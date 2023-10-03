@@ -18,4 +18,5 @@ target_link_libraries(Destiny d3d11.lib dxgi.lib dxguid.lib D3DCompiler.lib d2d1
 source_group("Engine" FILES ${SRC_ENGINE})
 
 
+include_directories("3rdparty/spdlog/include")
 

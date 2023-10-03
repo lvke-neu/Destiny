@@ -19,6 +19,7 @@
 //
 //    return theApp.Run();
 //}
+
 #include "GameApp.h"
 #include "Engine/Engine.h"
 
@@ -27,10 +28,10 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE prevInstance,
 {
 	AllocConsole();
 
-	Destiny::Engine engine;
-	engine.initialize();
-
-	getchar();
-
+	{
+		Destiny::Engine::GetInstance()->initialize();
+		Destiny::Engine::GetInstance()->run();
+		Destiny::Engine::GetInstance()->uninitialize();
+	}
 	return 0;
 }

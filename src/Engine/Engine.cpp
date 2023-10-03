@@ -1,11 +1,16 @@
 #include "Engine.h"
-#include <iostream>
+#include "LogManager.h"
 
 namespace Destiny
 {
+	Engine::Engine()
+	{
+		m_logManager = std::shared_ptr<LogManager>(new LogManager);
+	}
+
 	void Engine::initialize()
 	{
-		std::cout << "Hello, Cmake and Directx11" << std::endl;
+		m_logManager->initialize();
 	}
 
 	void Engine::uninitialize()
@@ -15,6 +20,6 @@ namespace Destiny
 
 	void Engine::run()
 	{
-		
+
 	}
 }

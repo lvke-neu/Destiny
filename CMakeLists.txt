@@ -9,12 +9,13 @@ endif()
 
 add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 
-aux_source_directory(src/ DIR_SRCS)
-file(GLOB HEADER_FILES src/*.h)
+file(GLOB SRC_MAIN src/main.cpp)
+file(GLOB SRC_ENGINE src/Engine/*)
 
-add_executable(Destiny WIN32 ${DIR_SRCS} ${HEADER_FILES})
+add_executable(Destiny WIN32 ${SRC_MAIN} ${SRC_ENGINE})
 target_link_libraries(Destiny d3d11.lib dxgi.lib dxguid.lib D3DCompiler.lib d2d1.lib dwrite.lib winmm.lib)
 
+source_group("Engine" FILES ${SRC_ENGINE})
 
 
 

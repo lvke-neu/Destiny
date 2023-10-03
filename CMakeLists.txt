@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
 
-include(FetchContent)
+project("Destiny")
 
-
-add_executable(src/main src/main.cpp)
+add_executable(Destiny src/main.cpp)

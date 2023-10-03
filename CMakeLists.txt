@@ -1,7 +1,18 @@
 cmake_minimum_required(VERSION 3.14)
 
-project("Destiny")
+add_compile_definitions(UNICODE _UNICODE)
+if (WIN7_SYSTEM_SUPPORT MATCHES ON)
+    add_compile_definitions(_WIN32_WINNT=0x601)
+endif()
 
-file(GLOB_RECURSE SOURCES "src/*.cpp" "src/Engine/*.cpp")
+add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 
-add_executable(Destiny ${SOURCES})
+aux_source_directory(src/ DIR_SRCS)
+file(GLOB HEADER_FILES src/*.h)
+
+add_executable(Destiny WIN32 ${DIR_SRCS} ${HEADER_FILES})
+target_link_libraries(Destiny d3d11.lib dxgi.lib dxguid.lib D3DCompiler.lib d2d1.lib dwrite.lib winmm.lib)
+
+
+
+

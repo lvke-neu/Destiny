@@ -10,7 +10,6 @@ namespace Destiny
 	public:
 		virtual void initialize() override;
 		virtual void uninitialize() override {}
-		virtual void tick() override {}
 		std::shared_ptr<spdlog::logger> getCoreLogger();
 	private:
 		std::shared_ptr<spdlog::logger> m_coreLogger;

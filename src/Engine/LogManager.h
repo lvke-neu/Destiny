@@ -1,15 +1,16 @@
 #pragma once
-#include "ParallelSystem.h"
 #include <spdlog/spdlog.h>
 #include <memory>
 
 namespace Destiny
 {
-	class LogManager : public ParallelSystem
+	class LogManager
 	{
 	public:
-		virtual void initialize() override;
-		virtual void uninitialize() override {}
+		LogManager();
+	public:
+		void initialize();
+		void uninitialize();
 		std::shared_ptr<spdlog::logger> getCoreLogger();
 	private:
 		std::shared_ptr<spdlog::logger> m_coreLogger;

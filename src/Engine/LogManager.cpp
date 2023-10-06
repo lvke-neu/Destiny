@@ -5,6 +5,11 @@
 
 namespace Destiny
 {
+	LogManager::LogManager() : m_coreLogger(nullptr)
+	{
+
+	}
+
 	void LogManager::initialize()
 	{
 		std::vector<spdlog::sink_ptr> logSinks;
@@ -18,5 +23,10 @@ namespace Destiny
 		spdlog::register_logger(m_coreLogger);
 		m_coreLogger->set_level(spdlog::level::trace);
 		m_coreLogger->flush_on(spdlog::level::trace);
+	}
+
+	void LogManager::uninitialize()
+	{
+
 	}
 }

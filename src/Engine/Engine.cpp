@@ -24,6 +24,6 @@ namespace Destiny
 
 	void Engine::run()
 	{
-		m_renderView->run();
+
 	}
 }

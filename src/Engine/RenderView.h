@@ -13,7 +13,6 @@ namespace Destiny
 	public:
 		void initialize();
 		void uninitialize();
-		void run();
 	private:
 		QApplication m_application;
 		std::shared_ptr<MainWindow> m_mainWindow;

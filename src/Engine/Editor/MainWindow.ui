@@ -27,6 +27,19 @@
      <string>Test Cmake + Qt, hahaha</string>
     </property>
    </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>240</x>
+      <y>310</y>
+      <width>321</width>
+      <height>91</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>测试cmake + Qt, 测试完成</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

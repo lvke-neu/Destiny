@@ -3,7 +3,7 @@
 
 namespace Destiny
 {
-	RenderView::RenderView(int argc, char* argv[]) : m_mainWindow(nullptr), m_application(argc, nullptr)
+	RenderView::RenderView(int argc, char* argv[]) : m_application(argc, argv), m_mainWindow(std::make_shared<MainWindow>())
 	{
 		
 	}
@@ -15,17 +15,12 @@ namespace Destiny
 
 	void RenderView::initialize()
 	{
-		m_mainWindow = std::make_shared<MainWindow>();
 		m_mainWindow->show();
+		m_application.exec();
 	}
 
 	void RenderView::uninitialize()
 	{
 
-	}
-
-	void RenderView::run()
-	{
-		m_application.exec();
 	}
 }

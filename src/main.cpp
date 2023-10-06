@@ -20,18 +20,31 @@
 //    return theApp.Run();
 //}
 
-#include "GameApp.h"
-#include "Engine/Engine.h"
+//#include "GameApp.h"
+//#include "Engine/Engine.h"
+//
+//int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE prevInstance,
+//	_In_ LPSTR cmdLine, _In_ int showCmd)
+//{
+//	AllocConsole();
+//
+//	{
+//		Destiny::Engine::GetInstance()->initialize();
+//		Destiny::Engine::GetInstance()->run();
+//		Destiny::Engine::GetInstance()->uninitialize();
+//	}
+//	return 0;
+//}
 
-int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE prevInstance,
-	_In_ LPSTR cmdLine, _In_ int showCmd)
-{
-	AllocConsole();
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QLabel>
 
-	{
-		Destiny::Engine::GetInstance()->initialize();
-		Destiny::Engine::GetInstance()->run();
-		Destiny::Engine::GetInstance()->uninitialize();
-	}
-	return 0;
+int main(int argc, char* argv[]) {
+	QApplication a(argc, argv);
+	QDialog w;
+	QLabel label(&w);
+	label.setText("Hello World! Hello Qt!");
+	w.show();
+	return a.exec();
 }

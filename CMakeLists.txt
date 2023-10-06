@@ -12,11 +12,12 @@ add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 file(GLOB SRC_MAIN src/main.cpp)
 file(GLOB SRC_ENGINE src/Engine/*)
 
-add_executable(Destiny WIN32 ${SRC_MAIN} ${SRC_ENGINE})
-target_link_libraries(Destiny d3d11.lib dxgi.lib dxguid.lib D3DCompiler.lib d2d1.lib dwrite.lib winmm.lib)
+add_executable(Destiny ${SRC_MAIN} ${SRC_ENGINE})
+target_link_libraries(Destiny d3d11.lib dxgi.lib dxguid.lib D3DCompiler.lib d2d1.lib dwrite.lib winmm.lib Qt5::Core Qt5::Gui Qt5::Widgets)
 
 source_group("Engine" FILES ${SRC_ENGINE})
 
 
 include_directories("3rdparty/spdlog/include")
 
+find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)

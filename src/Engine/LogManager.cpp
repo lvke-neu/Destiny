@@ -5,13 +5,6 @@
 
 namespace Destiny
 {
-
-	LogManager::~LogManager()
-	{
-		int i = 0;
-		i++;
-	}
-
 	void LogManager::initialize()
 	{
 		std::vector<spdlog::sink_ptr> logSinks;

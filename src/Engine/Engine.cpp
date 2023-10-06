@@ -5,7 +5,7 @@ namespace Destiny
 {
 	Engine::Engine()
 	{
-		m_logManager = std::shared_ptr<LogManager>(new LogManager);
+		m_logManager = std::make_shared<LogManager>();
 	}
 
 	void Engine::initialize()
@@ -15,7 +15,7 @@ namespace Destiny
 
 	void Engine::uninitialize()
 	{
-	
+		m_logManager->uninitialize();
 	}
 
 	void Engine::run()

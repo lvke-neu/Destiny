@@ -19,7 +19,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 source_group("Engine" FILES ${SRC_ENGINE})
-source_group("Engine/Editor" FILES ${SRC_EDITOR})
+source_group("Engine\\Editor" FILES ${SRC_EDITOR})
 
 include_directories("3rdparty/spdlog/include")
 

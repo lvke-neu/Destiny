@@ -18,7 +18,7 @@ namespace Destiny
 		m_logManager->uninitialize();
 	}
 
-	void Engine::run()
+	void Engine::update()
 	{
 
 	}

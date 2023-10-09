@@ -16,7 +16,7 @@ namespace Destiny
 	public:
 		void initialize();
 		void uninitialize();
-		void run();
+		void update();
 	public:
 		std::shared_ptr<LogManager> getLogManager();
 	private:

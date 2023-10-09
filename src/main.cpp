@@ -20,15 +20,24 @@
 //    return theApp.Run();
 //}
 
-#include "Engine/Engine.h"
+//#include "Engine/Engine.h"
+//
+//int main()
+//{
+//	Destiny::Engine::GetInstance()->initialize();
+//	Destiny::Engine::GetInstance()->run();
+//	Destiny::Engine::GetInstance()->uninitialize();
+//	
+//	return 0;
+//}
+
+#include "Editor/Application.h"
 
 int main()
 {
-	Destiny::Engine::GetInstance()->initialize();
-	Destiny::Engine::GetInstance()->run();
-	Destiny::Engine::GetInstance()->uninitialize();
-	
+	Destiny::Application application;
+	application.exec();
+
 	return 0;
 }
-
 

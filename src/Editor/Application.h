@@ -5,16 +5,13 @@
 class MainWindow;
 namespace Destiny
 {
-	class RenderView
+	class Application : public QApplication
 	{
 	public:
-		RenderView(int argc = 0, char* argv[] = nullptr);
-		~RenderView();
-	public:
-		void initialize();
-		void uninitialize();
+		Application(int argc = 0, char* argv[] = nullptr);
+		~Application();
 	private:
-		QApplication m_application;
 		std::shared_ptr<MainWindow> m_mainWindow;
 	};
 }
+	

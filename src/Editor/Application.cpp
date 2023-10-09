@@ -1,6 +1,7 @@
 #include "Application.h"
 #include "MainWindow.h"
 #include "Engine/Engine.h"
+#include "Engine/RenderView.h"
 
 namespace Destiny
 {

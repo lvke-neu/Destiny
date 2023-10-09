@@ -13,9 +13,17 @@
 
 
 //*************************************************log*************************************************
+#include "Engine/Engine.h"
+#include "Engine/LogManager.h"
+
 #define LOG_TRACE(...)     Engine::GetInstance()->getLogManager()->getCoreLogger()->trace("[" + std::string(__FUNCTION__) + "]:" + __VA_ARGS__);
 #define LOG_INFO(...)      Engine::GetInstance()->getLogManager()->getCoreLogger()->info("[" + std::string(__FUNCTION__) + "]:" + __VA_ARGS__);
 #define LOG_WARN(...)      Engine::GetInstance()->getLogManager()->getCoreLogger()->warn("[" + std::string(__FUNCTION__) + "]:" + __VA_ARGS__);
 #define LOG_ERROR(...)     Engine::GetInstance()->getLogManager()->getCoreLogger()->error("[" + std::string(__FUNCTION__) + "]:" + __VA_ARGS__);
 #define LOG_CRITICAL(...)  Engine::GetInstance()->getLogManager()->getCoreLogger()->critical("[" + std::string(__FUNCTION__) + "]:" + __VA_ARGS__);
+//********************************************************************************************************
+
+//*************************************************delete and release*************************************************
+#define SAFE_DELETE(p) { if ((p)) { delete (p); (p) = nullptr; } } 
+#define SAFE_RELEASE(p) { if ((p)) { (p)->Release(); (p) = nullptr; } }
 //********************************************************************************************************

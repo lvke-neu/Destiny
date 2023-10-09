@@ -5,6 +5,8 @@
 namespace Destiny
 {
 	class LogManager;
+	class RenderView;
+	class GraphicsSystem;
 	class Engine
 	{
 		SINGLETON(Engine);
@@ -19,12 +21,26 @@ namespace Destiny
 		void update();
 	public:
 		std::shared_ptr<LogManager> getLogManager();
+		std::shared_ptr<RenderView> getRenderView();
+		std::shared_ptr<GraphicsSystem> getGraphicsSystem();
 	private:
 		std::shared_ptr<LogManager> m_logManager;
+		std::shared_ptr<RenderView> m_renderView;
+		std::shared_ptr<GraphicsSystem> m_graphicsSystem;
 	};
 
 	inline std::shared_ptr<LogManager> Engine::getLogManager()
 	{
 		return m_logManager;
+	}
+
+	inline std::shared_ptr<RenderView> Engine::getRenderView()
+	{
+		return m_renderView;
+	}
+
+	inline std::shared_ptr<Destiny::GraphicsSystem> Engine::getGraphicsSystem()
+	{
+		return m_graphicsSystem;
 	}
 }

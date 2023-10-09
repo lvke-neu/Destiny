@@ -12,7 +12,7 @@ add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 file(GLOB SRC_MAIN src/main.cpp)
 file(GLOB SRC_ENGINE src/Engine/*)
 file(GLOB SRC_EDITOR src/Editor/*)
-file(GLOB SRC_GRAPHICS src/Graphics*)
+file(GLOB SRC_GRAPHICS src/Graphics/*)
 
 set(CMAKE_AUTOMOC ON)      
 set(CMAKE_AUTOUIC ON)

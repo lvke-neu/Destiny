@@ -62,6 +62,10 @@ namespace Destiny
 		//sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 		//sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 		//sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+
+		SAFE_RELEASE(dxgiDevice);
+		SAFE_RELEASE(dxgiAdapter);
+		SAFE_RELEASE(dxgiFactory);
 	}
 
 	void GraphicsSystem::uninitialize()

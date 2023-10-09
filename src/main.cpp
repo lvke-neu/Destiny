@@ -35,7 +35,7 @@
 
 int main()
 {
-	Destiny::Application application;
+	Application application;
 	application.exec();
 
 	return 0;

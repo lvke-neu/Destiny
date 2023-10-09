@@ -14,11 +14,6 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-signals:
-	void signalTest();
-private slots:
-	void button();
-	void signalTestTrigger();
 private:
     Ui::MainWindow *ui;
 };

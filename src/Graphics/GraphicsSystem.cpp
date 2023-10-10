@@ -7,11 +7,13 @@ namespace Destiny
 	GraphicsSystem::GraphicsSystem() : 
 		m_pD3D11Device(nullptr), 
 		m_pD3D11DeviceContext(nullptr),
+		m_pD3D11DeferredDeviceContext(nullptr),
 		m_pDXGISwapChain(nullptr),
 		m_pRenderTargetView(nullptr),
 		m_pDepthStencilBuffer(nullptr),
 		m_pDepthStencilView(nullptr),
-		m_4xMsaaQuality(0)
+		m_4xMsaaQuality(0),
+		m_viewport(new D3D11_VIEWPORT)
 	{
 
 	}
@@ -21,10 +23,12 @@ namespace Destiny
 		m_pD3D11DeviceContext->ClearState();
 		SAFE_RELEASE(m_pD3D11Device);
 		SAFE_RELEASE(m_pD3D11DeviceContext);
+		SAFE_RELEASE(m_pD3D11DeferredDeviceContext);
 		SAFE_RELEASE(m_pDXGISwapChain);
 		SAFE_RELEASE(m_pRenderTargetView);
 		SAFE_RELEASE(m_pDepthStencilBuffer);
 		SAFE_RELEASE(m_pDepthStencilView);
+		SAFE_DELETE(m_viewport);
 	}
 
 	void GraphicsSystem::initialize(long long hwnd, unsigned int width, unsigned int height)
@@ -36,14 +40,15 @@ namespace Destiny
 
 	void GraphicsSystem::uninitialize()
 	{
-
 	}
 
 	void GraphicsSystem::draw()
 	{
-		static float color[4] = { 1.0f, 0.0f, 1.0f, 1.0f };
+		static float color[4] = { 0.0f, 1.0f, 1.0f, 1.0f };
+
 		m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView, color);
 		m_pD3D11DeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
 		m_pDXGISwapChain->Present(0, 0);
 	}
 
@@ -77,15 +82,15 @@ namespace Destiny
 
 		m_pD3D11DeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
 
-		D3D11_VIEWPORT viewport;
-		viewport.TopLeftX = 0;
-		viewport.TopLeftY = 0;
-		viewport.Width = static_cast<float>(width);
-		viewport.Height = static_cast<float>(height);
-		viewport.MinDepth = 0.0f;
-		viewport.MaxDepth = 1.0f;
+		
+		m_viewport->TopLeftX = 0;
+		m_viewport->TopLeftY = 0;
+		m_viewport->Width = static_cast<float>(width);
+		m_viewport->Height = static_cast<float>(height);
+		m_viewport->MinDepth = 0.0f;
+		m_viewport->MaxDepth = 1.0f;
 
-		m_pD3D11DeviceContext->RSSetViewports(1, &viewport);
+		m_pD3D11DeviceContext->RSSetViewports(1, m_viewport);
 	}
 
 	void GraphicsSystem::createDeviceAndContext()
@@ -111,6 +116,7 @@ namespace Destiny
 			LOG_ERROR("Direct3D Feature Level 11_0 unsupported.");
 			return;
 		}
+		m_pD3D11Device->CreateDeferredContext(0, &m_pD3D11DeferredDeviceContext);
 	}
 
 	void GraphicsSystem::createSwapChain(long long hwnd)

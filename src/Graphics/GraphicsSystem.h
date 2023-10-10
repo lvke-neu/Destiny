@@ -9,6 +9,7 @@ struct ID3D11DepthStencilView;
 struct D3D11_VIEWPORT;
 namespace Destiny
 {
+	class ImagePass;
 	class GraphicsSystem
 	{
 	public:
@@ -19,6 +20,10 @@ namespace Destiny
 		void uninitialize();
 		void draw();
 		void onResize(unsigned int width, unsigned int height);
+		ID3D11Device* getDevice();
+		ID3D11DeviceContext* getImmediateContext();
+		ID3D11DeviceContext* getDeferredContext();
+		ID3D11RenderTargetView* getRenderTargetView();
 	private:
 		void createDeviceAndContext();
 		void createSwapChain(long long hwnd);
@@ -32,5 +37,26 @@ namespace Destiny
 		ID3D11DepthStencilView* m_pDepthStencilView;
 		unsigned int m_4xMsaaQuality;
 		D3D11_VIEWPORT* m_viewport;
+		ImagePass* m_imagePass;
 	};
+
+	inline ID3D11Device* GraphicsSystem::getDevice()
+	{
+		return m_pD3D11Device;
+	}
+
+	inline ID3D11DeviceContext* GraphicsSystem::getImmediateContext()
+	{
+		return m_pD3D11DeviceContext;
+	}
+
+	inline ID3D11DeviceContext* GraphicsSystem::getDeferredContext()
+	{
+		return m_pD3D11DeferredDeviceContext;
+	}
+
+	inline ID3D11RenderTargetView* GraphicsSystem::getRenderTargetView()
+	{
+		return m_pRenderTargetView;
+	}
 }

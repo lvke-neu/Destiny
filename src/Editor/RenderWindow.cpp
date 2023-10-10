@@ -18,5 +18,6 @@ RenderWindow::~RenderWindow()
 void RenderWindow::paintEvent(QPaintEvent* event)
 {
 	Destiny::Engine::GetInstance()->update();
+	update();
 }
 

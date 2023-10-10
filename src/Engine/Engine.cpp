@@ -1,6 +1,5 @@
 #include "Engine.h"
 #include "LogManager.h"
-#include "RenderView.h"
 #include "Graphics/GraphicsSystem.h"
 
 namespace Destiny
@@ -11,10 +10,10 @@ namespace Destiny
 		m_graphicsSystem = std::make_shared<GraphicsSystem>();
 	}
 
-	void Engine::initialize()
+	void Engine::initialize(long long hwnd, unsigned int width, unsigned int height)
 	{
 		m_logManager->initialize();
-		m_graphicsSystem->initialize();
+		m_graphicsSystem->initialize(hwnd, width, height);
 	}
 
 	void Engine::uninitialize()
@@ -25,6 +24,6 @@ namespace Destiny
 
 	void Engine::update()
 	{
-
+		m_graphicsSystem->draw();
 	}
 }

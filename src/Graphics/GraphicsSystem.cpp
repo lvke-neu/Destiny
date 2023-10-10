@@ -7,6 +7,10 @@ namespace Destiny
 	GraphicsSystem::GraphicsSystem() : 
 		m_pD3D11Device(nullptr), 
 		m_pD3D11DeviceContext(nullptr),
+		m_pDXGISwapChain(nullptr),
+		m_pRenderTargetView(nullptr),
+		m_pDepthStencilBuffer(nullptr),
+		m_pDepthStencilView(nullptr),
 		m_4xMsaaQuality(0)
 	{
 
@@ -14,11 +18,77 @@ namespace Destiny
 
 	GraphicsSystem::~GraphicsSystem()
 	{
+		m_pD3D11DeviceContext->ClearState();
 		SAFE_RELEASE(m_pD3D11Device);
 		SAFE_RELEASE(m_pD3D11DeviceContext);
+		SAFE_RELEASE(m_pDXGISwapChain);
+		SAFE_RELEASE(m_pRenderTargetView);
+		SAFE_RELEASE(m_pDepthStencilBuffer);
+		SAFE_RELEASE(m_pDepthStencilView);
 	}
 
-	void GraphicsSystem::initialize()
+	void GraphicsSystem::initialize(long long hwnd, unsigned int width, unsigned int height)
+	{
+		createDeviceAndContext();
+		createSwapChain(hwnd);
+		onResize(width, height);
+	}
+
+	void GraphicsSystem::uninitialize()
+	{
+
+	}
+
+	void GraphicsSystem::draw()
+	{
+		static float color[4] = { 1.0f, 0.0f, 1.0f, 1.0f };
+		m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView, color);
+		m_pD3D11DeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+		m_pDXGISwapChain->Present(0, 0);
+	}
+
+	void GraphicsSystem::onResize(unsigned int width, unsigned int height)
+	{
+		SAFE_RELEASE(m_pRenderTargetView);
+		SAFE_RELEASE(m_pDepthStencilBuffer);
+		SAFE_RELEASE(m_pDepthStencilView);
+
+		ID3D11Texture2D* backBuffer{ nullptr };
+		m_pDXGISwapChain->ResizeBuffers(1, width, height, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
+		m_pDXGISwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer));
+		m_pD3D11Device->CreateRenderTargetView(backBuffer, nullptr, &m_pRenderTargetView);
+		SAFE_RELEASE(backBuffer);
+
+		D3D11_TEXTURE2D_DESC depthStencilDesc;
+		depthStencilDesc.Width = width;
+		depthStencilDesc.Height = height;
+		depthStencilDesc.MipLevels = 1;
+		depthStencilDesc.ArraySize = 1;
+		depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		depthStencilDesc.SampleDesc.Count = 4;
+		depthStencilDesc.SampleDesc.Quality = m_4xMsaaQuality - 1;
+		depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
+		depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+		depthStencilDesc.CPUAccessFlags = 0;
+		depthStencilDesc.MiscFlags = 0;
+
+		m_pD3D11Device->CreateTexture2D(&depthStencilDesc, nullptr, &m_pDepthStencilBuffer);
+		m_pD3D11Device->CreateDepthStencilView(m_pDepthStencilBuffer, nullptr, &m_pDepthStencilView);
+
+		m_pD3D11DeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
+
+		D3D11_VIEWPORT viewport;
+		viewport.TopLeftX = 0;
+		viewport.TopLeftY = 0;
+		viewport.Width = static_cast<float>(width);
+		viewport.Height = static_cast<float>(height);
+		viewport.MinDepth = 0.0f;
+		viewport.MaxDepth = 1.0f;
+
+		m_pD3D11DeviceContext->RSSetViewports(1, &viewport);
+	}
+
+	void GraphicsSystem::createDeviceAndContext()
 	{
 		HRESULT hr = S_OK;
 
@@ -41,35 +111,43 @@ namespace Destiny
 			LOG_ERROR("Direct3D Feature Level 11_0 unsupported.");
 			return;
 		}
+	}
 
+	void GraphicsSystem::createSwapChain(long long hwnd)
+	{
 		m_pD3D11Device->CheckMultisampleQualityLevels(
 			DXGI_FORMAT_R8G8B8A8_UNORM, 4, &m_4xMsaaQuality);
 
-		IDXGIDevice* dxgiDevice = nullptr;
-		IDXGIAdapter* dxgiAdapter = nullptr;
-		IDXGIFactory* dxgiFactory = nullptr;
-		
+		IDXGIDevice* dxgiDevice{ nullptr };
+		IDXGIAdapter* dxgiAdapter{ nullptr };
+		IDXGIFactory* dxgiFactory{ nullptr };
+
 		m_pD3D11Device->QueryInterface(__uuidof(IDXGIDevice), (void**)&dxgiDevice);
 		dxgiDevice->GetParent(__uuidof(IDXGIAdapter), (void**)&dxgiAdapter);
 		dxgiAdapter->GetParent(__uuidof(IDXGIFactory), (void**)&dxgiFactory);
 
-		//DXGI_SWAP_CHAIN_DESC sd;
-		//ZeroMemory(&sd, sizeof(sd));
-		//sd.BufferDesc.Width = m_ClientWidth;
-		//sd.BufferDesc.Height = m_ClientHeight;
-		//sd.BufferDesc.RefreshRate.Numerator = 60;
-		//sd.BufferDesc.RefreshRate.Denominator = 1;
-		//sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-		//sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-		//sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+		DXGI_SWAP_CHAIN_DESC sd;
+		ZeroMemory(&sd, sizeof(sd));
+		sd.BufferDesc.Width = 0;
+		sd.BufferDesc.Height = 0;
+		sd.BufferDesc.RefreshRate.Numerator = 60;
+		sd.BufferDesc.RefreshRate.Denominator = 1;
+		sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+		sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+		sd.SampleDesc.Count = 4;
+		sd.SampleDesc.Quality = m_4xMsaaQuality - 1;
+		sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+		sd.BufferCount = 1;
+		sd.OutputWindow = (HWND)hwnd;
+		sd.Windowed = TRUE;
+		sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+		sd.Flags = 0;
+
+		dxgiFactory->CreateSwapChain(m_pD3D11Device, &sd, &m_pDXGISwapChain);
 
 		SAFE_RELEASE(dxgiDevice);
 		SAFE_RELEASE(dxgiAdapter);
 		SAFE_RELEASE(dxgiFactory);
-	}
-
-	void GraphicsSystem::uninitialize()
-	{
-
 	}
 }

@@ -1,18 +1,19 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
-#include "Engine/Engine.h"
+#include "RenderWindow.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    ui->setupUi(this);
-    Destiny::Engine::GetInstance()->initialize();
+    ui->setupUi(this);  
+    m_renderWindow = new RenderWindow(this);
+    setCentralWidget(m_renderWindow);
 }
 
 MainWindow::~MainWindow()
 {
-    Destiny::Engine::GetInstance()->uninitialize();
     delete ui;
+    delete m_renderWindow;
 }
 

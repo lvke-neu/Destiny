@@ -48,14 +48,13 @@ namespace Destiny
 
 	void GraphicsSystem::draw()
 	{
-		//static float color[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+		static float color[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 
-		//m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView, color);
-		//m_pD3D11DeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+		m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView, color);
+		m_pD3D11DeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 		
-		m_pD3D11DeviceContext->ExecuteCommandList(m_imagePass->m_pD3D11CommandList, true);
-		
-		//m_imagePass->draw();
+		m_imagePass->draw();
+
 		m_pDXGISwapChain->Present(0, 0);
 	}
 

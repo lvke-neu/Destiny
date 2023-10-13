@@ -16,10 +16,10 @@ namespace Destiny
 		GraphicsSystem();
 		~GraphicsSystem();
 	public:
-		void initialize(long long hwnd, unsigned int width, unsigned int height);
+		void initialize(long long hwnd);
 		void uninitialize();
 		void draw();
-		void onResize(unsigned int width, unsigned int height);
+		
 		ID3D11Device* getDevice();
 		ID3D11DeviceContext* getImmediateContext();
 		ID3D11DeviceContext* getDeferredContext();
@@ -27,6 +27,8 @@ namespace Destiny
 	private:
 		void createDeviceAndContext();
 		void createSwapChain(long long hwnd);
+		void onResize(void* data);
+		void onResize_(unsigned int width, unsigned int height);
 	private:
 		ID3D11Device* m_pD3D11Device;
 		ID3D11DeviceContext* m_pD3D11DeviceContext;

@@ -1,7 +1,7 @@
 #include "Application.h"
-#include "RenderWindow.h"
+#include "MainWindow.h"
 
-Application::Application(int argc, char* argv[]) : QApplication(argc, argv), m_renderWindow(std::make_shared<RenderWindow>())
+Application::Application(int argc, char* argv[]) : QApplication(argc, argv), m_mainWindow(std::make_shared<MainWindow>())
 {
-	m_renderWindow->show();
+	m_mainWindow->show();
 }

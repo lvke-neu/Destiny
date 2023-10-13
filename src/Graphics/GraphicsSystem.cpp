@@ -1,4 +1,6 @@
 #include "GraphicsSystem.h"
+#include "Engine/Engine.h"
+#include "Engine/EventSystem.h"
 #include "Engine/Utility.h"
 #include "ImagePass.h"
 #include <d3d11.h>
@@ -33,17 +35,20 @@ namespace Destiny
 		SAFE_DELETE(m_imagePass);
 	}
 
-	void GraphicsSystem::initialize(long long hwnd, unsigned int width, unsigned int height)
+	void GraphicsSystem::initialize(long long hwnd)
 	{
 		createDeviceAndContext();
 		createSwapChain(hwnd);
-		onResize(width, height);
+		onResize_(0, 0);
+
+		Engine::GetInstance()->getEventSystem()->registerEvent(EventType::WindowResize, std::bind(&GraphicsSystem::onResize, this, std::placeholders::_1));
 
 		m_imagePass = new ImagePass;
 	}
 
 	void GraphicsSystem::uninitialize()
 	{
+		Engine::GetInstance()->getEventSystem()->unRegisterEvent(EventType::WindowResize, std::bind(&GraphicsSystem::onResize, this, std::placeholders::_1));
 	}
 
 	void GraphicsSystem::draw()
@@ -58,7 +63,13 @@ namespace Destiny
 		m_pDXGISwapChain->Present(0, 0);
 	}
 
-	void GraphicsSystem::onResize(unsigned int width, unsigned int height)
+	void GraphicsSystem::onResize(void* data)
+	{
+		WindowResizeData wrd = *(WindowResizeData*)data;
+		onResize_(wrd.width, wrd.height);
+	}
+
+	void GraphicsSystem::onResize_(unsigned int width, unsigned int height)
 	{
 		SAFE_RELEASE(m_pRenderTargetView);
 		SAFE_RELEASE(m_pDepthStencilBuffer);

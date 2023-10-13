@@ -14,6 +14,7 @@ namespace Destiny
 		ImagePass();
 		~ImagePass();
 		void draw();
+		void onResize(void* data);
 	private:
 		std::unique_ptr<VertexShader> m_vertexShader;
 		std::unique_ptr<PixelShader> m_pixelShader;

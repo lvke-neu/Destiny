@@ -14,6 +14,7 @@ public:
 	}
 private:
 	virtual void paintEvent(QPaintEvent* event) override;
+	virtual void resizeEvent(QResizeEvent* event) override;
 };
 
 

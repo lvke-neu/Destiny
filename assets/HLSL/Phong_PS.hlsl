@@ -1,4 +1,4 @@
-#include "Cube.hlsli"
+#include "Common.hlsli"
 
 
 

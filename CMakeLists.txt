@@ -14,6 +14,7 @@ file(GLOB SRC_ENGINE src/Engine/*)
 file(GLOB SRC_EDITOR src/Editor/*)
 file(GLOB SRC_GRAPHICS src/Graphics/*)
 file(GLOB ASSETS_HLSL assets/HLSL/*)
+file(GLOB ASSETS_TEXTURE assets/Texture/*)
 
 set(CMAKE_AUTOMOC ON)      
 set(CMAKE_AUTOUIC ON)
@@ -24,6 +25,7 @@ source_group("Engine" FILES ${SRC_ENGINE})
 source_group("Editor" FILES ${SRC_EDITOR})
 source_group("Graphics" FILES ${SRC_GRAPHICS})
 source_group("assets\\HLSL" FILES ${ASSETS_HLSL})
+source_group("assets\\Texture" FILES ${ASSETS_TEXTURE})
 
 include_directories("3rdparty/spdlog/include")
 include_directories("src/")
@@ -33,7 +35,7 @@ find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 file(GLOB file_ui src/Editor/*.ui)
 QT5_WRAP_UI(ui_FILES ${file_ui} )
 
-add_executable(Destiny ${SRC_MAIN} ${SRC_ENGINE} ${SRC_EDITOR} ${SRC_GRAPHICS} ${ASSETS_HLSL})
+add_executable(Destiny ${SRC_MAIN} ${SRC_ENGINE} ${SRC_EDITOR} ${SRC_GRAPHICS} ${ASSETS_HLSL} ${ASSETS_TEXTURE})
 target_link_libraries(Destiny d3d11.lib dxgi.lib dxguid.lib D3DCompiler.lib d2d1.lib dwrite.lib winmm.lib Qt5::Core Qt5::Gui Qt5::Widgets)
 
 foreach(HLSL_FILE ${ASSETS_HLSL})
@@ -69,3 +71,5 @@ foreach(HLSL_FILE ${ASSETS_HLSL})
                                 VS_SHADER_DISABLE_OPTIMIZATIONS $<$<CONFIG:Debug>:true>
                                 VS_SHADER_ENABLE_DEBUG $<$<CONFIG:Debug>:true>)
 endforeach()
+
+file(COPY assets/Texture DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

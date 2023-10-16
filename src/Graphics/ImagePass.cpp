@@ -7,6 +7,7 @@
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 #include "ConstantBuffer.h"
+#include "Camera.h"
 #include <d3d11.h>
 #include <DirectXMath.h>
 
@@ -30,8 +31,6 @@ namespace Destiny
 	struct ConstantData
 	{
 		DirectX::XMMATRIX world;
-		DirectX::XMMATRIX view;
-		DirectX::XMMATRIX proj;
 	};
 
 	ImagePass::ImagePass()
@@ -39,13 +38,13 @@ namespace Destiny
 		VertexPosColor vertices[] =
 		{
 			{ XMFLOAT3(-1.0f, -1.0f, -1.0f),XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-			{ XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-			{ XMFLOAT3(1.0f, 1.0f, -1.0f),  XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-			{ XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-			{ XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-			{ XMFLOAT3(-1.0f, 1.0f, 1.0f),  XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-			{ XMFLOAT3(1.0f, 1.0f, 1.0f),   XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-			{ XMFLOAT3(1.0f, -1.0f, 1.0f),  XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }
+			{ XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f) },
+			{ XMFLOAT3(1.0f, 1.0f, -1.0f),  XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f) },
+			{ XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f) },
+			{ XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f) },
+			{ XMFLOAT3(-1.0f, 1.0f, 1.0f),  XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f) },
+			{ XMFLOAT3(1.0f, 1.0f, 1.0f),   XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f) },
+			{ XMFLOAT3(1.0f, -1.0f, 1.0f),  XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f) }
 		};
 
 		DWORD indices[] = {
@@ -70,61 +69,38 @@ namespace Destiny
 		};
 
 		auto device = Engine::GetInstance()->getGraphicsSystem()->getDevice();
+		auto immediateContext = Engine::GetInstance()->getGraphicsSystem()->getImmediateContext();
 
 		m_vertexShader = std::make_unique<VertexShader>(device, L"HLSL/Phong_VS.cso", VertexPosColor::inputLayout, ARRAYSIZE(VertexPosColor::inputLayout));
 		m_pixelShader = std::make_unique<PixelShader>(device, L"HLSL/Phong_PS.cso");
 		m_vertexBuffer = std::make_unique<VertexBuffer>(device, sizeof(VertexPosColor), 0, vertices, sizeof(vertices));
 		m_indexBuffer = std::make_unique<IndexBuffer>(device, DXGI_FORMAT_R32_UINT, indices, sizeof(indices));
 		m_constantBuffer = std::make_unique<ConstantBuffer>(device, sizeof(ConstantData));
-
-		Engine::GetInstance()->getEventSystem()->registerEvent(EventType::WindowResize, std::bind(&ImagePass::onResize, this, std::placeholders::_1));
-	}
-
-	ImagePass::~ImagePass()
-	{
-		Engine::GetInstance()->getEventSystem()->unRegisterEvent(EventType::WindowResize, std::bind(&ImagePass::onResize, this, std::placeholders::_1));
-	}
-
-	static ConstantData cd;
-	void ImagePass::draw()
-	{
-		auto immediateContext = Engine::GetInstance()->getGraphicsSystem()->getImmediateContext();
+		m_camera = std::make_unique<Camera>(device, immediateContext);
+		ConstantData cd;
+		cd.world = XMMatrixIdentity();
+		m_constantBuffer->updateData(immediateContext, &cd, sizeof(cd));
+		
 
 		immediateContext->IASetVertexBuffers(0, 1, &m_vertexBuffer->m_pVertexBuffer, &m_vertexBuffer->m_stride, &m_vertexBuffer->m_offset);
 		immediateContext->IASetInputLayout(m_vertexShader->m_pInputLayout);
 		immediateContext->IASetIndexBuffer(m_indexBuffer->m_pIndexBuffer, m_indexBuffer->m_format, 0);
-		
+
 		immediateContext->VSSetShader(m_vertexShader->m_pVertexShader, nullptr, 0);
 		immediateContext->PSSetShader(m_pixelShader->m_pPixelShader, nullptr, 0);
-		immediateContext->VSSetConstantBuffers(0, 1, &m_constantBuffer->m_pConstantBuffer);
-
-
-		
-		static float phi = 0.0f, theta = 0.0f;
-		phi += 0.0001f, theta += 0.00015f;
-		cd.world = XMMatrixTranspose(XMMatrixRotationX(phi) * XMMatrixRotationY(theta));
-		cd.view = XMMatrixTranspose(XMMatrixLookAtLH(
-			XMVectorSet(0.0f, 0.0f, -5.0f, 0.0f),
-			XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f),
-			XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f)
-		));
-		
-
-		m_constantBuffer->updateData(immediateContext, &cd, sizeof(cd));
-
+		immediateContext->VSSetConstantBuffers(2, 1, &m_constantBuffer->m_pConstantBuffer);
 		immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		immediateContext->DrawIndexed(36, 0, 0);
 	}
-	void ImagePass::onResize(void* data)
-	{
-		WindowResizeData wrd = *(WindowResizeData*)data;
-		cd.proj = XMMatrixTranspose(XMMatrixPerspectiveFovLH(XM_PIDIV2, (float)wrd.width / wrd.height, 1.0f, 1000.0f));
 
-		static int count = 0;
-		count++;
-		if (count > 500)
-		{
-			Engine::GetInstance()->getEventSystem()->unRegisterEvent(EventType::WindowResize, std::bind(&ImagePass::onResize, this, std::placeholders::_1));
-		}
+	ImagePass::~ImagePass()
+	{
+		
+	}
+
+
+	void ImagePass::draw()
+	{
+		auto immediateContext = Engine::GetInstance()->getGraphicsSystem()->getImmediateContext();
+		immediateContext->DrawIndexed(36, 0, 0);
 	}
 }

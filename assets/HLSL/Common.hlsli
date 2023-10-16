@@ -1,11 +1,18 @@
 
 cbuffer ConstantBuffer : register(b0)
 {
-	matrix g_World; 
 	matrix g_View;  
-	matrix g_Proj;  
 }
 
+cbuffer ConstantBuffer : register(b1)
+{
+	matrix g_Proj;
+}
+
+cbuffer ConstantBuffer : register(b2)
+{
+	matrix g_World;
+}
 struct VertexIn
 {
 	float3 posL : POSITION;

@@ -7,6 +7,7 @@ namespace Destiny
 	class LogManager;
 	class EventSystem;
 	class GraphicsSystem;
+	class Timer;
 	class Engine
 	{
 		SINGLETON(Engine);
@@ -27,6 +28,7 @@ namespace Destiny
 		std::shared_ptr<LogManager> m_logManager;
 		std::shared_ptr<EventSystem> m_eventSystem;
 		std::shared_ptr<GraphicsSystem> m_graphicsSystem;
+		std::shared_ptr<Timer> m_timer;
 	};
 
 	inline std::shared_ptr<LogManager> Engine::getLogManager()

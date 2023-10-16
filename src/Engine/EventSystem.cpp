@@ -31,9 +31,35 @@ namespace Destiny
 
 	void EventSystem::dispatchEvent(EventType type, void* data)
 	{
+		if (type == EventType::KeyPressed)
+		{
+			m_keyTriggers[*(KeyCode*)data] = true;
+		}
+		else if (type == EventType::KeyReleased)
+		{
+			m_keyTriggers[*(KeyCode*)data] = false;
+
+		}
+		if (type == EventType::MousePressed)
+		{
+			m_MouseTriggers[*(MouseCode*)data] = true;
+		}
+		else if (type == EventType::MouseReleased)
+		{
+			m_MouseTriggers[*(MouseCode*)data] = false;
+		}
 		for (const auto& event : m_events[type])
 		{
 			event(data);
 		}
+	}
+
+	bool EventSystem::isKeyPressed(KeyCode keyCode)
+	{
+		return m_keyTriggers[keyCode];
+	}
+	bool EventSystem::isMousePressed(MouseCode mouseCode)
+	{
+		return m_MouseTriggers[mouseCode];
 	}
 }

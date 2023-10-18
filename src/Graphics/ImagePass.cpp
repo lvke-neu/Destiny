@@ -143,7 +143,6 @@ namespace Destiny
 		rtDesc.BlendOpAlpha = D3D11_BLEND_OP_ADD;
 
 		device->CreateBlendState(&blendDesc, &bs);
-
 	}
 
 	ImagePass::~ImagePass()

@@ -23,5 +23,7 @@ float4 PS(VertexOut pIn) : SV_Target
     //float4 specular = pow(max(dot(reflecV, normalize(float3(-1, 1,0) - pIn.posW)), 0.0f), 128) * goSpecularColor * camSpecularColor;
 
     //return float4(1,1,1,1) * (ambient + diffuse + specular);
-    return g_Tex.Sample(g_Sampler, pIn.tex);
+	float4 color = g_Tex.Sample(g_Sampler, pIn.tex);
+	color.a = 0.5;
+	return color;
 }

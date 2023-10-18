@@ -25,7 +25,7 @@ namespace Destiny
 		static D3D11_INPUT_ELEMENT_DESC inputLayout[3]; 
 	};
 
-	D3D11_INPUT_ELEMENT_DESC VertexPosColor::inputLayout[3] = 
+	D3D11_INPUT_ELEMENT_DESC VertexPosColor::inputLayout[3] =
 	{
 			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -37,7 +37,7 @@ namespace Destiny
 		DirectX::XMMATRIX world;
 		DirectX::XMMATRIX invTranspose;
 	};
-
+	ID3D11BlendState* bs;
 	ImagePass::ImagePass()
 	{
 		VertexPosColor vertices[24];
@@ -100,15 +100,6 @@ namespace Destiny
 		m_constantBuffer = std::make_unique<ConstantBuffer>(device, sizeof(ConstantData));
 		m_texture = std::make_unique<Texture>(device, L"Texture/brick.dds");
 		m_camera = std::make_unique<Camera>(device, immediateContext);
-
-		Transform trans{ {10,10,1},{0,0,0}, {0,0,0} };
-		ConstantData cd;
-		cd.world = XMMatrixTranspose(trans.getWorldMatrix());
-		XMMATRIX A = cd.world;
-		A.r[3] = g_XMIdentityR3;
-
-		cd.invTranspose = XMMatrixTranspose(XMMatrixTranspose(XMMatrixInverse(nullptr, A)));
-		m_constantBuffer->updateData(immediateContext, &cd, sizeof(cd));
 		
 
 		D3D11_SAMPLER_DESC sampDesc;
@@ -132,6 +123,27 @@ namespace Destiny
 		immediateContext->PSSetSamplers(0, 1, &m_pSamplerState);
 		immediateContext->VSSetConstantBuffers(2, 1, &m_constantBuffer->m_pConstantBuffer);
 		immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+		D3D11_BLEND_DESC blendDesc;
+		ZeroMemory(&blendDesc, sizeof(blendDesc));
+		auto& rtDesc = blendDesc.RenderTarget[0];
+	
+		// 透明混合模式
+		// Color = SrcAlpha * SrcColor + (1 - SrcAlpha) * DestColor 
+		// Alpha = SrcAlpha
+		blendDesc.AlphaToCoverageEnable = false;
+		blendDesc.IndependentBlendEnable = false;
+		rtDesc.BlendEnable = true;
+		rtDesc.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+		rtDesc.SrcBlend = D3D11_BLEND_SRC_ALPHA;
+		rtDesc.DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+		rtDesc.BlendOp = D3D11_BLEND_OP_ADD;
+		rtDesc.SrcBlendAlpha = D3D11_BLEND_ONE;
+		rtDesc.DestBlendAlpha = D3D11_BLEND_ZERO;
+		rtDesc.BlendOpAlpha = D3D11_BLEND_OP_ADD;
+
+		device->CreateBlendState(&blendDesc, &bs);
+
 	}
 
 	ImagePass::~ImagePass()
@@ -143,6 +155,23 @@ namespace Destiny
 	void ImagePass::draw()
 	{
 		auto immediateContext = Engine::GetInstance()->getGraphicsSystem()->getImmediateContext();
+		immediateContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
+		
+
+		Transform trans{ {1,1,1},{0,0,0}, {0,0,0} };
+		ConstantData cd;
+
+		cd.world = XMMatrixTranspose(trans.getWorldMatrix());
+		m_constantBuffer->updateData(immediateContext, &cd, sizeof(cd));
+
+		
+		immediateContext->DrawIndexed(36, 0, 0);
+
+		immediateContext->OMSetBlendState(bs, nullptr, 0xFFFFFFFF);
+		trans = Transform{ {2,2,2},{0,0,0}, {0,0,5} };
+		cd.world = XMMatrixTranspose(trans.getWorldMatrix());
+		m_constantBuffer->updateData(immediateContext, &cd, sizeof(cd));
+
 		immediateContext->DrawIndexed(36, 0, 0);
 	}
 }

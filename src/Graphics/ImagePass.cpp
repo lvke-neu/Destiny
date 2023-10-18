@@ -38,6 +38,7 @@ namespace Destiny
 		DirectX::XMMATRIX invTranspose;
 	};
 	ID3D11BlendState* bs;
+	ID3D11RasterizerState* rs;
 	ImagePass::ImagePass()
 	{
 		VertexPosColor vertices[24];
@@ -143,6 +144,16 @@ namespace Destiny
 		rtDesc.BlendOpAlpha = D3D11_BLEND_OP_ADD;
 
 		device->CreateBlendState(&blendDesc, &bs);
+
+		D3D11_RASTERIZER_DESC rasterizerDesc;
+		ZeroMemory(&rasterizerDesc, sizeof(rasterizerDesc));
+
+		// 线框模式
+		rasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
+		rasterizerDesc.CullMode = D3D11_CULL_NONE;
+		rasterizerDesc.FrontCounterClockwise = false;
+		rasterizerDesc.DepthClipEnable = true;
+		device->CreateRasterizerState(&rasterizerDesc, &rs);
 	}
 
 	ImagePass::~ImagePass()
@@ -155,7 +166,7 @@ namespace Destiny
 	{
 		auto immediateContext = Engine::GetInstance()->getGraphicsSystem()->getImmediateContext();
 		immediateContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
-		
+		immediateContext->RSSetState(rs);
 
 		Transform trans{ {1,1,1},{0,0,0}, {0,0,0} };
 		ConstantData cd;
@@ -170,7 +181,7 @@ namespace Destiny
 		trans = Transform{ {2,2,2},{0,0,0}, {0,0,5} };
 		cd.world = XMMatrixTranspose(trans.getWorldMatrix());
 		m_constantBuffer->updateData(immediateContext, &cd, sizeof(cd));
-
+		immediateContext->RSSetState(nullptr);
 		immediateContext->DrawIndexed(36, 0, 0);
 	}
 }

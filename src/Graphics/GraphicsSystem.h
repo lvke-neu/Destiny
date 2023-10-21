@@ -31,7 +31,7 @@ namespace Destiny
 		void onResize_(unsigned int width, unsigned int height);
 	private:
 		ID3D11Device* m_pD3D11Device;
-		ID3D11DeviceContext* m_pD3D11DeviceContext;
+		ID3D11DeviceContext* m_pD3D11ImmediateDeviceContext;
 		ID3D11DeviceContext* m_pD3D11DeferredDeviceContext;
 		IDXGISwapChain* m_pDXGISwapChain;
 		ID3D11RenderTargetView* m_pRenderTargetView;
@@ -49,7 +49,7 @@ namespace Destiny
 
 	inline ID3D11DeviceContext* GraphicsSystem::getImmediateContext()
 	{
-		return m_pD3D11DeviceContext;
+		return m_pD3D11ImmediateDeviceContext;
 	}
 
 	inline ID3D11DeviceContext* GraphicsSystem::getDeferredContext()

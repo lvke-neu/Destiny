@@ -9,7 +9,7 @@ namespace Destiny
 {
 	GraphicsSystem::GraphicsSystem() : 
 		m_pD3D11Device(nullptr), 
-		m_pD3D11DeviceContext(nullptr),
+		m_pD3D11ImmediateDeviceContext(nullptr),
 		m_pD3D11DeferredDeviceContext(nullptr),
 		m_pDXGISwapChain(nullptr),
 		m_pRenderTargetView(nullptr),
@@ -23,9 +23,9 @@ namespace Destiny
 
 	GraphicsSystem::~GraphicsSystem()
 	{
-		m_pD3D11DeviceContext->ClearState();
+		m_pD3D11ImmediateDeviceContext->ClearState();
 		SAFE_RELEASE(m_pD3D11Device);
-		SAFE_RELEASE(m_pD3D11DeviceContext);
+		SAFE_RELEASE(m_pD3D11ImmediateDeviceContext);
 		SAFE_RELEASE(m_pD3D11DeferredDeviceContext);
 		SAFE_RELEASE(m_pDXGISwapChain);
 		SAFE_RELEASE(m_pRenderTargetView);
@@ -55,8 +55,8 @@ namespace Destiny
 	{
 		static float color[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 
-		m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView, color);
-		m_pD3D11DeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+		m_pD3D11ImmediateDeviceContext->ClearRenderTargetView(m_pRenderTargetView, color);
+		m_pD3D11ImmediateDeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 		
 		m_imagePass->draw();
 
@@ -97,7 +97,7 @@ namespace Destiny
 		m_pD3D11Device->CreateTexture2D(&depthStencilDesc, nullptr, &m_pDepthStencilBuffer);
 		m_pD3D11Device->CreateDepthStencilView(m_pDepthStencilBuffer, nullptr, &m_pDepthStencilView);
 
-		m_pD3D11DeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
+		m_pD3D11ImmediateDeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
 
 		
 		m_viewport->TopLeftX = 0;
@@ -107,7 +107,7 @@ namespace Destiny
 		m_viewport->MinDepth = 0.0f;
 		m_viewport->MaxDepth = 1.0f;
 
-		m_pD3D11DeviceContext->RSSetViewports(1, m_viewport);
+		m_pD3D11ImmediateDeviceContext->RSSetViewports(1, m_viewport);
 	}
 
 	void GraphicsSystem::createDeviceAndContext()
@@ -120,7 +120,7 @@ namespace Destiny
 		};
 		D3D_FEATURE_LEVEL featureLevel;
 		hr = D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, 0, featureLevels, ARRAYSIZE(featureLevels),
-			D3D11_SDK_VERSION, &m_pD3D11Device, &featureLevel, &m_pD3D11DeviceContext);
+			D3D11_SDK_VERSION, &m_pD3D11Device, &featureLevel, &m_pD3D11ImmediateDeviceContext);
 
 		if (FAILED(hr))
 		{

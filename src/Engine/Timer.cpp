@@ -97,7 +97,7 @@ namespace Destiny
 		}
 	}
 
-	void Timer::tick()
+	void Timer::update()
 	{
 		if (m_stopped)
 		{

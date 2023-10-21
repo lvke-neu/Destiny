@@ -11,7 +11,8 @@ RenderWindow::RenderWindow(QWidget* parent)
 	setFocusPolicy(Qt::StrongFocus);
 	setMouseTracking(true);
 
-	Destiny::Engine::GetInstance()->initialize(winId());
+	Destiny::EngineSetting setting{ winId(), 16 };
+	Destiny::Engine::GetInstance()->initialize(setting);
 }
 
 RenderWindow::~RenderWindow()

@@ -28,7 +28,7 @@ namespace Destiny
 		updateViewMat();
 
 		Engine::GetInstance()->getEventSystem()->registerEvent(EventType::WindowResize, std::bind(&Camera::onResize, this, std::placeholders::_1));
-		Engine::GetInstance()->getEventSystem()->registerEvent(EventType::Tick, std::bind(&Camera::onUpdate, this, std::placeholders::_1));
+		Engine::GetInstance()->getEventSystem()->registerEvent(EventType::Update, std::bind(&Camera::onUpdate, this, std::placeholders::_1));
 		Engine::GetInstance()->getEventSystem()->registerEvent(EventType::MousePressed, std::bind(&Camera::onMousePress, this, std::placeholders::_1));
 		Engine::GetInstance()->getEventSystem()->registerEvent(EventType::MouseReleased, std::bind(&Camera::onMouseRelease, this, std::placeholders::_1));
 		Engine::GetInstance()->getEventSystem()->registerEvent(EventType::MouseMoved, std::bind(&Camera::onMouseMove, this, std::placeholders::_1));

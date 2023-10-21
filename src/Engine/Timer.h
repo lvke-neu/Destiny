@@ -22,7 +22,7 @@ namespace Destiny
 		void reset();
 		void start();
 		void stop();
-		void tick();
+		void update();
 
 	private:
 		double m_secondsPerCount;

@@ -544,7 +544,7 @@ namespace Destiny
     };
 	enum class EventType
 	{
-		WindowResize,KeyPressed, KeyReleased, Tick, MousePressed, MouseReleased, MouseMoved
+		WindowResize,KeyPressed, KeyReleased, Update, MousePressed, MouseReleased, MouseMoved
 	};
 
 	struct WindowResizeData

@@ -12,7 +12,7 @@ namespace Destiny
 		m_timer = std::make_shared<Timer>();
 		m_logManager = std::make_shared<LogManager>();
 		m_eventSystem = std::make_shared<EventSystem>();
-		m_threadPool = std::make_shared<ThreadPool>();
+		m_dataLoadThreadPool = std::make_shared<ThreadPool>();
 		m_graphicsSystem = std::make_shared<GraphicsSystem>();
 	}
 
@@ -20,7 +20,7 @@ namespace Destiny
 	{
 		m_logManager->initialize();
 		m_eventSystem->initialize();
-		m_threadPool->initialize(setting.DataLoadingThreadCount);
+		m_dataLoadThreadPool->initialize(setting.DataLoadingThreadCount);
 		m_graphicsSystem->initialize(setting.Hwnd);
 	}
 
@@ -28,7 +28,7 @@ namespace Destiny
 	{
 		m_logManager->uninitialize();
 		m_eventSystem->uninitialize();
-		m_threadPool->uninitialize();
+		m_dataLoadThreadPool->uninitialize();
 		m_graphicsSystem->uninitialize();
 	}
 

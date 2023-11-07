@@ -36,7 +36,7 @@ namespace Destiny
 		std::shared_ptr<Timer> m_timer;
 		std::shared_ptr<LogManager> m_logManager;
 		std::shared_ptr<EventSystem> m_eventSystem;
-		std::shared_ptr<ThreadPool> m_threadPool;
+		std::shared_ptr<ThreadPool> m_dataLoadThreadPool;
 		std::shared_ptr<GraphicsSystem> m_graphicsSystem;
 	};
 
@@ -52,7 +52,7 @@ namespace Destiny
 
 	inline std::shared_ptr<ThreadPool> Engine::getThreadPool()
 	{
-		return m_threadPool;
+		return m_dataLoadThreadPool;
 	}
 
 	inline std::shared_ptr<Destiny::GraphicsSystem> Engine::getGraphicsSystem()

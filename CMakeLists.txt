@@ -28,6 +28,7 @@ source_group("assets\\HLSL" FILES ${ASSETS_HLSL})
 source_group("assets\\Texture" FILES ${ASSETS_TEXTURE})
 
 include_directories("3rdparty/spdlog/include")
+include_directories("3rdparty/rapidxml")
 include_directories("src/")
 
 find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)

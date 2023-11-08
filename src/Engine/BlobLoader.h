@@ -5,14 +5,14 @@
 namespace Destiny
 {
 	class BlobHolder;
-	class BlobLoader
+	class BlobLoader : public std::enable_shared_from_this<BlobLoader>
 	{
 		friend class BlobLoaderManager;
 	public:
 		BlobLoader(const std::string& storagePath);
 		virtual ~BlobLoader() = default;
 	public:
-		virtual BlobHolder* createBlobHolder(const std::string& path);
+		virtual std::shared_ptr<BlobHolder> createBlobHolder(const std::string& path);
 		virtual void doLoad(std::shared_ptr<BlobHolder> blobHolder) = 0;
 	protected:
 		std::string m_storagePath;

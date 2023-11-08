@@ -1,60 +1,45 @@
-//#include "BlobHolder.h"
-//#include "Blob.h"
-//#include "BlobLoader.h"
-//#include "ThreadPool.h"
-//
-//namespace Enternity
-//{
-//	BlobHolder::BlobHolder(BlobLoader* blobLoader, const std::string& path) :
-//		m_blob(nullptr),
-//		m_state(loading_state_pending),
-//		m_blobLoader(blobLoader),
-//		m_path(path)
-//	{
-//		auto pos = m_path.find("://");
-//		if (pos != m_path.npos)
-//		{
-//			m_path = m_path.substr(pos + 3);
-//		}
-//	}
-//
-//	BlobHolder::~BlobHolder()
-//	{
-//		SAFE_DELETE_SET_NULL(m_blob);
-//	}
-//
-//	void BlobHolder::load(int priority)
-//	{
-//		if (priority)
-//		{
-//			ThreadPool::GetInstance().commitTask(std::bind(&BlobLoader::doLoad, m_blobLoader, this));
-//		}
-//		else
-//		{
-//			m_blobLoader->doLoad(this);
-//		}
-//	}
-//
-//	void BlobHolder::loadSucceeded__(Blob* blob)
-//	{
-//		m_state = loading_state_succeeded;
-//		if (!blob)
-//		{
-//			return;
-//		}
-//		SAFE_DELETE_SET_NULL(m_blob);
-//		m_blob = new Blob(blob->getLength());
-//		memcpy_s(m_blob->getData(), m_blob->getLength(), blob->getData(), m_blob->getLength());
-//	}
-//
-//	void BlobHolder::loadFailed__()
-//	{
-//		SAFE_DELETE_SET_NULL(m_blob);
-//		m_state = loading_state_failed;
-//	}
-//
-//	Asset* BlobHolder::createAsset()
-//	{
-//		return nullptr;
-//	}
-//}
+#include "BlobHolder.h"
+#include "Blob.h"
+#include "BlobLoader.h"
+#include "ThreadPool.h"
+
+namespace Destiny
+{
+	BlobHolder::BlobHolder(std::shared_ptr<BlobLoader> blobLoader, const std::string& path) :
+		m_blob(nullptr),
+		m_blobLoader(blobLoader),
+		m_state(loading_state_pending),
+		m_path(path)
+	{
+		auto pos = m_path.find("://");
+		if (pos != m_path.npos)
+		{
+			m_path = m_path.substr(pos + 3);
+		}
+	}
+
+	void BlobHolder::load()
+	{
+		if (m_blobLoader)
+		{
+			m_blobLoader->doLoad(shared_from_this());
+		}
+		else
+		{
+			loadFailed__();
+		}
+	}
+
+	void BlobHolder::loadSucceeded__(std::shared_ptr<Blob> blob)
+	{
+		m_blob.reset();
+		m_blob = blob;
+		m_state = loading_state_succeeded;
+	}
+
+	void BlobHolder::loadFailed__()
+	{
+		m_blob.reset();
+		m_state = loading_state_failed;
+	}
+}

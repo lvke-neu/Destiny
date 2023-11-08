@@ -1,57 +1,37 @@
-//#pragma once
-//#include <string>
-//
-//namespace Enternity
-//{
-//	class Asset;
-//	class Blob;
-//	class BlobLoader;
-//	class BlobHolder
-//	{
-//	public:
-//		enum LoadingState
-//		{
-//			loading_state_pending,
-//			loading_state_succeeded,
-//			loading_state_failed
-//		};
-//	public:
-//		BlobHolder(BlobLoader* blobLoader, const std::string& path);
-//		virtual ~BlobHolder();
-//	public:
-//		void load(int priority = 1);
-//		void loadSucceeded__(Blob* blob);
-//		void loadFailed__();
-//		bool isLoadSucceeded();
-//		Blob* getBlob();
-//		const char* getPath();
-//		LoadingState getLoadingState();
-//		virtual Asset* createAsset();
-//	protected:
-//		Blob* m_blob;
-//		LoadingState m_state;
-//
-//		BlobLoader* m_blobLoader;
-//		std::string m_path;
-//	};
-//
-//	inline bool BlobHolder::isLoadSucceeded()
-//	{
-//		return loading_state_succeeded == m_state;
-//	}
-//
-//	inline Blob* BlobHolder::getBlob()
-//	{
-//		return m_blob;
-//	}
-//
-//	inline const char* BlobHolder::getPath()
-//	{
-//		return m_path.c_str();
-//	}
-//
-//	inline BlobHolder::LoadingState BlobHolder::getLoadingState()
-//	{
-//		return m_state;
-//	}
-//}
+#pragma once
+#include <string>
+#include <memory>
+
+namespace Destiny
+{
+	class Blob;
+	class BlobLoader;
+	class BlobHolder : public std::enable_shared_from_this<BlobHolder>
+	{
+	public:
+		enum LoadingState
+		{
+			loading_state_pending,
+			loading_state_failed,
+			loading_state_succeeded
+		};
+	public:
+		BlobHolder(std::shared_ptr<BlobLoader> blobLoader, const std::string& path);
+	public:
+		void load();
+		void loadSucceeded__(std::shared_ptr<Blob> blob);
+		void loadFailed__();
+	public:
+		const std::string& getPath() const;
+	protected:
+		std::shared_ptr<Blob> m_blob;
+		std::shared_ptr<BlobLoader> m_blobLoader;
+		LoadingState m_state;
+		std::string m_path;
+	};
+
+	inline const std::string& BlobHolder::getPath() const
+	{
+		return m_path;
+	}
+}

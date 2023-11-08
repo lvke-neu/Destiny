@@ -123,6 +123,7 @@
 #include "Editor/Application.h"
 #include "Engine/Engine.h"
 #include "Engine/BlobLoader.h"
+#include "Engine/BlobHolder.h"
 #include "Engine/BlobLoaderManager.h"
 #include "Engine/AssetBlobLoader.h"
 
@@ -135,6 +136,11 @@ int main()
 	Engine::GetInstance()->getBlobLoaderManager()->registerBlobLoader(std::shared_ptr<BlobLoader>((BlobLoader*)new AssetBlobLoader));
 
 	auto blobloader = Engine::GetInstance()->getBlobLoaderManager()->getBlobLoader("assets://");
+
+	auto bloholder = blobloader->createBlobHolder("assets://HLSL/Phong_PS.hlsl");
+	bloholder->load();
+
+
 
 	application.exec();
 

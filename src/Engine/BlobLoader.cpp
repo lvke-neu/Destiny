@@ -1,4 +1,5 @@
 #include "BlobLoader.h"
+#include "BlobHolder.h"
 
 namespace Destiny
 {
@@ -8,9 +9,8 @@ namespace Destiny
 
 	}
 
-	BlobHolder* BlobLoader::createBlobHolder(const std::string& path)
+	std::shared_ptr<BlobHolder> BlobLoader::createBlobHolder(const std::string& path)
 	{
-		//TODO:
-		return nullptr;
+		return std::make_shared<BlobHolder>(shared_from_this(), path);
 	}
 }

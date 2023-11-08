@@ -12,6 +12,7 @@ namespace Destiny
 
 	class Timer;
 	class LogManager;
+	class BlobLoaderManager;
 	class EventSystem;
 	class ThreadPool;
 	class GraphicsSystem;
@@ -29,12 +30,14 @@ namespace Destiny
 		void update();
 	public:
 		std::shared_ptr<LogManager> getLogManager();
+		std::shared_ptr<BlobLoaderManager> getBlobLoaderManager();
 		std::shared_ptr<EventSystem> getEventSystem();
 		std::shared_ptr<ThreadPool> getThreadPool();
 		std::shared_ptr<GraphicsSystem> getGraphicsSystem();
 	private:
 		std::shared_ptr<Timer> m_timer;
 		std::shared_ptr<LogManager> m_logManager;
+		std::shared_ptr<BlobLoaderManager> m_blobLoaderManager;
 		std::shared_ptr<EventSystem> m_eventSystem;
 		std::shared_ptr<ThreadPool> m_dataLoadThreadPool;
 		std::shared_ptr<GraphicsSystem> m_graphicsSystem;
@@ -43,6 +46,11 @@ namespace Destiny
 	inline std::shared_ptr<LogManager> Engine::getLogManager()
 	{
 		return m_logManager;
+	}
+
+	inline std::shared_ptr<BlobLoaderManager> Engine::getBlobLoaderManager()
+	{
+		return m_blobLoaderManager;
 	}
 
 	inline std::shared_ptr<EventSystem> Engine::getEventSystem()

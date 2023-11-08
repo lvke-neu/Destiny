@@ -31,13 +31,91 @@
 //	return 0;
 //}
 
-#include "Editor/Application.h"
+//#include "Editor/Application.h"
+//
+//int main()
+//{
+//	Application application;
+//	application.exec();
+//
+//	return 0;
+//}
 
+#include "rapidxml.hpp"
+#include "rapidxml_print.hpp"
+#include "rapidxml_utils.hpp"
+#include "Engine/Base64.h"
+#include <iostream>
 int main()
 {
-	Application application;
-	application.exec();
+	rapidxml::xml_document<> doc;
 
-	return 0;
+	// 2.node_declaration
+	rapidxml::xml_node<>* declaration = doc.allocate_node(rapidxml::node_declaration);
+	declaration->append_attribute(doc.allocate_attribute("version", "1.0"));
+	declaration->append_attribute(doc.allocate_attribute("encoding", "utf-8"));
+	doc.append_node(declaration);
+
+	//// 3.node_pi
+	//rapidxml::xml_node<>* dec = doc.allocate_node(rapidxml::node_pi, doc.allocate_string("xml version=\"1.0\" encoding=\"utf-8\""));
+	//doc.append_node(dec);
+
+	// 4.node_element
+	rapidxml::xml_node<>* root = doc.allocate_node(rapidxml::node_element, "root");
+	doc.append_node(root);
+	std::vector<int> arr{1,2,3,4,5,6,7,8,9,10};
+
+	char* data = new char[Destiny::Base64::EncodeBufferLength(40)];
+	Destiny::Base64::Encode(data, arr.data(), 40);
+
+	rapidxml::xml_node<>* students = doc.allocate_node(rapidxml::node_element, "students", data);
+	root->append_node(students);
+
+	//// 5.node_comment
+	//rapidxml::xml_node<>* comment = doc.allocate_node(rapidxml::node_comment, 0, "这是一个注释节点");
+	//root->append_node(comment);
+
+	//rapidxml::xml_node<>* students = doc.allocate_node(rapidxml::node_element, "students");
+
+	//// 6.node_data
+	//rapidxml::xml_node<>* one_student = doc.allocate_node(rapidxml::node_element, "student");
+	//rapidxml::xml_node<>* name = doc.allocate_node(rapidxml::node_data, "node_name", "11");
+	//one_student->append_node(name);
+	//students->append_node(one_student);
+
+	//// 7.node_element with value
+	//rapidxml::xml_node<>* two_student = doc.allocate_node(rapidxml::node_element, "student", "22");
+	//students->append_node(two_student);
+
+	//// 8.set attribute
+	//rapidxml::xml_node<>* three_student = doc.allocate_node(rapidxml::node_element, "student", "33");
+	//students->append_node(three_student);
+	//three_student->append_attribute(doc.allocate_attribute("course", doc.allocate_string(buf)));
+	//three_student->append_attribute(doc.allocate_attribute("score", "98"));
+
+	//// 9.node_element without value
+	//rapidxml::xml_node<>* four_student = doc.allocate_node(rapidxml::node_element, "student");
+	//students->append_node(four_student);
+
+	//// 10.node_cdata
+	//rapidxml::xml_node<>* five_student = doc.allocate_node(rapidxml::node_cdata, "student", "55");
+	//students->append_node(five_student);
+
+	//// 11.node_cdata
+	//rapidxml::xml_node<>* six_student = doc.allocate_node(rapidxml::node_pi, "student", "66");
+	//students->append_node(six_student);
+
+	//// 12.node_cdata
+	//rapidxml::xml_node<>* seven_student = doc.allocate_node(rapidxml::node_doctype, "student", "77");
+	//students->append_node(seven_student);
+	//root->append_node(students);
+
+	// 13.输出DOM到命令行
+	//std::cout << doc;
+	char* buf = new char[2048];
+	char* end = rapidxml::print(buf, doc, 0);
+	*end = 0;
+	
+	int i = 0;
+	i++;
 }
-

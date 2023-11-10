@@ -122,10 +122,11 @@
 
 #include "Editor/Application.h"
 #include "Engine/Engine.h"
+#include "Engine/Blob.h"
 #include "Engine/BlobLoader.h"
 #include "Engine/BlobHolder.h"
 #include "Engine/BlobLoaderManager.h"
-#include "Engine/AssetBlobLoader.h"
+#include "Engine/Detail/ResourceBlobLoader.h"
 
 int main()
 {
@@ -133,14 +134,23 @@ int main()
 
 	Application application;
 
-	Engine::GetInstance()->getBlobLoaderManager()->registerBlobLoader(std::shared_ptr<BlobLoader>((BlobLoader*)new AssetBlobLoader));
+	Engine::GetInstance()->getBlobLoaderManager()->registerBlobLoader(std::shared_ptr<BlobLoader>((BlobLoader*)new ResourceBlobLoader));
 
 	auto blobloader = Engine::GetInstance()->getBlobLoaderManager()->getBlobLoader("assets://");
 
-	auto bloholder = blobloader->createBlobHolder("assets://HLSL/Phong_PS.hlsl");
-	bloholder->load();
+	auto bloholder1 = blobloader->createBlobHolder("assets://Texture/bricsk.dds");
+	bloholder1->load();
 
+	auto bloholder2 = blobloader->createBlobHolder("assets://Texture/bricsk.dds");
+	bloholder2->load();
 
+	while (1)
+	{
+
+		LOG_INFO("Thread {0}", std::to_string((*(uint32_t*)&std::this_thread::get_id())));
+			
+	}
+	
 
 	application.exec();
 

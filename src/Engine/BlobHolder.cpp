@@ -2,6 +2,7 @@
 #include "Blob.h"
 #include "BlobLoader.h"
 #include "ThreadPool.h"
+#include "Engine.h"
 
 namespace Destiny
 {
@@ -18,11 +19,18 @@ namespace Destiny
 		}
 	}
 
-	void BlobHolder::load()
+	void BlobHolder::load(int priority)
 	{
 		if (m_blobLoader)
 		{
-			m_blobLoader->doLoad(shared_from_this());
+			if (priority == 0)
+			{
+				m_blobLoader->doLoad(shared_from_this());
+			}
+			else
+			{
+				Engine::GetInstance()->getThreadPool()->commitTask(std::bind(&BlobLoader::doLoad, m_blobLoader, shared_from_this()));
+			}
 		}
 		else
 		{

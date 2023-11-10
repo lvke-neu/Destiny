@@ -18,11 +18,13 @@ namespace Destiny
 	public:
 		BlobHolder(std::shared_ptr<BlobLoader> blobLoader, const std::string& path);
 	public:
-		void load();
+		void load(int priority = 1);
 		void loadSucceeded__(std::shared_ptr<Blob> blob);
 		void loadFailed__();
 	public:
 		const std::string& getPath() const;
+		const std::shared_ptr<Blob>& getBlob() const;
+		bool isLoadingSucceed();
 	protected:
 		std::shared_ptr<Blob> m_blob;
 		std::shared_ptr<BlobLoader> m_blobLoader;
@@ -33,5 +35,15 @@ namespace Destiny
 	inline const std::string& BlobHolder::getPath() const
 	{
 		return m_path;
+	}
+
+	inline const std::shared_ptr<Blob>& BlobHolder::getBlob() const
+	{
+		return m_blob;
+	}
+
+	inline bool BlobHolder::isLoadingSucceed()
+	{
+		return m_state == loading_state_succeeded;
 	}
 }

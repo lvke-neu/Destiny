@@ -1,6 +1,8 @@
-#include "AssetBlobLoader.h"
-#include "BlobHolder.h"
-#include "Blob.h"
+#include "ResourceBlobLoader.h"
+#include "../BlobHolder.h"
+#include "../Blob.h"
+#include "../Utility.h"
+#include <thread>
 #include <fstream>
 #include <Windows.h>
 
@@ -8,14 +10,16 @@
 namespace Destiny
 {
 
-	AssetBlobLoader::AssetBlobLoader() : 
+	ResourceBlobLoader::ResourceBlobLoader() :
 		BlobLoader("assets://")
 	{
 
 	}
 
-	void AssetBlobLoader::doLoad(std::shared_ptr<BlobHolder> blobHolder)
+	void ResourceBlobLoader::doLoad(std::shared_ptr<BlobHolder> blobHolder)
 	{
+		m_mtx.lock();
+
 		char buffer[MAX_PATH];
 		GetModuleFileNameA(NULL, buffer, sizeof(buffer));
 
@@ -33,6 +37,8 @@ namespace Destiny
 		if (!ifs.is_open())
 		{
 			blobHolder->loadFailed__();
+			LOG_ERROR("Thread {0}, ResourceBlobLoader failed : {1}", std::to_string((*(uint32_t*)&std::this_thread::get_id())), blobHolder->getPath());
+			m_mtx.unlock();
 			return;
 		}
 
@@ -47,5 +53,7 @@ namespace Destiny
 		ifs.close();
 
 		blobHolder->loadSucceeded__(blob);
+
+		m_mtx.unlock();
 	}
 }

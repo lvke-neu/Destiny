@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <memory>
+#include <mutex>
 
 namespace Destiny
 {
@@ -16,5 +17,6 @@ namespace Destiny
 		virtual void doLoad(std::shared_ptr<BlobHolder> blobHolder) = 0;
 	protected:
 		std::string m_storagePath;
+		std::mutex m_mtx;
 	};
 }

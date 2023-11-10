@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='utf-8' ?>
+
+<vertexBuffer>
+	<inputElements arraySize="5">
+					<_0>
+						<semanticName>POSITION</semanticName>
+						<semanticIndex>0</semanticIndex>
+						<format>r32g32b32_float</format>
+						<slot>0</slot>
+						<offset>0</offset>
+						<category>per_vertex_data</category>
+					</_0>
+					<_1>
+						<semanticName>NORMAL</semanticName>
+						<semanticIndex>0</semanticIndex>
+						<format>r32g32b32_float</format>
+						<slot>1</slot>
+						<offset>0</offset>
+						<category>per_vertex_data</category>
+					</_1>
+					<_2>
+						<semanticName>TANGENT</semanticName>
+						<semanticIndex>0</semanticIndex>
+						<format>r32g32b32_float</format>
+						<slot>2</slot>
+						<offset>0</offset>
+						<category>per_vertex_data</category>
+					</_2>
+					<_3>
+						<semanticName>BINORMAL</semanticName>
+						<semanticIndex>0</semanticIndex>
+						<format>r32g32b32_float</format>
+						<slot>3</slot>
+						<offset>0</offset>
+						<category>per_vertex_data</category>
+					</_3>
+					<_4>
+						<semanticName>TEXCOORD</semanticName>
+						<semanticIndex>0</semanticIndex>
+						<format>r32g32_float</format>
+						<slot>4</slot>
+						<offset>0</offset>
+						<category>per_vertex_data</category>
+					</_4>
+		</inputElements>
+	<inputSlots>
+			<stride>12</stride>
+			<offset>0</offset>
+	</inputSlots>
+
+	<vertexData>123</vertexData>
+</vertexBuffer>
+
+
+

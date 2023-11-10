@@ -1,12 +1,12 @@
 #pragma once
-#include "BlobLoader.h"
+#include "../BlobLoader.h"
 
 namespace Destiny
 {
-	class AssetBlobLoader : BlobLoader
+	class ResourceBlobLoader : BlobLoader
 	{
 	public:
-		AssetBlobLoader();
+		ResourceBlobLoader();
 	public:
 		virtual void doLoad(std::shared_ptr<BlobHolder> blobHolder) override;
 	};

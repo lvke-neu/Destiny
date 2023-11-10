@@ -5,6 +5,7 @@
 #include "ThreadPool.h"
 #include "Timer.h"
 #include "Graphics/GraphicsSystem.h"
+#include "Detail/ResourceBlobLoader.h"
 
 namespace Destiny
 {
@@ -24,6 +25,8 @@ namespace Destiny
 		m_eventSystem->initialize();
 		m_dataLoadThreadPool->initialize(setting.DataLoadingThreadCount);
 		m_graphicsSystem->initialize(setting.Hwnd);
+
+		m_blobLoaderManager->registerBlobLoader(std::shared_ptr<BlobLoader>((BlobLoader*)new ResourceBlobLoader));
 	}
 
 	void Engine::uninitialize()

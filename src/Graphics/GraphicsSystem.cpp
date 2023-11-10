@@ -2,7 +2,6 @@
 #include "Engine/Engine.h"
 #include "Engine/EventSystem.h"
 #include "Engine/Utility.h"
-#include "ImagePass.h"
 #include <d3d11.h>
 
 namespace Destiny
@@ -32,7 +31,6 @@ namespace Destiny
 		SAFE_RELEASE(m_pDepthStencilBuffer);
 		SAFE_RELEASE(m_pDepthStencilView);
 		SAFE_DELETE(m_viewport);
-		SAFE_DELETE(m_imagePass);
 	}
 
 	void GraphicsSystem::initialize(long long hwnd)
@@ -42,8 +40,6 @@ namespace Destiny
 		onResize_(0, 0);
 
 		Engine::GetInstance()->getEventSystem()->registerEvent(EventType::WindowResize, std::bind(&GraphicsSystem::onResize, this, std::placeholders::_1));
-
-		m_imagePass = new ImagePass;
 	}
 
 	void GraphicsSystem::uninitialize()
@@ -58,7 +54,7 @@ namespace Destiny
 		m_pD3D11ImmediateDeviceContext->ClearRenderTargetView(m_pRenderTargetView, color);
 		m_pD3D11ImmediateDeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 		
-		m_imagePass->draw();
+
 
 		m_pDXGISwapChain->Present(0, 0);
 	}

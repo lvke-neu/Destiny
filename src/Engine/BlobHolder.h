@@ -17,6 +17,7 @@ namespace Destiny
 		};
 	public:
 		BlobHolder(std::shared_ptr<BlobLoader> blobLoader, const std::string& path);
+		virtual ~BlobHolder() = default;
 	public:
 		void load(int priority = 1);
 		void loadSucceeded__(std::shared_ptr<Blob> blob);

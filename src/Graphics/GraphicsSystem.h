@@ -9,7 +9,6 @@ struct ID3D11DepthStencilView;
 struct D3D11_VIEWPORT;
 namespace Destiny
 {
-	class ImagePass;
 	class GraphicsSystem
 	{
 	public:
@@ -39,7 +38,6 @@ namespace Destiny
 		ID3D11DepthStencilView* m_pDepthStencilView;
 		unsigned int m_4xMsaaQuality;
 		D3D11_VIEWPORT* m_viewport;
-		ImagePass* m_imagePass;
 	};
 
 	inline ID3D11Device* GraphicsSystem::getDevice()

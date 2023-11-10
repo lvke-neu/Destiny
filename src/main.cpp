@@ -134,21 +134,20 @@ int main()
 
 	Application application;
 
-	Engine::GetInstance()->getBlobLoaderManager()->registerBlobLoader(std::shared_ptr<BlobLoader>((BlobLoader*)new ResourceBlobLoader));
+	
 
-	auto blobloader = Engine::GetInstance()->getBlobLoaderManager()->getBlobLoader("assets://");
+	auto blobloader = Engine::GetInstance()->getBlobLoaderManager()->getBlobLoader("assets://test.vtb");
 
-	auto bloholder1 = blobloader->createBlobHolder("assets://Texture/bricsk.dds");
-	bloholder1->load();
-
-	auto bloholder2 = blobloader->createBlobHolder("assets://Texture/bricsk.dds");
-	bloholder2->load();
+	auto blobholder = blobloader->createBlobHolder("assets://test.vtb");
+	blobholder->load();
 
 	while (1)
 	{
+		if (blobholder->isLoadingSucceed())
+		{
 
-		LOG_INFO("Thread {0}", std::to_string((*(uint32_t*)&std::this_thread::get_id())));
-			
+			break;
+		}	
 	}
 	
 

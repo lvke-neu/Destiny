@@ -69,7 +69,7 @@ foreach(HLSL_FILE ${ASSETS_HLSL})
         set(SHADER_TYPE "Compute")
     endif()
     set_source_files_properties(${HLSL_FILE} PROPERTIES
-                                VS_SHADER_OBJECT_FILE_NAME HLSL/${HLSL_FBASENAME_WE}.cso
+                                VS_SHADER_OBJECT_FILE_NAME ../assets/HLSL/${HLSL_FBASENAME_WE}.cso
                                 VS_SHADER_TYPE ${SHADER_TYPE}
                                 VS_SHADER_MODEL 5.0
                                 VS_SHADER_ENTRYPOINT ${ENTRY_POINT}
@@ -77,4 +77,4 @@ foreach(HLSL_FILE ${ASSETS_HLSL})
                                 VS_SHADER_ENABLE_DEBUG $<$<CONFIG:Debug>:true>)
 endforeach()
 
-file(COPY assets/Texture DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY assets DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Debug)

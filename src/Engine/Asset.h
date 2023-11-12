@@ -25,7 +25,7 @@ namespace Destiny
 		std::shared_ptr<BlobHolder> getBlobHolder() const;
 	private:
 		virtual void doLoad();
-	private:
+	protected:
 		std::shared_ptr<AssetLoader> m_assetLoader;
 		std::shared_ptr<BlobHolder> m_blobHolder;
 		LoadingState m_state;

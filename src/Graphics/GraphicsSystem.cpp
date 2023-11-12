@@ -2,6 +2,9 @@
 #include "Engine/Engine.h"
 #include "Engine/EventSystem.h"
 #include "Engine/Utility.h"
+#include "Engine/Blob.h"
+#include "Engine/BlobHolder.h"
+#include "IndexBuffer.h"
 #include <d3d11.h>
 
 namespace Destiny
@@ -57,6 +60,21 @@ namespace Destiny
 
 
 		m_pDXGISwapChain->Present(0, 0);
+	}
+
+	std::shared_ptr<IndexBuffer> GraphicsSystem::createIndexBuffer(DXGI_FORMAT format, std::shared_ptr<Blob> indices)
+	{
+		std::shared_ptr<Blob> data = std::make_shared<Blob>(sizeof(DXGI_FORMAT) + indices->getLength());
+		memcpy_s(data->getData(), sizeof(DXGI_FORMAT), &format, sizeof(DXGI_FORMAT));
+		memcpy_s((char*)data->getData() + sizeof(DXGI_FORMAT), indices->getLength(), indices->getData(), indices->getLength());
+
+		std::shared_ptr<BlobHolder> blobHolder = std::make_shared<BlobHolder>();
+		blobHolder->loadSucceeded__(data);
+
+		std::shared_ptr<IndexBuffer> indexbuffer = std::make_shared<IndexBuffer>();
+		indexbuffer->initialize(nullptr, blobHolder);
+
+		return indexbuffer;
 	}
 
 	void GraphicsSystem::onResize(void* data)

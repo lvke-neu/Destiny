@@ -2,13 +2,13 @@
 #include "Engine/Blob.h"
 #include "Engine/Utility.h"
 #include "Engine/Engine.h"
+#include "Engine/BlobHolder.h"
 #include "GraphicsSystem.h"
 
 namespace Destiny
 {
-	IndexBuffer::IndexBuffer(DXGI_FORMAT format, std::shared_ptr<Blob> indexData) :
-		m_format(format),
-		m_indexData(indexData),
+	IndexBuffer::IndexBuffer() :
+		m_format(DXGI_FORMAT_UNKNOWN),
 		m_indexBuffer(nullptr)
 	{
 
@@ -21,32 +21,58 @@ namespace Destiny
 
 	void IndexBuffer::doLoad()
 	{
-		if (!m_indexData)
+		if (m_blobHolder)
 		{
-			loadFailed__();
-			return;
-		}
+			if (m_blobHolder->isLoadingPending())
+			{
+				m_blobHolder->load(0);
+			}
 
-		D3D11_BUFFER_DESC ibd;
-		ZeroMemory(&ibd, sizeof(ibd));
-		ibd.Usage = D3D11_USAGE_IMMUTABLE;
-		ibd.ByteWidth = (unsigned int)m_indexData->getLength();
-		ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-		ibd.CPUAccessFlags = 0;
+			if (!m_blobHolder->isLoadingSucceed())
+			{
+				loadFailed__();
+				return;
+			}
 
-		D3D11_SUBRESOURCE_DATA InitData;
-		ZeroMemory(&InitData, sizeof(InitData));
-		InitData.pSysMem = m_indexData->getData();
+			auto blob = m_blobHolder->getBlob();
+			if (blob)
+			{
+				memcpy_s(&m_format, sizeof(DXGI_FORMAT), blob->getData(), sizeof(DXGI_FORMAT));
 
-		HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateBuffer(&ibd, &InitData, &m_indexBuffer);
+				D3D11_BUFFER_DESC ibd;
+				ZeroMemory(&ibd, sizeof(ibd));
+				ibd.Usage = D3D11_USAGE_IMMUTABLE;
+				ibd.ByteWidth = (unsigned int)(blob->getLength() - sizeof(DXGI_FORMAT));
+				ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+				ibd.CPUAccessFlags = 0;
 
-		if (SUCCEEDED(hr))
-		{
-			loadSucceeded__();
+				D3D11_SUBRESOURCE_DATA InitData;
+				ZeroMemory(&InitData, sizeof(InitData));
+				InitData.pSysMem = (char*)blob->getData() + sizeof(DXGI_FORMAT);
+
+				HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateBuffer(&ibd, &InitData, &m_indexBuffer);
+
+				if (SUCCEEDED(hr))
+				{
+					loadSucceeded__();
+				}
+				else
+				{
+					loadFailed__();
+				}
+			}
+			else
+			{
+				loadFailed__();
+				return;
+			}
+
 		}
 		else
 		{
 			loadFailed__();
 		}
+
+
 	}
 }

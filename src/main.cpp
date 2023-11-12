@@ -131,6 +131,7 @@
 #include "Graphics/VertexBuffer.h"
 #include "Graphics/IndexBuffer.h"
 #include "Graphics/Renderer.h"
+#include "Graphics/GraphicsSystem.h"
 #include <d3d11.h>
 #include <DirectXMath.h>
 #include <fstream>
@@ -205,30 +206,30 @@ int main()
 	//	vertices[i * 4 + 3].tex = XMFLOAT2(1.0f, 1.0f);
 	//}
 
-	//unsigned int indices[36] = {
-	//		0, 1, 2, 2, 3, 0,		// 右面(+X面)
-	//		4, 5, 6, 6, 7, 4,		// 左面(-X面)
-	//		8, 9, 10, 10, 11, 8,	// 顶面(+Y面)
-	//		12, 13, 14, 14, 15, 12,	// 底面(-Y面)
-	//		16, 17, 18, 18, 19, 16, // 背面(+Z面)
-	//		20, 21, 22, 22, 23, 20	// 正面(-Z面)
-	//};
+	unsigned int indices[36] = {
+			0, 1, 2, 2, 3, 0,		// 右面(+X面)
+			4, 5, 6, 6, 7, 4,		// 左面(-X面)
+			8, 9, 10, 10, 11, 8,	// 顶面(+Y面)
+			12, 13, 14, 14, 15, 12,	// 底面(-Y面)
+			16, 17, 18, 18, 19, 16, // 背面(+Z面)
+			20, 21, 22, 22, 23, 20	// 正面(-Z面)
+	};
 
 	//std::shared_ptr<Blob> vertexData = std::make_shared<Blob>(24 * sizeof(VertexPosColor));
 	//memcpy_s(vertexData->getData(), vertexData->getLength(), vertices, vertexData->getLength());
 	//std::shared_ptr<VertexBuffer> vertexbuffer = std::make_shared<VertexBuffer>(inputLayout, sizeof(VertexPosColor), 0, vertexData);
 	//vertexbuffer->load(0);
 
-	//std::shared_ptr<Blob> indexData = std::make_shared<Blob>(36 * sizeof(unsigned int));
-	//memcpy_s(indexData->getData(), indexData->getLength(), indices, indexData->getLength());
-	//std::shared_ptr<IndexBuffer> indexbuffer = std::make_shared<IndexBuffer>(DXGI_FORMAT_R32_UINT, indexData);
-	//indexbuffer->load(0);
-	
-	auto blobloader = Engine::GetInstance()->getBlobLoaderManager()->getBlobLoader("assets://HLSL/Phong_PS.cso");
-	auto blobholder = blobloader->createBlobHolder("assets://HLSL/Phong_PS1.cso");
-	std::shared_ptr<Renderer> renderer = std::make_shared<Renderer>();
-	renderer->initialize(nullptr, blobholder);
-	renderer->load();
+	std::shared_ptr<Blob> data = std::make_shared<Blob>(36 * sizeof(unsigned int));
+	memcpy_s(data->getData(), 36 * sizeof(unsigned int), indices, 36 * sizeof(unsigned int));
+	auto indexbuffer = Engine::GetInstance()->getGraphicsSystem()->createIndexBuffer(DXGI_FORMAT_R32_UINT, data);
+	indexbuffer->load(0);
+
+	//auto blobloader = Engine::GetInstance()->getBlobLoaderManager()->getBlobLoader("assets://HLSL/Phong_PS.cso");
+	//auto blobholder = blobloader->createBlobHolder("assets://HLSL/Phong_PS1.cso");
+	//std::shared_ptr<Renderer> renderer = std::make_shared<Renderer>();
+	//renderer->initialize(nullptr, blobholder);
+	//renderer->load();
 
 	application.exec();
 

@@ -9,13 +9,12 @@ namespace Destiny
 	class IndexBuffer : public Asset
 	{
 	public:
-		IndexBuffer(DXGI_FORMAT format, std::shared_ptr<Blob> vertexData);
+		IndexBuffer();
 		virtual ~IndexBuffer();
 	public:
 		virtual void doLoad() override;
 	private:
 		DXGI_FORMAT m_format;
-		std::shared_ptr<Blob> m_indexData;
 		ID3D11Buffer* m_indexBuffer;
 	};
 }

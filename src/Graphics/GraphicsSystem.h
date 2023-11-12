@@ -1,14 +1,11 @@
 #pragma once
+#include <memory>
+#include <d3d11.h>
 
-struct ID3D11Device;
-struct ID3D11DeviceContext;
-struct IDXGISwapChain;
-struct ID3D11Texture2D;
-struct ID3D11RenderTargetView;
-struct ID3D11DepthStencilView;
-struct D3D11_VIEWPORT;
 namespace Destiny
 {
+	class Blob;
+	class IndexBuffer;
 	class GraphicsSystem
 	{
 	public:
@@ -23,6 +20,8 @@ namespace Destiny
 		ID3D11DeviceContext* getImmediateContext();
 		ID3D11DeviceContext* getDeferredContext();
 		ID3D11RenderTargetView* getRenderTargetView();
+	public:
+		std::shared_ptr<IndexBuffer> createIndexBuffer(DXGI_FORMAT format, std::shared_ptr<Blob> indices);
 	private:
 		void createDeviceAndContext();
 		void createSwapChain(long long hwnd);

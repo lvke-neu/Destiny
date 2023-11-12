@@ -128,10 +128,8 @@
 #include "Engine/BlobHolder.h"
 #include "Engine/BlobLoaderManager.h"
 #include "Engine/Detail/ResourceBlobLoader.h"
-#include "Graphics/GraphicsAssetLoader.h"
-#include "Graphics/VertexBufferLoader.h"
 #include "Graphics/VertexBuffer.h"
-#include "Graphics/VertexBufferFile.h"
+#include "Graphics/IndexBuffer.h"
 #include <d3d11.h>
 #include <DirectXMath.h>
 #include <fstream>
@@ -157,7 +155,7 @@ int main()
 		XMFLOAT2 tex;
 	};
 
-	D3D11_INPUT_ELEMENT_DESC inputLayout[3] =
+	std::vector<D3D11_INPUT_ELEMENT_DESC> inputLayout =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -206,20 +204,24 @@ int main()
 		vertices[i * 4 + 3].tex = XMFLOAT2(1.0f, 1.0f);
 	}
 
-	auto size = sizeof(VertexPosColor);
-	auto blob = VertexBufferFile::BuildVertexBufferFile(inputLayout, 3, 24, 0, vertices, 24 * sizeof(VertexPosColor));
+	unsigned int indices[36] = {
+			0, 1, 2, 2, 3, 0,		// 右面(+X面)
+			4, 5, 6, 6, 7, 4,		// 左面(-X面)
+			8, 9, 10, 10, 11, 8,	// 顶面(+Y面)
+			12, 13, 14, 14, 15, 12,	// 底面(-Y面)
+			16, 17, 18, 18, 19, 16, // 背面(+Z面)
+			20, 21, 22, 22, 23, 20	// 正面(-Z面)
+	};
 
-	std::shared_ptr<BlobHolder> blobholder = std::make_shared<BlobHolder>();
-	blobholder->loadSucceeded__(blob);
-	std::shared_ptr<VertexBuffer> vb = std::make_shared<VertexBuffer>();
-	vb->initialize(Engine::GetInstance()->getGraphicsAssetLoader()->getVertexBufferLoader(), blobholder);
-	vb->load();
-	std::string str((char*)blob->getData(), blob->getLength());
+	std::shared_ptr<Blob> vertexData = std::make_shared<Blob>(24 * sizeof(VertexPosColor));
+	memcpy_s(vertexData->getData(), vertexData->getLength(), vertices, vertexData->getLength());
+	std::shared_ptr<VertexBuffer> vertexbuffer = std::make_shared<VertexBuffer>(inputLayout, sizeof(VertexPosColor), 0, vertexData);
+	vertexbuffer->load(0);
 
-	std::fstream fs;
-	fs.open("E:\\C++Project\\Destiny\\assets\\test.vtb");
-	fs << str;
-
+	std::shared_ptr<Blob> indexData = std::make_shared<Blob>(36 * sizeof(unsigned int));
+	memcpy_s(indexData->getData(), indexData->getLength(), indices, indexData->getLength());
+	std::shared_ptr<IndexBuffer> indexbuffer = std::make_shared<IndexBuffer>(DXGI_FORMAT_R32_UINT, indexData);
+	indexbuffer->load(0);
 	application.exec();
 
 	return 0;

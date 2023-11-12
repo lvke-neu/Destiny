@@ -5,7 +5,6 @@
 #include "ThreadPool.h"
 #include "Timer.h"
 #include "Graphics/GraphicsSystem.h"
-#include "Graphics/GraphicsAssetLoader.h"
 #include "Detail/ResourceBlobLoader.h"
 
 namespace Destiny
@@ -18,7 +17,6 @@ namespace Destiny
 		m_eventSystem = std::make_shared<EventSystem>();
 		m_dataLoadThreadPool = std::make_shared<ThreadPool>();
 		m_graphicsSystem = std::make_shared<GraphicsSystem>();
-		m_graphicsAssetLoader = std::make_shared<GraphicsAssetLoader>();
 	}
 
 	void Engine::initialize(const EngineSetting& setting)

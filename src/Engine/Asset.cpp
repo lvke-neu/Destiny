@@ -35,7 +35,14 @@ namespace Destiny
 		}
 		else
 		{
-			loadFailed__();
+			if (priority)
+			{
+				Engine::GetInstance()->getThreadPool()->commitTask(std::bind(&Asset::doLoad, this));
+			}
+			else
+			{
+				doLoad();
+			}
 		}
 	}
 
@@ -47,5 +54,10 @@ namespace Destiny
 	void Asset::loadFailed__()
 	{
 		m_state = loading_state_failed;
+	}
+
+	void Asset::doLoad()
+	{
+		loadFailed__();
 	}
 }

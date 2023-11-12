@@ -16,7 +16,6 @@ namespace Destiny
 	class EventSystem;
 	class ThreadPool;
 	class GraphicsSystem;
-	class GraphicsAssetLoader;
 	class Engine
 	{
 		SINGLETON(Engine);
@@ -35,7 +34,6 @@ namespace Destiny
 		std::shared_ptr<EventSystem> getEventSystem();
 		std::shared_ptr<ThreadPool> getThreadPool();
 		std::shared_ptr<GraphicsSystem> getGraphicsSystem();
-		std::shared_ptr<GraphicsAssetLoader> getGraphicsAssetLoader();
 	private:
 		std::shared_ptr<Timer> m_timer;
 		std::shared_ptr<LogManager> m_logManager;
@@ -43,7 +41,6 @@ namespace Destiny
 		std::shared_ptr<EventSystem> m_eventSystem;
 		std::shared_ptr<ThreadPool> m_dataLoadThreadPool;
 		std::shared_ptr<GraphicsSystem> m_graphicsSystem;
-		std::shared_ptr<GraphicsAssetLoader> m_graphicsAssetLoader;
 	};
 
 	inline std::shared_ptr<LogManager> Engine::getLogManager()
@@ -69,10 +66,5 @@ namespace Destiny
 	inline std::shared_ptr<GraphicsSystem> Engine::getGraphicsSystem()
 	{
 		return m_graphicsSystem;
-	}
-
-	inline std::shared_ptr<GraphicsAssetLoader> Engine::getGraphicsAssetLoader()
-	{
-		return m_graphicsAssetLoader;
 	}
 }

@@ -127,6 +127,9 @@
 #include "Engine/BlobHolder.h"
 #include "Engine/BlobLoaderManager.h"
 #include "Engine/Detail/ResourceBlobLoader.h"
+#include "Graphics/GraphicsAssetLoader.h"
+#include "Graphics/VertexBufferLoader.h"
+#include "Graphics/VertexBuffer.h"
 
 int main()
 {
@@ -137,19 +140,10 @@ int main()
 	
 
 	auto blobloader = Engine::GetInstance()->getBlobLoaderManager()->getBlobLoader("assets://test.vtb");
-
 	auto blobholder = blobloader->createBlobHolder("assets://test.vtb");
-	blobholder->load();
 
-	while (1)
-	{
-		if (blobholder->isLoadingSucceed())
-		{
-
-			break;
-		}	
-	}
-	
+	auto vertexbuffer = Engine::GetInstance()->getGraphicsAssetLoader()->getVertexBufferLoader()->createAsset(blobholder);
+	vertexbuffer->load();
 
 	application.exec();
 

@@ -1,17 +1,12 @@
 #pragma once
+#include "Engine/Asset.h"
 
-struct ID3D11Device;
-struct ID3D11Buffer;
 namespace Destiny
 {
-	class VertexBuffer
+	class VertexBuffer : public Asset
 	{
+	//TODO:test, will remove
 	public:
-		VertexBuffer(ID3D11Device* device, unsigned int stride, unsigned int offset, const void* vertexData, unsigned int vertexDataSize);
-		~VertexBuffer();
-	public:
-		ID3D11Buffer* m_pVertexBuffer;
-		unsigned int m_stride;
-		unsigned int m_offset;
+		int hhhh = 0;
 	};
 }

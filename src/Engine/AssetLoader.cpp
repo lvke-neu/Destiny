@@ -2,5 +2,8 @@
 
 namespace Destiny
 {
+	AssetLoader::AssetLoader()
+	{
 
+	}
 }

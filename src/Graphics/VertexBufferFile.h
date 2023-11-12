@@ -5,6 +5,6 @@ namespace Destiny
 	class VertexBufferFile
 	{
 	public:
-		static void ParseXml(const void* fileData, unsigned int length);
+		static bool ParseXml(const void* fileData, unsigned int length);
 	};
 }

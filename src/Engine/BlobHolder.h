@@ -24,7 +24,7 @@ namespace Destiny
 		void loadFailed__();
 	public:
 		const std::string& getPath() const;
-		const std::shared_ptr<Blob>& getBlob() const;
+		std::shared_ptr<Blob> getBlob() const;
 		bool isLoadingSucceed();
 	protected:
 		std::shared_ptr<Blob> m_blob;
@@ -38,7 +38,7 @@ namespace Destiny
 		return m_path;
 	}
 
-	inline const std::shared_ptr<Blob>& BlobHolder::getBlob() const
+	inline std::shared_ptr<Blob> BlobHolder::getBlob() const
 	{
 		return m_blob;
 	}

@@ -19,6 +19,15 @@ namespace Destiny
 		}
 	}
 
+	BlobHolder::BlobHolder() :
+		m_blob(nullptr),
+		m_blobLoader(nullptr),
+		m_state(loading_state_pending),
+		m_path("")
+	{
+
+	}
+
 	void BlobHolder::load(int priority)
 	{
 		if (m_blobLoader)

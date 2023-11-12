@@ -18,7 +18,10 @@ namespace Destiny
 			return;
 		}
 
-		blobHolder->load(0);
+		if (blobHolder->isLoadingPending())
+		{
+			blobHolder->load(0);
+		}
 		
 		if (blobHolder->isLoadingSucceed())
 		{

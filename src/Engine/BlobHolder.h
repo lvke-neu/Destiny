@@ -16,6 +16,7 @@ namespace Destiny
 			loading_state_succeeded
 		};
 	public:
+		BlobHolder();
 		BlobHolder(std::shared_ptr<BlobLoader> blobLoader, const std::string& path);
 		virtual ~BlobHolder() = default;
 	public:
@@ -26,6 +27,7 @@ namespace Destiny
 		const std::string& getPath() const;
 		std::shared_ptr<Blob> getBlob() const;
 		bool isLoadingSucceed();
+		bool isLoadingPending();
 	protected:
 		std::shared_ptr<Blob> m_blob;
 		std::shared_ptr<BlobLoader> m_blobLoader;
@@ -46,5 +48,10 @@ namespace Destiny
 	inline bool BlobHolder::isLoadingSucceed()
 	{
 		return m_state == loading_state_succeeded;
+	}
+
+	inline bool BlobHolder::isLoadingPending()
+	{
+		return m_state == loading_state_pending;
 	}
 }

@@ -115,7 +115,8 @@
 //	char* buf = new char[2048];
 //	char* end = rapidxml::print(buf, doc, 0);
 //	*end = 0;
-//	
+//	 std::string text;
+//rapidxml::print(std::back_inserter(text), doc, 0);
 //	int i = 0;
 //	i++;
 //}
@@ -130,6 +131,10 @@
 #include "Graphics/GraphicsAssetLoader.h"
 #include "Graphics/VertexBufferLoader.h"
 #include "Graphics/VertexBuffer.h"
+#include "Graphics/VertexBufferFile.h"
+#include <d3d11.h>
+#include <DirectXMath.h>
+#include <fstream>
 
 int main()
 {
@@ -139,11 +144,81 @@ int main()
 
 	
 
-	auto blobloader = Engine::GetInstance()->getBlobLoaderManager()->getBlobLoader("assets://test.vtb");
-	auto blobholder = blobloader->createBlobHolder("assets://test.vtb");
+	//auto blobloader = Engine::GetInstance()->getBlobLoaderManager()->getBlobLoader("assets://test.vtb");
+	//auto blobholder = blobloader->createBlobHolder("assets://test.vtb");
 
-	auto vertexbuffer = Engine::GetInstance()->getGraphicsAssetLoader()->getVertexBufferLoader()->createAsset(blobholder);
-	vertexbuffer->load();
+	//auto vertexbuffer = Engine::GetInstance()->getGraphicsAssetLoader()->getVertexBufferLoader()->createAsset(blobholder);
+	//vertexbuffer->load();
+	using namespace DirectX;
+	struct VertexPosColor
+	{
+		XMFLOAT3 pos;
+		XMFLOAT3 normal;
+		XMFLOAT2 tex;
+	};
+
+	D3D11_INPUT_ELEMENT_DESC inputLayout[3] =
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+	};
+
+	VertexPosColor vertices[24];
+	vertices[0].pos = XMFLOAT3(1, 2, 3);
+	vertices[1].pos = XMFLOAT3(4, 5, 6);
+	vertices[2].pos = XMFLOAT3(7, 8, 9);
+	vertices[3].pos = XMFLOAT3(1, -1, 1);
+	vertices[4].pos = XMFLOAT3(-1, -1, 1);
+	vertices[5].pos = XMFLOAT3(-1, 1, 1);
+	vertices[6].pos = XMFLOAT3(-1, 1, -1);
+	vertices[7].pos = XMFLOAT3(-1, -1, -1);
+	vertices[8].pos = XMFLOAT3(-1, 1, -1);
+	vertices[9].pos = XMFLOAT3(-1, 1, 1);
+	vertices[10].pos = XMFLOAT3(1, 1, 1);
+	vertices[11].pos = XMFLOAT3(1, 1, -1);
+	vertices[12].pos = XMFLOAT3(1, -1, -1);
+	vertices[13].pos = XMFLOAT3(1, -1, 1);
+	vertices[14].pos = XMFLOAT3(-1, -1, 1);
+	vertices[15].pos = XMFLOAT3(-1, -1, -1);
+	vertices[16].pos = XMFLOAT3(1, -1, 1);
+	vertices[17].pos = XMFLOAT3(1, 1, 1);
+	vertices[18].pos = XMFLOAT3(-1, 1, 1);
+	vertices[19].pos = XMFLOAT3(-1, -1, 1);
+	vertices[20].pos = XMFLOAT3(-1, -1, -1);
+	vertices[21].pos = XMFLOAT3(-1, 1, -1);
+	vertices[22].pos = XMFLOAT3(1, 1, -1);
+	vertices[23].pos = XMFLOAT3(250, 222, 221);
+	for (UINT i = 0; i < 4; ++i)
+	{
+		vertices[i].normal = XMFLOAT3(1.0f, 0.0f, 0.0f);
+		vertices[i + 4].normal = XMFLOAT3(-1.0f, 0.0f, 0.0f);
+		vertices[i + 8].normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
+		vertices[i + 12].normal = XMFLOAT3(0.0f, -1.0f, 0.0f);
+		vertices[i + 16].normal = XMFLOAT3(0.0f, 0.0f, 1.0f);
+		vertices[i + 20].normal = XMFLOAT3(0.0f, 0.0f, -1.0f);
+	}
+	for (UINT i = 0; i < 6; ++i)
+	{
+		vertices[i * 4].tex = XMFLOAT2(0.0f, 1.0f);
+		vertices[i * 4 + 1].tex = XMFLOAT2(0.0f, 0.0f);
+		vertices[i * 4 + 2].tex = XMFLOAT2(1.0f, 0.0f);
+		vertices[i * 4 + 3].tex = XMFLOAT2(1.0f, 1.0f);
+	}
+
+	auto size = sizeof(VertexPosColor);
+	auto blob = VertexBufferFile::BuildVertexBufferFile(inputLayout, 3, 24, 0, vertices, 24 * sizeof(VertexPosColor));
+
+	std::shared_ptr<BlobHolder> blobholder = std::make_shared<BlobHolder>();
+	blobholder->loadSucceeded__(blob);
+	std::shared_ptr<VertexBuffer> vb = std::make_shared<VertexBuffer>();
+	vb->initialize(Engine::GetInstance()->getGraphicsAssetLoader()->getVertexBufferLoader(), blobholder);
+	vb->load();
+	std::string str((char*)blob->getData(), blob->getLength());
+
+	std::fstream fs;
+	fs.open("E:\\C++Project\\Destiny\\assets\\test.vtb");
+	fs << str;
 
 	application.exec();
 

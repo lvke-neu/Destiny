@@ -3,9 +3,13 @@
 #include "Engine/EventSystem.h"
 #include "Engine/Utility.h"
 #include "Engine/Blob.h"
+#include "Engine/BlobLoader.h"
 #include "Engine/BlobHolder.h"
+#include "Engine/BlobLoaderManager.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
+#include "VertexShader.h"
+#include "PixelShader.h"
 #include <d3d11.h>
 
 namespace Destiny
@@ -92,6 +96,34 @@ namespace Destiny
 		indexbuffer->initialize(nullptr, blobHolder);
 
 		return indexbuffer;
+	}
+
+	std::shared_ptr<VertexShader> GraphicsSystem::createVertexShader(const char* path)
+	{
+		std::shared_ptr<VertexShader> vertexShader = std::make_shared<VertexShader>();
+
+		auto blobLoader = Engine::GetInstance()->getBlobLoaderManager()->getBlobLoader(path);
+		if (blobLoader)
+		{
+			auto blobHolder = blobLoader->createBlobHolder(path);
+			vertexShader->initialize(nullptr, blobHolder);
+		}
+		
+		return vertexShader;
+	}
+
+	std::shared_ptr<PixelShader> GraphicsSystem::createPixelShader(const char* path)
+	{
+		std::shared_ptr<PixelShader> pixelShader = std::make_shared<PixelShader>();
+
+		auto blobLoader = Engine::GetInstance()->getBlobLoaderManager()->getBlobLoader(path);
+		if (blobLoader)
+		{
+			auto blobHolder = blobLoader->createBlobHolder(path);
+			pixelShader->initialize(nullptr, blobHolder);
+		}
+
+		return pixelShader;
 	}
 
 	void GraphicsSystem::onResize(void* data)

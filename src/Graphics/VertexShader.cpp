@@ -1,4 +1,4 @@
-#include "Renderer.h"
+#include "VertexShader.h"
 #include "Engine/Utility.h"
 #include "Engine/Engine.h"
 #include "Engine/Blob.h"
@@ -8,18 +8,18 @@
 
 namespace Destiny
 {
-	Renderer::Renderer() :
-		m_psShader(nullptr)
+	VertexShader::VertexShader() :
+		m_vertexShader(nullptr)
 	{
 
 	}
 
-	Renderer::~Renderer()
+	VertexShader::~VertexShader()
 	{
-		SAFE_RELEASE(m_psShader);
+		SAFE_RELEASE(m_vertexShader);
 	}
 
-	void Renderer::doLoad()
+	void VertexShader::doLoad()
 	{
 		if (m_blobHolder)
 		{
@@ -37,7 +37,7 @@ namespace Destiny
 			auto blob = m_blobHolder->getBlob();
 			if (blob)
 			{
-				HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreatePixelShader(blob->getData(), blob->getLength(), 0, &m_psShader);
+				HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateVertexShader(blob->getData(), blob->getLength(), 0, &m_vertexShader);
 
 				if (SUCCEEDED(hr))
 				{
@@ -53,7 +53,7 @@ namespace Destiny
 				loadFailed__();
 				return;
 			}
-			
+
 		}
 		else
 		{

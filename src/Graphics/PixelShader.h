@@ -4,14 +4,14 @@
 struct ID3D11PixelShader;
 namespace Destiny
 {
-	class Renderer : public Asset
+	class PixelShader : public Asset
 	{
 	public:
-		Renderer();
-		virtual ~Renderer();
+		PixelShader();
+		virtual ~PixelShader();
 	public:
 		virtual void doLoad() override;
 	private:
-		ID3D11PixelShader* m_psShader;
+		ID3D11PixelShader* m_pixelShader;
 	};
 }

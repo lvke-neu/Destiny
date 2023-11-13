@@ -5,6 +5,7 @@
 namespace Destiny
 {
 	class Blob;
+	class VertexBuffer;
 	class IndexBuffer;
 	class GraphicsSystem
 	{
@@ -21,7 +22,8 @@ namespace Destiny
 		ID3D11DeviceContext* getDeferredContext();
 		ID3D11RenderTargetView* getRenderTargetView();
 	public:
-		std::shared_ptr<IndexBuffer> createIndexBuffer(DXGI_FORMAT format, std::shared_ptr<Blob> indices);
+		std::shared_ptr<VertexBuffer> createVertexBuffer(unsigned int stride, unsigned int offset, std::shared_ptr<Blob> vertexData);
+		std::shared_ptr<IndexBuffer> createIndexBuffer(DXGI_FORMAT format, std::shared_ptr<Blob> indexData);
 	private:
 		void createDeviceAndContext();
 		void createSwapChain(long long hwnd);

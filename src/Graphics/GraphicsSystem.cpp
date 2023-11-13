@@ -4,6 +4,7 @@
 #include "Engine/Utility.h"
 #include "Engine/Blob.h"
 #include "Engine/BlobHolder.h"
+#include "VertexBuffer.h"
 #include "IndexBuffer.h"
 #include <d3d11.h>
 
@@ -62,11 +63,27 @@ namespace Destiny
 		m_pDXGISwapChain->Present(0, 0);
 	}
 
-	std::shared_ptr<IndexBuffer> GraphicsSystem::createIndexBuffer(DXGI_FORMAT format, std::shared_ptr<Blob> indices)
+	std::shared_ptr<VertexBuffer> GraphicsSystem::createVertexBuffer(unsigned int stride, unsigned int offset, std::shared_ptr<Blob> vertexData)
 	{
-		std::shared_ptr<Blob> data = std::make_shared<Blob>(sizeof(DXGI_FORMAT) + indices->getLength());
+		std::shared_ptr<Blob> data = std::make_shared<Blob>(sizeof(unsigned int) * 2 + vertexData->getLength());
+		memcpy_s(data->getData(), sizeof(unsigned int), &stride, sizeof(unsigned int));
+		memcpy_s((char*)data->getData() + sizeof(unsigned int), sizeof(unsigned int), &offset, sizeof(unsigned int));
+		memcpy_s((char*)data->getData() + sizeof(unsigned int) * 2, vertexData->getLength(), vertexData->getData(), vertexData->getLength());
+
+		std::shared_ptr<BlobHolder> blobHolder = std::make_shared<BlobHolder>();
+		blobHolder->loadSucceeded__(data);
+
+		std::shared_ptr<VertexBuffer> vertexBuffer = std::make_shared<VertexBuffer>();
+		vertexBuffer->initialize(nullptr, blobHolder);
+
+		return vertexBuffer;
+	}
+
+	std::shared_ptr<IndexBuffer> GraphicsSystem::createIndexBuffer(DXGI_FORMAT format, std::shared_ptr<Blob> indexData)
+	{
+		std::shared_ptr<Blob> data = std::make_shared<Blob>(sizeof(DXGI_FORMAT) + indexData->getLength());
 		memcpy_s(data->getData(), sizeof(DXGI_FORMAT), &format, sizeof(DXGI_FORMAT));
-		memcpy_s((char*)data->getData() + sizeof(DXGI_FORMAT), indices->getLength(), indices->getData(), indices->getLength());
+		memcpy_s((char*)data->getData() + sizeof(DXGI_FORMAT), indexData->getLength(), indexData->getData(), indexData->getLength());
 
 		std::shared_ptr<BlobHolder> blobHolder = std::make_shared<BlobHolder>();
 		blobHolder->loadSucceeded__(data);

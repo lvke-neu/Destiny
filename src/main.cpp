@@ -150,12 +150,12 @@ int main()
 	//auto vertexbuffer = Engine::GetInstance()->getGraphicsAssetLoader()->getVertexBufferLoader()->createAsset(blobholder);
 	//vertexbuffer->load();
 	using namespace DirectX;
-	//struct VertexPosColor
-	//{
-	//	XMFLOAT3 pos;
-	//	XMFLOAT3 normal;
-	//	XMFLOAT2 tex;
-	//};
+	struct VertexPosColor
+	{
+		XMFLOAT3 pos;
+		XMFLOAT3 normal;
+		XMFLOAT2 tex;
+	};
 
 	//std::vector<D3D11_INPUT_ELEMENT_DESC> inputLayout =
 	//{
@@ -164,47 +164,47 @@ int main()
 	//	{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	//};
 
-	//VertexPosColor vertices[24];
-	//vertices[0].pos = XMFLOAT3(1, 2, 3);
-	//vertices[1].pos = XMFLOAT3(4, 5, 6);
-	//vertices[2].pos = XMFLOAT3(7, 8, 9);
-	//vertices[3].pos = XMFLOAT3(1, -1, 1);
-	//vertices[4].pos = XMFLOAT3(-1, -1, 1);
-	//vertices[5].pos = XMFLOAT3(-1, 1, 1);
-	//vertices[6].pos = XMFLOAT3(-1, 1, -1);
-	//vertices[7].pos = XMFLOAT3(-1, -1, -1);
-	//vertices[8].pos = XMFLOAT3(-1, 1, -1);
-	//vertices[9].pos = XMFLOAT3(-1, 1, 1);
-	//vertices[10].pos = XMFLOAT3(1, 1, 1);
-	//vertices[11].pos = XMFLOAT3(1, 1, -1);
-	//vertices[12].pos = XMFLOAT3(1, -1, -1);
-	//vertices[13].pos = XMFLOAT3(1, -1, 1);
-	//vertices[14].pos = XMFLOAT3(-1, -1, 1);
-	//vertices[15].pos = XMFLOAT3(-1, -1, -1);
-	//vertices[16].pos = XMFLOAT3(1, -1, 1);
-	//vertices[17].pos = XMFLOAT3(1, 1, 1);
-	//vertices[18].pos = XMFLOAT3(-1, 1, 1);
-	//vertices[19].pos = XMFLOAT3(-1, -1, 1);
-	//vertices[20].pos = XMFLOAT3(-1, -1, -1);
-	//vertices[21].pos = XMFLOAT3(-1, 1, -1);
-	//vertices[22].pos = XMFLOAT3(1, 1, -1);
-	//vertices[23].pos = XMFLOAT3(250, 222, 221);
-	//for (UINT i = 0; i < 4; ++i)
-	//{
-	//	vertices[i].normal = XMFLOAT3(1.0f, 0.0f, 0.0f);
-	//	vertices[i + 4].normal = XMFLOAT3(-1.0f, 0.0f, 0.0f);
-	//	vertices[i + 8].normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
-	//	vertices[i + 12].normal = XMFLOAT3(0.0f, -1.0f, 0.0f);
-	//	vertices[i + 16].normal = XMFLOAT3(0.0f, 0.0f, 1.0f);
-	//	vertices[i + 20].normal = XMFLOAT3(0.0f, 0.0f, -1.0f);
-	//}
-	//for (UINT i = 0; i < 6; ++i)
-	//{
-	//	vertices[i * 4].tex = XMFLOAT2(0.0f, 1.0f);
-	//	vertices[i * 4 + 1].tex = XMFLOAT2(0.0f, 0.0f);
-	//	vertices[i * 4 + 2].tex = XMFLOAT2(1.0f, 0.0f);
-	//	vertices[i * 4 + 3].tex = XMFLOAT2(1.0f, 1.0f);
-	//}
+	VertexPosColor vertices[24];
+	vertices[0].pos = XMFLOAT3(1, 2, 3);
+	vertices[1].pos = XMFLOAT3(4, 5, 6);
+	vertices[2].pos = XMFLOAT3(7, 8, 9);
+	vertices[3].pos = XMFLOAT3(1, -1, 1);
+	vertices[4].pos = XMFLOAT3(-1, -1, 1);
+	vertices[5].pos = XMFLOAT3(-1, 1, 1);
+	vertices[6].pos = XMFLOAT3(-1, 1, -1);
+	vertices[7].pos = XMFLOAT3(-1, -1, -1);
+	vertices[8].pos = XMFLOAT3(-1, 1, -1);
+	vertices[9].pos = XMFLOAT3(-1, 1, 1);
+	vertices[10].pos = XMFLOAT3(1, 1, 1);
+	vertices[11].pos = XMFLOAT3(1, 1, -1);
+	vertices[12].pos = XMFLOAT3(1, -1, -1);
+	vertices[13].pos = XMFLOAT3(1, -1, 1);
+	vertices[14].pos = XMFLOAT3(-1, -1, 1);
+	vertices[15].pos = XMFLOAT3(-1, -1, -1);
+	vertices[16].pos = XMFLOAT3(1, -1, 1);
+	vertices[17].pos = XMFLOAT3(1, 1, 1);
+	vertices[18].pos = XMFLOAT3(-1, 1, 1);
+	vertices[19].pos = XMFLOAT3(-1, -1, 1);
+	vertices[20].pos = XMFLOAT3(-1, -1, -1);
+	vertices[21].pos = XMFLOAT3(-1, 1, -1);
+	vertices[22].pos = XMFLOAT3(1, 1, -1);
+	vertices[23].pos = XMFLOAT3(250, 222, 221);
+	for (UINT i = 0; i < 4; ++i)
+	{
+		vertices[i].normal = XMFLOAT3(1.0f, 0.0f, 0.0f);
+		vertices[i + 4].normal = XMFLOAT3(-1.0f, 0.0f, 0.0f);
+		vertices[i + 8].normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
+		vertices[i + 12].normal = XMFLOAT3(0.0f, -1.0f, 0.0f);
+		vertices[i + 16].normal = XMFLOAT3(0.0f, 0.0f, 1.0f);
+		vertices[i + 20].normal = XMFLOAT3(0.0f, 0.0f, -1.0f);
+	}
+	for (UINT i = 0; i < 6; ++i)
+	{
+		vertices[i * 4].tex = XMFLOAT2(0.0f, 1.0f);
+		vertices[i * 4 + 1].tex = XMFLOAT2(0.0f, 0.0f);
+		vertices[i * 4 + 2].tex = XMFLOAT2(1.0f, 0.0f);
+		vertices[i * 4 + 3].tex = XMFLOAT2(1.0f, 1.0f);
+	}
 
 	unsigned int indices[36] = {
 			0, 1, 2, 2, 3, 0,		// 右面(+X面)
@@ -215,15 +215,16 @@ int main()
 			20, 21, 22, 22, 23, 20	// 正面(-Z面)
 	};
 
-	//std::shared_ptr<Blob> vertexData = std::make_shared<Blob>(24 * sizeof(VertexPosColor));
-	//memcpy_s(vertexData->getData(), vertexData->getLength(), vertices, vertexData->getLength());
-	//std::shared_ptr<VertexBuffer> vertexbuffer = std::make_shared<VertexBuffer>(inputLayout, sizeof(VertexPosColor), 0, vertexData);
-	//vertexbuffer->load(0);
+	std::shared_ptr<Blob> vertexData = std::make_shared<Blob>(24 * sizeof(VertexPosColor));
+	memcpy_s(vertexData->getData(), vertexData->getLength(), vertices, vertexData->getLength());
+	auto vertexbuffer = Engine::GetInstance()->getGraphicsSystem()->createVertexBuffer(sizeof(VertexPosColor), 0, vertexData);
+	
+	vertexbuffer->load();
 
 	std::shared_ptr<Blob> data = std::make_shared<Blob>(36 * sizeof(unsigned int));
 	memcpy_s(data->getData(), 36 * sizeof(unsigned int), indices, 36 * sizeof(unsigned int));
 	auto indexbuffer = Engine::GetInstance()->getGraphicsSystem()->createIndexBuffer(DXGI_FORMAT_R32_UINT, data);
-	indexbuffer->load(0);
+	indexbuffer->load();
 
 	//auto blobloader = Engine::GetInstance()->getBlobLoaderManager()->getBlobLoader("assets://HLSL/Phong_PS.cso");
 	//auto blobholder = blobloader->createBlobHolder("assets://HLSL/Phong_PS1.cso");

@@ -72,7 +72,5 @@ namespace Destiny
 		{
 			loadFailed__();
 		}
-
-
 	}
 }

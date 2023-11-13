@@ -1,6 +1,5 @@
 #pragma once
 #include "Engine/Asset.h"
-#include <memory>
 #include <d3d11.h>
 
 namespace Destiny

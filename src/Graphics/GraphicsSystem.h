@@ -9,6 +9,7 @@ namespace Destiny
 	class IndexBuffer;
 	class VertexShader;
 	class PixelShader;
+	class InputLayout;
 	class GraphicsSystem
 	{
 	public:
@@ -28,6 +29,7 @@ namespace Destiny
 		std::shared_ptr<IndexBuffer> createIndexBuffer(DXGI_FORMAT format, std::shared_ptr<Blob> indexData);
 		std::shared_ptr<VertexShader> createVertexShader(const char* path);
 		std::shared_ptr<PixelShader> createPixelShader(const char* path);
+		std::shared_ptr<InputLayout> createInputLayout(std::shared_ptr<Blob> inputElements, const char* vsPath);
 	private:
 		void createDeviceAndContext();
 		void createSwapChain(long long hwnd);

@@ -132,6 +132,7 @@
 #include "Graphics/IndexBuffer.h"
 #include "Graphics/VertexShader.h"
 #include "Graphics/PixelShader.h"
+#include "Graphics/InputLayout.h"
 #include "Graphics/GraphicsSystem.h"
 #include <d3d11.h>
 #include <DirectXMath.h>
@@ -158,12 +159,12 @@ int main()
 	//	XMFLOAT2 tex;
 	//};
 
-	////std::vector<D3D11_INPUT_ELEMENT_DESC> inputLayout =
-	////{
-	////	{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	////	{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	////	{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 }
-	////};
+	std::vector<D3D11_INPUT_ELEMENT_DESC> inputElements =
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+	};
 
 	//VertexPosColor vertices[24];
 	//vertices[0].pos = XMFLOAT3(1, 2, 3);
@@ -227,11 +228,16 @@ int main()
 	//auto indexbuffer = Engine::GetInstance()->getGraphicsSystem()->createIndexBuffer(DXGI_FORMAT_R32_UINT, data);
 	//indexbuffer->load();
 
-	auto vs = Engine::GetInstance()->getGraphicsSystem()->createVertexShader("assets://HLSL/Phong_VS.cso");
-	vs->load();
+	//auto vs = Engine::GetInstance()->getGraphicsSystem()->createVertexShader("assets://HLSL/Phong_VS.cso");
+	//vs->load();
 
-	auto ps = Engine::GetInstance()->getGraphicsSystem()->createPixelShader("assets://HLSL/Phong_PS.cso");
-	ps->load();
+	//auto ps = Engine::GetInstance()->getGraphicsSystem()->createPixelShader("assets://HLSL/Phong_PS.cso");
+	//ps->load();
+
+	std::shared_ptr<Blob> data = std::make_shared<Blob>(3 * sizeof(D3D11_INPUT_ELEMENT_DESC));
+	memcpy_s(data->getData(), data->getLength(), inputElements.data(), data->getLength());
+	auto inputlayout = Engine::GetInstance()->getGraphicsSystem()->createInputLayout(data, "assets://HLSL/Phong_VS.cso");
+	inputlayout->load();
 
 	application.exec();
 

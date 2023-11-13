@@ -10,6 +10,7 @@
 #include "IndexBuffer.h"
 #include "VertexShader.h"
 #include "PixelShader.h"
+#include "InputLayout.h"
 #include <d3d11.h>
 
 namespace Destiny
@@ -124,6 +125,19 @@ namespace Destiny
 		}
 
 		return pixelShader;
+	}
+
+	std::shared_ptr<InputLayout> GraphicsSystem::createInputLayout(std::shared_ptr<Blob> inputElements, const char* vsPath)
+	{
+		std::shared_ptr<InputLayout> inputLayout = std::make_shared<InputLayout>(inputElements);
+		auto blobLoader = Engine::GetInstance()->getBlobLoaderManager()->getBlobLoader(vsPath);
+		if (blobLoader)
+		{
+			auto blobHolder = blobLoader->createBlobHolder(vsPath);
+			inputLayout->initialize(nullptr, blobHolder);
+		}
+
+		return inputLayout;
 	}
 
 	void GraphicsSystem::onResize(void* data)

@@ -1,8 +1,9 @@
 #pragma once
+#include <memory>
 
-struct ID3D11CommandList;
 namespace Destiny
 {
+	class Visual3D;
 	class SceneManager
 	{
 	public:
@@ -11,8 +12,8 @@ namespace Destiny
 	public:
 		void initialize();
 		void uninitialize();
-		void tick();
+		void update();
 	private:
-		ID3D11CommandList* m_commandList;
+		std::shared_ptr<Visual3D> m_visual3D;
 	};
 }

@@ -9,7 +9,8 @@ namespace Destiny
 {
 	IndexBuffer::IndexBuffer() :
 		m_format(DXGI_FORMAT_UNKNOWN),
-		m_indexBuffer(nullptr)
+		m_indexBuffer(nullptr),
+		m_count(0)
 	{
 
 	}
@@ -54,6 +55,8 @@ namespace Destiny
 
 				if (SUCCEEDED(hr))
 				{
+					m_count = (unsigned int)(blob->getLength() - sizeof(DXGI_FORMAT)) / sizeof(unsigned int);
+
 					loadSucceeded__();
 				}
 				else

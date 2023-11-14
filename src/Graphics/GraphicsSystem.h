@@ -1,9 +1,12 @@
 #pragma once
 #include <memory>
+#include <vector>
 #include <d3d11.h>
 
 namespace Destiny
 {
+	class Visual3D;
+
 	class Blob;
 	class VertexBuffer;
 	class IndexBuffer;
@@ -19,12 +22,14 @@ namespace Destiny
 	public:
 		void initialize(long long hwnd);
 		void uninitialize();
-		void draw();
+		void update();
 		
 		ID3D11Device* getDevice();
 		ID3D11DeviceContext* getImmediateContext();
 		ID3D11DeviceContext* getDeferredContext();
 		ID3D11RenderTargetView* getRenderTargetView();
+	public:
+		void addCommandList(ID3D11CommandList* commandList);
 	public:
 		std::shared_ptr<VertexBuffer> createVertexBuffer(unsigned int stride, unsigned int offset, std::shared_ptr<Blob> vertexData);
 		std::shared_ptr<IndexBuffer> createIndexBuffer(DXGI_FORMAT format, std::shared_ptr<Blob> indexData);
@@ -47,6 +52,8 @@ namespace Destiny
 		ID3D11DepthStencilView* m_pDepthStencilView;
 		unsigned int m_4xMsaaQuality;
 		D3D11_VIEWPORT* m_viewport;
+		std::vector<ID3D11CommandList*> m_commandLists;
+		std::shared_ptr<Visual3D> m_visual3D;
 	};
 
 	inline ID3D11Device* GraphicsSystem::getDevice()

@@ -12,6 +12,7 @@
 #include "VertexShader.h"
 #include "PixelShader.h"
 #include "InputLayout.h"
+#include "Visual3D.h"
 #include <d3d11.h>
 
 namespace Destiny
@@ -50,23 +51,52 @@ namespace Destiny
 		onResize_(0, 0);
 
 		Engine::GetInstance()->getEventSystem()->registerEvent(EventType::WindowResize, std::bind(&GraphicsSystem::onResize, this, std::placeholders::_1));
+		
+		//float color[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+		//m_pD3D11DeferredDeviceContext->ClearRenderTargetView(m_pRenderTargetView, color);
+		//m_pD3D11DeferredDeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+		//ID3D11CommandList* commandList = nullptr;
+		//m_pD3D11DeferredDeviceContext->FinishCommandList(false, &commandList);
+		//addCommandList(commandList);
+		//SAFE_RELEASE(commandList);
+
+		m_visual3D = std::make_shared<Visual3D>();
 	}
 
 	void GraphicsSystem::uninitialize()
 	{
 		Engine::GetInstance()->getEventSystem()->unRegisterEvent(EventType::WindowResize, std::bind(&GraphicsSystem::onResize, this, std::placeholders::_1));
+		for (auto& commandList : m_commandLists)
+		{
+			SAFE_RELEASE(commandList);
+		}
 	}
 
-	void GraphicsSystem::draw()
+	void GraphicsSystem::update()
 	{
+		//for (const auto& commandList : m_commandLists)
+		//{
+		//	m_pD3D11ImmediateDeviceContext->ExecuteCommandList(commandList, false);
+		//}
 		static float color[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-
 		m_pD3D11ImmediateDeviceContext->ClearRenderTargetView(m_pRenderTargetView, color);
 		m_pD3D11ImmediateDeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-		
-
-
+		m_visual3D->draw();
 		m_pDXGISwapChain->Present(0, 0);
+	}
+
+	void GraphicsSystem::addCommandList(ID3D11CommandList* commandList)
+	{
+		if (!commandList)
+		{
+			return;
+		}
+		auto iter = std::find(m_commandLists.begin(), m_commandLists.end(), commandList);
+		if (iter == m_commandLists.end())
+		{
+			commandList->AddRef();
+			m_commandLists.push_back(commandList);
+		}
 	}
 
 	std::shared_ptr<VertexBuffer> GraphicsSystem::createVertexBuffer(unsigned int stride, unsigned int offset, std::shared_ptr<Blob> vertexData)
@@ -182,6 +212,7 @@ namespace Destiny
 		m_pD3D11Device->CreateDepthStencilView(m_pDepthStencilBuffer, nullptr, &m_pDepthStencilView);
 
 		m_pD3D11ImmediateDeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
+		//m_pD3D11DeferredDeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
 
 		
 		m_viewport->TopLeftX = 0;
@@ -192,6 +223,7 @@ namespace Destiny
 		m_viewport->MaxDepth = 1.0f;
 
 		m_pD3D11ImmediateDeviceContext->RSSetViewports(1, m_viewport);
+		//m_pD3D11DeferredDeviceContext->RSSetViewports(1, m_viewport);
 	}
 
 	void GraphicsSystem::createDeviceAndContext()

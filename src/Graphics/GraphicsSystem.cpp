@@ -8,6 +8,7 @@
 #include "Engine/BlobLoaderManager.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
+#include "Mesh.h"
 #include "VertexShader.h"
 #include "PixelShader.h"
 #include "InputLayout.h"
@@ -99,6 +100,12 @@ namespace Destiny
 		return indexbuffer;
 	}
 
+	std::shared_ptr<Mesh> GraphicsSystem::createMesh(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer)
+	{
+		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(vertexBuffer, indexBuffer);
+		return mesh;
+	}
+
 	std::shared_ptr<VertexShader> GraphicsSystem::createVertexShader(const char* path)
 	{
 		std::shared_ptr<VertexShader> vertexShader = std::make_shared<VertexShader>();
@@ -123,7 +130,7 @@ namespace Destiny
 			auto blobHolder = blobLoader->createBlobHolder(path);
 			pixelShader->initialize(nullptr, blobHolder);
 		}
-
+		
 		return pixelShader;
 	}
 

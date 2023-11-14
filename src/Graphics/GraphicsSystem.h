@@ -7,6 +7,7 @@ namespace Destiny
 	class Blob;
 	class VertexBuffer;
 	class IndexBuffer;
+	class Mesh;
 	class VertexShader;
 	class PixelShader;
 	class InputLayout;
@@ -27,6 +28,7 @@ namespace Destiny
 	public:
 		std::shared_ptr<VertexBuffer> createVertexBuffer(unsigned int stride, unsigned int offset, std::shared_ptr<Blob> vertexData);
 		std::shared_ptr<IndexBuffer> createIndexBuffer(DXGI_FORMAT format, std::shared_ptr<Blob> indexData);
+		std::shared_ptr<Mesh> createMesh(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer);
 		std::shared_ptr<VertexShader> createVertexShader(const char* path);
 		std::shared_ptr<PixelShader> createPixelShader(const char* path);
 		std::shared_ptr<InputLayout> createInputLayout(std::shared_ptr<Blob> inputElements, const char* vsPath);

@@ -23,6 +23,8 @@ namespace Destiny
 		void loadSucceeded__();
 		void loadFailed__();
 		std::shared_ptr<BlobHolder> getBlobHolder() const;
+		bool isLoadingSucceed();
+		bool isLoadingPending();
 	private:
 		virtual void doLoad();
 	protected:
@@ -34,5 +36,15 @@ namespace Destiny
 	inline std::shared_ptr<BlobHolder> Asset::getBlobHolder() const
 	{
 		return m_blobHolder;
+	}
+
+	inline bool Asset::isLoadingSucceed()
+	{
+		return m_state == loading_state_succeeded;
+	}
+
+	inline bool Asset::isLoadingPending()
+	{
+		return m_state == loading_state_pending;
 	}
 }

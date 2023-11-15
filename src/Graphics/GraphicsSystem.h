@@ -5,8 +5,6 @@
 
 namespace Destiny
 {
-	class Visual3D;
-
 	class Blob;
 	class VertexBuffer;
 	class IndexBuffer;
@@ -22,12 +20,15 @@ namespace Destiny
 	public:
 		void initialize(long long hwnd);
 		void uninitialize();
-		void update();
+		void begin();
+		void end();
 		
 		ID3D11Device* getDevice();
 		ID3D11DeviceContext* getImmediateContext();
 		ID3D11DeviceContext* getDeferredContext();
-		ID3D11RenderTargetView* getRenderTargetView();
+		ID3D11RenderTargetView** getRenderTargetView();
+		ID3D11DepthStencilView* getDepthStencilView();
+		D3D11_VIEWPORT* getViewport();
 	public:
 		void addCommandList(ID3D11CommandList* commandList);
 	public:
@@ -52,8 +53,6 @@ namespace Destiny
 		ID3D11DepthStencilView* m_pDepthStencilView;
 		unsigned int m_4xMsaaQuality;
 		D3D11_VIEWPORT* m_viewport;
-		std::vector<ID3D11CommandList*> m_commandLists;
-		std::shared_ptr<Visual3D> m_visual3D;
 	};
 
 	inline ID3D11Device* GraphicsSystem::getDevice()
@@ -71,8 +70,18 @@ namespace Destiny
 		return m_pD3D11DeferredDeviceContext;
 	}
 
-	inline ID3D11RenderTargetView* GraphicsSystem::getRenderTargetView()
+	inline ID3D11RenderTargetView** GraphicsSystem::getRenderTargetView()
 	{
-		return m_pRenderTargetView;
+		return &m_pRenderTargetView;
+	}
+
+	inline ID3D11DepthStencilView* GraphicsSystem::getDepthStencilView()
+	{
+		return m_pDepthStencilView;
+	}
+
+	inline D3D11_VIEWPORT* GraphicsSystem::getViewport()
+	{
+		return m_viewport;
 	}
 }

@@ -19,8 +19,8 @@ namespace Destiny
 
 	void SceneManager::initialize()
 	{
-		//m_visual3D = std::make_shared<Visual3D>();
-		//Engine::GetInstance()->getGraphicsSystem()->addCommandList(m_visual3D->getCommmandList());
+		m_visual3D = std::make_shared<Visual3D>();
+		
 	}
 
 	void SceneManager::uninitialize()
@@ -30,6 +30,7 @@ namespace Destiny
 
 	void SceneManager::update()
 	{
-		//m_visual3D->draw();
+		m_visual3D->draw();
+		//Engine::GetInstance()->getGraphicsSystem()->addCommandList(m_visual3D->getCommmandList());
 	}
 }

@@ -13,9 +13,10 @@
 
 namespace Destiny
 {
-	Visual3D::Visual3D() :
-		m_commandList(nullptr)
+	Visual3D::Visual3D()
 	{
+		m_deferredContext = Engine::GetInstance()->getGraphicsSystem()->getDeferredContext();
+
 		auto graphicsSystem = Engine::GetInstance()->getGraphicsSystem();
 		std::shared_ptr<Blob> data = nullptr;
 
@@ -52,47 +53,39 @@ namespace Destiny
 		m_vertexShader->load(0);
 		m_pixelShader = graphicsSystem->createPixelShader("assets://HLSL/Triangle_PS.cso");
 		m_pixelShader->load(0);
-
-
-		///**********************************************command*************************************/
-		//auto deferredContext = graphicsSystem->getDeferredContext();
-
-		//deferredContext->IASetVertexBuffers(0, 1, m_vertexBuffer->getVertexBuffer(), m_vertexBuffer->getStride(), m_vertexBuffer->getOffset());
-		//deferredContext->IASetIndexBuffer(m_indexBuffer->getIndexBuffer(), m_indexBuffer->getFormat(), 0);
-		//deferredContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		//deferredContext->IASetInputLayout(m_inputLayout->getInputLayout());
-
-		//deferredContext->VSSetShader(m_vertexShader->getVertexShader(), nullptr, 0);
-		//deferredContext->PSSetShader(m_pixelShader->getPixelShader(), nullptr, 0);
-
-		//deferredContext->DrawIndexed(m_indexBuffer->getCount(), 0, 0);
-
-		//deferredContext->FinishCommandList(false, &m_commandList);
-		///******************************************************************************************/
 	}
 
 	Visual3D::~Visual3D()
 	{
-		SAFE_RELEASE(m_commandList);
+
 	}
 
 	void Visual3D::draw()
 	{
-		auto immediateContext = Engine::GetInstance()->getGraphicsSystem()->getImmediateContext();
+		auto graphicsSystem = Engine::GetInstance()->getGraphicsSystem();
 
-		immediateContext->IASetVertexBuffers(0, 1, m_vertexBuffer->getVertexBuffer(), m_vertexBuffer->getStride(), m_vertexBuffer->getOffset());
-		immediateContext->IASetIndexBuffer(m_indexBuffer->getIndexBuffer(), m_indexBuffer->getFormat(), 0);
-		immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		immediateContext->IASetInputLayout(m_inputLayout->getInputLayout());
+		//IA
+		m_deferredContext->IASetVertexBuffers(0, 1, m_vertexBuffer->getVertexBuffer(), m_vertexBuffer->getStride(), m_vertexBuffer->getOffset());
+		m_deferredContext->IASetIndexBuffer(m_indexBuffer->getIndexBuffer(), m_indexBuffer->getFormat(), 0);
+		m_deferredContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		m_deferredContext->IASetInputLayout(m_inputLayout->getInputLayout());
+		
+		//SHDAER
+		m_deferredContext->VSSetShader(m_vertexShader->getVertexShader(), nullptr, 0);
+		m_deferredContext->PSSetShader(m_pixelShader->getPixelShader(), nullptr, 0);
 
-		immediateContext->VSSetShader(m_vertexShader->getVertexShader(), nullptr, 0);
-		immediateContext->PSSetShader(m_pixelShader->getPixelShader(), nullptr, 0);
+		//RS
+		m_deferredContext->RSSetViewports(1, graphicsSystem->getViewport());
 
-		immediateContext->DrawIndexed(m_indexBuffer->getCount(), 0, 0);
-	}
+		//OM
+		m_deferredContext->OMSetRenderTargets(1, graphicsSystem->getRenderTargetView(), graphicsSystem->getDepthStencilView());
 
-	ID3D11CommandList* Visual3D::getCommmandList()
-	{
-		return m_commandList;
+		m_deferredContext->DrawIndexed(m_indexBuffer->getCount(), 0, 0);
+
+		ID3D11CommandList* commandList = nullptr;
+		m_deferredContext->FinishCommandList(false, &commandList);
+		
+		graphicsSystem->getImmediateContext()->ExecuteCommandList(commandList, false);
+		SAFE_RELEASE(commandList);
 	}
 }

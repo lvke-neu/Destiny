@@ -197,7 +197,7 @@ namespace Destiny
 		m_pD3D11Device->CreateTexture2D(&depthStencilDesc, nullptr, &m_pDepthStencilBuffer);
 		m_pD3D11Device->CreateDepthStencilView(m_pDepthStencilBuffer, nullptr, &m_pDepthStencilView);
 
-		//m_pD3D11ImmediateDeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
+		m_pD3D11ImmediateDeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
 		//m_pD3D11DeferredDeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
 
 		
@@ -208,7 +208,7 @@ namespace Destiny
 		m_viewport->MinDepth = 0.0f;
 		m_viewport->MaxDepth = 1.0f;
 
-		//m_pD3D11ImmediateDeviceContext->RSSetViewports(1, m_viewport);
+		m_pD3D11ImmediateDeviceContext->RSSetViewports(1, m_viewport);
 		//m_pD3D11DeferredDeviceContext->RSSetViewports(1, m_viewport);
 	}
 

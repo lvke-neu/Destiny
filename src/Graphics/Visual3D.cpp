@@ -15,7 +15,7 @@ namespace Destiny
 {
 	Visual3D::Visual3D()
 	{
-		m_deferredContext = Engine::GetInstance()->getGraphicsSystem()->getDeferredContext();
+		m_immediateContext = Engine::GetInstance()->getGraphicsSystem()->getImmediateContext();
 
 		auto graphicsSystem = Engine::GetInstance()->getGraphicsSystem();
 		std::shared_ptr<Blob> data = nullptr;
@@ -65,27 +65,21 @@ namespace Destiny
 		auto graphicsSystem = Engine::GetInstance()->getGraphicsSystem();
 
 		//IA
-		m_deferredContext->IASetVertexBuffers(0, 1, m_vertexBuffer->getVertexBuffer(), m_vertexBuffer->getStride(), m_vertexBuffer->getOffset());
-		m_deferredContext->IASetIndexBuffer(m_indexBuffer->getIndexBuffer(), m_indexBuffer->getFormat(), 0);
-		m_deferredContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		m_deferredContext->IASetInputLayout(m_inputLayout->getInputLayout());
+		m_immediateContext->IASetVertexBuffers(0, 1, m_vertexBuffer->getVertexBuffer(), m_vertexBuffer->getStride(), m_vertexBuffer->getOffset());
+		m_immediateContext->IASetIndexBuffer(m_indexBuffer->getIndexBuffer(), m_indexBuffer->getFormat(), 0);
+		m_immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		m_immediateContext->IASetInputLayout(m_inputLayout->getInputLayout());
 		
 		//SHDAER
-		m_deferredContext->VSSetShader(m_vertexShader->getVertexShader(), nullptr, 0);
-		m_deferredContext->PSSetShader(m_pixelShader->getPixelShader(), nullptr, 0);
+		m_immediateContext->VSSetShader(m_vertexShader->getVertexShader(), nullptr, 0);
+		m_immediateContext->PSSetShader(m_pixelShader->getPixelShader(), nullptr, 0);
 
 		//RS
-		m_deferredContext->RSSetViewports(1, graphicsSystem->getViewport());
+		m_immediateContext->RSSetViewports(1, graphicsSystem->getViewport());
 
 		//OM
-		m_deferredContext->OMSetRenderTargets(1, graphicsSystem->getRenderTargetView(), graphicsSystem->getDepthStencilView());
+		m_immediateContext->OMSetRenderTargets(1, graphicsSystem->getRenderTargetView(), graphicsSystem->getDepthStencilView());
 
-		m_deferredContext->DrawIndexed(m_indexBuffer->getCount(), 0, 0);
-
-		ID3D11CommandList* commandList = nullptr;
-		m_deferredContext->FinishCommandList(false, &commandList);
-		
-		graphicsSystem->getImmediateContext()->ExecuteCommandList(commandList, false);
-		SAFE_RELEASE(commandList);
+		m_immediateContext->DrawIndexed(m_indexBuffer->getCount(), 0, 0);
 	}
 }

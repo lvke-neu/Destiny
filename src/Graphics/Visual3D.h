@@ -1,7 +1,6 @@
 #pragma once
 #include <memory>
 
-struct ID3D11CommandList;
 struct ID3D11DeviceContext;
 namespace Destiny
 {
@@ -24,6 +23,6 @@ namespace Destiny
 		std::shared_ptr<VertexShader> m_vertexShader;
 		std::shared_ptr<PixelShader> m_pixelShader;
 
-		ID3D11DeviceContext* m_deferredContext;
+		ID3D11DeviceContext* m_immediateContext;
 	};
 }

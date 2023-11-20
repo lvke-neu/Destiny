@@ -12,6 +12,7 @@ namespace Destiny
 	class RasterizerState;
 	class DepthStencilState;
 	class BlendState;
+	class SamplerState;
 	class Visual3D
 	{
 	public:
@@ -28,6 +29,7 @@ namespace Destiny
 		std::shared_ptr<RasterizerState> m_rasterizerState;
 		std::shared_ptr<DepthStencilState> m_depthStencilState;
 		std::shared_ptr<BlendState> m_blendState;
+		std::shared_ptr<SamplerState> m_samplerState;
 
 		ID3D11DeviceContext* m_immediateContext;
 	};

@@ -11,6 +11,7 @@
 #include "Graphics/RasterizerState.h"
 #include "Graphics/DepthStencilState.h"
 #include "Graphics/BlendState.h"
+#include "Graphics/SamplerState.h"
 #include <d3d11.h>
 #include <DirectXMath.h>
 
@@ -75,6 +76,12 @@ namespace Destiny
 		memcpy_s(data->getData(), data->getLength(), &blendStateDesc, data->getLength());
 		m_blendState = Engine::GetInstance()->getGraphicsSystem()->createBlendState(data);
 		m_blendState->load(0);
+
+		D3D11_SAMPLER_DESC samplerStateDesc = SamplerState::Default_SamplerState_Desc;
+		data.reset(new Blob(sizeof(D3D11_SAMPLER_DESC)));
+		memcpy_s(data->getData(), data->getLength(), &samplerStateDesc, data->getLength());
+		m_samplerState = Engine::GetInstance()->getGraphicsSystem()->createSamplerState(data);
+		m_samplerState->load(0);
 	}
 
 	Visual3D::~Visual3D()
@@ -91,7 +98,7 @@ namespace Destiny
 			!m_pixelShader->isLoadingSucceed()	     ||
 			!m_rasterizerState->isLoadingSucceed()   ||
 			!m_depthStencilState->isLoadingSucceed() ||
-			!m_blendState->isLoadingSucceed()
+			!m_blendState->isLoadingSucceed()		 
 			)
 
 		{

@@ -15,6 +15,7 @@ namespace Destiny
 	class RasterizerState;
 	class DepthStencilState;
 	class BlendState;
+	class SamplerState;
 	class GraphicsSystem
 	{
 	public:
@@ -44,6 +45,7 @@ namespace Destiny
 		std::shared_ptr<RasterizerState> createRasterizerState(std::shared_ptr<Blob> rasterizerDesc);
 		std::shared_ptr<DepthStencilState> createDepthStencilState(std::shared_ptr<Blob> depthStencilStateDesc);
 		std::shared_ptr<BlendState> createBlendState(std::shared_ptr<Blob> blendStateDesc);
+		std::shared_ptr<SamplerState> createSamplerState(std::shared_ptr<Blob> samplerStateDesc);
 	private:
 		void createDeviceAndContext();
 		void createSwapChain(long long hwnd);

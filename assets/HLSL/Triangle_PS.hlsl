@@ -3,7 +3,12 @@ struct VertexOut
 	float4 posH : SV_POSITION;
 };
 
+cbuffer testCB : register(b0)
+{
+	float4 color;
+}
+
 float4 PS(VertexOut pIn) : SV_Target
 {
-	return float4(1.0f, 1.0f, 1.0f, 1.0f);
+	return color;
 }

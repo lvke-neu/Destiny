@@ -16,6 +16,7 @@ namespace Destiny
 	class DepthStencilState;
 	class BlendState;
 	class SamplerState;
+
 	class GraphicsSystem
 	{
 	public:

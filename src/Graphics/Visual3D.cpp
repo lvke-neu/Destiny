@@ -12,11 +12,14 @@
 #include "Graphics/DepthStencilState.h"
 #include "Graphics/BlendState.h"
 #include "Graphics/SamplerState.h"
+#include "Graphics/ConstantBuffer.h"
 #include <d3d11.h>
 #include <DirectXMath.h>
 
 namespace Destiny
 {
+	static std::shared_ptr<ConstantBuffer<DirectX::XMFLOAT4>> constantBuffer = nullptr;
+
 	Visual3D::Visual3D()
 	{
 		m_immediateContext = Engine::GetInstance()->getGraphicsSystem()->getImmediateContext();
@@ -34,7 +37,7 @@ namespace Destiny
 		memcpy_s(data->getData(), data->getLength(), vertices, data->getLength());
 		m_vertexBuffer = graphicsSystem->createVertexBuffer(sizeof(DirectX::XMFLOAT3), 0, data);
 		m_vertexBuffer->load(0);
-	
+
 		unsigned int indices[3] =
 		{
 			0, 2, 1
@@ -44,7 +47,7 @@ namespace Destiny
 		m_indexBuffer = graphicsSystem->createIndexBuffer(DXGI_FORMAT_R32_UINT, data);
 		m_indexBuffer->load(0);
 
-		D3D11_INPUT_ELEMENT_DESC inputElements[1] = 
+		D3D11_INPUT_ELEMENT_DESC inputElements[1] =
 		{
 			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 		};
@@ -82,6 +85,10 @@ namespace Destiny
 		memcpy_s(data->getData(), data->getLength(), &samplerStateDesc, data->getLength());
 		m_samplerState = Engine::GetInstance()->getGraphicsSystem()->createSamplerState(data);
 		m_samplerState->load(0);
+
+		constantBuffer = std::make_shared<ConstantBuffer<DirectX::XMFLOAT4>>();
+
+		constantBuffer->update({ 0.0f, 0.0f, 1.0f, 1.0f });
 	}
 
 	Visual3D::~Visual3D()
@@ -116,6 +123,7 @@ namespace Destiny
 		//SHDAER
 		m_immediateContext->VSSetShader(m_vertexShader->getVertexShader(), nullptr, 0);
 		m_immediateContext->PSSetShader(m_pixelShader->getPixelShader(), nullptr, 0);
+		m_immediateContext->PSSetConstantBuffers(0, 1, constantBuffer->getConstantBuffer());
 
 		//RS
 		m_immediateContext->RSSetViewports(1, graphicsSystem->getViewport());

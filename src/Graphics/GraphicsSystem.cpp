@@ -13,6 +13,7 @@
 #include "PixelShader.h"
 #include "InputLayout.h"
 #include "RasterizerState.h"
+#include "DepthStencilState.h"
 #include <d3d11.h>
 
 namespace Destiny
@@ -173,6 +174,17 @@ namespace Destiny
 		rasterizerState->initialize(nullptr, blobHolder);
 
 		return rasterizerState;
+	}
+
+	std::shared_ptr<DepthStencilState> GraphicsSystem::createDepthStencilState(std::shared_ptr<Blob> depthStencilStateDesc)
+	{
+		std::shared_ptr<DepthStencilState> depthStencilState = std::make_shared<DepthStencilState>();
+
+		std::shared_ptr<BlobHolder> blobHolder = std::make_shared<BlobHolder>();
+		blobHolder->loadSucceeded__(depthStencilStateDesc);
+		depthStencilState->initialize(nullptr, blobHolder);
+
+		return depthStencilState;
 	}
 
 	void GraphicsSystem::onResize(void* data)

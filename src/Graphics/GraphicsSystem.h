@@ -13,6 +13,7 @@ namespace Destiny
 	class PixelShader;
 	class InputLayout;
 	class RasterizerState;
+	class DepthStencilState;
 	class GraphicsSystem
 	{
 	public:
@@ -40,6 +41,7 @@ namespace Destiny
 		std::shared_ptr<PixelShader> createPixelShader(const char* path);
 		std::shared_ptr<InputLayout> createInputLayout(std::shared_ptr<Blob> inputElements, const char* vsPath);
 		std::shared_ptr<RasterizerState> createRasterizerState(std::shared_ptr<Blob> rasterizerDesc);
+		std::shared_ptr<DepthStencilState> createDepthStencilState(std::shared_ptr<Blob> depthStencilStateDesc);
 
 	private:
 		void createDeviceAndContext();

@@ -9,6 +9,7 @@
 #include "Graphics/PixelShader.h"
 #include "Graphics/InputLayout.h"
 #include "Graphics/RasterizerState.h"
+#include "Graphics/DepthStencilState.h"
 #include <d3d11.h>
 #include <DirectXMath.h>
 
@@ -57,11 +58,16 @@ namespace Destiny
 
 
 		D3D11_RASTERIZER_DESC rasterizerDesc = RasterizerState::Default_Rasterizer_Desc;
-		rasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
 		data.reset(new Blob(sizeof(D3D11_RASTERIZER_DESC)));
 		memcpy_s(data->getData(), data->getLength(), &rasterizerDesc, data->getLength());
 		m_rasterizerState = Engine::GetInstance()->getGraphicsSystem()->createRasterizerState(data);
 		m_rasterizerState->load(0);
+
+		D3D11_DEPTH_STENCIL_DESC depthStencilStateDesc = DepthStencilState::Default_DepthStencil_Desc;
+		data.reset(new Blob(sizeof(D3D11_DEPTH_STENCIL_DESC)));
+		memcpy_s(data->getData(), data->getLength(), &depthStencilStateDesc, data->getLength());
+		m_depthStencilState = Engine::GetInstance()->getGraphicsSystem()->createDepthStencilState(data);
+		m_depthStencilState->load(0);
 	}
 
 	Visual3D::~Visual3D()
@@ -71,12 +77,13 @@ namespace Destiny
 
 	void Visual3D::draw()
 	{
-		if (!m_vertexBuffer->isLoadingSucceed() ||
-			!m_indexBuffer->isLoadingSucceed() ||
-			!m_inputLayout->isLoadingSucceed() ||
-			!m_vertexShader->isLoadingSucceed() ||
-			!m_pixelShader->isLoadingSucceed() ||
-			!m_rasterizerState->isLoadingSucceed()
+		if (!m_vertexBuffer->isLoadingSucceed()    ||
+			!m_indexBuffer->isLoadingSucceed()     ||
+			!m_inputLayout->isLoadingSucceed()     ||
+			!m_vertexShader->isLoadingSucceed()    ||
+			!m_pixelShader->isLoadingSucceed()	   ||
+			!m_rasterizerState->isLoadingSucceed() ||
+			!m_depthStencilState->isLoadingSucceed()
 			)
 
 		{
@@ -100,6 +107,7 @@ namespace Destiny
 		m_immediateContext->RSSetState(m_rasterizerState->getRasterizerState());
 		//OM
 		m_immediateContext->OMSetRenderTargets(1, graphicsSystem->getRenderTargetView(), graphicsSystem->getDepthStencilView());
+		m_immediateContext->OMSetDepthStencilState(m_depthStencilState->getDepthStencilState(), 0);
 
 		m_immediateContext->DrawIndexed(m_indexBuffer->getCount(), 0, 0);
 	}

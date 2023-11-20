@@ -8,6 +8,7 @@
 #include "Graphics/VertexShader.h"
 #include "Graphics/PixelShader.h"
 #include "Graphics/InputLayout.h"
+#include "Graphics/RasterizerState.h"
 #include <d3d11.h>
 #include <DirectXMath.h>
 
@@ -53,6 +54,14 @@ namespace Destiny
 		m_vertexShader->load(0);
 		m_pixelShader = graphicsSystem->createPixelShader("assets://HLSL/Triangle_PS.cso");
 		m_pixelShader->load(0);
+
+
+		D3D11_RASTERIZER_DESC rasterizerDesc = RasterizerState::Default_Rasterizer_Desc;
+		rasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
+		data.reset(new Blob(sizeof(D3D11_RASTERIZER_DESC)));
+		memcpy_s(data->getData(), data->getLength(), &rasterizerDesc, data->getLength());
+		m_rasterizerState = Engine::GetInstance()->getGraphicsSystem()->createRasterizerState(data);
+		m_rasterizerState->load(0);
 	}
 
 	Visual3D::~Visual3D()
@@ -62,6 +71,18 @@ namespace Destiny
 
 	void Visual3D::draw()
 	{
+		if (!m_vertexBuffer->isLoadingSucceed() ||
+			!m_indexBuffer->isLoadingSucceed() ||
+			!m_inputLayout->isLoadingSucceed() ||
+			!m_vertexShader->isLoadingSucceed() ||
+			!m_pixelShader->isLoadingSucceed() ||
+			!m_rasterizerState->isLoadingSucceed()
+			)
+
+		{
+			return;
+		}
+
 		auto graphicsSystem = Engine::GetInstance()->getGraphicsSystem();
 
 		//IA
@@ -76,7 +97,7 @@ namespace Destiny
 
 		//RS
 		m_immediateContext->RSSetViewports(1, graphicsSystem->getViewport());
-
+		m_immediateContext->RSSetState(m_rasterizerState->getRasterizerState());
 		//OM
 		m_immediateContext->OMSetRenderTargets(1, graphicsSystem->getRenderTargetView(), graphicsSystem->getDepthStencilView());
 

@@ -12,6 +12,7 @@ namespace Destiny
 	class VertexShader;
 	class PixelShader;
 	class InputLayout;
+	class RasterizerState;
 	class GraphicsSystem
 	{
 	public:
@@ -38,6 +39,8 @@ namespace Destiny
 		std::shared_ptr<VertexShader> createVertexShader(const char* path);
 		std::shared_ptr<PixelShader> createPixelShader(const char* path);
 		std::shared_ptr<InputLayout> createInputLayout(std::shared_ptr<Blob> inputElements, const char* vsPath);
+		std::shared_ptr<RasterizerState> createRasterizerState(std::shared_ptr<Blob> rasterizerDesc);
+
 	private:
 		void createDeviceAndContext();
 		void createSwapChain(long long hwnd);

@@ -12,6 +12,7 @@
 #include "VertexShader.h"
 #include "PixelShader.h"
 #include "InputLayout.h"
+#include "RasterizerState.h"
 #include <d3d11.h>
 
 namespace Destiny
@@ -161,6 +162,17 @@ namespace Destiny
 		}
 
 		return inputLayout;
+	}
+
+	std::shared_ptr<RasterizerState> GraphicsSystem::createRasterizerState(std::shared_ptr<Blob> rasterizerDesc)
+	{
+		std::shared_ptr<RasterizerState> rasterizerState = std::make_shared<RasterizerState>();
+
+		std::shared_ptr<BlobHolder> blobHolder = std::make_shared<BlobHolder>();
+		blobHolder->loadSucceeded__(rasterizerDesc);
+		rasterizerState->initialize(nullptr, blobHolder);
+
+		return rasterizerState;
 	}
 
 	void GraphicsSystem::onResize(void* data)

@@ -1,7 +1,6 @@
 #pragma once
 #include <memory>
 
-struct ID3D11DeviceContext;
 namespace Destiny
 {
 	class VertexBuffer;
@@ -12,7 +11,6 @@ namespace Destiny
 	class RasterizerState;
 	class DepthStencilState;
 	class BlendState;
-	class SamplerState;
 	class Visual3D
 	{
 	public:
@@ -20,6 +18,15 @@ namespace Destiny
 		~Visual3D();
 	public:
 		void draw();
+	public:
+		void setVertexBuffer(std::shared_ptr<VertexBuffer> vertexBuffer);
+		void setIndexBuffer(std::shared_ptr<IndexBuffer> indexBuffer);
+		void setInputLayout(std::shared_ptr<InputLayout> inputLayout);
+		void setVertexShader(std::shared_ptr<VertexShader> vertexShader);
+		void setPixelShader(std::shared_ptr<PixelShader> pixelShader);
+		void setRasterizerState(std::shared_ptr<RasterizerState> rasterizerState);
+		void setDepthStencilState(std::shared_ptr<DepthStencilState> depthStencilState);
+		void setBlendState(std::shared_ptr<BlendState> blendState);
 	private:
 		std::shared_ptr<VertexBuffer> m_vertexBuffer;
 		std::shared_ptr<IndexBuffer> m_indexBuffer;
@@ -29,8 +36,77 @@ namespace Destiny
 		std::shared_ptr<RasterizerState> m_rasterizerState;
 		std::shared_ptr<DepthStencilState> m_depthStencilState;
 		std::shared_ptr<BlendState> m_blendState;
-		std::shared_ptr<SamplerState> m_samplerState;
-
-		ID3D11DeviceContext* m_immediateContext;
 	};
+
+	inline void Visual3D::setVertexBuffer(std::shared_ptr<VertexBuffer> vertexBuffer)
+	{
+		if (m_vertexBuffer)
+		{
+			m_vertexBuffer.reset();
+		}
+		m_vertexBuffer = vertexBuffer;
+	}
+
+	inline void Visual3D::setIndexBuffer(std::shared_ptr<IndexBuffer> indexBuffer)
+	{
+		if (m_indexBuffer)
+		{
+			m_indexBuffer.reset();
+		}
+		m_indexBuffer = indexBuffer;
+	}
+
+	inline void Visual3D::setInputLayout(std::shared_ptr<InputLayout> inputLayout)
+	{
+		if (m_inputLayout)
+		{
+			m_inputLayout.reset();
+		}
+		m_inputLayout = inputLayout;
+	}
+
+	inline void Visual3D::setVertexShader(std::shared_ptr<VertexShader> vertexShader)
+	{
+		if (m_vertexShader)
+		{
+			m_vertexShader.reset();
+		}
+		m_vertexShader = vertexShader;
+	}
+
+	inline void Visual3D::setPixelShader(std::shared_ptr<PixelShader> pixelShader)
+	{
+		if (m_pixelShader)
+		{
+			m_pixelShader.reset();
+		}
+		m_pixelShader = pixelShader;
+	}
+
+	inline void Visual3D::setRasterizerState(std::shared_ptr<RasterizerState> rasterizerState)
+	{
+		if (m_rasterizerState)
+		{
+			m_rasterizerState.reset();
+		}
+		m_rasterizerState = rasterizerState;
+	}
+
+	inline void Visual3D::setDepthStencilState(std::shared_ptr<DepthStencilState> depthStencilState)
+	{
+		if (m_depthStencilState)
+		{
+			m_depthStencilState.reset();
+		}
+		m_depthStencilState = depthStencilState;
+	}
+
+	inline void Visual3D::setBlendState(std::shared_ptr<BlendState> blendState)
+	{
+		if (m_blendState)
+		{
+			m_blendState.reset();
+		}
+		m_blendState = blendState;
+	}
 }

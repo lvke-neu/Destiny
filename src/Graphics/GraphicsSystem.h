@@ -16,7 +16,7 @@ namespace Destiny
 	class DepthStencilState;
 	class BlendState;
 	class SamplerState;
-
+	class Visual3D;
 	class GraphicsSystem
 	{
 	public:
@@ -35,7 +35,7 @@ namespace Destiny
 		ID3D11DepthStencilView* getDepthStencilView();
 		D3D11_VIEWPORT* getViewport();
 	public:
-		void addCommandList(ID3D11CommandList* commandList);
+		void commitVisual3D(std::shared_ptr<Visual3D> visual3D);
 	public:
 		std::shared_ptr<VertexBuffer> createVertexBuffer(unsigned int stride, unsigned int offset, std::shared_ptr<Blob> vertexData);
 		std::shared_ptr<IndexBuffer> createIndexBuffer(DXGI_FORMAT format, std::shared_ptr<Blob> indexData);
@@ -62,6 +62,7 @@ namespace Destiny
 		ID3D11DepthStencilView* m_pDepthStencilView;
 		unsigned int m_4xMsaaQuality;
 		D3D11_VIEWPORT* m_viewport;
+		std::vector<std::shared_ptr<Visual3D>> m_visual3Ds;
 	};
 
 	inline ID3D11Device* GraphicsSystem::getDevice()

@@ -16,6 +16,7 @@
 #include "DepthStencilState.h"
 #include "BlendState.h"
 #include "SamplerState.h"
+#include "Graphics/Visual3D.h"
 #include <d3d11.h>
 
 namespace Destiny
@@ -72,21 +73,26 @@ namespace Destiny
 
 	void GraphicsSystem::end()
 	{
+		for (const auto& visual3D : m_visual3Ds)
+		{
+			visual3D->draw();
+		}
+
 		m_pDXGISwapChain->Present(0, 0);
+		m_visual3Ds.clear();
 	}
 	
-	void GraphicsSystem::addCommandList(ID3D11CommandList* commandList)
+	void GraphicsSystem::commitVisual3D(std::shared_ptr<Visual3D> visual3D)
 	{
-		//if (!commandList)
-		//{
-		//	return;
-		//}
-		//auto iter = std::find(m_commandLists.begin(), m_commandLists.end(), commandList);
-		//if (iter == m_commandLists.end())
-		//{
-		//	commandList->AddRef();
-		//	m_commandLists.push_back(commandList);
-		//}
+		if (!visual3D)
+		{
+			return;
+		}
+		auto iter = std::find(m_visual3Ds.begin(), m_visual3Ds.end(), visual3D);
+		if (iter == m_visual3Ds.end())
+		{
+			m_visual3Ds.push_back(visual3D);
+		}
 	}
 
 	std::shared_ptr<VertexBuffer> GraphicsSystem::createVertexBuffer(unsigned int stride, unsigned int offset, std::shared_ptr<Blob> vertexData)

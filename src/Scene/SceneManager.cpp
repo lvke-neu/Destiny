@@ -1,5 +1,7 @@
 #include "SceneManager.h"
 #include "Graphics/Visual3D.h"
+#include "Engine/Engine.h"
+#include "Graphics/GraphicsSystem.h"
 
 namespace Destiny
 {
@@ -27,6 +29,6 @@ namespace Destiny
 
 	void SceneManager::update()
 	{
-		m_visual3D->draw();
+		Engine::GetInstance()->getGraphicsSystem()->commitVisual3D(m_visual3D);
 	}
 }

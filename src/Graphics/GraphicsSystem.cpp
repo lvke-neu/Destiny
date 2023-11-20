@@ -14,6 +14,7 @@
 #include "InputLayout.h"
 #include "RasterizerState.h"
 #include "DepthStencilState.h"
+#include "BlendState.h"
 #include <d3d11.h>
 
 namespace Destiny
@@ -185,6 +186,17 @@ namespace Destiny
 		depthStencilState->initialize(nullptr, blobHolder);
 
 		return depthStencilState;
+	}
+
+	std::shared_ptr<BlendState> GraphicsSystem::createBlendState(std::shared_ptr<Blob> blendStateDesc)
+	{
+		std::shared_ptr<BlendState> blendState = std::make_shared<BlendState>();
+
+		std::shared_ptr<BlobHolder> blobHolder = std::make_shared<BlobHolder>();
+		blobHolder->loadSucceeded__(blendStateDesc);
+		blendState->initialize(nullptr, blobHolder);
+
+		return blendState;
 	}
 
 	void GraphicsSystem::onResize(void* data)

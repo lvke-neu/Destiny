@@ -14,6 +14,7 @@ namespace Destiny
 	class InputLayout;
 	class RasterizerState;
 	class DepthStencilState;
+	class BlendState;
 	class GraphicsSystem
 	{
 	public:
@@ -42,7 +43,7 @@ namespace Destiny
 		std::shared_ptr<InputLayout> createInputLayout(std::shared_ptr<Blob> inputElements, const char* vsPath);
 		std::shared_ptr<RasterizerState> createRasterizerState(std::shared_ptr<Blob> rasterizerDesc);
 		std::shared_ptr<DepthStencilState> createDepthStencilState(std::shared_ptr<Blob> depthStencilStateDesc);
-
+		std::shared_ptr<BlendState> createBlendState(std::shared_ptr<Blob> blendStateDesc);
 	private:
 		void createDeviceAndContext();
 		void createSwapChain(long long hwnd);

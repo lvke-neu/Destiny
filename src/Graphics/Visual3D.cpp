@@ -10,6 +10,7 @@
 #include "Graphics/InputLayout.h"
 #include "Graphics/RasterizerState.h"
 #include "Graphics/DepthStencilState.h"
+#include "Graphics/BlendState.h"
 #include <d3d11.h>
 #include <DirectXMath.h>
 
@@ -68,6 +69,12 @@ namespace Destiny
 		memcpy_s(data->getData(), data->getLength(), &depthStencilStateDesc, data->getLength());
 		m_depthStencilState = Engine::GetInstance()->getGraphicsSystem()->createDepthStencilState(data);
 		m_depthStencilState->load(0);
+
+		D3D11_BLEND_DESC blendStateDesc = BlendState::Default_BlendState_Desc;
+		data.reset(new Blob(sizeof(D3D11_BLEND_DESC)));
+		memcpy_s(data->getData(), data->getLength(), &blendStateDesc, data->getLength());
+		m_blendState = Engine::GetInstance()->getGraphicsSystem()->createBlendState(data);
+		m_blendState->load(0);
 	}
 
 	Visual3D::~Visual3D()
@@ -77,13 +84,14 @@ namespace Destiny
 
 	void Visual3D::draw()
 	{
-		if (!m_vertexBuffer->isLoadingSucceed()    ||
-			!m_indexBuffer->isLoadingSucceed()     ||
-			!m_inputLayout->isLoadingSucceed()     ||
-			!m_vertexShader->isLoadingSucceed()    ||
-			!m_pixelShader->isLoadingSucceed()	   ||
-			!m_rasterizerState->isLoadingSucceed() ||
-			!m_depthStencilState->isLoadingSucceed()
+		if (!m_vertexBuffer->isLoadingSucceed()      ||
+			!m_indexBuffer->isLoadingSucceed()       ||
+			!m_inputLayout->isLoadingSucceed()       ||
+			!m_vertexShader->isLoadingSucceed()      ||
+			!m_pixelShader->isLoadingSucceed()	     ||
+			!m_rasterizerState->isLoadingSucceed()   ||
+			!m_depthStencilState->isLoadingSucceed() ||
+			!m_blendState->isLoadingSucceed()
 			)
 
 		{
@@ -108,6 +116,7 @@ namespace Destiny
 		//OM
 		m_immediateContext->OMSetRenderTargets(1, graphicsSystem->getRenderTargetView(), graphicsSystem->getDepthStencilView());
 		m_immediateContext->OMSetDepthStencilState(m_depthStencilState->getDepthStencilState(), 0);
+		m_immediateContext->OMSetBlendState(m_blendState->getBlendState(), nullptr, 0xFFFFFFFF);
 
 		m_immediateContext->DrawIndexed(m_indexBuffer->getCount(), 0, 0);
 	}

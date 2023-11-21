@@ -8,6 +8,8 @@ class MainWindow;
 }
 
 class RenderWindow;
+class NodeDockWidget;
+class ComponentDockWidget;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -16,11 +18,11 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    virtual void contextMenuEvent(QContextMenuEvent* event) override;
 private:
     Ui::MainWindow *ui;
     RenderWindow* m_renderWindow;
-    QMenu* m_menu;
+	NodeDockWidget* m_nodeDockWidget;
+	ComponentDockWidget* m_componentDockWidget;
 };
 
 #endif // MAINWINDOW_H

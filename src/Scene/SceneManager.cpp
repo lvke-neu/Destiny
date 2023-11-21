@@ -14,6 +14,7 @@
 #include "Graphics/RasterizerState.h"
 #include "Graphics/DepthStencilState.h"
 #include "Graphics/BlendState.h"
+#include "Graphics/Texture.h"
 #include <DirectXMath.h>
 
 namespace Destiny
@@ -94,6 +95,9 @@ namespace Destiny
 		auto blendState = Engine::GetInstance()->getGraphicsSystem()->createBlendState(data);
 		blendState->load(0);
 		m_visual3D->setBlendState(blendState);
+
+		auto tex = Engine::GetInstance()->getGraphicsSystem()->createTexture("assets://Texture/box_diffuse.png");
+		tex->load(0);
 	}
 
 	void SceneManager::uninitialize()

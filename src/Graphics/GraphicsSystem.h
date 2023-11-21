@@ -17,6 +17,9 @@ namespace Destiny
 	class BlendState;
 	class SamplerState;
 	class Visual3D;
+	class Texture;
+	class TextureLoader_dds;
+	class TextureLoader_color;
 	class GraphicsSystem
 	{
 	public:
@@ -47,6 +50,8 @@ namespace Destiny
 		std::shared_ptr<DepthStencilState> createDepthStencilState(std::shared_ptr<Blob> depthStencilStateDesc);
 		std::shared_ptr<BlendState> createBlendState(std::shared_ptr<Blob> blendStateDesc);
 		std::shared_ptr<SamplerState> createSamplerState(std::shared_ptr<Blob> samplerStateDesc);
+		std::shared_ptr<Texture> createTexture(const char* path);
+
 	private:
 		void createDeviceAndContext();
 		void createSwapChain(long long hwnd);
@@ -63,6 +68,8 @@ namespace Destiny
 		unsigned int m_4xMsaaQuality;
 		D3D11_VIEWPORT* m_viewport;
 		std::vector<std::shared_ptr<Visual3D>> m_visual3Ds;
+		std::shared_ptr<TextureLoader_dds> m_textureLoader_dds;
+		std::shared_ptr<TextureLoader_color> m_textureLoader_color;
 	};
 
 	inline ID3D11Device* GraphicsSystem::getDevice()
@@ -94,4 +101,5 @@ namespace Destiny
 	{
 		return m_viewport;
 	}
+
 }

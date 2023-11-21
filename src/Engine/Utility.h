@@ -28,3 +28,7 @@
 #define SAFE_RELEASE(p) { if ((p)) { (p)->Release(); (p) = nullptr; } }
 //*********************************************************************************************************************
 
+
+wchar_t* multiByteToWideChar(const std::string& pKey);
+
+char* wideCharToMultiByte(const wchar_t* pWCStrKey);

@@ -15,9 +15,12 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+    virtual void contextMenuEvent(QContextMenuEvent* event) override;
 private:
     Ui::MainWindow *ui;
     RenderWindow* m_renderWindow;
+    QMenu* m_menu;
 };
 
 #endif // MAINWINDOW_H

@@ -32,7 +32,9 @@ namespace Destiny
 
 	}
 
-	static std::shared_ptr<ConstantBuffer<DirectX::XMFLOAT4>> cb = nullptr;
+	static std::shared_ptr<ConstantBuffer<DirectX::XMMATRIX>> cbWorld = nullptr;
+	static std::shared_ptr<ConstantBuffer<DirectX::XMMATRIX>> cbView = nullptr;
+	static std::shared_ptr<ConstantBuffer<DirectX::XMMATRIX>> cbProj = nullptr;
 	static std::shared_ptr<Texture> tex = nullptr;
 	static std::shared_ptr<SamplerState> samplerState = nullptr;
 	void SceneManager::initialize()
@@ -41,41 +43,90 @@ namespace Destiny
 
 		std::shared_ptr<Blob> data = nullptr;
 
-		DirectX::XMFLOAT3 vertices[3] =
+		using namespace DirectX;
+		struct VertexPosColor
 		{
-			{ -0.5f, 0.0f, 0.5f },
-			{ 0.5f,  0.0f, 0.5f },
-			{ 0.0f,  0.5f, 0.5f }
+			XMFLOAT3 position;
+			XMFLOAT3 normal;
+			XMFLOAT2 texcoord;
 		};
-		data.reset(new Blob(3 * sizeof(DirectX::XMFLOAT3)));
+		VertexPosColor vertices[24];
+		vertices[0].position = XMFLOAT3(1, -1, -1);
+		vertices[1].position = XMFLOAT3(1, 1, -1);
+		vertices[2].position = XMFLOAT3(1, 1, 1);
+		vertices[3].position = XMFLOAT3(1, -1, 1);
+		vertices[4].position = XMFLOAT3(-1, -1, 1);
+		vertices[5].position = XMFLOAT3(-1, 1, 1);
+		vertices[6].position = XMFLOAT3(-1, 1, -1);
+		vertices[7].position = XMFLOAT3(-1, -1, -1);
+		vertices[8].position = XMFLOAT3(-1, 1, -1);
+		vertices[9].position = XMFLOAT3(-1, 1, 1);
+		vertices[10].position = XMFLOAT3(1, 1, 1);
+		vertices[11].position = XMFLOAT3(1, 1, -1);
+		vertices[12].position = XMFLOAT3(1, -1, -1);
+		vertices[13].position = XMFLOAT3(1, -1, 1);
+		vertices[14].position = XMFLOAT3(-1, -1, 1);
+		vertices[15].position = XMFLOAT3(-1, -1, -1);
+		vertices[16].position = XMFLOAT3(1, -1, 1);
+		vertices[17].position = XMFLOAT3(1, 1, 1);
+		vertices[18].position = XMFLOAT3(-1, 1, 1);
+		vertices[19].position = XMFLOAT3(-1, -1, 1);
+		vertices[20].position = XMFLOAT3(-1, -1, -1);
+		vertices[21].position = XMFLOAT3(-1, 1, -1);
+		vertices[22].position = XMFLOAT3(1, 1, -1);
+		vertices[23].position = XMFLOAT3(1, -1, -1);
+		for (UINT i = 0; i < 4; ++i)
+		{
+			vertices[i].normal = XMFLOAT3(1.0f, 0.0f, 0.0f);
+			vertices[i + 4].normal = XMFLOAT3(-1.0f, 0.0f, 0.0f);
+			vertices[i + 8].normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
+			vertices[i + 12].normal = XMFLOAT3(0.0f, -1.0f, 0.0f);
+			vertices[i + 16].normal = XMFLOAT3(0.0f, 0.0f, 1.0f);
+			vertices[i + 20].normal = XMFLOAT3(0.0f, 0.0f, -1.0f);
+		}		
+		for (UINT i = 0; i < 6; ++i)
+		{
+			vertices[i * 4].texcoord = XMFLOAT2(0.0f, 1.0f);
+			vertices[i * 4 + 1].texcoord = XMFLOAT2(0.0f, 0.0f);
+			vertices[i * 4 + 2].texcoord = XMFLOAT2(1.0f, 0.0f);
+			vertices[i * 4 + 3].texcoord = XMFLOAT2(1.0f, 1.0f);
+		}
+		data.reset(new Blob(24 * sizeof(VertexPosColor)));
 		memcpy_s(data->getData(), data->getLength(), vertices, data->getLength());
-		auto vertexBuffer = Engine::GetInstance()->getGraphicsSystem()->createVertexBuffer(sizeof(DirectX::XMFLOAT3), 0, data);
+		auto vertexBuffer = Engine::GetInstance()->getGraphicsSystem()->createVertexBuffer(sizeof(VertexPosColor), 0, data);
 		vertexBuffer->load(0);
 		m_visual3D->setVertexBuffer(vertexBuffer);
 
-		unsigned int indices[3] =
-		{
-			0, 2, 1
-		};
-		data.reset(new Blob(sizeof(unsigned int) * 3));
+		unsigned int indices[36] = {
+						0, 1, 2, 2, 3, 0,		
+						4, 5, 6, 6, 7, 4,		
+						8, 9, 10, 10, 11, 8,	
+						12, 13, 14, 14, 15, 12,	
+						16, 17, 18, 18, 19, 16, 
+						20, 21, 22, 22, 23, 20	
+					};
+		data.reset(new Blob(sizeof(unsigned int) * 36));
 		memcpy_s(data->getData(), data->getLength(), indices, data->getLength());
 		auto indexBuffer = Engine::GetInstance()->getGraphicsSystem()->createIndexBuffer(DXGI_FORMAT_R32_UINT, data);
 		indexBuffer->load(0);
 		m_visual3D->setIndexBuffer(indexBuffer);
 
-		D3D11_INPUT_ELEMENT_DESC inputElements[1] =
+
+		D3D11_INPUT_ELEMENT_DESC inputElements[3] =
 		{
-			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 		};
-		data.reset(new Blob(sizeof(D3D11_INPUT_ELEMENT_DESC)));
+		data.reset(new Blob(3 * sizeof(D3D11_INPUT_ELEMENT_DESC)));
 		memcpy_s(data->getData(), data->getLength(), inputElements, data->getLength());
-		auto inputLayout = Engine::GetInstance()->getGraphicsSystem()->createInputLayout(data, "assets://HLSL/Triangle_VS.cso");
+		auto inputLayout = Engine::GetInstance()->getGraphicsSystem()->createInputLayout(data, "assets://HLSL/Basic_VS.cso");
 		inputLayout->load(0);
 		m_visual3D->setInputLayout(inputLayout);
 
-		auto vertexShader = Engine::GetInstance()->getGraphicsSystem()->createVertexShader("assets://HLSL/Triangle_VS.cso");
+		auto vertexShader = Engine::GetInstance()->getGraphicsSystem()->createVertexShader("assets://HLSL/Basic_VS.cso");
 		vertexShader->load(0);
-		auto pixelShader = Engine::GetInstance()->getGraphicsSystem()->createPixelShader("assets://HLSL/Triangle_PS.cso");
+		auto pixelShader = Engine::GetInstance()->getGraphicsSystem()->createPixelShader("assets://HLSL/Basic_PS.cso");
 		pixelShader->load(0);
 		m_visual3D->setVertexShader(vertexShader);
 		m_visual3D->setPixelShader(pixelShader);
@@ -101,7 +152,7 @@ namespace Destiny
 		blendState->load(0);
 		m_visual3D->setBlendState(blendState);
 
-		tex = Engine::GetInstance()->getGraphicsSystem()->createTexture("assets://Texture/brick.dds");
+		tex = Engine::GetInstance()->getGraphicsSystem()->createTexture("assets://Texture/box_diffuse.png");
 		tex->load(0);
 
 		data.reset(new Blob(sizeof(D3D11_SAMPLER_DESC)));
@@ -109,8 +160,15 @@ namespace Destiny
 		samplerState = Engine::GetInstance()->getGraphicsSystem()->createSamplerState(data);
 		samplerState->load(0);
 
-		cb = std::make_shared<ConstantBuffer<DirectX::XMFLOAT4>>();
-		cb->update({ 1.0f,1.0f,0.0f,1.0f });
+		cbWorld = std::make_shared<ConstantBuffer<XMMATRIX>>();
+		cbWorld->update(XMMatrixTranspose(XMMatrixTranslation(0.0f, 0.0f, 5.0f)));
+
+		cbView = std::make_shared<ConstantBuffer<XMMATRIX>>();
+		cbView->update(XMMatrixTranspose(XMMatrixIdentity()));
+
+		cbProj = std::make_shared<ConstantBuffer<DirectX::XMMATRIX>>();
+		cbProj->update(XMMatrixTranspose(XMMatrixPerspectiveFovLH(XM_PIDIV2, 438.0f / 600.0f, 1.0f, 1000.0f)));
+
 		m_visual3D->setAdditionalCommands(std::bind(&SceneManager::additionalCommands, this));
 	}
 
@@ -134,7 +192,9 @@ namespace Destiny
 			return;
 		}
 
-		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetConstantBuffers(0, 1, cb->getConstantBuffer());
+		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->VSSetConstantBuffers(0, 1, cbView->getConstantBuffer());
+		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->VSSetConstantBuffers(1, 1, cbProj->getConstantBuffer());
+		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->VSSetConstantBuffers(2, 1, cbWorld->getConstantBuffer());
 		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetSamplers(0, 1, samplerState->getSamplerState());
 		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetShaderResources(0, 1, tex->getShaderResourceView());
 

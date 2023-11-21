@@ -1,29 +1,27 @@
 
-cbuffer ConstantBuffer : register(b0)
+cbuffer cbView : register(b0)
 {
-	matrix g_View;  
+	matrix g_view;  
 }
 
-cbuffer ConstantBuffer : register(b1)
+cbuffer cbProj : register(b1)
 {
-	matrix g_Proj;
+	matrix g_proj;
 }
 
-cbuffer ConstantBuffer : register(b2)
+cbuffer cbWorld : register(b2)
 {
-	matrix g_World;
-	matrix g_InvTranspose;
+	matrix g_world;
 }
+
 struct VertexIn
 {
-	float3 posL : POSITION;
-	float3 normalL : NORMAL;
-	float2 tex : TEXCOORD;
+	float3 positionL : POSITION;
+	float3 normal : NORMAL;
+	float2 texcoord : TEXCOORD;
 };
 struct VertexOut
 {
-	float4 posH : SV_POSITION;
-	float3 posW : POSITION;     
-	float3 normalW : NORMAL;
-	float2 tex : TEXCOORD;
+	float4 positionH : SV_POSITION;
+	float2 texcoord : TEXCOORD;
 };

@@ -30,6 +30,7 @@ namespace Destiny
 
 			if (!m_blobHolder->isLoadingSucceed())
 			{
+				LOG_ERROR("VertexShader load failed : {0}", m_blobHolder->getPath());
 				loadFailed__();
 				return;
 			}
@@ -45,11 +46,13 @@ namespace Destiny
 				}
 				else
 				{
+					LOG_ERROR("VertexShader load failed : {0}", m_blobHolder->getPath());
 					loadFailed__();
 				}
 			}
 			else
 			{
+				LOG_ERROR("VertexShader load failed : {0}", m_blobHolder->getPath());
 				loadFailed__();
 				return;
 			}

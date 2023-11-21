@@ -22,6 +22,11 @@ namespace Destiny
 
 	}
 
+	void Visual3D::setAdditionalCommands(std::function<void(void)> additionalCommands)
+	{
+		m_additionalCommands = additionalCommands;
+	}
+
 	void Visual3D::draw()
 	{
 		if (
@@ -56,6 +61,9 @@ namespace Destiny
 		immediateContext->OMSetRenderTargets(1, graphicsSystem->getRenderTargetView(), graphicsSystem->getDepthStencilView());
 		immediateContext->OMSetDepthStencilState(m_depthStencilState->getDepthStencilState(), 0);
 		immediateContext->OMSetBlendState(m_blendState->getBlendState(), nullptr, 0xFFFFFFFF);
+
+		if(m_additionalCommands)
+			m_additionalCommands();
 
 		immediateContext->DrawIndexed(m_indexBuffer->getCount(), 0, 0);
 	}

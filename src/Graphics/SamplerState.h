@@ -13,13 +13,13 @@ namespace Destiny
 		virtual ~SamplerState();
 	public:
 		virtual void doLoad() override;
-		ID3D11SamplerState* getSamplerState();
+		ID3D11SamplerState** getSamplerState();
 	private:
 		ID3D11SamplerState* m_samplerState;
 	};
 
-	inline ID3D11SamplerState* SamplerState::getSamplerState()
+	inline ID3D11SamplerState** SamplerState::getSamplerState()
 	{
-		return m_samplerState;
+		return &m_samplerState;
 	}
 }

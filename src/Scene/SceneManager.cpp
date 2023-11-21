@@ -15,6 +15,8 @@
 #include "Graphics/DepthStencilState.h"
 #include "Graphics/BlendState.h"
 #include "Graphics/Texture.h"
+#include "Graphics/ConstantBuffer.h"
+#include "Graphics/SamplerState.h"
 #include <DirectXMath.h>
 
 namespace Destiny
@@ -30,6 +32,9 @@ namespace Destiny
 
 	}
 
+	static std::shared_ptr<ConstantBuffer<DirectX::XMFLOAT4>> cb = nullptr;
+	static std::shared_ptr<Texture> tex = nullptr;
+	static std::shared_ptr<SamplerState> samplerState = nullptr;
 	void SceneManager::initialize()
 	{
 		m_visual3D = std::make_shared<Visual3D>();
@@ -96,8 +101,17 @@ namespace Destiny
 		blendState->load(0);
 		m_visual3D->setBlendState(blendState);
 
-		auto tex = Engine::GetInstance()->getGraphicsSystem()->createTexture("assets://Texture/box_diffuse.png");
+		tex = Engine::GetInstance()->getGraphicsSystem()->createTexture("assets://Texture/box_diffuse.png");
 		tex->load(0);
+
+		data.reset(new Blob(sizeof(D3D11_SAMPLER_DESC)));
+		memcpy_s(data->getData(), data->getLength(), &SamplerState::Default_SamplerState_Desc, data->getLength());
+		samplerState = Engine::GetInstance()->getGraphicsSystem()->createSamplerState(data);
+		samplerState->load(0);
+
+		cb = std::make_shared<ConstantBuffer<DirectX::XMFLOAT4>>();
+		cb->update({ 1.0f,1.0f,0.0f,1.0f });
+		m_visual3D->setAdditionalCommands(std::bind(&SceneManager::additionalCommands, this));
 	}
 
 	void SceneManager::uninitialize()
@@ -108,5 +122,13 @@ namespace Destiny
 	void SceneManager::update()
 	{
 		Engine::GetInstance()->getGraphicsSystem()->commitVisual3D(m_visual3D);
+	}
+
+	void SceneManager::additionalCommands()
+	{
+		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetConstantBuffers(0, 1, cb->getConstantBuffer());
+		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetSamplers(0, 1, samplerState->getSamplerState());
+		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetShaderResources(0, 1, tex->getShaderResourceView());
+
 	}
 }

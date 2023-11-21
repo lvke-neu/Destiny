@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <functional>
 
 namespace Destiny
 {
@@ -18,6 +19,7 @@ namespace Destiny
 		~Visual3D();
 	public:
 		void draw();
+		void setAdditionalCommands(std::function<void(void)> additionalCommands);
 	public:
 		void setVertexBuffer(std::shared_ptr<VertexBuffer> vertexBuffer);
 		void setIndexBuffer(std::shared_ptr<IndexBuffer> indexBuffer);
@@ -36,6 +38,8 @@ namespace Destiny
 		std::shared_ptr<RasterizerState> m_rasterizerState;
 		std::shared_ptr<DepthStencilState> m_depthStencilState;
 		std::shared_ptr<BlendState> m_blendState;
+
+		std::function<void(void)> m_additionalCommands;
 	};
 
 	inline void Visual3D::setVertexBuffer(std::shared_ptr<VertexBuffer> vertexBuffer)

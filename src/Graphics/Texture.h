@@ -11,8 +11,15 @@ namespace Destiny
 	public:
 		Texture();
 		virtual ~Texture();
+	public:
+		ID3D11ShaderResourceView** getShaderResourceView();
 	private:
 		ID3D11Resource* m_resource;
 		ID3D11ShaderResourceView* m_shaderResourceView;
 	};
+
+	inline ID3D11ShaderResourceView** Texture::getShaderResourceView()
+	{
+		return &m_shaderResourceView;
+	}
 }

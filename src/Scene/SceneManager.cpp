@@ -101,7 +101,7 @@ namespace Destiny
 		blendState->load(0);
 		m_visual3D->setBlendState(blendState);
 
-		tex = Engine::GetInstance()->getGraphicsSystem()->createTexture("assets://Texture/box_diffuse.png");
+		tex = Engine::GetInstance()->getGraphicsSystem()->createTexture("assets://Texture/brick.dds");
 		tex->load(0);
 
 		data.reset(new Blob(sizeof(D3D11_SAMPLER_DESC)));
@@ -126,6 +126,14 @@ namespace Destiny
 
 	void SceneManager::additionalCommands()
 	{
+		if (
+			!samplerState || !samplerState->isLoadingSucceed() ||
+			!tex || !tex->isLoadingSucceed()
+			)
+		{
+			return;
+		}
+
 		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetConstantBuffers(0, 1, cb->getConstantBuffer());
 		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetSamplers(0, 1, samplerState->getSamplerState());
 		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetShaderResources(0, 1, tex->getShaderResourceView());

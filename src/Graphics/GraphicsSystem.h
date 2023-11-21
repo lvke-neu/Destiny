@@ -18,8 +18,7 @@ namespace Destiny
 	class SamplerState;
 	class Visual3D;
 	class Texture;
-	class TextureLoader_dds;
-	class TextureLoader_color;
+	class TextureLoader;
 	class GraphicsSystem
 	{
 	public:
@@ -68,8 +67,7 @@ namespace Destiny
 		unsigned int m_4xMsaaQuality;
 		D3D11_VIEWPORT* m_viewport;
 		std::vector<std::shared_ptr<Visual3D>> m_visual3Ds;
-		std::shared_ptr<TextureLoader_dds> m_textureLoader_dds;
-		std::shared_ptr<TextureLoader_color> m_textureLoader_color;
+		std::shared_ptr<TextureLoader> m_textureLoader;
 	};
 
 	inline ID3D11Device* GraphicsSystem::getDevice()

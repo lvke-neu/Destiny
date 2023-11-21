@@ -17,8 +17,7 @@
 #include "BlendState.h"
 #include "SamplerState.h"
 #include "Visual3D.h"
-#include "TextureLoader_dds.h"
-#include "TextureLoader_color.h"
+#include "TextureLoader.h"
 #include <d3d11.h>
 
 namespace Destiny
@@ -33,7 +32,7 @@ namespace Destiny
 		m_pDepthStencilView(nullptr),
 		m_4xMsaaQuality(0),
 		m_viewport(new D3D11_VIEWPORT),
-		m_textureLoader_dds(nullptr)
+		m_textureLoader(nullptr)
 	{
 
 	}
@@ -59,8 +58,7 @@ namespace Destiny
 
 		Engine::GetInstance()->getEventSystem()->registerEvent(EventType::WindowResize, std::bind(&GraphicsSystem::onResize, this, std::placeholders::_1));
 
-		m_textureLoader_dds = std::make_shared<TextureLoader_dds>();
-		m_textureLoader_color = std::make_shared<TextureLoader_color>();
+		m_textureLoader = std::make_shared<TextureLoader>();
 	}
 
 	void GraphicsSystem::uninitialize()
@@ -224,36 +222,11 @@ namespace Destiny
 	std::shared_ptr<Texture> GraphicsSystem::createTexture(const char* path)
 	{
 		std::string str(path);
-		size_t prefix = str.find("assets://");
-		if (prefix == std::string::npos)
-		{
-			return nullptr;
-		}
-		str = str.substr(prefix + 9);
-
-		char buffer[MAX_PATH];
-		GetModuleFileNameA(NULL, buffer, sizeof(buffer));
-
-		std::string exePath = buffer;
-		auto pos = exePath.find("Destiny");
-		if (pos == exePath.npos)
-		{
-			return nullptr;
-		}
-		exePath = exePath.substr(0, pos + 7);
-
-		str = exePath + "\\assets\\" + str;
-
 		std::shared_ptr<Blob> blob = std::make_shared<Blob>(str.size());
 		memcpy_s(blob->getData(), blob->getLength(), str.data(), blob->getLength());
 		std::shared_ptr<BlobHolder> blobHolder = std::make_shared<BlobHolder>();
 		blobHolder->loadSucceeded__(blob);
-
-		if (str.substr(str.rfind(".") + 1, 3) == "dds")
-		{
-			return m_textureLoader_dds->createAsset(blobHolder);
-		}
-		return m_textureLoader_color->createAsset(blobHolder);
+		return m_textureLoader->createAsset(blobHolder);
 	}
 
 	void GraphicsSystem::onResize(void* data)

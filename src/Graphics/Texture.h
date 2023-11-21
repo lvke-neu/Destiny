@@ -6,8 +6,7 @@ namespace Destiny
 {
 	class Texture : public Asset
 	{
-		friend class TextureLoader_color;
-		friend class TextureLoader_dds;
+		friend class TextureLoader;
 	public:
 		Texture();
 		virtual ~Texture();

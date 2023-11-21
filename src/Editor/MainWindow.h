@@ -8,7 +8,7 @@ class MainWindow;
 }
 
 class RenderWindow;
-class NodeDockWidget;
+class SceneDockWidget;
 class ComponentDockWidget;
 class MainWindow : public QMainWindow
 {
@@ -21,7 +21,7 @@ public:
 private:
     Ui::MainWindow *ui;
     RenderWindow* m_renderWindow;
-	NodeDockWidget* m_nodeDockWidget;
+	SceneDockWidget* m_sceneDockWidget;
 	ComponentDockWidget* m_componentDockWidget;
 };
 

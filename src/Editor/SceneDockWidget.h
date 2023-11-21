@@ -2,13 +2,13 @@
 #include <QDockWidget>
 #include <QMenu>
 
-class NodeDockWidget : public QDockWidget
+class SceneDockWidget : public QDockWidget
 {
 	Q_OBJECT
 
 public:
-	NodeDockWidget(const QString &title, QWidget *parent = nullptr);
-	~NodeDockWidget();
+	SceneDockWidget(QWidget *parent = nullptr);
+	~SceneDockWidget();
 public:
 	virtual void contextMenuEvent(QContextMenuEvent* event) override;
 private:

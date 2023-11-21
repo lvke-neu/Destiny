@@ -7,7 +7,7 @@ class ComponentDockWidget : public QDockWidget
 	Q_OBJECT
 
 public:
-	ComponentDockWidget(const QString &title, QWidget *parent = nullptr);
+	ComponentDockWidget(QWidget *parent = nullptr);
 	~ComponentDockWidget();
 };
 

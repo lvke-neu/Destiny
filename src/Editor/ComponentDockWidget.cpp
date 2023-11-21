@@ -2,7 +2,7 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 
-ComponentDockWidget::ComponentDockWidget(const QString &title, QWidget *parent /*= nullptr*/) : QDockWidget(title, parent)
+ComponentDockWidget::ComponentDockWidget(QWidget *parent /*= nullptr*/) : QDockWidget("Component", parent)
 {
 	QWidget* widget = new QWidget();
 	QVBoxLayout* layout = new QVBoxLayout(widget);

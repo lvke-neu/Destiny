@@ -12,7 +12,9 @@ namespace Destiny
 {
 	TextureLoader::TextureLoader()
 	{
-
+		ID3D11Resource* resource = nullptr;
+		DirectX::CreateDDSTextureFromFile(Engine::GetInstance()->getGraphicsSystem()->getDevice(), L"", &resource, nullptr);
+		DirectX::CreateWICTextureFromFile(Engine::GetInstance()->getGraphicsSystem()->getDevice(), L"", &resource, nullptr);
 	}
 
 	TextureLoader::~TextureLoader()

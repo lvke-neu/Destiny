@@ -153,8 +153,8 @@ namespace Destiny
 		blendState->load(0);
 		m_visual3D->setBlendState(blendState);
 
-		tex = Engine::GetInstance()->getGraphicsSystem()->createTexture("assets://Texture/box_diffuse.png");
-		tex->load(0);
+		tex = Engine::GetInstance()->getGraphicsSystem()->createTexture("assets://Texture/brick.dds");
+		tex->load();
 
 		data.reset(new Blob(sizeof(D3D11_SAMPLER_DESC)));
 		memcpy_s(data->getData(), data->getLength(), &SamplerState::Default_SamplerState_Desc, data->getLength());

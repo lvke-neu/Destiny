@@ -1,7 +1,13 @@
 #pragma once
 #include <QDockWidget>
-#include <QMenu>
 
+class QMenu;
+class QTreeWidget;
+class QTreeWidgetItem;
+namespace Destiny
+{
+	class Node3D;
+}
 class SceneDockWidget : public QDockWidget
 {
 	Q_OBJECT
@@ -11,6 +17,10 @@ public:
 	~SceneDockWidget();
 public:
 	virtual void contextMenuEvent(QContextMenuEvent* event) override;
+signals:
+	void chooseNode(QString uuid);
+private:
+	void trace(QTreeWidget* treeWidget, QTreeWidgetItem* parentItem, std::shared_ptr<Destiny::Node3D> parentNode);
 private:
 	QMenu* m_menu;
 };

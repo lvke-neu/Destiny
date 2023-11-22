@@ -1,8 +1,10 @@
 #include "Node3D.h"
+#include "Engine/Utility.h"
 
 namespace Destiny
 {
 	Node3D::Node3D() : 
+		m_uuid(Utility::GenerateUUID()),
 		m_name(""), 
 		m_parent(nullptr)
 	{

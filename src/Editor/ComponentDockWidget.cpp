@@ -1,5 +1,5 @@
 #include "ComponentDockWidget.h"
-#include <QPushButton>
+#include <QLabel>
 #include <QVBoxLayout>
 
 ComponentDockWidget::ComponentDockWidget(QWidget *parent /*= nullptr*/) : QDockWidget("Component", parent)
@@ -7,9 +7,9 @@ ComponentDockWidget::ComponentDockWidget(QWidget *parent /*= nullptr*/) : QDockW
 	QWidget* widget = new QWidget();
 	QVBoxLayout* layout = new QVBoxLayout(widget);
 
-	QPushButton* button = new QPushButton("add component", widget);
-	layout->addWidget(button);
-
+	m_label = new QLabel("null", widget);
+	layout->addWidget(m_label);
+	
 	this->setWidget(widget);
 
 }
@@ -18,4 +18,10 @@ ComponentDockWidget::~ComponentDockWidget()
 {
 
 }
+
+void ComponentDockWidget::onChooseNode(QString uuid)
+{
+	m_label->setText(uuid);
+}
+
 

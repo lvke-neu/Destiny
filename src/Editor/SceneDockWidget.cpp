@@ -1,4 +1,5 @@
 #include "SceneDockWidget.h"
+#include <QMenu>
 #include <QTreeWidget>
 #include <QVBoxLayout>
 #include <QTreeWidgetItem>
@@ -9,14 +10,20 @@
 
 using namespace Destiny;
 
-static void trace(QTreeWidgetItem* parentItem, std::shared_ptr<Node3D> parentNode)
+void SceneDockWidget::trace(QTreeWidget* treeWidget,QTreeWidgetItem* parentItem, std::shared_ptr<Node3D> parentNode)
 {
 	QTreeWidgetItem* item = new QTreeWidgetItem(parentItem);
 	item->setText(0, parentNode->getName().c_str());
+	item->setData(0, 1, parentNode->getUuid().c_str());
+	connect(treeWidget, &QTreeWidget::itemClicked, this,
+		[this](QTreeWidgetItem* item)
+		{
+			emit chooseNode(item->data(0, 1).toString());
+		});
 
 	for (const auto& node : parentNode->getChilds())
 	{
-		trace(item, node);
+		trace(treeWidget, item, node);
 	}
 }
 
@@ -46,10 +53,16 @@ SceneDockWidget::SceneDockWidget(QWidget *parent /*= nullptr*/) : QDockWidget("S
 
 	QTreeWidgetItem* rootItem = new QTreeWidgetItem(treeWidget);
 	rootItem->setText(0, rootNode->getName().c_str());
-	
+	rootItem->setData(0, 1, rootNode->getUuid().c_str());
+	connect(treeWidget, &QTreeWidget::itemClicked, this,
+		[this](QTreeWidgetItem* item)
+		{
+			emit chooseNode(item->data(0, 1).toString());
+		});
+
 	for (const auto& node : rootNode->getChilds())
 	{
-		trace(rootItem, node);
+		trace(treeWidget, rootItem, node);
 	}
 
 }

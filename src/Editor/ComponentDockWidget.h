@@ -2,6 +2,7 @@
 #include <QDockWidget>
 #include <QMenu>
 
+class QLabel;
 class ComponentDockWidget : public QDockWidget
 {
 	Q_OBJECT
@@ -9,6 +10,10 @@ class ComponentDockWidget : public QDockWidget
 public:
 	ComponentDockWidget(QWidget *parent = nullptr);
 	~ComponentDockWidget();
+public slots:
+	void onChooseNode(QString uuid);
+private:
+	QLabel* m_label;
 };
 
 

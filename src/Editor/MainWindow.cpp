@@ -18,6 +18,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	m_componentDockWidget = new ComponentDockWidget(this);
 	this->addDockWidget(Qt::RightDockWidgetArea, m_componentDockWidget);
+
+	connect(m_sceneDockWidget, &SceneDockWidget::chooseNode, m_componentDockWidget, &ComponentDockWidget::onChooseNode);
 }
 
 MainWindow::~MainWindow()

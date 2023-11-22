@@ -14,14 +14,21 @@ namespace Destiny
 		void addToParent(std::shared_ptr<Node3D> parent);
 		void removeFromParent();
 	public:
+		std::string getUuid();
 		std::string getName();
 		void setName(const std::string& name);
 		std::vector<std::shared_ptr<Node3D>> getChilds();
 	private:
+		std::string m_uuid;
 		std::string m_name;
 		std::shared_ptr<Node3D> m_parent;
 		std::vector<std::shared_ptr<Node3D>> m_childs;
 	};
+
+	inline std::string Node3D::getUuid()
+	{
+		return m_uuid;
+	}
 
 	inline std::string Node3D::getName()
 	{

@@ -2,6 +2,23 @@
 #include <QTreeWidget>
 #include <QVBoxLayout>
 #include <QTreeWidgetItem>
+#include "Engine/Engine.h"
+#include "Scene/SceneManager.h"
+#include "Scene/Scene3D.h"
+#include "Scene/Node3D.h"
+
+using namespace Destiny;
+
+static void trace(QTreeWidgetItem* parentItem, std::shared_ptr<Node3D> parentNode)
+{
+	QTreeWidgetItem* item = new QTreeWidgetItem(parentItem);
+	item->setText(0, parentNode->getName().c_str());
+
+	for (const auto& node : parentNode->getChilds())
+	{
+		trace(item, node);
+	}
+}
 
 SceneDockWidget::SceneDockWidget(QWidget *parent /*= nullptr*/) : QDockWidget("Scene3D", parent)
 {
@@ -25,23 +42,16 @@ SceneDockWidget::SceneDockWidget(QWidget *parent /*= nullptr*/) : QDockWidget("S
 	m_menu->addAction(ac3);
 	m_menu->addAction(ac4);
 
-	QTreeWidgetItem* root = new QTreeWidgetItem(treeWidget);
-	root->setText(0, "root");
+	auto rootNode = Engine::GetInstance()->getSceneManager()->getScene3D()->getRootNode();
 
-	QTreeWidgetItem* node1 = new QTreeWidgetItem(root);
-	node1->setText(0, "node1");
-	QTreeWidgetItem* node11 = new QTreeWidgetItem(node1);
-	node11->setText(0, "node11");
-	QTreeWidgetItem* node12 = new QTreeWidgetItem(node1);
-	node12->setText(0, "node12");
-	QTreeWidgetItem* node13 = new QTreeWidgetItem(node1);
-	node13->setText(0, "node1");
+	QTreeWidgetItem* rootItem = new QTreeWidgetItem(treeWidget);
+	rootItem->setText(0, rootNode->getName().c_str());
+	
+	for (const auto& node : rootNode->getChilds())
+	{
+		trace(rootItem, node);
+	}
 
-	QTreeWidgetItem* node2 = new QTreeWidgetItem(root);
-	node2->setText(0, "node2");
-
-	QTreeWidgetItem* node3 = new QTreeWidgetItem(root);
-	node3->setText(0, "node3");
 }
 
 SceneDockWidget::~SceneDockWidget()

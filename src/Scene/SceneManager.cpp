@@ -1,5 +1,6 @@
 #include "SceneManager.h"
 #include "Graphics/Visual3D.h"
+#include "Scene3D.h"
 #include "Engine/Engine.h"
 #include "Graphics/GraphicsSystem.h"
 
@@ -24,7 +25,7 @@ namespace Destiny
 	SceneManager::SceneManager() :
 		m_visual3D(nullptr)
 	{
-
+		m_scene3D = std::make_shared<Scene3D>();
 	}
 
 	SceneManager::~SceneManager()

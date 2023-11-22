@@ -11,7 +11,7 @@ namespace Destiny
 
 	Node3D::~Node3D()
 	{
-		removeFromParent();
+
 	}
 
 	void Node3D::addToParent(std::shared_ptr<Node3D> parent)
@@ -28,7 +28,7 @@ namespace Destiny
 		}
 
 		removeFromParent();
-		parent->m_childs.emplace_back(this);
+		parent->m_childs.emplace_back(shared_from_this());
 		m_parent = parent;
 	}
 

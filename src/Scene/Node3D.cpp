@@ -49,4 +49,13 @@ namespace Destiny
 
 		m_parent.reset();
 	}
+
+	RTTR_REGISTRATION
+	{
+		rttr::registration::class_<Node3D>("Node3D")
+			.constructor<>()
+			(
+				rttr::policy::ctor::as_raw_ptr
+			);
+	}
 }

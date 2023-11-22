@@ -35,7 +35,11 @@ source_group("assets\\Texture" FILES ${ASSETS_TEXTURE})
 
 include_directories("3rdparty/spdlog/include")
 include_directories("3rdparty/rapidxml")
+include_directories("3rdparty/rttr/include")
 include_directories("src/")
+
+link_directories("3rdparty/rttr/lib/")
+link_libraries(rttr_core.lib)
 
 find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 

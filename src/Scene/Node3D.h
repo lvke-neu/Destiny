@@ -2,11 +2,13 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <rttr/registration>
 
 namespace Destiny
 {
 	class Node3D : public std::enable_shared_from_this<Node3D>
 	{
+		RTTR_ENABLE();
 	public:
 		Node3D();
 		~Node3D();

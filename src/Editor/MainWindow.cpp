@@ -20,6 +20,8 @@ MainWindow::MainWindow(QWidget *parent) :
 	this->addDockWidget(Qt::RightDockWidgetArea, m_componentDockWidget);
 
 	connect(m_sceneDockWidget, &SceneDockWidget::chooseNode, m_componentDockWidget, &ComponentDockWidget::onChooseNode);
+
+	this->setWindowState(Qt::WindowMaximized);
 }
 
 MainWindow::~MainWindow()

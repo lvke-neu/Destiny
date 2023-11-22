@@ -1,8 +1,6 @@
 #pragma once
 #include <QDockWidget>
-#include <QMenu>
 
-class QLabel;
 class ComponentDockWidget : public QDockWidget
 {
 	Q_OBJECT
@@ -12,8 +10,6 @@ public:
 	~ComponentDockWidget();
 public slots:
 	void onChooseNode(QString uuid);
-private:
-	QLabel* m_label;
 };
 
 

@@ -60,7 +60,7 @@ namespace Destiny
 
 		if (path.substr(path.rfind(".") + 1, 3) == "dds")
 		{
-			HRESULT hr = DirectX::CreateDDSTextureFromFile(Engine::GetInstance()->getGraphicsSystem()->getDevice(), multiByteToWideChar(path), &((Texture*)asset.get())->m_resource, &((Texture*)asset.get())->m_shaderResourceView);
+			HRESULT hr = DirectX::CreateDDSTextureFromFile(Engine::GetInstance()->getGraphicsSystem()->getDevice(), Utility::MultiByte2WideChar(path).c_str(), &((Texture*)asset.get())->m_resource, &((Texture*)asset.get())->m_shaderResourceView);
 			if (SUCCEEDED(hr))
 			{
 				asset->loadSucceeded__();
@@ -73,7 +73,7 @@ namespace Destiny
 		}
 		else
 		{
-			HRESULT hr = DirectX::CreateWICTextureFromFile(Engine::GetInstance()->getGraphicsSystem()->getDevice(), multiByteToWideChar(path), &((Texture*)asset.get())->m_resource, &((Texture*)asset.get())->m_shaderResourceView);
+			HRESULT hr = DirectX::CreateWICTextureFromFile(Engine::GetInstance()->getGraphicsSystem()->getDevice(), Utility::MultiByte2WideChar(path).c_str(), &((Texture*)asset.get())->m_resource, &((Texture*)asset.get())->m_shaderResourceView);
 			if (SUCCEEDED(hr))
 			{
 				asset->loadSucceeded__();

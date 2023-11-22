@@ -28,7 +28,17 @@
 #define SAFE_RELEASE(p) { if ((p)) { (p)->Release(); (p) = nullptr; } }
 //*********************************************************************************************************************
 
+namespace Destiny
+{
+	class Utility
+	{
+	public:
+		static std::wstring MultiByte2WideChar(const std::string& pKey);
+		static std::string WideChar2MultiByte(const std::wstring& pWCStrKey);
+		static std::string GenerateUUID();
+	};
+}
 
-wchar_t* multiByteToWideChar(const std::string& pKey);
 
-char* wideCharToMultiByte(const wchar_t* pWCStrKey);
+
+

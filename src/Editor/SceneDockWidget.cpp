@@ -3,13 +3,13 @@
 #include <QVBoxLayout>
 #include <QTreeWidgetItem>
 
-SceneDockWidget::SceneDockWidget(QWidget *parent /*= nullptr*/) : QDockWidget("Scene", parent)
+SceneDockWidget::SceneDockWidget(QWidget *parent /*= nullptr*/) : QDockWidget("Scene3D", parent)
 {
 	QWidget* widget = new QWidget();
 	QVBoxLayout* layout = new QVBoxLayout(widget);
 
 	QTreeWidget* treeWidget = new QTreeWidget(widget);
-	treeWidget->setHeaderLabel("Node");
+	treeWidget->setHeaderLabel("Node3D");
 	layout->addWidget(treeWidget);
 
 	this->setWidget(widget);

@@ -6,26 +6,26 @@ namespace Destiny
 	Scene3D::Scene3D() 
 	{
 		m_root = std::make_shared<Node3D>();
-		m_root->setName("root");
+		m_root->set_name("root");
 
 		auto node1 = std::make_shared<Node3D>();
-		node1->setName("node1");
+		node1->set_name("node1");
 		node1->addToParent(m_root);
 		auto node2 = std::make_shared<Node3D>();
-		node2->setName("node2");
+		node2->set_name("node2");
 		node2->addToParent(m_root);
 		auto node3 = std::make_shared<Node3D>();
-		node3->setName("node3");
+		node3->set_name("node3");
 		node3->addToParent(m_root);
 
 		auto node11 = std::make_shared<Node3D>();
-		node11->setName("node11");
+		node11->set_name("node11");
 		node11->addToParent(node1);
 		auto node12 = std::make_shared<Node3D>();
-		node12->setName("node12");
+		node12->set_name("node12");
 		node12->addToParent(node1);
 		auto node13 = std::make_shared<Node3D>();
-		node13->setName("node13");
+		node13->set_name("node13");
 		node13->addToParent(node1);
 	}
 }

@@ -13,15 +13,15 @@ using namespace Destiny;
 void SceneDockWidget::trace(QTreeWidget* treeWidget,QTreeWidgetItem* parentItem, std::shared_ptr<Node3D> parentNode)
 {
 	QTreeWidgetItem* item = new QTreeWidgetItem(parentItem);
-	item->setText(0, parentNode->getName().c_str());
-	item->setData(0, 1, parentNode->getUuid().c_str());
+	item->setText(0, parentNode->get_name().c_str());
+	item->setData(0, 1, QVariant::fromValue(parentNode));
 	connect(treeWidget, &QTreeWidget::itemClicked, this,
 		[this](QTreeWidgetItem* item)
 		{
-			emit chooseNode(item->data(0, 1).toString());
+			emit chooseNode(item->data(0, 1).value<std::shared_ptr<Destiny::Node3D>>());
 		});
 
-	for (const auto& node : parentNode->getChilds())
+	for (const auto& node : parentNode->get_childs())
 	{
 		trace(treeWidget, item, node);
 	}
@@ -52,15 +52,15 @@ SceneDockWidget::SceneDockWidget(QWidget *parent /*= nullptr*/) : QDockWidget("S
 	auto rootNode = Engine::GetInstance()->getSceneManager()->getScene3D()->getRootNode();
 
 	QTreeWidgetItem* rootItem = new QTreeWidgetItem(treeWidget);
-	rootItem->setText(0, rootNode->getName().c_str());
-	rootItem->setData(0, 1, rootNode->getUuid().c_str());
+	rootItem->setText(0, rootNode->get_name().c_str());
+	rootItem->setData(0, 1, QVariant::fromValue(rootNode));
 	connect(treeWidget, &QTreeWidget::itemClicked, this,
 		[this](QTreeWidgetItem* item)
 		{
-			emit chooseNode(item->data(0, 1).toString());
+			emit chooseNode(item->data(0, 1).value<std::shared_ptr<Destiny::Node3D>>());
 		});
 
-	for (const auto& node : rootNode->getChilds())
+	for (const auto& node : rootNode->get_childs())
 	{
 		trace(treeWidget, rootItem, node);
 	}

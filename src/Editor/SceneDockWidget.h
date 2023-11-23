@@ -1,5 +1,6 @@
 #pragma once
 #include <QDockWidget>
+#include <memory>
 
 class QMenu;
 class QTreeWidget;
@@ -18,7 +19,7 @@ public:
 public:
 	virtual void contextMenuEvent(QContextMenuEvent* event) override;
 signals:
-	void chooseNode(QString uuid);
+	void chooseNode(std::shared_ptr<Destiny::Node3D> node);
 private:
 	void trace(QTreeWidget* treeWidget, QTreeWidgetItem* parentItem, std::shared_ptr<Destiny::Node3D> parentNode);
 private:

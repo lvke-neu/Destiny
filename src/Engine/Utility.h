@@ -39,6 +39,30 @@ namespace Destiny
 	};
 }
 
+//*************************************************get set************************************************
+#define GET(TYPE, NAME)\
+	TYPE get_##NAME() const\
+	{\
+		return m_##NAME;\
+	}\
+
+#define SET(TYPE, NAME)\
+	void set_##NAME(TYPE NAME)\
+	{\
+		m_##NAME = NAME;\
+	}
+
+#define GET_SET(TYPE, NAME)\
+	GET(TYPE, NAME);\
+	SET(TYPE, NAME);
+
+#define GET_CLASS_NAME(NAME)\
+	virtual std::string get_class_name() const\
+	{\
+		return #NAME;\
+	}\
+//**********************************************************************************************************
+
 
 
 

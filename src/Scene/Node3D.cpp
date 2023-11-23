@@ -11,11 +11,6 @@ namespace Destiny
 
 	}
 
-	Node3D::~Node3D()
-	{
-
-	}
-
 	void Node3D::addToParent(std::shared_ptr<Node3D> parent)
 	{
 		if (!parent || shared_from_this() == parent)
@@ -56,6 +51,7 @@ namespace Destiny
 			.constructor<>()
 			(
 				rttr::policy::ctor::as_raw_ptr
-			);
+			)
+		    .property("name", &Node3D::get_name, &Node3D::set_name);
 	}
 }

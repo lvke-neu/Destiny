@@ -15,6 +15,7 @@ namespace Destiny
 		void addToParent(std::shared_ptr<Node3D> parent);
 		void removeFromParent();
 	public:
+		GET_CLASS_NAME(Node3D);
 		GET(std::string, uuid);
 		GET_SET(std::string, name);
 		GET(std::vector<std::shared_ptr<Node3D>>, childs);

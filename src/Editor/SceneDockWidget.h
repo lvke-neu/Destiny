@@ -1,14 +1,14 @@
 #pragma once
 #include <QDockWidget>
 #include <memory>
+#include "Scene/Node3D.h"
 
 class QMenu;
 class QTreeWidget;
 class QTreeWidgetItem;
-namespace Destiny
-{
-	class Node3D;
-}
+
+Q_DECLARE_METATYPE(std::shared_ptr<Destiny::Node3D>);
+
 class SceneDockWidget : public QDockWidget
 {
 	Q_OBJECT

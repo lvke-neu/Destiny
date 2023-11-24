@@ -4,11 +4,13 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QCheckBox>
+#include "Scene/Node3D.h"
+#include "ReflectWidget.h"
 
 ComponentDockWidget::ComponentDockWidget(QWidget *parent /*= nullptr*/) : QDockWidget("Component", parent)
 {
 	QWidget* widget = new QWidget();
-	QVBoxLayout* layout = new QVBoxLayout(widget);
+	m_layout = new QVBoxLayout(widget);
 
 	QTableWidget* tableWidget = new QTableWidget(widget);
 	tableWidget->setColumnCount(2);
@@ -17,7 +19,7 @@ ComponentDockWidget::ComponentDockWidget(QWidget *parent /*= nullptr*/) : QDockW
 	tableWidget->setHorizontalHeaderItem(1, new QTableWidgetItem("value"));
 	tableWidget->horizontalHeader()->setStretchLastSection(true);
 	//tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-	layout->addWidget(tableWidget);
+	m_layout->addWidget(tableWidget);
 	
 	tableWidget->setItem(0, 0, new QTableWidgetItem("hhh"));
 	tableWidget->setCellWidget(0, 1, new QPushButton(tableWidget));
@@ -34,9 +36,9 @@ ComponentDockWidget::~ComponentDockWidget()
 
 }
 
-void ComponentDockWidget::onChooseNode(QString uuid)
+void ComponentDockWidget::onChooseNode(std::shared_ptr<Destiny::Node3D> node)
 {
-
+	Destiny::ReflectWidget::Reflect(node, m_layout);
 }
 
 

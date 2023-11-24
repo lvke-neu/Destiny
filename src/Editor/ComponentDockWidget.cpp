@@ -19,7 +19,7 @@ ComponentDockWidget::ComponentDockWidget(QWidget *parent /*= nullptr*/) : QDockW
 	tableWidget->setHorizontalHeaderItem(1, new QTableWidgetItem("value"));
 	tableWidget->horizontalHeader()->setStretchLastSection(true);
 	//tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-	m_layout->addWidget(tableWidget);
+	//m_layout->addWidget(tableWidget);
 	
 	tableWidget->setItem(0, 0, new QTableWidgetItem("hhh"));
 	tableWidget->setCellWidget(0, 1, new QPushButton(tableWidget));

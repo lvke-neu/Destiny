@@ -14,11 +14,6 @@ void SceneDockWidget::trace(QTreeWidget* treeWidget,QTreeWidgetItem* parentItem,
 	QTreeWidgetItem* item = new QTreeWidgetItem(parentItem);
 	item->setText(0, parentNode->get_name().c_str());
 	item->setData(0, 1, QVariant::fromValue(parentNode));
-	connect(treeWidget, &QTreeWidget::itemClicked, this,
-		[this](QTreeWidgetItem* item)
-		{
-			emit chooseNode(item->data(0, 1).value<std::shared_ptr<Destiny::Node3D>>());
-		});
 
 	for (const auto& node : parentNode->get_childs())
 	{

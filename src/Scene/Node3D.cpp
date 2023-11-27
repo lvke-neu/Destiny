@@ -52,6 +52,7 @@ namespace Destiny
 			(
 				rttr::policy::ctor::as_raw_ptr
 			)
+		    .property("uuid", &Node3D::get_uuid, &Node3D::set_uuid)
 		    .property("name", &Node3D::get_name, &Node3D::set_name);
 	}
 }

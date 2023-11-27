@@ -129,6 +129,18 @@ void ComponentDockWidget::reflect(std::shared_ptr<Destiny::Reflection> reflectio
 				{
 					prop.set_value(reflection, XMFLOAT3((float)doubleSpinBox_x->value(), (float)doubleSpinBox_y->value(), (float)doubleSpinBox_z->value()));
 				});
+
+			connect(doubleSpinBox_y, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this,
+				[=]()
+				{
+					prop.set_value(reflection, XMFLOAT3((float)doubleSpinBox_x->value(), (float)doubleSpinBox_y->value(), (float)doubleSpinBox_z->value()));
+				});
+
+			connect(doubleSpinBox_z, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this,
+				[=]()
+				{
+					prop.set_value(reflection, XMFLOAT3((float)doubleSpinBox_x->value(), (float)doubleSpinBox_y->value(), (float)doubleSpinBox_z->value()));
+				});
 		}
 		else if (prop.get_type().get_name() == "Transform3D")
 		{

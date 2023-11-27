@@ -9,7 +9,6 @@ namespace Destiny
 }
 
 class QVBoxLayout;
-class QTableWidget;
 class ComponentDockWidget : public QDockWidget
 {
 	Q_OBJECT
@@ -20,10 +19,9 @@ public:
 public slots:
 	void onChooseNode(std::shared_ptr<Destiny::Node3D> node);
 private:
-	void reflect(std::shared_ptr<Destiny::Reflection> reflection, QTableWidget* tableWidget);
+	void reflect(std::shared_ptr<Destiny::Reflection> reflection, QVBoxLayout* layout, bool clearLayout);
 private:
 	QVBoxLayout* m_layout;
-	QTableWidget* m_tableWidget;
 };
 
 

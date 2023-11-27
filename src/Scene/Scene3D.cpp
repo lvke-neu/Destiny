@@ -1,5 +1,6 @@
 #include "Scene3D.h"
 #include "Node3D.h"
+#include "Component.h"
 
 namespace Destiny
 {
@@ -7,6 +8,9 @@ namespace Destiny
 	{
 		m_root = std::make_shared<Node3D>();
 		m_root->set_name("root");
+
+		auto comp1 = std::make_shared<Component>();
+		m_root->addComponent(comp1);
 
 		auto node1 = std::make_shared<Node3D>();
 		node1->set_name("node1");

@@ -1,4 +1,5 @@
 #include "Node3D.h"
+#include "Component.h"
 #include "Engine/Utility.h"
 
 namespace Destiny
@@ -43,6 +44,39 @@ namespace Destiny
 		}
 
 		m_parent.reset();
+	}
+
+	void Node3D::addComponent(std::shared_ptr<Component> component)
+	{
+		if (!component)
+		{
+			return;
+		}
+
+		auto iter = std::find(m_components.begin(), m_components.end(), component);
+		if (iter != m_components.end())
+		{
+			return;
+		}
+		component->m_node = shared_from_this();
+		m_components.emplace_back(component);
+	}
+
+	void Node3D::removeComponent(std::shared_ptr<Component> component)
+	{
+		if (!component)
+		{
+			return;
+		}
+		
+		auto iter = std::find(m_components.begin(), m_components.end(), component);
+		if (iter == m_components.end())
+		{
+			return;
+		}
+
+		component->m_node.reset();
+		m_components.erase(iter);
 	}
 
 	RTTR_REGISTRATION

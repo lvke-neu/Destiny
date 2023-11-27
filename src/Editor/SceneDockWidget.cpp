@@ -6,6 +6,7 @@
 #include "Engine/Engine.h"
 #include "Scene/SceneManager.h"
 #include "Scene/Scene3D.h"
+#include "Scene/Node3D.h"
 
 using namespace Destiny;
 

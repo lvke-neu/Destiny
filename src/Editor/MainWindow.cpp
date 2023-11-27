@@ -22,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(m_sceneDockWidget, &SceneDockWidget::chooseNode, m_componentDockWidget, &ComponentDockWidget::onChooseNode);
 
 	//this->setWindowState(Qt::WindowMaximized);
+	//this->setFixedSize(300, 300);
 }
 
 MainWindow::~MainWindow()

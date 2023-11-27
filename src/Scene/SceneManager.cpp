@@ -180,7 +180,7 @@ namespace Destiny
 
 	void SceneManager::update()
 	{
-		Engine::GetInstance()->getGraphicsSystem()->commitVisual3D(m_visual3D);
+		//Engine::GetInstance()->getGraphicsSystem()->commitVisual3D(m_visual3D);
 	}
 
 	void SceneManager::additionalCommands()

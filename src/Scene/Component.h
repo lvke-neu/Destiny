@@ -7,7 +7,7 @@ namespace Destiny
 	class Node3D;
 	class Component : public Reflection
 	{
-		RTTR_ENABLE();
+		RTTR_ENABLE(Reflection);
 		friend class Node3D;
 	public:
 		Component();

@@ -9,7 +9,7 @@ namespace Destiny
 	class Component;
 	class Node3D : public Reflection, public std::enable_shared_from_this<Node3D>
 	{
-		RTTR_ENABLE();
+		RTTR_ENABLE(Reflection);
 	public:
 		Node3D();
 	public:

@@ -43,7 +43,7 @@ namespace Destiny
 		{
 			Visual3DComponent* visual3DComponent = dynamic_cast<Visual3DComponent*>(componet.get());
 
-			if (!visual3DComponent)
+			if (!visual3DComponent || !visual3DComponent->get_enable())
 			{
 				continue;
 			}

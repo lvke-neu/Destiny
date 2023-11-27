@@ -150,10 +150,10 @@ namespace Destiny
 		cbProj = std::make_shared<ConstantBuffer<DirectX::XMMATRIX>>();
 		cbProj->update(XMMatrixTranspose(XMMatrixPerspectiveFovLH(XM_PIDIV2, 438.0f / 600.0f, 1.0f, 1000.0f)));
 
-		m_visual3D->setAdditionalCommands(std::bind(&BoxComponent::additionalCommands, this));
+		m_visual3D->setBeforeDrawCommands(std::bind(&BoxComponent::beforeDrawCommands, this));
 	}
 
-	void BoxComponent::additionalCommands()
+	void BoxComponent::beforeDrawCommands()
 	{
 		if (
 			!samplerState || !samplerState->isLoadingSucceed() ||

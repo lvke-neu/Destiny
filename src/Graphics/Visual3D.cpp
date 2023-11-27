@@ -23,16 +23,12 @@ namespace Destiny
 		m_depthStencilState(nullptr),
 		m_blendState(nullptr)
 	{
+
 	}
 
 	Visual3D::~Visual3D()
 	{
 
-	}
-
-	void Visual3D::setAdditionalCommands(std::function<void(void)> additionalCommands)
-	{
-		m_additionalCommands = additionalCommands;
 	}
 
 	void Visual3D::draw()
@@ -70,9 +66,16 @@ namespace Destiny
 		immediateContext->OMSetDepthStencilState(m_depthStencilState->getDepthStencilState(), 0);
 		immediateContext->OMSetBlendState(m_blendState->getBlendState(), nullptr, 0xFFFFFFFF);
 
-		if(m_additionalCommands)
-			m_additionalCommands();
+		if (m_beforeDrawCommands)
+		{
+			m_beforeDrawCommands();
+		}
 
 		immediateContext->DrawIndexed(m_indexBuffer->getCount(), 0, 0);
+
+		if (m_afterDrawCommands)
+		{
+			m_afterDrawCommands();
+		}	
 	}
 }

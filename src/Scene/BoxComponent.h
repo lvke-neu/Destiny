@@ -11,6 +11,6 @@ namespace Destiny
 	public:
 		GET_CLASS_NAME(BoxComponent);
 	private:
-		void additionalCommands();
+		void beforeDrawCommands();
 	};
 }

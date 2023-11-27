@@ -1,16 +1,20 @@
 #include "ComponentDockWidget.h"
 #include "Scene/Node3D.h"
 #include "Scene/Component.h"
+#include <DirectXMath.h>
 #include <QTableWidget>
 #include <QHeaderView>
 #include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QGridLayout>
 #include <QPushButton>
 #include <QCheckBox>
 #include <QLineEdit>
 #include <QLabel>
+#include <QDoubleSpinBox>
 #include <rttr/type>
 
-ComponentDockWidget::ComponentDockWidget(QWidget *parent /*= nullptr*/) : QDockWidget("Node3D Info", parent)
+ComponentDockWidget::ComponentDockWidget(QWidget *parent /*= nullptr*/) : QDockWidget("Property", parent)
 {
 	QWidget* widget = new QWidget();
 	m_layout = new QVBoxLayout(widget);
@@ -76,8 +80,7 @@ void ComponentDockWidget::reflect(std::shared_ptr<Destiny::Reflection> reflectio
 					prop.set_value(reflection, lineEdit->text().toStdString());
 				});
 		}
-
-		if (prop.get_type().get_name() == "bool")
+		else if (prop.get_type().get_name() == "bool")
 		{
 			QCheckBox* checkBox = new QCheckBox(tableWidget);
 			checkBox->setChecked(prop.get_value(reflection).to_bool());
@@ -88,13 +91,57 @@ void ComponentDockWidget::reflect(std::shared_ptr<Destiny::Reflection> reflectio
 					prop.set_value(reflection, checkBox->isChecked());
 				});
 		}
+		else if (prop.get_type().get_name() == "XMFLOAT3")
+		{
+			using namespace DirectX;
+
+			QHBoxLayout* hBoxLayout = new QHBoxLayout(tableWidget);
+			QLabel* label_x = new QLabel("x", tableWidget);
+			QLabel* label_y = new QLabel("y", tableWidget);
+			QLabel* label_z = new QLabel("z", tableWidget);
+			QDoubleSpinBox* doubleSpinBox_x = new QDoubleSpinBox(tableWidget);
+			doubleSpinBox_x->setMaximum(DBL_MAX);
+			doubleSpinBox_x->setMinimum(-DBL_MAX);
+			QDoubleSpinBox* doubleSpinBox_y = new QDoubleSpinBox(tableWidget);
+			doubleSpinBox_y->setMaximum(DBL_MAX);
+			doubleSpinBox_y->setMinimum(-DBL_MAX);
+			QDoubleSpinBox* doubleSpinBox_z = new QDoubleSpinBox(tableWidget);
+			doubleSpinBox_z->setMaximum(DBL_MAX);
+			doubleSpinBox_z->setMinimum(-DBL_MAX);
+			hBoxLayout->addWidget(label_x);
+			hBoxLayout->addWidget(doubleSpinBox_x);
+			hBoxLayout->addWidget(label_y);
+			hBoxLayout->addWidget(doubleSpinBox_y);
+			hBoxLayout->addWidget(label_z);
+			hBoxLayout->addWidget(doubleSpinBox_z);
+
+			QWidget* widget = new QWidget(tableWidget);
+			widget->setLayout(hBoxLayout);
+			tableWidget->setCellWidget(index, 1, widget);
+		}
+		else if (prop.get_type().get_name() == "Transform3D")
+		{
+			QGridLayout* gridLayout = new QGridLayout(tableWidget);
+			QWidget* widget = new QWidget(tableWidget);
+			QLabel* label_x = new QLabel("x", tableWidget);
+			QLabel* label_y = new QLabel("y", tableWidget);
+			QLabel* label_z = new QLabel("z", tableWidget);
+			gridLayout->addWidget(label_x, 0, 0);
+			gridLayout->addWidget(label_y, 0, 1);
+			gridLayout->addWidget(label_z, 0, 2);
+			widget->setLayout(gridLayout);
+			tableWidget->setCellWidget(index, 1, widget);
+		}
+		else
+		{
+			tableWidget->setItem(index, 1, new QTableWidgetItem("Unsupported reflection type"));
+		}
 
 		index++;
 	}
 
-	m_layout->addWidget(label);
-	m_layout->addWidget(tableWidget);
-	
+	layout->addWidget(label);
+	layout->addWidget(tableWidget);	
 }
 
 void ComponentDockWidget::onChooseNode(std::shared_ptr<Destiny::Node3D> node)

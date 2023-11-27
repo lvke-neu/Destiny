@@ -8,14 +8,17 @@ namespace Destiny
 {
 	Scene3D::Scene3D() 
 	{
-		m_root = std::make_shared<Node3D>();
-		m_root->set_name("Root");
+		m_rootNode = std::make_shared<Node3D>();
+		m_rootNode->set_name("Root");
 
-		auto node1 = std::make_shared<Node3D>();
-		node1->set_name("BaseScene");
-		node1->addToParent(m_root);
+		m_cameraNode = std::make_shared<Node3D>();
+		m_cameraNode->set_name("Camera");
+		m_cameraNode->addToParent(m_rootNode);
 
-		auto comp1 = std::make_shared<BoxComponent>();
-		node1->addComponent(comp1);
+		auto boxNode = std::make_shared<Node3D>();
+		boxNode->set_name("Box");
+		boxNode->addToParent(m_rootNode);
+		auto boxComponent = std::make_shared<BoxComponent>();
+		boxNode->addComponent(boxComponent);
 	}
 }

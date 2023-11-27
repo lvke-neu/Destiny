@@ -10,11 +10,12 @@ namespace Destiny
 		Scene3D();
 		std::shared_ptr<Node3D> getRootNode();
 	private:
-		std::shared_ptr<Node3D> m_root;
+		std::shared_ptr<Node3D> m_rootNode;
+		std::shared_ptr<Node3D> m_cameraNode;
 	};
 
 	inline std::shared_ptr<Node3D> Scene3D::getRootNode()
 	{
-		return m_root;
+		return m_rootNode;
 	}
 }

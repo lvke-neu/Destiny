@@ -6,7 +6,7 @@ namespace Destiny
 {
 	Node3D::Node3D() : 
 		m_uuid(Utility::GenerateUUID()),
-		m_name(""), 
+		m_name("Default Name"), 
 		m_parent(nullptr)
 	{
 
@@ -87,6 +87,8 @@ namespace Destiny
 				rttr::policy::ctor::as_raw_ptr
 			)
 		    .property("uuid", &Node3D::get_uuid, &Node3D::set_uuid)
-		    .property("name", &Node3D::get_name, &Node3D::set_name);
+		    .property("name", &Node3D::get_name, &Node3D::set_name)
+		    .property("transform3D", &Node3D::get_transform3D, &Node3D::set_transform3D)
+		    .property("testFloat3", &Node3D::get_testFloat3, &Node3D::set_testFloat3);
 	}
 }

@@ -19,7 +19,14 @@ namespace Destiny
 		~Visual3D();
 	public:
 		void draw();
-		void setAdditionalCommands(std::function<void(void)> additionalCommands);
+		void setBeforeDrawCommands(std::function<void(void)> beforeDrawCommands)
+		{
+			m_beforeDrawCommands = beforeDrawCommands;
+		}
+		void setAfterDrawCommands(std::function<void(void)> afterDrawCommands)
+		{
+			m_afterDrawCommands = afterDrawCommands;
+		}
 	public:
 		void setVertexBuffer(std::shared_ptr<VertexBuffer> vertexBuffer);
 		void setIndexBuffer(std::shared_ptr<IndexBuffer> indexBuffer);
@@ -39,7 +46,8 @@ namespace Destiny
 		std::shared_ptr<DepthStencilState> m_depthStencilState;
 		std::shared_ptr<BlendState> m_blendState;
 
-		std::function<void(void)> m_additionalCommands;
+		std::function<void(void)> m_beforeDrawCommands;
+		std::function<void(void)> m_afterDrawCommands;
 	};
 
 	inline void Visual3D::setVertexBuffer(std::shared_ptr<VertexBuffer> vertexBuffer)

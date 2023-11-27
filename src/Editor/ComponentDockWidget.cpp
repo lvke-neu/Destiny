@@ -142,20 +142,17 @@ void ComponentDockWidget::reflect(std::shared_ptr<Destiny::Reflection> reflectio
 					prop.set_value(reflection, XMFLOAT3((float)doubleSpinBox_x->value(), (float)doubleSpinBox_y->value(), (float)doubleSpinBox_z->value()));
 				});
 		}
-		else if (prop.get_type().get_name() == "Transform3D")
+		else if (prop.get_type().get_name() == "classstd::shared_ptr<classDestiny::Transform3D>")
 		{
-			using namespace Destiny;
-
-			std::shared_ptr<Transform3D> transform3D(new Transform3D(prop.get_value(reflection).get_value<Transform3D>()));
-
 			QVBoxLayout* vBoxLayout = new QVBoxLayout(tableWidget);
 			QWidget* widget = new QWidget(tableWidget);
-			reflect(transform3D, vBoxLayout, true);
+			reflect(prop.get_value(reflection).get_value<std::shared_ptr<Destiny::Transform3D>>(), vBoxLayout, true);
 			widget->setLayout(vBoxLayout);
 			tableWidget->setCellWidget(index, 1, widget);
 		}
 		else
 		{
+			auto name = prop.get_type().get_name();
 			tableWidget->setItem(index, 1, new QTableWidgetItem("Unsupported reflection type"));
 		}
 

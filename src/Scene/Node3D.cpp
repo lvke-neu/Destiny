@@ -7,7 +7,8 @@ namespace Destiny
 	Node3D::Node3D() : 
 		m_uuid(Utility::GenerateUUID()),
 		m_name("Default Name"), 
-		m_parent(nullptr)
+		m_parent(nullptr),
+		m_transform3D(std::make_shared<Transform3D>())
 	{
 
 	}

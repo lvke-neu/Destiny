@@ -85,7 +85,7 @@ void ComponentDockWidget::reflect(std::shared_ptr<Destiny::Reflection> reflectio
 			connect(checkBox, &QCheckBox::stateChanged, this,
 				[=]()
 				{
-					prop.set_value(reflection, checkBox->isChecked();
+					prop.set_value(reflection, checkBox->isChecked());
 				});
 		}
 

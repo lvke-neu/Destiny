@@ -95,6 +95,8 @@ void ComponentDockWidget::reflect(std::shared_ptr<Destiny::Reflection> reflectio
 		{
 			using namespace DirectX;
 
+			XMFLOAT3 float3 = prop.get_value(reflection).get_value<XMFLOAT3>();
+
 			QHBoxLayout* hBoxLayout = new QHBoxLayout(tableWidget);
 			QLabel* label_x = new QLabel("x", tableWidget);
 			QLabel* label_y = new QLabel("y", tableWidget);
@@ -102,12 +104,15 @@ void ComponentDockWidget::reflect(std::shared_ptr<Destiny::Reflection> reflectio
 			QDoubleSpinBox* doubleSpinBox_x = new QDoubleSpinBox(tableWidget);
 			doubleSpinBox_x->setMaximum(DBL_MAX);
 			doubleSpinBox_x->setMinimum(-DBL_MAX);
+			doubleSpinBox_x->setValue(float3.x);
 			QDoubleSpinBox* doubleSpinBox_y = new QDoubleSpinBox(tableWidget);
 			doubleSpinBox_y->setMaximum(DBL_MAX);
 			doubleSpinBox_y->setMinimum(-DBL_MAX);
+			doubleSpinBox_y->setValue(float3.y);
 			QDoubleSpinBox* doubleSpinBox_z = new QDoubleSpinBox(tableWidget);
 			doubleSpinBox_z->setMaximum(DBL_MAX);
 			doubleSpinBox_z->setMinimum(-DBL_MAX);
+			doubleSpinBox_z->setValue(float3.z);
 			hBoxLayout->addWidget(label_x);
 			hBoxLayout->addWidget(doubleSpinBox_x);
 			hBoxLayout->addWidget(label_y);
@@ -118,18 +123,23 @@ void ComponentDockWidget::reflect(std::shared_ptr<Destiny::Reflection> reflectio
 			QWidget* widget = new QWidget(tableWidget);
 			widget->setLayout(hBoxLayout);
 			tableWidget->setCellWidget(index, 1, widget);
+
+			connect(doubleSpinBox_x, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this,
+				[=]()
+				{
+					prop.set_value(reflection, XMFLOAT3((float)doubleSpinBox_x->value(), (float)doubleSpinBox_y->value(), (float)doubleSpinBox_z->value()));
+				});
 		}
 		else if (prop.get_type().get_name() == "Transform3D")
 		{
-			QGridLayout* gridLayout = new QGridLayout(tableWidget);
+			using namespace Destiny;
+
+			std::shared_ptr<Transform3D> transform3D(new Transform3D(prop.get_value(reflection).get_value<Transform3D>()));
+
+			QVBoxLayout* vBoxLayout = new QVBoxLayout(tableWidget);
 			QWidget* widget = new QWidget(tableWidget);
-			QLabel* label_x = new QLabel("x", tableWidget);
-			QLabel* label_y = new QLabel("y", tableWidget);
-			QLabel* label_z = new QLabel("z", tableWidget);
-			gridLayout->addWidget(label_x, 0, 0);
-			gridLayout->addWidget(label_y, 0, 1);
-			gridLayout->addWidget(label_z, 0, 2);
-			widget->setLayout(gridLayout);
+			reflect(transform3D, vBoxLayout, true);
+			widget->setLayout(vBoxLayout);
 			tableWidget->setCellWidget(index, 1, widget);
 		}
 		else

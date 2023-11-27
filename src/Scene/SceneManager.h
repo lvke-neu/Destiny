@@ -3,8 +3,8 @@
 
 namespace Destiny
 {
+	class Node3D;
 	class Scene3D;
-	class Visual3D;
 	class SceneManager
 	{
 	public:
@@ -15,12 +15,9 @@ namespace Destiny
 		void uninitialize();
 		void update();
 		std::shared_ptr<Scene3D> getScene3D();
-
-		//TODO:remove
-		void additionalCommands();
-
 	private:
-		std::shared_ptr<Visual3D> m_visual3D;
+		void trace(std::shared_ptr<Node3D> node);
+	private:
 		std::shared_ptr<Scene3D> m_scene3D;
 	};
 

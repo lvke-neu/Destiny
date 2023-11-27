@@ -68,7 +68,7 @@ namespace Destiny
 
 	void GraphicsSystem::begin()
 	{
-		static float color[4] = { 1.0f, 1.0f, 1.0f, 0.0f };
+		static float color[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 		m_pD3D11ImmediateDeviceContext->ClearRenderTargetView(m_pRenderTargetView, color);
 		m_pD3D11ImmediateDeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	}

@@ -13,7 +13,15 @@
 
 namespace Destiny
 {
-	Visual3D::Visual3D()
+	Visual3D::Visual3D() :
+		m_vertexBuffer(nullptr),
+		m_indexBuffer(nullptr),
+		m_inputLayout(nullptr),
+		m_vertexShader(nullptr),
+		m_pixelShader(nullptr),
+		m_rasterizerState(nullptr),
+		m_depthStencilState(nullptr),
+		m_blendState(nullptr)
 	{
 	}
 

@@ -2,6 +2,7 @@
 #include "Node3D.h"
 #include "Component.h"
 #include "Visual3DComponent.h"
+#include "BoxComponent.h"
 
 namespace Destiny
 {
@@ -14,7 +15,7 @@ namespace Destiny
 		node1->set_name("BaseScene");
 		node1->addToParent(m_root);
 
-		auto comp1 = std::make_shared<Visual3DComponent>();
+		auto comp1 = std::make_shared<BoxComponent>();
 		node1->addComponent(comp1);
 	}
 }

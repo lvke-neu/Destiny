@@ -4,7 +4,7 @@
 namespace Destiny
 {
 	Visual3DComponent::Visual3DComponent() : 
-		m_visual3D(nullptr)
+		m_visual3D(std::make_shared<Visual3D>())
 	{
 
 	}

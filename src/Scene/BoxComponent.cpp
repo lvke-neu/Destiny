@@ -146,7 +146,6 @@ namespace Destiny
 	void BoxComponent::onAttachNode()
 	{
 		m_worldMatrix->update(XMMatrixTranspose(m_node->get_transform3D().getWorldMatrix()));
-		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->VSSetConstantBuffers(2, 1, m_worldMatrix->getConstantBuffer());
 	}
 
 	void BoxComponent::onNodeTransformChanged()
@@ -163,7 +162,7 @@ namespace Destiny
 		{
 			return;
 		}
-
+		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->VSSetConstantBuffers(2, 1, m_worldMatrix->getConstantBuffer());
 		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetSamplers(0, 1, samplerState->getSamplerState());
 		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetShaderResources(0, 1, tex->getShaderResourceView());
 	}

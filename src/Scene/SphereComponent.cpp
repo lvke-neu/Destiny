@@ -1,4 +1,4 @@
-#include "BoxComponent.h"
+#include "SphereComponent.h"
 #include "Engine/Blob.h"
 #include "Graphics/Visual3D.h"
 #include "Graphics/VertexBuffer.h"
@@ -18,7 +18,7 @@ namespace Destiny
 {
 	using namespace DirectX;
 
-	BoxComponent::BoxComponent() :
+	SphereComponent::SphereComponent() :
 		m_texturePath("assets://Texture/brick.dds")
 	{
 		std::shared_ptr<Blob> data = nullptr;
@@ -28,62 +28,82 @@ namespace Destiny
 			XMFLOAT3 normal;
 			XMFLOAT2 texcoord;
 		};
-		VertexPosColor vertices[24];
-		vertices[0].position = XMFLOAT3(1, -1, -1);
-		vertices[1].position = XMFLOAT3(1, 1, -1);
-		vertices[2].position = XMFLOAT3(1, 1, 1);
-		vertices[3].position = XMFLOAT3(1, -1, 1);
-		vertices[4].position = XMFLOAT3(-1, -1, 1);
-		vertices[5].position = XMFLOAT3(-1, 1, 1);
-		vertices[6].position = XMFLOAT3(-1, 1, -1);
-		vertices[7].position = XMFLOAT3(-1, -1, -1);
-		vertices[8].position = XMFLOAT3(-1, 1, -1);
-		vertices[9].position = XMFLOAT3(-1, 1, 1);
-		vertices[10].position = XMFLOAT3(1, 1, 1);
-		vertices[11].position = XMFLOAT3(1, 1, -1);
-		vertices[12].position = XMFLOAT3(1, -1, -1);
-		vertices[13].position = XMFLOAT3(1, -1, 1);
-		vertices[14].position = XMFLOAT3(-1, -1, 1);
-		vertices[15].position = XMFLOAT3(-1, -1, -1);
-		vertices[16].position = XMFLOAT3(1, -1, 1);
-		vertices[17].position = XMFLOAT3(1, 1, 1);
-		vertices[18].position = XMFLOAT3(-1, 1, 1);
-		vertices[19].position = XMFLOAT3(-1, -1, 1);
-		vertices[20].position = XMFLOAT3(-1, -1, -1);
-		vertices[21].position = XMFLOAT3(-1, 1, -1);
-		vertices[22].position = XMFLOAT3(1, 1, -1);
-		vertices[23].position = XMFLOAT3(1, -1, -1);
-		for (UINT i = 0; i < 4; ++i)
+
+		const float radius = 1.0f;
+		const UINT levels = 20;
+		const UINT slices = 20;
+
+		const UINT vertexCount = 2 + (levels - 1) * (slices + 1);
+		VertexPosColor vertices[vertexCount];
+
+		DWORD vIndex = 0, iIndex = 0;
+
+		float phi = 0.0f, theta = 0.0f;
+		float per_phi = XM_PI / levels;
+		float per_theta = XM_2PI / slices;
+		float x, y, z;
+
+		vertices[vIndex++] = VertexPosColor({ XMFLOAT3(0.0f, radius, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) });
+
+		for (UINT i = 1; i < levels; ++i)
 		{
-			vertices[i].normal = XMFLOAT3(1.0f, 0.0f, 0.0f);
-			vertices[i + 4].normal = XMFLOAT3(-1.0f, 0.0f, 0.0f);
-			vertices[i + 8].normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
-			vertices[i + 12].normal = XMFLOAT3(0.0f, -1.0f, 0.0f);
-			vertices[i + 16].normal = XMFLOAT3(0.0f, 0.0f, 1.0f);
-			vertices[i + 20].normal = XMFLOAT3(0.0f, 0.0f, -1.0f);
+			phi = per_phi * i;
+
+			for (UINT j = 0; j <= slices; ++j)
+			{
+				theta = per_theta * j;
+				x = radius * sinf(phi) * cosf(theta);
+				y = radius * cosf(phi);
+				z = radius * sinf(phi) * sinf(theta);
+
+				XMFLOAT3 pos = XMFLOAT3(x, y, z), normal;
+				XMStoreFloat3(&normal, XMVector3Normalize(XMLoadFloat3(&pos)));
+
+				vertices[vIndex++] = VertexPosColor({ pos, normal, XMFLOAT2(theta / XM_2PI, phi / XM_PI) });
+			}
 		}
-		for (UINT i = 0; i < 6; ++i)
-		{
-			vertices[i * 4].texcoord = XMFLOAT2(0.0f, 1.0f);
-			vertices[i * 4 + 1].texcoord = XMFLOAT2(0.0f, 0.0f);
-			vertices[i * 4 + 2].texcoord = XMFLOAT2(1.0f, 0.0f);
-			vertices[i * 4 + 3].texcoord = XMFLOAT2(1.0f, 1.0f);
-		}
-		data.reset(new Blob(24 * sizeof(VertexPosColor)));
+		vertices[vIndex++] = VertexPosColor({ XMFLOAT3(0.0f, -radius, 0.0f), XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) });
+		
+		data.reset(new Blob(vertexCount * sizeof(VertexPosColor)));
 		memcpy_s(data->getData(), data->getLength(), vertices, data->getLength());
 		auto vertexBuffer = Engine::GetInstance()->getGraphicsSystem()->createVertexBuffer(sizeof(VertexPosColor), 0, data);
 		vertexBuffer->load(0);
 		m_visual3D->setVertexBuffer(vertexBuffer);
 
-		unsigned int indices[36] = {
-						0, 1, 2, 2, 3, 0,
-						4, 5, 6, 6, 7, 4,
-						8, 9, 10, 10, 11, 8,
-						12, 13, 14, 14, 15, 12,
-						16, 17, 18, 18, 19, 16,
-						20, 21, 22, 22, 23, 20
-		};
-		data.reset(new Blob(sizeof(unsigned int) * 36));
+		unsigned int indices[6 * (levels - 1) * slices];
+		if (levels > 1)
+		{
+			for (UINT j = 1; j <= slices; ++j)
+			{
+				indices[iIndex++] = 0;
+				indices[iIndex++] = j % (slices + 1) + 1;
+				indices[iIndex++] = j;
+			}
+		}
+		for (UINT i = 1; i < levels - 1; ++i)
+		{
+			for (UINT j = 1; j <= slices; ++j)
+			{
+				indices[iIndex++] = (i - 1) * (slices + 1) + j;
+				indices[iIndex++] = (i - 1) * (slices + 1) + j % (slices + 1) + 1;
+				indices[iIndex++] = i * (slices + 1) + j % (slices + 1) + 1;
+
+				indices[iIndex++] = i * (slices + 1) + j % (slices + 1) + 1;
+				indices[iIndex++] = i * (slices + 1) + j;
+				indices[iIndex++] = (i - 1) * (slices + 1) + j;
+			}
+		}
+		if (levels > 1)
+		{
+			for (UINT j = 1; j <= slices; ++j)
+			{
+				indices[iIndex++] = (levels - 2) * (slices + 1) + j;
+				indices[iIndex++] = (levels - 2) * (slices + 1) + j % (slices + 1) + 1;
+				indices[iIndex++] = (levels - 1) * (slices + 1) + 1;
+			}
+		}
+
+		data.reset(new Blob(sizeof(unsigned int) * 6 * (levels - 1) * slices));
 		memcpy_s(data->getData(), data->getLength(), indices, data->getLength());
 		auto indexBuffer = Engine::GetInstance()->getGraphicsSystem()->createIndexBuffer(DXGI_FORMAT_R32_UINT, data);
 		indexBuffer->load(0);
@@ -140,20 +160,20 @@ namespace Destiny
 
 		m_worldMatrix = std::make_shared<ConstantBuffer<XMMATRIX>>();
 
-		m_visual3D->setBeforeDrawCommands(std::bind(&BoxComponent::beforeDrawCommands, this));
+		m_visual3D->setBeforeDrawCommands(std::bind(&SphereComponent::beforeDrawCommands, this));
 	}
 
-	void BoxComponent::onAttachNode()
+	void SphereComponent::onAttachNode()
 	{
 		m_worldMatrix->update(XMMatrixTranspose(m_node->get_transform3D().getWorldMatrix()));
 	}
 
-	void BoxComponent::onNodeTransformChanged()
+	void SphereComponent::onNodeTransformChanged()
 	{
 		m_worldMatrix->update(XMMatrixTranspose(m_node->get_transform3D().getWorldMatrix()));
 	}
 
-	void BoxComponent::set_texturePath(std::string texturePath)
+	void SphereComponent::set_texturePath(std::string texturePath)
 	{
 		m_texturePath = texturePath;
 		m_texture.reset();
@@ -161,7 +181,7 @@ namespace Destiny
 		m_texture->load();
 	}
 
-	void BoxComponent::beforeDrawCommands()
+	void SphereComponent::beforeDrawCommands()
 	{
 		if (
 			!m_samplerState || !m_samplerState->isLoadingSucceed() ||
@@ -177,11 +197,11 @@ namespace Destiny
 
 	RTTR_REGISTRATION
 	{
-		rttr::registration::class_<BoxComponent>("BoxComponent")
+		rttr::registration::class_<SphereComponent>("SphereComponent")
 			.constructor<>()
 			(
 				rttr::policy::ctor::as_raw_ptr
 			)
-		    .property("texturePath", &BoxComponent::get_texturePath, &BoxComponent::set_texturePath);
+		    .property("texturePath", &SphereComponent::get_texturePath, &SphereComponent::set_texturePath);
 	}
 }

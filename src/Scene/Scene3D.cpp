@@ -3,6 +3,7 @@
 #include "Component.h"
 #include "Visual3DComponent.h"
 #include "BoxComponent.h"
+#include "SphereComponent.h"
 #include "Camera3DComponent.h"
 #include "CameraController.h"
 
@@ -40,5 +41,11 @@ namespace Destiny
 		boxNode2->addComponent(boxComponent2);
 		transform3D.set_translation({ 2.0f, 0.0f, 0.0f });
 		boxNode2->set_transform3D(transform3D);
+
+		auto sphereNode = std::make_shared<Node3D>();
+		sphereNode->set_name("Sphere");
+		sphereNode->addToParent(m_rootNode);
+		auto sphereComponent = std::make_shared<SphereComponent>();
+		sphereNode->addComponent(sphereComponent);
 	}
 }

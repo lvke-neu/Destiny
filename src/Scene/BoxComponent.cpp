@@ -12,12 +12,10 @@
 #include "Graphics/Texture.h"
 #include "Graphics/ConstantBuffer.h"
 #include "Graphics/SamplerState.h"
-#include <DirectXMath.h>
+#include "Node3D.h"
 
 namespace Destiny
 {
-	static std::shared_ptr<ConstantBuffer<DirectX::XMMATRIX>> cbWorld = nullptr;
-	static std::shared_ptr<ConstantBuffer<DirectX::XMMATRIX>> cbView = nullptr;
 	static std::shared_ptr<Texture> tex = nullptr;
 	static std::shared_ptr<SamplerState> samplerState = nullptr;
 	BoxComponent::BoxComponent()
@@ -140,14 +138,20 @@ namespace Destiny
 		samplerState = Engine::GetInstance()->getGraphicsSystem()->createSamplerState(data);
 		samplerState->load(0);
 
-		cbWorld = std::make_shared<ConstantBuffer<XMMATRIX>>();
-		cbWorld->update(XMMatrixTranspose(XMMatrixTranslation(0.0f, 0.0f, 5.0f)));
-
-		cbView = std::make_shared<ConstantBuffer<XMMATRIX>>();
-		cbView->update(XMMatrixTranspose(XMMatrixIdentity()));
-
+		m_worldMatrix = std::make_shared<ConstantBuffer<XMMATRIX>>();
 
 		m_visual3D->setBeforeDrawCommands(std::bind(&BoxComponent::beforeDrawCommands, this));
+	}
+
+	void BoxComponent::onAttachNode()
+	{
+		m_worldMatrix->update(XMMatrixTranspose(m_node->get_transform3D().getWorldMatrix()));
+		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->VSSetConstantBuffers(2, 1, m_worldMatrix->getConstantBuffer());
+	}
+
+	void BoxComponent::onNodeTransformChanged()
+	{
+		m_worldMatrix->update(XMMatrixTranspose(m_node->get_transform3D().getWorldMatrix()));
 	}
 
 	void BoxComponent::beforeDrawCommands()
@@ -160,10 +164,8 @@ namespace Destiny
 			return;
 		}
 
-		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->VSSetConstantBuffers(2, 1, cbWorld->getConstantBuffer());
 		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetSamplers(0, 1, samplerState->getSamplerState());
 		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetShaderResources(0, 1, tex->getShaderResourceView());
-
 	}
 
 	RTTR_REGISTRATION

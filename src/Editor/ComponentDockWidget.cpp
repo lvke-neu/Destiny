@@ -15,7 +15,8 @@
 #include <QDoubleSpinBox>
 #include <rttr/type>
 
-#define DRAW_FLOAT3(NAME) \
+#define DRAW_FLOAT3(NAME, LABEL_NAME) \
+	QLabel* label_##NAME = new QLabel(LABEL_NAME);\
 	QHBoxLayout* hBoxLayout_##NAME = new QHBoxLayout();\
 	QLabel* label_x_##NAME = new QLabel("x");\
 	QLabel* label_y_##NAME = new QLabel("y");\
@@ -32,12 +33,15 @@
 	doubleSpinBox_z_##NAME->setMaximum(DBL_MAX);\
 	doubleSpinBox_z_##NAME->setMinimum(-DBL_MAX);\
 	doubleSpinBox_z_##NAME->setValue(transform3D.get_##NAME().z);\
+	hBoxLayout_##NAME->addWidget(label_##NAME);\
 	hBoxLayout_##NAME->addWidget(label_x_##NAME);\
 	hBoxLayout_##NAME->addWidget(doubleSpinBox_x_##NAME);\
 	hBoxLayout_##NAME->addWidget(label_y_##NAME);\
 	hBoxLayout_##NAME->addWidget(doubleSpinBox_y_##NAME);\
 	hBoxLayout_##NAME->addWidget(label_z_##NAME);\
-	hBoxLayout_##NAME->addWidget(doubleSpinBox_z_##NAME);\
+	hBoxLayout_##NAME->addWidget(doubleSpinBox_z_##NAME);
+	
+
 
 ComponentDockWidget::ComponentDockWidget(QWidget *parent /*= nullptr*/) : QDockWidget("Property", parent)
 {
@@ -177,9 +181,9 @@ void ComponentDockWidget::reflect(std::shared_ptr<Destiny::Reflection> reflectio
 			using namespace Destiny;
 
 			Transform3D transform3D = prop.get_value(reflection).get_value<Transform3D>();
-			DRAW_FLOAT3(translation);
-			DRAW_FLOAT3(rotation);
-			DRAW_FLOAT3(scale);
+			DRAW_FLOAT3(translation, "translation:");
+			DRAW_FLOAT3(rotation, "rotation:");
+			DRAW_FLOAT3(scale, "scale:");
 
 
 			QVBoxLayout* vBoxLayout = new QVBoxLayout();
@@ -192,13 +196,13 @@ void ComponentDockWidget::reflect(std::shared_ptr<Destiny::Reflection> reflectio
 
 			auto func =
 				[=]()
-			{
-				Transform3D transform;
-				transform.set_translation({ (float)doubleSpinBox_x_translation->value(), (float)doubleSpinBox_y_translation->value(), (float)doubleSpinBox_z_translation->value() });
-				transform.set_rotation({ (float)doubleSpinBox_x_rotation->value(), (float)doubleSpinBox_y_rotation->value(), (float)doubleSpinBox_z_rotation->value() });
-				transform.set_translation({ (float)doubleSpinBox_x_scale->value(), (float)doubleSpinBox_y_scale->value(), (float)doubleSpinBox_z_scale->value() });
-				prop.set_value(reflection, transform);
-			};
+				{
+					Transform3D transform;
+					transform.set_translation({ (float)doubleSpinBox_x_translation->value(), (float)doubleSpinBox_y_translation->value(), (float)doubleSpinBox_z_translation->value() });
+					transform.set_rotation({ (float)doubleSpinBox_x_rotation->value(), (float)doubleSpinBox_y_rotation->value(), (float)doubleSpinBox_z_rotation->value() });
+					transform.set_scale({ (float)doubleSpinBox_x_scale->value(), (float)doubleSpinBox_y_scale->value(), (float)doubleSpinBox_z_scale->value() });
+					prop.set_value(reflection, transform);
+				};
 			connect(doubleSpinBox_x_translation, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, func);
 			connect(doubleSpinBox_y_translation, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, func);
 			connect(doubleSpinBox_z_translation, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, func);

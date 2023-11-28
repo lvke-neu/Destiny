@@ -12,8 +12,9 @@ namespace Destiny
 
 	XMMATRIX Transform3D::getWorldMatrix()
 	{
+		XMFLOAT3 radiansRotation { XMConvertToRadians(m_rotation.x), XMConvertToRadians(m_rotation.y), XMConvertToRadians(m_rotation.z) };
 		return XMMatrixScalingFromVector(XMLoadFloat3(&m_scale)) *
-			XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&m_rotation)) *
+			XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&radiansRotation)) *
 			XMMatrixTranslationFromVector(XMLoadFloat3(&m_translation));
 	}
 

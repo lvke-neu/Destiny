@@ -18,7 +18,6 @@ namespace Destiny
 {
 	static std::shared_ptr<ConstantBuffer<DirectX::XMMATRIX>> cbWorld = nullptr;
 	static std::shared_ptr<ConstantBuffer<DirectX::XMMATRIX>> cbView = nullptr;
-	static std::shared_ptr<ConstantBuffer<DirectX::XMMATRIX>> cbProj = nullptr;
 	static std::shared_ptr<Texture> tex = nullptr;
 	static std::shared_ptr<SamplerState> samplerState = nullptr;
 	BoxComponent::BoxComponent()
@@ -147,8 +146,6 @@ namespace Destiny
 		cbView = std::make_shared<ConstantBuffer<XMMATRIX>>();
 		cbView->update(XMMatrixTranspose(XMMatrixIdentity()));
 
-		cbProj = std::make_shared<ConstantBuffer<DirectX::XMMATRIX>>();
-		cbProj->update(XMMatrixTranspose(XMMatrixPerspectiveFovLH(XM_PIDIV2, 438.0f / 600.0f, 1.0f, 1000.0f)));
 
 		m_visual3D->setBeforeDrawCommands(std::bind(&BoxComponent::beforeDrawCommands, this));
 	}
@@ -163,8 +160,6 @@ namespace Destiny
 			return;
 		}
 
-		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->VSSetConstantBuffers(0, 1, cbView->getConstantBuffer());
-		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->VSSetConstantBuffers(1, 1, cbProj->getConstantBuffer());
 		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->VSSetConstantBuffers(2, 1, cbWorld->getConstantBuffer());
 		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetSamplers(0, 1, samplerState->getSamplerState());
 		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetShaderResources(0, 1, tex->getShaderResourceView());

@@ -11,6 +11,10 @@ namespace Destiny
 		friend class Node3D;
 	public:
 		Component();
+		virtual ~Component() = default;
+	public:
+		virtual void onAttachNode() {};
+		virtual void onNodeTransformChanged() {};
 	public:
 		GET_CLASS_NAME(Component);
 		GET_SET(bool, enable);

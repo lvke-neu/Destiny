@@ -10,6 +10,13 @@ namespace Destiny
 
 	}
 
+	XMMATRIX Transform3D::getWorldMatrix()
+	{
+		return XMMatrixScalingFromVector(XMLoadFloat3(&m_scale)) *
+			XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&m_rotation)) *
+			XMMatrixTranslationFromVector(XMLoadFloat3(&m_translation));
+	}
+
 	RTTR_REGISTRATION
 	{
 		rttr::registration::class_<XMFLOAT3>("XMFLOAT3")

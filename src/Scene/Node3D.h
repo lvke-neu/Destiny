@@ -24,15 +24,18 @@ namespace Destiny
 		GET_SET(std::string, name);
 		GET(std::vector<std::shared_ptr<Node3D>>, childs);
 		GET(std::vector<std::shared_ptr<Component>>, components);
-		GET_SET(std::shared_ptr<Transform3D>, transform3D);
+		GET(Transform3D, transform3D);
 		GET_SET(XMFLOAT3, testFloat3);
+
+
+		void set_transform3D(Transform3D transform3D);
 	private:
 		std::string m_uuid;
 		std::string m_name;
 		std::shared_ptr<Node3D> m_parent;
 		std::vector<std::shared_ptr<Node3D>> m_childs;
 		std::vector<std::shared_ptr<Component>> m_components;
-		std::shared_ptr<Transform3D> m_transform3D;
+		Transform3D m_transform3D;
 		XMFLOAT3 m_testFloat3;
 	};
 }

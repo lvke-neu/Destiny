@@ -8,7 +8,7 @@ namespace Destiny
 		m_uuid(Utility::GenerateUUID()),
 		m_name("Default Name"), 
 		m_parent(nullptr),
-		m_transform3D(std::make_shared<Transform3D>())
+		m_transform3D(Transform3D())
 	{
 
 	}
@@ -60,6 +60,7 @@ namespace Destiny
 			return;
 		}
 		component->m_node = shared_from_this();
+		component->onAttachNode();
 		m_components.emplace_back(component);
 	}
 
@@ -80,6 +81,15 @@ namespace Destiny
 		m_components.erase(iter);
 	}
 
+	void Node3D::set_transform3D(Transform3D transform3D)
+	{
+		m_transform3D = transform3D;
+		for (const auto& component : m_components)
+		{
+			component->onNodeTransformChanged();
+		}
+	}
+
 	RTTR_REGISTRATION
 	{
 		rttr::registration::class_<Node3D>("Node3D")
@@ -89,7 +99,6 @@ namespace Destiny
 			)
 		    .property("uuid", &Node3D::get_uuid, &Node3D::set_uuid)
 		    .property("name", &Node3D::get_name, &Node3D::set_name)
-		    .property("transform3D", &Node3D::get_transform3D, &Node3D::set_transform3D)
-		    .property("testFloat3", &Node3D::get_testFloat3, &Node3D::set_testFloat3);
+		    .property("transform3D", &Node3D::get_transform3D, &Node3D::set_transform3D);
 	}
 }

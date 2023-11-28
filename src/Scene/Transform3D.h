@@ -11,6 +11,8 @@ namespace Destiny
 	public:
 		Transform3D();
 	public:
+		XMMATRIX getWorldMatrix();
+	public:
 		GET_CLASS_NAME(Transform3D);
 		GET_SET(XMFLOAT3, translation);
 		GET_SET(XMFLOAT3, rotation);

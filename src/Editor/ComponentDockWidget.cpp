@@ -1,6 +1,7 @@
 #include "ComponentDockWidget.h"
 #include "Scene/Node3D.h"
 #include "Scene/Component.h"
+#include "Scene/Transform3D.h"
 #include <DirectXMath.h>
 #include <QTableWidget>
 #include <QHeaderView>
@@ -13,6 +14,30 @@
 #include <QLabel>
 #include <QDoubleSpinBox>
 #include <rttr/type>
+
+#define DRAW_FLOAT3(NAME) \
+	QHBoxLayout* hBoxLayout_##NAME = new QHBoxLayout();\
+	QLabel* label_x_##NAME = new QLabel("x");\
+	QLabel* label_y_##NAME = new QLabel("y");\
+	QLabel* label_z_##NAME = new QLabel("z");\
+	QDoubleSpinBox* doubleSpinBox_x_##NAME = new QDoubleSpinBox();\
+	doubleSpinBox_x_##NAME->setMaximum(DBL_MAX);\
+	doubleSpinBox_x_##NAME->setMinimum(-DBL_MAX);\
+	doubleSpinBox_x_##NAME->setValue(transform3D.get_##NAME().x);\
+	QDoubleSpinBox* doubleSpinBox_y_##NAME = new QDoubleSpinBox();\
+	doubleSpinBox_y_##NAME->setMaximum(DBL_MAX);\
+	doubleSpinBox_y_##NAME->setMinimum(-DBL_MAX);\
+	doubleSpinBox_y_##NAME->setValue(transform3D.get_##NAME().y);\
+	QDoubleSpinBox* doubleSpinBox_z_##NAME = new QDoubleSpinBox();\
+	doubleSpinBox_z_##NAME->setMaximum(DBL_MAX);\
+	doubleSpinBox_z_##NAME->setMinimum(-DBL_MAX);\
+	doubleSpinBox_z_##NAME->setValue(transform3D.get_##NAME().z);\
+	hBoxLayout_##NAME->addWidget(label_x_##NAME);\
+	hBoxLayout_##NAME->addWidget(doubleSpinBox_x_##NAME);\
+	hBoxLayout_##NAME->addWidget(label_y_##NAME);\
+	hBoxLayout_##NAME->addWidget(doubleSpinBox_y_##NAME);\
+	hBoxLayout_##NAME->addWidget(label_z_##NAME);\
+	hBoxLayout_##NAME->addWidget(doubleSpinBox_z_##NAME);\
 
 ComponentDockWidget::ComponentDockWidget(QWidget *parent /*= nullptr*/) : QDockWidget("Property", parent)
 {
@@ -91,6 +116,19 @@ void ComponentDockWidget::reflect(std::shared_ptr<Destiny::Reflection> reflectio
 					prop.set_value(reflection, checkBox->isChecked());
 				});
 		}
+		else if (prop.get_type().get_name() == "float")
+		{
+			QDoubleSpinBox* doubleSpinBox = new QDoubleSpinBox(tableWidget);
+			doubleSpinBox->setMaximum(DBL_MAX);
+			doubleSpinBox->setMinimum(-DBL_MAX);
+			doubleSpinBox->setValue(prop.get_value(reflection).to_float());
+			tableWidget->setCellWidget(index, 1, doubleSpinBox);
+			connect(doubleSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, 
+				[=]()
+				{
+					prop.set_value(reflection, (float)doubleSpinBox->value());
+				});
+		}
 		else if (prop.get_type().get_name() == "XMFLOAT3")
 		{
 			using namespace DirectX;
@@ -124,31 +162,54 @@ void ComponentDockWidget::reflect(std::shared_ptr<Destiny::Reflection> reflectio
 			widget->setLayout(hBoxLayout);
 			tableWidget->setCellWidget(index, 1, widget);
 
-			connect(doubleSpinBox_x, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this,
-				[=]()
-				{
-					prop.set_value(reflection, XMFLOAT3((float)doubleSpinBox_x->value(), (float)doubleSpinBox_y->value(), (float)doubleSpinBox_z->value()));
-				});
-
-			connect(doubleSpinBox_y, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this,
-				[=]()
-				{
-					prop.set_value(reflection, XMFLOAT3((float)doubleSpinBox_x->value(), (float)doubleSpinBox_y->value(), (float)doubleSpinBox_z->value()));
-				});
-
-			connect(doubleSpinBox_z, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this,
-				[=]()
-				{
-					prop.set_value(reflection, XMFLOAT3((float)doubleSpinBox_x->value(), (float)doubleSpinBox_y->value(), (float)doubleSpinBox_z->value()));
-				});
+			auto func = 
+			[=]()
+			{
+				prop.set_value(reflection, XMFLOAT3((float)doubleSpinBox_x->value(), (float)doubleSpinBox_y->value(), (float)doubleSpinBox_z->value()));
+			};
+			connect(doubleSpinBox_x, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, func);
+			connect(doubleSpinBox_y, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, func);
+			connect(doubleSpinBox_z, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, func);
 		}
-		else if (prop.get_type().get_name() == "classstd::shared_ptr<classDestiny::Transform3D>")
+		else if (prop.get_type().get_name() == "Transform3D")
 		{
-			QVBoxLayout* vBoxLayout = new QVBoxLayout(tableWidget);
+			using namespace DirectX;
+			using namespace Destiny;
+
+			Transform3D transform3D = prop.get_value(reflection).get_value<Transform3D>();
+			DRAW_FLOAT3(translation);
+			DRAW_FLOAT3(rotation);
+			DRAW_FLOAT3(scale);
+
+
+			QVBoxLayout* vBoxLayout = new QVBoxLayout();
+			vBoxLayout->addLayout(hBoxLayout_translation);
+			vBoxLayout->addLayout(hBoxLayout_rotation);
+			vBoxLayout->addLayout(hBoxLayout_scale);
 			QWidget* widget = new QWidget(tableWidget);
-			reflect(prop.get_value(reflection).get_value<std::shared_ptr<Destiny::Transform3D>>(), vBoxLayout, true);
 			widget->setLayout(vBoxLayout);
 			tableWidget->setCellWidget(index, 1, widget);
+
+			auto func =
+				[=]()
+			{
+				Transform3D transform;
+				transform.set_translation({ (float)doubleSpinBox_x_translation->value(), (float)doubleSpinBox_y_translation->value(), (float)doubleSpinBox_z_translation->value() });
+				transform.set_rotation({ (float)doubleSpinBox_x_rotation->value(), (float)doubleSpinBox_y_rotation->value(), (float)doubleSpinBox_z_rotation->value() });
+				transform.set_translation({ (float)doubleSpinBox_x_scale->value(), (float)doubleSpinBox_y_scale->value(), (float)doubleSpinBox_z_scale->value() });
+				prop.set_value(reflection, transform);
+			};
+			connect(doubleSpinBox_x_translation, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, func);
+			connect(doubleSpinBox_y_translation, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, func);
+			connect(doubleSpinBox_z_translation, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, func);
+
+			connect(doubleSpinBox_x_rotation, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, func);
+			connect(doubleSpinBox_y_rotation, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, func);
+			connect(doubleSpinBox_z_rotation, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, func);
+
+			connect(doubleSpinBox_x_scale, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, func);
+			connect(doubleSpinBox_y_scale, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, func);
+			connect(doubleSpinBox_z_scale, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, func);
 		}
 		else
 		{

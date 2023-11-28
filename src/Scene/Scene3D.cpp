@@ -4,6 +4,7 @@
 #include "Visual3DComponent.h"
 #include "BoxComponent.h"
 #include "Camera3DComponent.h"
+#include "CameraController.h"
 
 namespace Destiny
 {
@@ -21,6 +22,8 @@ namespace Destiny
 		m_cameraNode->set_transform3D(transform3D);
 		auto camera3DComponent = std::make_shared<Camera3DComponent>();
 		m_cameraNode->addComponent(camera3DComponent);
+		auto cameraController = std::make_shared<CameraController>();
+		m_cameraNode->addComponent(cameraController);
 
 		auto boxNode1 = std::make_shared<Node3D>();
 		boxNode1->set_name("Box1");

@@ -81,6 +81,42 @@ namespace Destiny
 		m_components.erase(iter);
 	}
 
+	void Node3D::moveZAxis(float distance)
+	{
+		m_transform3D.moveZAxis(distance);
+		for (const auto& component : m_components)
+		{
+			component->onNodeTransformChanged();
+		}
+	}
+
+	void Node3D::moveXAxis(float distance)
+	{
+		m_transform3D.moveXAxis(distance);
+		for (const auto& component : m_components)
+		{
+			component->onNodeTransformChanged();
+		}
+	}
+
+	void Node3D::rotateXAxis(float angle)
+	{
+		m_transform3D.rotateXAxis(angle);
+		for (const auto& component : m_components)
+		{
+			component->onNodeTransformChanged();
+		}
+	}
+
+	void Node3D::rotateYAxis(float angle)
+	{
+		m_transform3D.rotateYAxis(angle);
+		for (const auto& component : m_components)
+		{
+			component->onNodeTransformChanged();
+		}
+	}
+
 	void Node3D::set_transform3D(Transform3D transform3D)
 	{
 		m_transform3D = transform3D;

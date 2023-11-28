@@ -18,6 +18,39 @@ namespace Destiny
 			XMMatrixTranslationFromVector(XMLoadFloat3(&m_translation));
 	}
 
+	void Transform3D::moveZAxis(float distance)
+	{
+		XMFLOAT3 radiansRotation{ XMConvertToRadians(m_rotation.x), XMConvertToRadians(m_rotation.y), XMConvertToRadians(m_rotation.z) };
+		XMMATRIX rotMatrix = XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&radiansRotation));
+
+		XMVECTOR pos = XMLoadFloat3(&m_translation);
+		XMVECTOR dir = rotMatrix.r[2];
+		pos += dir * distance;
+
+		XMStoreFloat3(&m_translation, pos);
+	}
+
+	void Transform3D::moveXAxis(float distance)
+	{
+		XMFLOAT3 radiansRotation{ XMConvertToRadians(m_rotation.x), XMConvertToRadians(m_rotation.y), XMConvertToRadians(m_rotation.z) };
+		XMMATRIX rotMatrix = XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&radiansRotation));
+
+		XMVECTOR pos = XMLoadFloat3(&m_translation);
+		XMVECTOR dir = rotMatrix.r[0];
+		pos += dir * distance;
+
+		XMStoreFloat3(&m_translation, pos);
+	}
+
+	void Transform3D::rotateXAxis(float angle)
+	{
+		m_rotation.x -= angle;
+	}
+	void Transform3D::rotateYAxis(float angle)
+	{
+		m_rotation.y -= angle;
+	}
+
 	RTTR_REGISTRATION
 	{
 		rttr::registration::class_<XMFLOAT3>("XMFLOAT3")

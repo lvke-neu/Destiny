@@ -18,6 +18,10 @@ namespace Destiny
 		void removeFromParent();
 		void addComponent(std::shared_ptr<Component> component);
 		void removeComponent(std::shared_ptr<Component> component);
+		void moveZAxis(float distance);
+		void moveXAxis(float distance);
+		void rotateXAxis(float angle);
+		void rotateYAxis(float angle);
 	public:
 		GET_CLASS_NAME(Node3D);
 		GET_SET(std::string, uuid);

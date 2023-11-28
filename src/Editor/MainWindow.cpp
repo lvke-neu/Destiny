@@ -23,6 +23,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	//this->setWindowState(Qt::WindowMaximized);
 	//this->setMaximumSize(300, 300);
+
+	this->setWindowTitle("Destiny");
 }
 
 MainWindow::~MainWindow()

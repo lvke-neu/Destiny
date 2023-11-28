@@ -16,9 +16,8 @@
 
 namespace Destiny
 {
-	static std::shared_ptr<Texture> tex = nullptr;
-	static std::shared_ptr<SamplerState> samplerState = nullptr;
-	BoxComponent::BoxComponent()
+	BoxComponent::BoxComponent() :
+		m_texturePath("assets://Texture/brick.dds")
 	{
 		std::shared_ptr<Blob> data = nullptr;
 		using namespace DirectX;
@@ -130,13 +129,13 @@ namespace Destiny
 		blendState->load(0);
 		m_visual3D->setBlendState(blendState);
 
-		tex = Engine::GetInstance()->getGraphicsSystem()->createTexture("assets://Texture/brick.dds");
-		tex->load();
+		m_texture = Engine::GetInstance()->getGraphicsSystem()->createTexture(m_texturePath.c_str());
+		m_texture->load();
 
 		data.reset(new Blob(sizeof(D3D11_SAMPLER_DESC)));
 		memcpy_s(data->getData(), data->getLength(), &SamplerState::Default_SamplerState_Desc, data->getLength());
-		samplerState = Engine::GetInstance()->getGraphicsSystem()->createSamplerState(data);
-		samplerState->load(0);
+		m_samplerState = Engine::GetInstance()->getGraphicsSystem()->createSamplerState(data);
+		m_samplerState->load(0);
 
 		m_worldMatrix = std::make_shared<ConstantBuffer<XMMATRIX>>();
 
@@ -153,18 +152,26 @@ namespace Destiny
 		m_worldMatrix->update(XMMatrixTranspose(m_node->get_transform3D().getWorldMatrix()));
 	}
 
+	void BoxComponent::set_texturePath(std::string texturePath)
+	{
+		m_texturePath = texturePath;
+		m_texture.reset();
+		m_texture = Engine::GetInstance()->getGraphicsSystem()->createTexture(m_texturePath.c_str());
+		m_texture->load();
+	}
+
 	void BoxComponent::beforeDrawCommands()
 	{
 		if (
-			!samplerState || !samplerState->isLoadingSucceed() ||
-			!tex || !tex->isLoadingSucceed()
+			!m_samplerState || !m_samplerState->isLoadingSucceed() ||
+			!m_texture || !m_texture->isLoadingSucceed()
 			)
 		{
 			return;
 		}
 		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->VSSetConstantBuffers(2, 1, m_worldMatrix->getConstantBuffer());
-		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetSamplers(0, 1, samplerState->getSamplerState());
-		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetShaderResources(0, 1, tex->getShaderResourceView());
+		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetSamplers(0, 1, m_samplerState->getSamplerState());
+		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetShaderResources(0, 1, m_texture->getShaderResourceView());
 	}
 
 	RTTR_REGISTRATION
@@ -173,6 +180,7 @@ namespace Destiny
 			.constructor<>()
 			(
 				rttr::policy::ctor::as_raw_ptr
-			);
+			)
+		    .property("texturePath", &BoxComponent::get_texturePath, &BoxComponent::set_texturePath);
 	}
 }

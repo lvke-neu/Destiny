@@ -18,7 +18,7 @@ namespace Destiny
 		m_cameraNode->set_name("Camera");
 		m_cameraNode->addToParent(m_rootNode);
 		Transform3D transform3D;
-		transform3D.set_translation({ 0.0f, 0.0f, -5.0f });
+		transform3D.set_translation({ 0.0f, 0.0f, -10.0f });
 		m_cameraNode->set_transform3D(transform3D);
 		auto camera3DComponent = std::make_shared<Camera3DComponent>();
 		m_cameraNode->addComponent(camera3DComponent);
@@ -30,11 +30,15 @@ namespace Destiny
 		boxNode1->addToParent(m_rootNode);
 		auto boxComponent1 = std::make_shared<BoxComponent>();
 		boxNode1->addComponent(boxComponent1);
+		transform3D.set_translation({ -2.0f, 0.0f, 0.0f });
+		boxNode1->set_transform3D(transform3D);
 
 		auto boxNode2 = std::make_shared<Node3D>();
 		boxNode2->set_name("Box2");
 		boxNode2->addToParent(m_rootNode);
 		auto boxComponent2 = std::make_shared<BoxComponent>();
 		boxNode2->addComponent(boxComponent2);
+		transform3D.set_translation({ 2.0f, 0.0f, 0.0f });
+		boxNode2->set_transform3D(transform3D);
 	}
 }

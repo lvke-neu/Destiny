@@ -13,6 +13,8 @@
 #include <QLineEdit>
 #include <QLabel>
 #include <QDoubleSpinBox>
+#include <QComboBox>
+#include <d3d11.h>
 #include <rttr/type>
 
 #define DRAW_FLOAT3(NAME, LABEL_NAME) \
@@ -42,6 +44,8 @@
 	hBoxLayout_##NAME->addWidget(doubleSpinBox_z_##NAME);
 	
 
+Q_DECLARE_METATYPE(D3D11_FILL_MODE);
+Q_DECLARE_METATYPE(D3D11_CULL_MODE);
 
 ComponentDockWidget::ComponentDockWidget(QWidget *parent /*= nullptr*/) : QDockWidget("Property", parent)
 {
@@ -216,10 +220,143 @@ void ComponentDockWidget::reflect(std::shared_ptr<Destiny::Reflection> reflectio
 			connect(doubleSpinBox_y_scale, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, func);
 			connect(doubleSpinBox_z_scale, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, func);
 		}
+		else if (prop.get_type().get_name() == "D3D11_RASTERIZER_DESC")
+		{
+			QWidget* widget = new QWidget();
+			QVBoxLayout* vBoxLayout = new QVBoxLayout();
+
+			auto desc = prop.get_value(reflection).get_value<D3D11_RASTERIZER_DESC>();
+
+			QComboBox* comboBox_FillMode = new QComboBox;
+			comboBox_FillMode->addItem("D3D11_FILL_WIREFRAME", D3D11_FILL_MODE::D3D11_FILL_WIREFRAME);
+			comboBox_FillMode->addItem("D3D11_FILL_SOLID", D3D11_FILL_MODE::D3D11_FILL_SOLID);
+			comboBox_FillMode->setCurrentIndex(desc.FillMode - 2);
+			QHBoxLayout* hBoxLayout_FillMode = new QHBoxLayout;
+			QLabel* label_FillMode = new QLabel("FillMode:");
+			hBoxLayout_FillMode->addWidget(label_FillMode);
+			hBoxLayout_FillMode->addWidget(comboBox_FillMode);
+
+			
+			QComboBox* comboBox_CullMode = new QComboBox;
+			comboBox_CullMode->addItem("D3D11_CULL_NONE", D3D11_CULL_MODE::D3D11_CULL_NONE);
+			comboBox_CullMode->addItem("D3D11_CULL_FRONT", D3D11_CULL_MODE::D3D11_CULL_FRONT);
+			comboBox_CullMode->addItem("D3D11_CULL_BACK", D3D11_CULL_MODE::D3D11_CULL_BACK);
+			comboBox_CullMode->setCurrentIndex(desc.FillMode - 1);
+			QHBoxLayout* hBoxLayout_CullMode = new QHBoxLayout;
+			QLabel* label_CullMode = new QLabel("CullMode:");
+			hBoxLayout_CullMode->addWidget(label_CullMode);
+			hBoxLayout_CullMode->addWidget(comboBox_CullMode);
+
+			QCheckBox* checkBox_FrontCounterClockwise = new QCheckBox(tableWidget);
+			checkBox_FrontCounterClockwise->setChecked(desc.FrontCounterClockwise);
+			QHBoxLayout* hBoxLayout_FrontCounterClockwise = new QHBoxLayout();
+			QLabel* label_FrontCounterClockwise = new QLabel("FrontCounterClockwise:");
+			hBoxLayout_FrontCounterClockwise->addWidget(label_FrontCounterClockwise);
+			hBoxLayout_FrontCounterClockwise->addWidget(checkBox_FrontCounterClockwise);
+			
+
+			QSpinBox* spinBox_DepthBias = new QSpinBox(tableWidget);
+			spinBox_DepthBias->setMaximum(INT_MAX);
+			spinBox_DepthBias->setMinimum(-INT_MAX);
+			spinBox_DepthBias->setValue(desc.DepthBias);
+			QHBoxLayout* hBoxLayout_DepthBias = new QHBoxLayout();
+			QLabel* label_DepthBias = new QLabel("DepthBias:");
+			hBoxLayout_DepthBias->addWidget(label_DepthBias);
+			hBoxLayout_DepthBias->addWidget(spinBox_DepthBias);
+
+			QDoubleSpinBox* doubleSpinBox_DepthBiasClamp = new QDoubleSpinBox;
+			doubleSpinBox_DepthBiasClamp->setMaximum(DBL_MAX);
+			doubleSpinBox_DepthBiasClamp->setMinimum(-DBL_MAX);
+			doubleSpinBox_DepthBiasClamp->setValue(desc.DepthBiasClamp);
+			QHBoxLayout* hBoxLayout_DepthBiasClamp = new QHBoxLayout();
+			QLabel* label_DepthBiasClamp = new QLabel("DepthBiasClamp:");
+			hBoxLayout_DepthBiasClamp->addWidget(label_DepthBiasClamp);
+			hBoxLayout_DepthBiasClamp->addWidget(doubleSpinBox_DepthBiasClamp);
+
+			QDoubleSpinBox* doubleSpinBox_SlopeScaledDepthBias = new QDoubleSpinBox;
+			doubleSpinBox_SlopeScaledDepthBias->setMaximum(DBL_MAX);
+			doubleSpinBox_SlopeScaledDepthBias->setMinimum(-DBL_MAX);
+			doubleSpinBox_SlopeScaledDepthBias->setValue(desc.SlopeScaledDepthBias);
+			QHBoxLayout* hBoxLayout_SlopeScaledDepthBias = new QHBoxLayout();
+			QLabel* label_SlopeScaledDepthBias = new QLabel("SlopeScaledDepthBias:");
+			hBoxLayout_SlopeScaledDepthBias->addWidget(label_SlopeScaledDepthBias);
+			hBoxLayout_SlopeScaledDepthBias->addWidget(doubleSpinBox_SlopeScaledDepthBias);
+
+			QCheckBox* checkBox_DepthClipEnable = new QCheckBox(tableWidget);
+			checkBox_DepthClipEnable->setChecked(desc.DepthClipEnable);
+			QHBoxLayout* hBoxLayout_DepthClipEnable = new QHBoxLayout();
+			QLabel* label_DepthClipEnable = new QLabel("DepthClipEnable:");
+			hBoxLayout_DepthClipEnable->addWidget(label_DepthClipEnable);
+			hBoxLayout_DepthClipEnable->addWidget(checkBox_DepthClipEnable);
+			
+
+			QCheckBox* checkBox_ScissorEnable = new QCheckBox(tableWidget);
+			checkBox_ScissorEnable->setChecked(desc.ScissorEnable);
+			QHBoxLayout* hBoxLayout_ScissorEnable = new QHBoxLayout();
+			QLabel* label_ScissorEnable = new QLabel("ScissorEnable:");
+			hBoxLayout_ScissorEnable->addWidget(label_ScissorEnable);
+			hBoxLayout_ScissorEnable->addWidget(checkBox_ScissorEnable);
+			
+
+
+			QCheckBox* checkBox_MultisampleEnable = new QCheckBox(tableWidget);
+			checkBox_MultisampleEnable->setChecked(desc.MultisampleEnable);
+			QHBoxLayout* hBoxLayout_MultisampleEnable = new QHBoxLayout();
+			QLabel* label_MultisampleEnable = new QLabel("MultisampleEnable:");
+			hBoxLayout_MultisampleEnable->addWidget(label_MultisampleEnable);
+			hBoxLayout_MultisampleEnable->addWidget(checkBox_MultisampleEnable);
+			
+
+			QCheckBox* checkBox_AntialiasedLineEnable = new QCheckBox(tableWidget);
+			checkBox_AntialiasedLineEnable->setChecked(desc.AntialiasedLineEnable);
+			QHBoxLayout* hBoxLayout_AntialiasedLineEnable = new QHBoxLayout();
+			QLabel* label_AntialiasedLineEnable = new QLabel("AntialiasedLineEnable:");
+			hBoxLayout_AntialiasedLineEnable->addWidget(label_AntialiasedLineEnable);
+			hBoxLayout_AntialiasedLineEnable->addWidget(checkBox_AntialiasedLineEnable);
+			
+			auto func =
+				[=]()
+			{
+				D3D11_RASTERIZER_DESC tmpDesc;
+				tmpDesc.FillMode = comboBox_FillMode->currentData().value<D3D11_FILL_MODE>();
+				tmpDesc.CullMode = comboBox_CullMode->currentData().value<D3D11_CULL_MODE>();
+				tmpDesc.FrontCounterClockwise = checkBox_FrontCounterClockwise->isChecked();
+				tmpDesc.DepthBias = spinBox_DepthBias->value();
+				tmpDesc.DepthBiasClamp = doubleSpinBox_DepthBiasClamp->value();
+				tmpDesc.SlopeScaledDepthBias = doubleSpinBox_SlopeScaledDepthBias->value();
+				tmpDesc.DepthClipEnable = checkBox_DepthClipEnable->isChecked();
+				tmpDesc.ScissorEnable = checkBox_ScissorEnable->isChecked();
+				tmpDesc.MultisampleEnable = checkBox_MultisampleEnable->isChecked();
+				tmpDesc.AntialiasedLineEnable = checkBox_AntialiasedLineEnable->isChecked();
+				prop.set_value(reflection, tmpDesc);
+			}; 
+			connect(comboBox_FillMode, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, func);
+			connect(comboBox_CullMode, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, func);
+			connect(checkBox_FrontCounterClockwise, &QCheckBox::stateChanged, this, func);
+			connect(spinBox_DepthBias, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, func);
+			connect(doubleSpinBox_DepthBiasClamp, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, func);
+			connect(doubleSpinBox_SlopeScaledDepthBias, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, func);
+			connect(checkBox_DepthClipEnable, &QCheckBox::stateChanged, this, func);
+			connect(checkBox_ScissorEnable, &QCheckBox::stateChanged, this, func);
+			connect(checkBox_MultisampleEnable, &QCheckBox::stateChanged, this, func);
+			connect(checkBox_AntialiasedLineEnable, &QCheckBox::stateChanged, this, func);
+			vBoxLayout->addLayout(hBoxLayout_FillMode);
+			vBoxLayout->addLayout(hBoxLayout_CullMode);
+			vBoxLayout->addLayout(hBoxLayout_FrontCounterClockwise);
+			vBoxLayout->addLayout(hBoxLayout_DepthBias);
+			vBoxLayout->addLayout(hBoxLayout_DepthBiasClamp);
+			vBoxLayout->addLayout(hBoxLayout_SlopeScaledDepthBias);
+			vBoxLayout->addLayout(hBoxLayout_DepthClipEnable);
+			vBoxLayout->addLayout(hBoxLayout_ScissorEnable);
+			vBoxLayout->addLayout(hBoxLayout_MultisampleEnable);
+			vBoxLayout->addLayout(hBoxLayout_AntialiasedLineEnable);
+			widget->setLayout(vBoxLayout);
+			tableWidget->setCellWidget(index, 1, widget);
+		}
 		else
 		{
 			auto name = prop.get_type().get_name();
-			tableWidget->setItem(index, 1, new QTableWidgetItem("Unsupported reflection type"));
+			tableWidget->setItem(index, 1, new QTableWidgetItem(name.to_string().c_str()));
 		}
 
 		index++;

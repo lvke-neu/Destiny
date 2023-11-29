@@ -1,12 +1,27 @@
 #include "Visual3DComponent.h"
 #include "Graphics/Visual3D.h"
+#include "Engine/Blob.h"
+#include "Engine/Engine.h"
+#include "Graphics/GraphicsSystem.h"
 
 namespace Destiny
 {
 	Visual3DComponent::Visual3DComponent() : 
-		m_visual3D(std::make_shared<Visual3D>())
+		m_visual3D(std::make_shared<Visual3D>()),
+		m_rasterizerStateDesc(RasterizerState::Default_Rasterizer_Desc)
 	{
 
+	}
+
+	void Visual3DComponent::set_rasterizerStateDesc(D3D11_RASTERIZER_DESC rasterizerStateDesc)
+	{
+		m_rasterizerStateDesc = rasterizerStateDesc;
+		std::shared_ptr<Blob> data = nullptr;
+		data.reset(new Blob(sizeof(D3D11_RASTERIZER_DESC)));
+		memcpy_s(data->getData(), data->getLength(), &m_rasterizerStateDesc, data->getLength());
+		auto rasterizerState = Engine::GetInstance()->getGraphicsSystem()->createRasterizerState(data);
+		rasterizerState->load(0);
+		m_visual3D->setRasterizerState(rasterizerState);
 	}
 
 	RTTR_REGISTRATION
@@ -15,6 +30,34 @@ namespace Destiny
 			.constructor<>()
 			(
 				rttr::policy::ctor::as_raw_ptr
+			)
+			.property("rasterizerStateDesc", &Visual3DComponent::get_rasterizerStateDesc, &Visual3DComponent::set_rasterizerStateDesc);
+
+		rttr::registration::enumeration<D3D11_FILL_MODE>("D3D11_FILL_MODE")
+			(
+				rttr::detail::enum_data<D3D11_FILL_MODE>("D3D11_FILL_WIREFRAME", D3D11_FILL_MODE::D3D11_FILL_WIREFRAME),
+				rttr::detail::enum_data<D3D11_FILL_MODE>("D3D11_FILL_SOLID", D3D11_FILL_MODE::D3D11_FILL_SOLID)
 			);
+		rttr::registration::enumeration<D3D11_CULL_MODE>("D3D11_CULL_MODE")
+			(
+				rttr::detail::enum_data<D3D11_CULL_MODE>("D3D11_CULL_NONE", D3D11_CULL_MODE::D3D11_CULL_NONE),
+				rttr::detail::enum_data<D3D11_CULL_MODE>("D3D11_CULL_FRONT", D3D11_CULL_MODE::D3D11_CULL_FRONT),
+				rttr::detail::enum_data<D3D11_CULL_MODE>("D3D11_CULL_BACK", D3D11_CULL_MODE::D3D11_CULL_BACK)
+			);
+		rttr::registration::class_<D3D11_RASTERIZER_DESC>("D3D11_RASTERIZER_DESC")
+			.constructor<>()
+			(
+				rttr::policy::ctor::as_raw_ptr
+			)
+			.property("FillMode", &D3D11_RASTERIZER_DESC::FillMode)
+			.property("CullMode", &D3D11_RASTERIZER_DESC::CullMode)
+			.property("FrontCounterClockwise", &D3D11_RASTERIZER_DESC::FrontCounterClockwise)
+			.property("DepthBias", &D3D11_RASTERIZER_DESC::DepthBias)
+			.property("DepthBiasClamp", &D3D11_RASTERIZER_DESC::DepthBiasClamp)
+			.property("SlopeScaledDepthBias", &D3D11_RASTERIZER_DESC::SlopeScaledDepthBias)
+			.property("DepthClipEnable", &D3D11_RASTERIZER_DESC::DepthClipEnable)
+			.property("ScissorEnable", &D3D11_RASTERIZER_DESC::ScissorEnable)
+			.property("MultisampleEnable", &D3D11_RASTERIZER_DESC::MultisampleEnable)
+			.property("AntialiasedLineEnable", &D3D11_RASTERIZER_DESC::AntialiasedLineEnable);
 	}
 }

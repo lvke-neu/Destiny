@@ -46,6 +46,8 @@
 
 Q_DECLARE_METATYPE(D3D11_FILL_MODE);
 Q_DECLARE_METATYPE(D3D11_CULL_MODE);
+Q_DECLARE_METATYPE(D3D11_DEPTH_WRITE_MASK);
+Q_DECLARE_METATYPE(D3D11_COMPARISON_FUNC);
 
 ComponentDockWidget::ComponentDockWidget(QWidget *parent /*= nullptr*/) : QDockWidget("Property", parent)
 {
@@ -350,6 +352,73 @@ void ComponentDockWidget::reflect(std::shared_ptr<Destiny::Reflection> reflectio
 			vBoxLayout->addLayout(hBoxLayout_ScissorEnable);
 			vBoxLayout->addLayout(hBoxLayout_MultisampleEnable);
 			vBoxLayout->addLayout(hBoxLayout_AntialiasedLineEnable);
+			widget->setLayout(vBoxLayout);
+			tableWidget->setCellWidget(index, 1, widget);
+		}
+		else if (prop.get_type().get_name() == "D3D11_DEPTH_STENCIL_DESC")
+		{
+			QWidget* widget = new QWidget();
+			QVBoxLayout* vBoxLayout = new QVBoxLayout();
+
+			auto desc = prop.get_value(reflection).get_value<D3D11_DEPTH_STENCIL_DESC>();
+
+			QCheckBox* checkBox_DepthEnable = new QCheckBox(tableWidget);
+			checkBox_DepthEnable->setChecked(desc.DepthEnable);
+			QHBoxLayout* hBoxLayout_DepthEnable = new QHBoxLayout();
+			QLabel* label_DepthEnable = new QLabel("DepthEnable:");
+			hBoxLayout_DepthEnable->addWidget(label_DepthEnable);
+			hBoxLayout_DepthEnable->addWidget(checkBox_DepthEnable);
+
+			QComboBox* comboBox_DepthWriteMask = new QComboBox;
+			comboBox_DepthWriteMask->addItem("D3D11_DEPTH_WRITE_MASK_ZERO", D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ZERO);
+			comboBox_DepthWriteMask->addItem("D3D11_DEPTH_WRITE_MASK_ALL", D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL);
+			comboBox_DepthWriteMask->setCurrentIndex(desc.DepthWriteMask);
+			QHBoxLayout* hBoxLayout_DepthWriteMask = new QHBoxLayout;
+			QLabel* label_DepthWriteMask = new QLabel("DepthWriteMask:");
+			hBoxLayout_DepthWriteMask->addWidget(label_DepthWriteMask);
+			hBoxLayout_DepthWriteMask->addWidget(comboBox_DepthWriteMask);
+
+			QComboBox* comboBox_DepthFunc = new QComboBox;
+			comboBox_DepthFunc->addItem("D3D11_DEPTH_WRITE_MASK_ZERO", D3D11_COMPARISON_FUNC::D3D11_COMPARISON_NEVER);
+			comboBox_DepthFunc->addItem("D3D11_COMPARISON_LESS", D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS);
+			comboBox_DepthFunc->addItem("D3D11_COMPARISON_EQUAL", D3D11_COMPARISON_FUNC::D3D11_COMPARISON_EQUAL);
+			comboBox_DepthFunc->addItem("D3D11_COMPARISON_LESS_EQUAL", D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS_EQUAL);
+			comboBox_DepthFunc->addItem("D3D11_COMPARISON_GREATER", D3D11_COMPARISON_FUNC::D3D11_COMPARISON_GREATER);
+			comboBox_DepthFunc->addItem("D3D11_COMPARISON_NOT_EQUAL", D3D11_COMPARISON_FUNC::D3D11_COMPARISON_NOT_EQUAL);
+			comboBox_DepthFunc->addItem("D3D11_COMPARISON_GREATER_EQUAL", D3D11_COMPARISON_FUNC::D3D11_COMPARISON_GREATER_EQUAL);
+			comboBox_DepthFunc->addItem("D3D11_COMPARISON_ALWAYS", D3D11_COMPARISON_FUNC::D3D11_COMPARISON_ALWAYS);
+			comboBox_DepthFunc->setCurrentIndex(desc.DepthFunc - 1);
+			QHBoxLayout* hBoxLayout_DepthFunc = new QHBoxLayout;
+			QLabel* label_DepthFunc = new QLabel("DepthFunc:");
+			hBoxLayout_DepthFunc->addWidget(label_DepthFunc);
+			hBoxLayout_DepthFunc->addWidget(comboBox_DepthFunc);
+
+			QCheckBox* checkBox_StencilEnable = new QCheckBox(tableWidget);
+			checkBox_StencilEnable->setChecked(desc.StencilEnable);
+			QHBoxLayout* hBoxLayout_StencilEnable = new QHBoxLayout();
+			QLabel* label_StencilEnable = new QLabel("StencilEnable:");
+			hBoxLayout_StencilEnable->addWidget(label_StencilEnable);
+			hBoxLayout_StencilEnable->addWidget(checkBox_StencilEnable);
+
+			auto func =
+				[=]()
+			{
+				D3D11_DEPTH_STENCIL_DESC tmpDesc;
+				tmpDesc.DepthEnable = checkBox_DepthEnable->isChecked();
+				tmpDesc.DepthWriteMask = comboBox_DepthWriteMask->currentData().value<D3D11_DEPTH_WRITE_MASK>();
+				tmpDesc.DepthFunc = comboBox_DepthFunc->currentData().value<D3D11_COMPARISON_FUNC>();
+				tmpDesc.StencilEnable = checkBox_StencilEnable->isChecked();
+				prop.set_value(reflection, tmpDesc);
+			};
+			connect(checkBox_DepthEnable, &QCheckBox::stateChanged, this, func);
+			connect(comboBox_DepthWriteMask, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, func);
+			connect(comboBox_DepthFunc, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, func);
+			connect(checkBox_StencilEnable, &QCheckBox::stateChanged, this, func);
+			vBoxLayout->addLayout(hBoxLayout_DepthEnable);
+			vBoxLayout->addLayout(hBoxLayout_DepthWriteMask);
+			vBoxLayout->addLayout(hBoxLayout_DepthFunc);
+			vBoxLayout->addLayout(hBoxLayout_DepthEnable);
+
 			widget->setLayout(vBoxLayout);
 			tableWidget->setCellWidget(index, 1, widget);
 		}

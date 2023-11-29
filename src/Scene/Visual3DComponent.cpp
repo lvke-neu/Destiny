@@ -8,7 +8,8 @@ namespace Destiny
 {
 	Visual3DComponent::Visual3DComponent() : 
 		m_visual3D(std::make_shared<Visual3D>()),
-		m_rasterizerStateDesc(RasterizerState::Default_Rasterizer_Desc)
+		m_rasterizerStateDesc(RasterizerState::Default_Rasterizer_Desc),
+		m_depthStencilStateDesc(DepthStencilState::Default_DepthStencil_Desc)
 	{
 
 	}
@@ -31,7 +32,8 @@ namespace Destiny
 			(
 				rttr::policy::ctor::as_raw_ptr
 			)
-			.property("rasterizerStateDesc", &Visual3DComponent::get_rasterizerStateDesc, &Visual3DComponent::set_rasterizerStateDesc);
+			.property("rasterizerStateDesc", &Visual3DComponent::get_rasterizerStateDesc, &Visual3DComponent::set_rasterizerStateDesc)
+			.property("depthStencilStateDesc", &Visual3DComponent::get_depthStencilStateDesc, &Visual3DComponent::set_depthStencilStateDesc);
 
 		rttr::registration::enumeration<D3D11_FILL_MODE>("D3D11_FILL_MODE")
 			(
@@ -59,5 +61,18 @@ namespace Destiny
 			.property("ScissorEnable", &D3D11_RASTERIZER_DESC::ScissorEnable)
 			.property("MultisampleEnable", &D3D11_RASTERIZER_DESC::MultisampleEnable)
 			.property("AntialiasedLineEnable", &D3D11_RASTERIZER_DESC::AntialiasedLineEnable);
+		rttr::registration::class_<D3D11_DEPTH_STENCIL_DESC>("D3D11_DEPTH_STENCIL_DESC")
+			.constructor<>()
+			(
+				rttr::policy::ctor::as_raw_ptr
+				)
+			.property("DepthEnable", &D3D11_DEPTH_STENCIL_DESC::DepthEnable)
+			.property("DepthWriteMask", &D3D11_DEPTH_STENCIL_DESC::DepthWriteMask)
+			.property("DepthFunc", &D3D11_DEPTH_STENCIL_DESC::DepthFunc)
+			.property("StencilEnable", &D3D11_DEPTH_STENCIL_DESC::StencilEnable)
+			.property("StencilReadMask", &D3D11_DEPTH_STENCIL_DESC::StencilReadMask)
+			.property("StencilWriteMask", &D3D11_DEPTH_STENCIL_DESC::StencilWriteMask)
+			.property("FrontFace", &D3D11_DEPTH_STENCIL_DESC::FrontFace)
+			.property("BackFace", &D3D11_DEPTH_STENCIL_DESC::BackFace);
 	}
 }

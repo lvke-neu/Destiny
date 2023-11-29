@@ -30,7 +30,7 @@ namespace Destiny
 
 	void SceneManager::update()
 	{
-		trace(Engine::GetInstance()->getSceneManager()->getScene3D()->getRootNode());
+		//trace(Engine::GetInstance()->getSceneManager()->getScene3D()->getRootNode());
 	}
 
 	void SceneManager::trace(std::shared_ptr<Node3D> node)

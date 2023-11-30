@@ -1,3 +1,4 @@
+#define NOMINMAX
 #include "GraphicsSystem.h"
 #include "Engine/Engine.h"
 #include "Engine/EventSystem.h"
@@ -18,6 +19,7 @@
 #include "SamplerState.h"
 #include "Visual3D.h"
 #include "TextureLoader.h"
+#include "Color.h"
 #include <d3d11.h>
 
 namespace Destiny
@@ -68,8 +70,7 @@ namespace Destiny
 
 	void GraphicsSystem::begin()
 	{
-		static float color[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-		m_pD3D11ImmediateDeviceContext->ClearRenderTargetView(m_pRenderTargetView, color);
+		m_pD3D11ImmediateDeviceContext->ClearRenderTargetView(m_pRenderTargetView, Color::White.toFloat());
 		m_pD3D11ImmediateDeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	}
 

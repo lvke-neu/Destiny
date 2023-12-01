@@ -9,7 +9,8 @@ namespace Destiny
 	Visual3DComponent::Visual3DComponent() : 
 		m_visual3D(std::make_shared<Visual3D>()),
 		m_rasterizerStateDesc(RasterizerState::Default_Rasterizer_Desc),
-		m_depthStencilStateDesc(DepthStencilState::Default_DepthStencil_Desc)
+		m_depthStencilStateDesc(DepthStencilState::Default_DepthStencil_Desc),
+		m_color(Color::White)
 	{
 
 	}
@@ -33,7 +34,8 @@ namespace Destiny
 				rttr::policy::ctor::as_raw_ptr
 			)
 			.property("rasterizerStateDesc", &Visual3DComponent::get_rasterizerStateDesc, &Visual3DComponent::set_rasterizerStateDesc)
-			.property("depthStencilStateDesc", &Visual3DComponent::get_depthStencilStateDesc, &Visual3DComponent::set_depthStencilStateDesc);
+			.property("depthStencilStateDesc", &Visual3DComponent::get_depthStencilStateDesc, &Visual3DComponent::set_depthStencilStateDesc)
+			.property("color", &Visual3DComponent::get_color, &Visual3DComponent::set_color);
 
 		rttr::registration::enumeration<D3D11_FILL_MODE>("D3D11_FILL_MODE")
 			(

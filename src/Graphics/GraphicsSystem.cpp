@@ -70,7 +70,7 @@ namespace Destiny
 
 	void GraphicsSystem::begin()
 	{
-		m_pD3D11ImmediateDeviceContext->ClearRenderTargetView(m_pRenderTargetView, Color::White.toFloat());
+		m_pD3D11ImmediateDeviceContext->ClearRenderTargetView(m_pRenderTargetView, Color::Black.toFloat());
 		m_pD3D11ImmediateDeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	}
 

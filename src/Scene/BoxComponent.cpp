@@ -12,7 +12,6 @@
 #include "Graphics/Texture.h"
 #include "Graphics/ConstantBuffer.h"
 #include "Graphics/SamplerState.h"
-#include "Node3D.h"
 
 namespace Destiny
 {
@@ -138,19 +137,7 @@ namespace Destiny
 		m_samplerState = Engine::GetInstance()->getGraphicsSystem()->createSamplerState(data);
 		m_samplerState->load(0);
 
-		m_worldMatrix = std::make_shared<ConstantBuffer<XMMATRIX>>();
-
-		m_visual3D->setBeforeDrawCommands(std::bind(&BoxComponent::beforeDrawCommands, this));
-	}
-
-	void BoxComponent::onAttachNode()
-	{
-		m_worldMatrix->update(XMMatrixTranspose(m_node->get_transform3D().getWorldMatrix()));
-	}
-
-	void BoxComponent::onNodeTransformChanged()
-	{
-		m_worldMatrix->update(XMMatrixTranspose(m_node->get_transform3D().getWorldMatrix()));
+		m_visual3D->registerBeforeDrawCommands(std::bind(&BoxComponent::beforeDrawCommands, this));
 	}
 
 	void BoxComponent::set_texturePath(std::string texturePath)
@@ -170,7 +157,6 @@ namespace Destiny
 		{
 			return;
 		}
-		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->VSSetConstantBuffers(2, 1, m_worldMatrix->getConstantBuffer());
 		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetSamplers(0, 1, m_samplerState->getSamplerState());
 		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetShaderResources(0, 1, m_texture->getShaderResourceView());
 	}

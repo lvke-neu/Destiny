@@ -3,16 +3,18 @@
 #include "Engine/Blob.h"
 #include "Engine/Engine.h"
 #include "Graphics/GraphicsSystem.h"
+#include "Node3D.h"
 
 namespace Destiny
 {
-	Visual3DComponent::Visual3DComponent() : 
+	Visual3DComponent::Visual3DComponent() :
 		m_visual3D(std::make_shared<Visual3D>()),
 		m_rasterizerStateDesc(RasterizerState::Default_Rasterizer_Desc),
 		m_depthStencilStateDesc(DepthStencilState::Default_DepthStencil_Desc),
-		m_color(Color::White)
+		m_color(Color::White),
+		m_worldMatrix(std::make_shared<ConstantBuffer<XMMATRIX>>())
 	{
-
+		m_visual3D->registerBeforeDrawCommands(std::bind(&Visual3DComponent::setWorldMatrix, this));
 	}
 
 	void Visual3DComponent::set_rasterizerStateDesc(D3D11_RASTERIZER_DESC rasterizerStateDesc)
@@ -24,6 +26,21 @@ namespace Destiny
 		auto rasterizerState = Engine::GetInstance()->getGraphicsSystem()->createRasterizerState(data);
 		rasterizerState->load(0);
 		m_visual3D->setRasterizerState(rasterizerState);
+	}
+
+	void Visual3DComponent::onAttachNode()
+	{
+		m_worldMatrix->update(XMMatrixTranspose(m_node->get_transform3D().getWorldMatrix()));
+	}
+
+	void Visual3DComponent::onNodeTransformChanged()
+	{
+		m_worldMatrix->update(XMMatrixTranspose(m_node->get_transform3D().getWorldMatrix()));
+	}
+
+	void Visual3DComponent::setWorldMatrix()
+	{
+		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->VSSetConstantBuffers(2, 1, m_worldMatrix->getConstantBuffer());
 	}
 
 	RTTR_REGISTRATION

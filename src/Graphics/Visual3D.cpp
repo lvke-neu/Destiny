@@ -66,16 +66,20 @@ namespace Destiny
 		immediateContext->OMSetDepthStencilState(m_depthStencilState->getDepthStencilState(), 0);
 		immediateContext->OMSetBlendState(m_blendState->getBlendState(), nullptr, 0xFFFFFFFF);
 
-		if (m_beforeDrawCommands)
+		for (const auto& command : m_beforeDrawCommands)
 		{
-			m_beforeDrawCommands();
+			if (command)
+			{
+				command();
+			}
 		}
-
 		immediateContext->DrawIndexed(m_indexBuffer->getCount(), 0, 0);
-
-		if (m_afterDrawCommands)
+		for (const auto& command : m_afterDrawCommands)
 		{
-			m_afterDrawCommands();
-		}	
+			if (command)
+			{
+				command();
+			}
+		}
 	}
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include <functional>
+#include <vector>
 
 namespace Destiny
 {
@@ -19,13 +20,13 @@ namespace Destiny
 		~Visual3D();
 	public:
 		void draw();
-		void setBeforeDrawCommands(std::function<void(void)> beforeDrawCommands)
+		void registerBeforeDrawCommands(std::function<void(void)> beforeDrawCommand)
 		{
-			m_beforeDrawCommands = beforeDrawCommands;
+			m_beforeDrawCommands.push_back(beforeDrawCommand);
 		}
-		void setAfterDrawCommands(std::function<void(void)> afterDrawCommands)
+		void registerAfterDrawCommands(std::function<void(void)> afterDrawCommand)
 		{
-			m_afterDrawCommands = afterDrawCommands;
+			m_afterDrawCommands.push_back(afterDrawCommand);
 		}
 	public:
 		void setVertexBuffer(std::shared_ptr<VertexBuffer> vertexBuffer);
@@ -46,8 +47,8 @@ namespace Destiny
 		std::shared_ptr<DepthStencilState> m_depthStencilState;
 		std::shared_ptr<BlendState> m_blendState;
 
-		std::function<void(void)> m_beforeDrawCommands;
-		std::function<void(void)> m_afterDrawCommands;
+		std::vector<std::function<void(void)>> m_beforeDrawCommands;
+		std::vector < std::function<void(void)>> m_afterDrawCommands;
 	};
 
 	inline void Visual3D::setVertexBuffer(std::shared_ptr<VertexBuffer> vertexBuffer)

@@ -6,11 +6,7 @@
 #include "Graphics/VertexShader.h"
 #include "Graphics/PixelShader.h"
 #include "Graphics/InputLayout.h"
-#include "Graphics/RasterizerState.h"
-#include "Graphics/DepthStencilState.h"
-#include "Graphics/BlendState.h"
 #include "Graphics/Texture.h"
-#include "Graphics/ConstantBuffer.h"
 #include "Graphics/SamplerState.h"
 
 namespace Destiny
@@ -107,27 +103,6 @@ namespace Destiny
 		pixelShader->load(0);
 		m_visual3D->setVertexShader(vertexShader);
 		m_visual3D->setPixelShader(pixelShader);
-
-		D3D11_RASTERIZER_DESC rasterizerDesc = RasterizerState::Default_Rasterizer_Desc;
-		data.reset(new Blob(sizeof(D3D11_RASTERIZER_DESC)));
-		memcpy_s(data->getData(), data->getLength(), &rasterizerDesc, data->getLength());
-		auto rasterizerState = Engine::GetInstance()->getGraphicsSystem()->createRasterizerState(data);
-		rasterizerState->load(0);
-		m_visual3D->setRasterizerState(rasterizerState);
-
-		D3D11_DEPTH_STENCIL_DESC depthStencilStateDesc = DepthStencilState::Default_DepthStencil_Desc;
-		data.reset(new Blob(sizeof(D3D11_DEPTH_STENCIL_DESC)));
-		memcpy_s(data->getData(), data->getLength(), &depthStencilStateDesc, data->getLength());
-		auto depthStencilState = Engine::GetInstance()->getGraphicsSystem()->createDepthStencilState(data);
-		depthStencilState->load(0);
-		m_visual3D->setDepthStencilState(depthStencilState);
-
-		D3D11_BLEND_DESC blendStateDesc = BlendState::Default_BlendState_Desc;
-		data.reset(new Blob(sizeof(D3D11_BLEND_DESC)));
-		memcpy_s(data->getData(), data->getLength(), &blendStateDesc, data->getLength());
-		auto blendState = Engine::GetInstance()->getGraphicsSystem()->createBlendState(data);
-		blendState->load(0);
-		m_visual3D->setBlendState(blendState);
 
 		m_texture = Engine::GetInstance()->getGraphicsSystem()->createTexture(m_texturePath.c_str());
 		m_texture->load();

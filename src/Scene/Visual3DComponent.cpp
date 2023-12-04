@@ -1,8 +1,11 @@
 #include "Visual3DComponent.h"
-#include "Graphics/Visual3D.h"
 #include "Engine/Blob.h"
 #include "Engine/Engine.h"
+#include "Graphics/Visual3D.h"
 #include "Graphics/GraphicsSystem.h"
+#include "Graphics/RasterizerState.h"
+#include "Graphics/DepthStencilState.h"
+#include "Graphics/BlendState.h"
 #include "Node3D.h"
 
 namespace Destiny
@@ -14,6 +17,29 @@ namespace Destiny
 		m_color(Color::White),
 		m_worldMatrix(std::make_shared<ConstantBuffer<XMMATRIX>>())
 	{
+		std::shared_ptr<Blob> data = nullptr;
+
+		D3D11_RASTERIZER_DESC rasterizerDesc = RasterizerState::Default_Rasterizer_Desc;
+		data.reset(new Blob(sizeof(D3D11_RASTERIZER_DESC)));
+		memcpy_s(data->getData(), data->getLength(), &rasterizerDesc, data->getLength());
+		auto rasterizerState = Engine::GetInstance()->getGraphicsSystem()->createRasterizerState(data);
+		rasterizerState->load(0);
+		m_visual3D->setRasterizerState(rasterizerState);
+
+		D3D11_DEPTH_STENCIL_DESC depthStencilStateDesc = DepthStencilState::Default_DepthStencil_Desc;
+		data.reset(new Blob(sizeof(D3D11_DEPTH_STENCIL_DESC)));
+		memcpy_s(data->getData(), data->getLength(), &depthStencilStateDesc, data->getLength());
+		auto depthStencilState = Engine::GetInstance()->getGraphicsSystem()->createDepthStencilState(data);
+		depthStencilState->load(0);
+		m_visual3D->setDepthStencilState(depthStencilState);
+
+		D3D11_BLEND_DESC blendStateDesc = BlendState::Default_BlendState_Desc;
+		data.reset(new Blob(sizeof(D3D11_BLEND_DESC)));
+		memcpy_s(data->getData(), data->getLength(), &blendStateDesc, data->getLength());
+		auto blendState = Engine::GetInstance()->getGraphicsSystem()->createBlendState(data);
+		blendState->load(0);
+		m_visual3D->setBlendState(blendState);
+
 		m_visual3D->registerBeforeDrawCommands(std::bind(&Visual3DComponent::setWorldMatrix, this));
 	}
 

@@ -52,6 +52,8 @@ Q_DECLARE_METATYPE(D3D11_CULL_MODE);
 Q_DECLARE_METATYPE(D3D11_DEPTH_WRITE_MASK);
 Q_DECLARE_METATYPE(D3D11_COMPARISON_FUNC);
 Q_DECLARE_METATYPE(D3D11_STENCIL_OP);
+Q_DECLARE_METATYPE(D3D11_BLEND);
+Q_DECLARE_METATYPE(D3D11_BLEND_OP);
 
 ComponentDockWidget::ComponentDockWidget(QWidget *parent /*= nullptr*/) : QDockWidget("Property", parent)
 {
@@ -649,6 +651,235 @@ void ComponentDockWidget::reflect(std::shared_ptr<Destiny::Reflection> reflectio
 				}
 				
 			});
+		}
+		else if (prop.get_type().get_name() == "D3D11_BLEND_DESC")
+		{
+			QWidget* widget = new QWidget();
+			QVBoxLayout* vBoxLayout = new QVBoxLayout();
+
+			auto desc = prop.get_value(reflection).get_value<D3D11_BLEND_DESC>();
+
+			QCheckBox* checkBox_AlphaToCoverageEnable = new QCheckBox();
+			checkBox_AlphaToCoverageEnable->setChecked(desc.AlphaToCoverageEnable);
+			QHBoxLayout* hBoxLayout_AlphaToCoverageEnable = new QHBoxLayout();
+			QLabel* label_AlphaToCoverageEnable = new QLabel("AlphaToCoverageEnable:");
+			hBoxLayout_AlphaToCoverageEnable->addWidget(label_AlphaToCoverageEnable);
+			hBoxLayout_AlphaToCoverageEnable->addWidget(checkBox_AlphaToCoverageEnable);
+
+			QCheckBox* checkBox_IndependentBlendEnable = new QCheckBox();
+			checkBox_IndependentBlendEnable->setChecked(desc.IndependentBlendEnable);
+			QHBoxLayout* hBoxLayout_IndependentBlendEnable = new QHBoxLayout();
+			QLabel* label_IndependentBlendEnable = new QLabel("IndependentBlendEnable:");
+			hBoxLayout_IndependentBlendEnable->addWidget(label_IndependentBlendEnable);
+			hBoxLayout_IndependentBlendEnable->addWidget(checkBox_IndependentBlendEnable);
+
+			QCheckBox* checkBox_BlendEnable = new QCheckBox();
+			checkBox_BlendEnable->setChecked(desc.RenderTarget[0].BlendEnable);
+			QHBoxLayout* hBoxLayout_BlendEnable = new QHBoxLayout();
+			QLabel* label_BlendEnable = new QLabel("BlendEnable:");
+			hBoxLayout_BlendEnable->addWidget(label_BlendEnable);
+			hBoxLayout_BlendEnable->addWidget(checkBox_BlendEnable);
+
+			
+			QComboBox* comboBox_SrcBlend = new QComboBox;
+			comboBox_SrcBlend->addItem("D3D11_BLEND_ZERO", D3D11_BLEND::D3D11_BLEND_ZERO);
+			comboBox_SrcBlend->addItem("D3D11_BLEND_ONE", D3D11_BLEND::D3D11_BLEND_ONE);
+			comboBox_SrcBlend->addItem("D3D11_BLEND_SRC_COLOR", D3D11_BLEND::D3D11_BLEND_SRC_COLOR);
+			comboBox_SrcBlend->addItem("D3D11_BLEND_INV_SRC_COLOR", D3D11_BLEND::D3D11_BLEND_INV_SRC_COLOR);
+			comboBox_SrcBlend->addItem("D3D11_BLEND_SRC_ALPHA", D3D11_BLEND::D3D11_BLEND_SRC_ALPHA);
+			comboBox_SrcBlend->addItem("D3D11_BLEND_INV_SRC_ALPHA", D3D11_BLEND::D3D11_BLEND_INV_SRC_ALPHA);
+			comboBox_SrcBlend->addItem("D3D11_BLEND_DEST_ALPHA", D3D11_BLEND::D3D11_BLEND_DEST_ALPHA);
+			comboBox_SrcBlend->addItem("D3D11_BLEND_INV_DEST_ALPHA", D3D11_BLEND::D3D11_BLEND_INV_DEST_ALPHA);
+			comboBox_SrcBlend->addItem("D3D11_BLEND_DEST_COLOR", D3D11_BLEND::D3D11_BLEND_DEST_COLOR);
+			comboBox_SrcBlend->addItem("D3D11_BLEND_INV_DEST_COLOR", D3D11_BLEND::D3D11_BLEND_INV_DEST_COLOR);
+			comboBox_SrcBlend->addItem("D3D11_BLEND_SRC_ALPHA_SAT", D3D11_BLEND::D3D11_BLEND_SRC_ALPHA_SAT);
+			comboBox_SrcBlend->addItem("D3D11_BLEND_BLEND_FACTOR", D3D11_BLEND::D3D11_BLEND_BLEND_FACTOR);
+			comboBox_SrcBlend->addItem("D3D11_BLEND_INV_BLEND_FACTOR", D3D11_BLEND::D3D11_BLEND_INV_BLEND_FACTOR);
+			comboBox_SrcBlend->addItem("D3D11_BLEND_SRC1_COLOR", D3D11_BLEND::D3D11_BLEND_SRC1_COLOR);
+			comboBox_SrcBlend->addItem("D3D11_BLEND_INV_SRC1_COLOR", D3D11_BLEND::D3D11_BLEND_INV_SRC1_COLOR);
+			comboBox_SrcBlend->addItem("D3D11_BLEND_SRC1_ALPHA", D3D11_BLEND::D3D11_BLEND_SRC1_ALPHA);
+			comboBox_SrcBlend->addItem("D3D11_BLEND_INV_SRC1_ALPHA", D3D11_BLEND::D3D11_BLEND_INV_SRC1_ALPHA);
+			if (desc.RenderTarget[0].SrcBlend <= 11)
+			{
+				comboBox_SrcBlend->setCurrentIndex(desc.RenderTarget[0].SrcBlend - 1);
+			}
+			else
+			{
+				comboBox_SrcBlend->setCurrentIndex(desc.RenderTarget[0].SrcBlend - 3);
+			}
+			QHBoxLayout* hBoxLayout_SrcBlend = new QHBoxLayout;
+			QLabel* label_SrcBlend = new QLabel("SrcBlend:");
+			hBoxLayout_SrcBlend->addWidget(label_SrcBlend);
+			hBoxLayout_SrcBlend->addWidget(comboBox_SrcBlend);
+		
+
+			QComboBox* comboBox_DestBlend = new QComboBox;
+			comboBox_DestBlend->addItem("D3D11_BLEND_ZERO", D3D11_BLEND::D3D11_BLEND_ZERO);
+			comboBox_DestBlend->addItem("D3D11_BLEND_ONE", D3D11_BLEND::D3D11_BLEND_ONE);
+			comboBox_DestBlend->addItem("D3D11_BLEND_SRC_COLOR", D3D11_BLEND::D3D11_BLEND_SRC_COLOR);
+			comboBox_DestBlend->addItem("D3D11_BLEND_INV_SRC_COLOR", D3D11_BLEND::D3D11_BLEND_INV_SRC_COLOR);
+			comboBox_DestBlend->addItem("D3D11_BLEND_SRC_ALPHA", D3D11_BLEND::D3D11_BLEND_SRC_ALPHA);
+			comboBox_DestBlend->addItem("D3D11_BLEND_INV_SRC_ALPHA", D3D11_BLEND::D3D11_BLEND_INV_SRC_ALPHA);
+			comboBox_DestBlend->addItem("D3D11_BLEND_DEST_ALPHA", D3D11_BLEND::D3D11_BLEND_DEST_ALPHA);
+			comboBox_DestBlend->addItem("D3D11_BLEND_INV_DEST_ALPHA", D3D11_BLEND::D3D11_BLEND_INV_DEST_ALPHA);
+			comboBox_DestBlend->addItem("D3D11_BLEND_DEST_COLOR", D3D11_BLEND::D3D11_BLEND_DEST_COLOR);
+			comboBox_DestBlend->addItem("D3D11_BLEND_INV_DEST_COLOR", D3D11_BLEND::D3D11_BLEND_INV_DEST_COLOR);
+			comboBox_DestBlend->addItem("D3D11_BLEND_SRC_ALPHA_SAT", D3D11_BLEND::D3D11_BLEND_SRC_ALPHA_SAT);
+			comboBox_DestBlend->addItem("D3D11_BLEND_BLEND_FACTOR", D3D11_BLEND::D3D11_BLEND_BLEND_FACTOR);
+			comboBox_DestBlend->addItem("D3D11_BLEND_INV_BLEND_FACTOR", D3D11_BLEND::D3D11_BLEND_INV_BLEND_FACTOR);
+			comboBox_DestBlend->addItem("D3D11_BLEND_SRC1_COLOR", D3D11_BLEND::D3D11_BLEND_SRC1_COLOR);
+			comboBox_DestBlend->addItem("D3D11_BLEND_INV_SRC1_COLOR", D3D11_BLEND::D3D11_BLEND_INV_SRC1_COLOR);
+			comboBox_DestBlend->addItem("D3D11_BLEND_SRC1_ALPHA", D3D11_BLEND::D3D11_BLEND_SRC1_ALPHA);
+			comboBox_DestBlend->addItem("D3D11_BLEND_INV_SRC1_ALPHA", D3D11_BLEND::D3D11_BLEND_INV_SRC1_ALPHA);
+			if (desc.RenderTarget[0].DestBlend <= 11)
+			{
+				comboBox_SrcBlend->setCurrentIndex(desc.RenderTarget[0].DestBlend - 1);
+			}
+			else
+			{
+				comboBox_SrcBlend->setCurrentIndex(desc.RenderTarget[0].DestBlend - 3);
+			}
+			QHBoxLayout* hBoxLayout_DestBlend = new QHBoxLayout;
+			QLabel* label_DestBlend = new QLabel("DestBlend:");
+			hBoxLayout_DestBlend->addWidget(label_DestBlend);
+			hBoxLayout_DestBlend->addWidget(comboBox_DestBlend);
+
+
+			QComboBox* comboBox_BlendOp = new QComboBox;
+			comboBox_BlendOp->addItem("D3D11_BLEND_OP_ADD", D3D11_BLEND_OP::D3D11_BLEND_OP_ADD);
+			comboBox_BlendOp->addItem("D3D11_BLEND_OP_SUBTRACT", D3D11_BLEND_OP::D3D11_BLEND_OP_SUBTRACT);
+			comboBox_BlendOp->addItem("D3D11_BLEND_OP_REV_SUBTRACT", D3D11_BLEND_OP::D3D11_BLEND_OP_REV_SUBTRACT);
+			comboBox_BlendOp->addItem("D3D11_BLEND_OP_MIN", D3D11_BLEND_OP::D3D11_BLEND_OP_MIN);
+			comboBox_BlendOp->addItem("D3D11_BLEND_OP_MAX", D3D11_BLEND_OP::D3D11_BLEND_OP_MAX);
+			comboBox_BlendOp->setCurrentIndex(desc.RenderTarget[0].BlendOp - 1);
+			QHBoxLayout* hBoxLayout_BlendOp = new QHBoxLayout;
+			QLabel* label_BlendOp = new QLabel("BlendOp:");
+			hBoxLayout_BlendOp->addWidget(label_BlendOp);
+			hBoxLayout_BlendOp->addWidget(comboBox_BlendOp);
+
+
+			QComboBox* comboBox_SrcBlendAlpha = new QComboBox;
+			comboBox_SrcBlendAlpha->addItem("D3D11_BLEND_ZERO", D3D11_BLEND::D3D11_BLEND_ZERO);
+			comboBox_SrcBlendAlpha->addItem("D3D11_BLEND_ONE", D3D11_BLEND::D3D11_BLEND_ONE);
+			comboBox_SrcBlendAlpha->addItem("D3D11_BLEND_SRC_COLOR", D3D11_BLEND::D3D11_BLEND_SRC_COLOR);
+			comboBox_SrcBlendAlpha->addItem("D3D11_BLEND_INV_SRC_COLOR", D3D11_BLEND::D3D11_BLEND_INV_SRC_COLOR);
+			comboBox_SrcBlendAlpha->addItem("D3D11_BLEND_SRC_ALPHA", D3D11_BLEND::D3D11_BLEND_SRC_ALPHA);
+			comboBox_SrcBlendAlpha->addItem("D3D11_BLEND_INV_SRC_ALPHA", D3D11_BLEND::D3D11_BLEND_INV_SRC_ALPHA);
+			comboBox_SrcBlendAlpha->addItem("D3D11_BLEND_DEST_ALPHA", D3D11_BLEND::D3D11_BLEND_DEST_ALPHA);
+			comboBox_SrcBlendAlpha->addItem("D3D11_BLEND_INV_DEST_ALPHA", D3D11_BLEND::D3D11_BLEND_INV_DEST_ALPHA);
+			comboBox_SrcBlendAlpha->addItem("D3D11_BLEND_DEST_COLOR", D3D11_BLEND::D3D11_BLEND_DEST_COLOR);
+			comboBox_SrcBlendAlpha->addItem("D3D11_BLEND_INV_DEST_COLOR", D3D11_BLEND::D3D11_BLEND_INV_DEST_COLOR);
+			comboBox_SrcBlendAlpha->addItem("D3D11_BLEND_SRC_ALPHA_SAT", D3D11_BLEND::D3D11_BLEND_SRC_ALPHA_SAT);
+			comboBox_SrcBlendAlpha->addItem("D3D11_BLEND_BLEND_FACTOR", D3D11_BLEND::D3D11_BLEND_BLEND_FACTOR);
+			comboBox_SrcBlendAlpha->addItem("D3D11_BLEND_INV_BLEND_FACTOR", D3D11_BLEND::D3D11_BLEND_INV_BLEND_FACTOR);
+			comboBox_SrcBlendAlpha->addItem("D3D11_BLEND_SRC1_COLOR", D3D11_BLEND::D3D11_BLEND_SRC1_COLOR);
+			comboBox_SrcBlendAlpha->addItem("D3D11_BLEND_INV_SRC1_COLOR", D3D11_BLEND::D3D11_BLEND_INV_SRC1_COLOR);
+			comboBox_SrcBlendAlpha->addItem("D3D11_BLEND_SRC1_ALPHA", D3D11_BLEND::D3D11_BLEND_SRC1_ALPHA);
+			comboBox_SrcBlendAlpha->addItem("D3D11_BLEND_INV_SRC1_ALPHA", D3D11_BLEND::D3D11_BLEND_INV_SRC1_ALPHA);
+			if (desc.RenderTarget[0].SrcBlendAlpha <= 11)
+			{
+				comboBox_SrcBlendAlpha->setCurrentIndex(desc.RenderTarget[0].SrcBlendAlpha - 1);
+			}
+			else
+			{
+				comboBox_SrcBlendAlpha->setCurrentIndex(desc.RenderTarget[0].SrcBlendAlpha - 3);
+			}
+			QHBoxLayout* hBoxLayout_SrcBlendAlpha = new QHBoxLayout;
+			QLabel* label_SrcBlendAlpha = new QLabel("SrcBlendAlpha:");
+			hBoxLayout_SrcBlendAlpha->addWidget(label_SrcBlendAlpha);
+			hBoxLayout_SrcBlendAlpha->addWidget(comboBox_SrcBlendAlpha);
+
+			QComboBox* comboBox_DestBlendAlpha = new QComboBox;
+			comboBox_DestBlendAlpha->addItem("D3D11_BLEND_ZERO", D3D11_BLEND::D3D11_BLEND_ZERO);
+			comboBox_DestBlendAlpha->addItem("D3D11_BLEND_ONE", D3D11_BLEND::D3D11_BLEND_ONE);
+			comboBox_DestBlendAlpha->addItem("D3D11_BLEND_SRC_COLOR", D3D11_BLEND::D3D11_BLEND_SRC_COLOR);
+			comboBox_DestBlendAlpha->addItem("D3D11_BLEND_INV_SRC_COLOR", D3D11_BLEND::D3D11_BLEND_INV_SRC_COLOR);
+			comboBox_DestBlendAlpha->addItem("D3D11_BLEND_SRC_ALPHA", D3D11_BLEND::D3D11_BLEND_SRC_ALPHA);
+			comboBox_DestBlendAlpha->addItem("D3D11_BLEND_INV_SRC_ALPHA", D3D11_BLEND::D3D11_BLEND_INV_SRC_ALPHA);
+			comboBox_DestBlendAlpha->addItem("D3D11_BLEND_DEST_ALPHA", D3D11_BLEND::D3D11_BLEND_DEST_ALPHA);
+			comboBox_DestBlendAlpha->addItem("D3D11_BLEND_INV_DEST_ALPHA", D3D11_BLEND::D3D11_BLEND_INV_DEST_ALPHA);
+			comboBox_DestBlendAlpha->addItem("D3D11_BLEND_DEST_COLOR", D3D11_BLEND::D3D11_BLEND_DEST_COLOR);
+			comboBox_DestBlendAlpha->addItem("D3D11_BLEND_INV_DEST_COLOR", D3D11_BLEND::D3D11_BLEND_INV_DEST_COLOR);
+			comboBox_DestBlendAlpha->addItem("D3D11_BLEND_SRC_ALPHA_SAT", D3D11_BLEND::D3D11_BLEND_SRC_ALPHA_SAT);
+			comboBox_DestBlendAlpha->addItem("D3D11_BLEND_BLEND_FACTOR", D3D11_BLEND::D3D11_BLEND_BLEND_FACTOR);
+			comboBox_DestBlendAlpha->addItem("D3D11_BLEND_INV_BLEND_FACTOR", D3D11_BLEND::D3D11_BLEND_INV_BLEND_FACTOR);
+			comboBox_DestBlendAlpha->addItem("D3D11_BLEND_SRC1_COLOR", D3D11_BLEND::D3D11_BLEND_SRC1_COLOR);
+			comboBox_DestBlendAlpha->addItem("D3D11_BLEND_INV_SRC1_COLOR", D3D11_BLEND::D3D11_BLEND_INV_SRC1_COLOR);
+			comboBox_DestBlendAlpha->addItem("D3D11_BLEND_SRC1_ALPHA", D3D11_BLEND::D3D11_BLEND_SRC1_ALPHA);
+			comboBox_DestBlendAlpha->addItem("D3D11_BLEND_INV_SRC1_ALPHA", D3D11_BLEND::D3D11_BLEND_INV_SRC1_ALPHA);
+			if (desc.RenderTarget[0].DestBlendAlpha <= 11)
+			{
+				comboBox_DestBlendAlpha->setCurrentIndex(desc.RenderTarget[0].DestBlendAlpha - 1);
+			}
+			else
+			{
+				comboBox_DestBlendAlpha->setCurrentIndex(desc.RenderTarget[0].DestBlendAlpha - 3);
+			}
+			QHBoxLayout* hBoxLayout_DestBlendAlpha = new QHBoxLayout;
+			QLabel* label_DestBlendAlpha = new QLabel("DestBlendAlpha:");
+			hBoxLayout_DestBlendAlpha->addWidget(label_DestBlendAlpha);
+			hBoxLayout_DestBlendAlpha->addWidget(comboBox_DestBlendAlpha);
+
+			QComboBox* comboBox_BlendOpAlpha = new QComboBox;
+			comboBox_BlendOpAlpha->addItem("D3D11_BLEND_OP_ADD", D3D11_BLEND_OP::D3D11_BLEND_OP_ADD);
+			comboBox_BlendOpAlpha->addItem("D3D11_BLEND_OP_SUBTRACT", D3D11_BLEND_OP::D3D11_BLEND_OP_SUBTRACT);
+			comboBox_BlendOpAlpha->addItem("D3D11_BLEND_OP_REV_SUBTRACT", D3D11_BLEND_OP::D3D11_BLEND_OP_REV_SUBTRACT);
+			comboBox_BlendOpAlpha->addItem("D3D11_BLEND_OP_MIN", D3D11_BLEND_OP::D3D11_BLEND_OP_MIN);
+			comboBox_BlendOpAlpha->addItem("D3D11_BLEND_OP_MAX", D3D11_BLEND_OP::D3D11_BLEND_OP_MAX);
+			comboBox_BlendOpAlpha->setCurrentIndex(desc.RenderTarget[0].BlendOpAlpha - 1);
+			QHBoxLayout* hBoxLayout_BlendOpAlpha = new QHBoxLayout;
+			QLabel* label_BlendOpAlpha = new QLabel("BlendOpAlpha:");
+			hBoxLayout_BlendOpAlpha->addWidget(label_BlendOpAlpha);
+			hBoxLayout_BlendOpAlpha->addWidget(comboBox_BlendOpAlpha);
+
+			QSpinBox* spinBox_RenderTargetWriteMask = new QSpinBox(tableWidget);
+			spinBox_RenderTargetWriteMask->setMaximum(255);
+			spinBox_RenderTargetWriteMask->setMinimum(0);
+			spinBox_RenderTargetWriteMask->setValue(desc.RenderTarget[0].RenderTargetWriteMask);
+			QHBoxLayout* hBoxLayout_RenderTargetWriteMask = new QHBoxLayout();
+			QLabel* label_RenderTargetWriteMask = new QLabel("RenderTargetWriteMask:");
+			hBoxLayout_RenderTargetWriteMask->addWidget(label_RenderTargetWriteMask);
+			hBoxLayout_RenderTargetWriteMask->addWidget(spinBox_RenderTargetWriteMask);
+
+			auto func =
+				[=]()
+			{
+				D3D11_BLEND_DESC tmpDesc;
+				tmpDesc.AlphaToCoverageEnable = checkBox_AlphaToCoverageEnable->isChecked();
+				tmpDesc.IndependentBlendEnable = checkBox_IndependentBlendEnable->isChecked();
+				tmpDesc.RenderTarget[0].BlendEnable = checkBox_BlendEnable->isChecked();
+				tmpDesc.RenderTarget[0].SrcBlend = comboBox_SrcBlend->currentData().value<D3D11_BLEND>();
+				tmpDesc.RenderTarget[0].DestBlend = comboBox_DestBlend->currentData().value<D3D11_BLEND>();
+				tmpDesc.RenderTarget[0].BlendOp = comboBox_BlendOp->currentData().value<D3D11_BLEND_OP>();
+				tmpDesc.RenderTarget[0].SrcBlendAlpha = comboBox_SrcBlendAlpha->currentData().value<D3D11_BLEND>();
+				tmpDesc.RenderTarget[0].DestBlendAlpha = comboBox_DestBlendAlpha->currentData().value<D3D11_BLEND>();
+				tmpDesc.RenderTarget[0].BlendOpAlpha = comboBox_BlendOpAlpha->currentData().value<D3D11_BLEND_OP>();
+				tmpDesc.RenderTarget[0].RenderTargetWriteMask = spinBox_RenderTargetWriteMask->value();
+				prop.set_value(reflection, tmpDesc);
+			};
+			connect(checkBox_AlphaToCoverageEnable, &QCheckBox::stateChanged, this, func);
+			connect(checkBox_IndependentBlendEnable, &QCheckBox::stateChanged, this, func);
+			connect(checkBox_BlendEnable, &QCheckBox::stateChanged, this, func);
+			connect(comboBox_SrcBlend, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, func);
+			connect(comboBox_DestBlend, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, func);
+			connect(comboBox_BlendOp, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, func);
+			connect(comboBox_SrcBlendAlpha, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, func);
+			connect(comboBox_DestBlendAlpha, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, func);
+			connect(comboBox_BlendOpAlpha, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, func);
+			connect(spinBox_RenderTargetWriteMask, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, func);
+			vBoxLayout->addLayout(hBoxLayout_AlphaToCoverageEnable);
+			vBoxLayout->addLayout(hBoxLayout_IndependentBlendEnable);
+			vBoxLayout->addLayout(hBoxLayout_BlendEnable);
+			vBoxLayout->addLayout(hBoxLayout_SrcBlend);
+			vBoxLayout->addLayout(hBoxLayout_DestBlend);
+			vBoxLayout->addLayout(hBoxLayout_BlendOp);
+			vBoxLayout->addLayout(hBoxLayout_SrcBlendAlpha);
+			vBoxLayout->addLayout(hBoxLayout_DestBlendAlpha);
+			vBoxLayout->addLayout(hBoxLayout_BlendOpAlpha);
+			vBoxLayout->addLayout(hBoxLayout_RenderTargetWriteMask);
+
+			widget->setLayout(vBoxLayout);
+			tableWidget->setCellWidget(index, 1, widget);
 		}
 		else
 		{

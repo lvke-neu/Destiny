@@ -3,9 +3,6 @@
 #include "Engine/Engine.h"
 #include "Graphics/Visual3D.h"
 #include "Graphics/GraphicsSystem.h"
-#include "Graphics/RasterizerState.h"
-#include "Graphics/DepthStencilState.h"
-#include "Graphics/BlendState.h"
 #include "Node3D.h"
 
 namespace Destiny
@@ -14,28 +11,28 @@ namespace Destiny
 		m_visual3D(std::make_shared<Visual3D>()),
 		m_rasterizerStateDesc(RasterizerState::Default_Rasterizer_Desc),
 		m_depthStencilStateDesc(DepthStencilState::Default_DepthStencil_Desc),
-		m_color(Color::White),
+		m_blendStateDesc(BlendState::Default_BlendState_Desc),
+		m_color(Color::Green),
 		m_worldMatrix(std::make_shared<ConstantBuffer<XMMATRIX>>())
 	{
 		std::shared_ptr<Blob> data = nullptr;
 
-		D3D11_RASTERIZER_DESC rasterizerDesc = RasterizerState::Default_Rasterizer_Desc;
 		data.reset(new Blob(sizeof(D3D11_RASTERIZER_DESC)));
-		memcpy_s(data->getData(), data->getLength(), &rasterizerDesc, data->getLength());
+		memcpy_s(data->getData(), data->getLength(), &m_rasterizerStateDesc, data->getLength());
 		auto rasterizerState = Engine::GetInstance()->getGraphicsSystem()->createRasterizerState(data);
 		rasterizerState->load(0);
 		m_visual3D->setRasterizerState(rasterizerState);
 
-		D3D11_DEPTH_STENCIL_DESC depthStencilStateDesc = DepthStencilState::Default_DepthStencil_Desc;
+		
 		data.reset(new Blob(sizeof(D3D11_DEPTH_STENCIL_DESC)));
-		memcpy_s(data->getData(), data->getLength(), &depthStencilStateDesc, data->getLength());
+		memcpy_s(data->getData(), data->getLength(), &m_depthStencilStateDesc, data->getLength());
 		auto depthStencilState = Engine::GetInstance()->getGraphicsSystem()->createDepthStencilState(data);
 		depthStencilState->load(0);
 		m_visual3D->setDepthStencilState(depthStencilState);
 
-		D3D11_BLEND_DESC blendStateDesc = BlendState::Default_BlendState_Desc;
+	
 		data.reset(new Blob(sizeof(D3D11_BLEND_DESC)));
-		memcpy_s(data->getData(), data->getLength(), &blendStateDesc, data->getLength());
+		memcpy_s(data->getData(), data->getLength(), &m_blendStateDesc, data->getLength());
 		auto blendState = Engine::GetInstance()->getGraphicsSystem()->createBlendState(data);
 		blendState->load(0);
 		m_visual3D->setBlendState(blendState);
@@ -65,6 +62,17 @@ namespace Destiny
 		m_visual3D->setDepthStencilState(depthStencilState);
 	}
 
+	void Visual3DComponent::set_blendStateDesc(D3D11_BLEND_DESC blendStateDesc)
+	{
+		m_blendStateDesc = blendStateDesc;
+		std::shared_ptr<Blob> data = nullptr;
+		data.reset(new Blob(sizeof(D3D11_BLEND_DESC)));
+		memcpy_s(data->getData(), data->getLength(), &m_blendStateDesc, data->getLength());
+		auto blendState = Engine::GetInstance()->getGraphicsSystem()->createBlendState(data);
+		blendState->load(0);
+		m_visual3D->setBlendState(blendState);
+	}
+
 	void Visual3DComponent::onAttachNode()
 	{
 		m_worldMatrix->update(XMMatrixTranspose(m_node->get_transform3D().getWorldMatrix()));
@@ -89,19 +97,9 @@ namespace Destiny
 			)
 			.property("rasterizerStateDesc", &Visual3DComponent::get_rasterizerStateDesc, &Visual3DComponent::set_rasterizerStateDesc)
 			.property("depthStencilStateDesc", &Visual3DComponent::get_depthStencilStateDesc, &Visual3DComponent::set_depthStencilStateDesc)
+			.property("blendStateDesc", &Visual3DComponent::get_blendStateDesc, &Visual3DComponent::set_blendStateDesc)
 			.property("color", &Visual3DComponent::get_color, &Visual3DComponent::set_color);
 
-		rttr::registration::enumeration<D3D11_FILL_MODE>("D3D11_FILL_MODE")
-			(
-				rttr::detail::enum_data<D3D11_FILL_MODE>("D3D11_FILL_WIREFRAME", D3D11_FILL_MODE::D3D11_FILL_WIREFRAME),
-				rttr::detail::enum_data<D3D11_FILL_MODE>("D3D11_FILL_SOLID", D3D11_FILL_MODE::D3D11_FILL_SOLID)
-			);
-		rttr::registration::enumeration<D3D11_CULL_MODE>("D3D11_CULL_MODE")
-			(
-				rttr::detail::enum_data<D3D11_CULL_MODE>("D3D11_CULL_NONE", D3D11_CULL_MODE::D3D11_CULL_NONE),
-				rttr::detail::enum_data<D3D11_CULL_MODE>("D3D11_CULL_FRONT", D3D11_CULL_MODE::D3D11_CULL_FRONT),
-				rttr::detail::enum_data<D3D11_CULL_MODE>("D3D11_CULL_BACK", D3D11_CULL_MODE::D3D11_CULL_BACK)
-			);
 		rttr::registration::class_<D3D11_RASTERIZER_DESC>("D3D11_RASTERIZER_DESC")
 			.constructor<>()
 			(
@@ -130,5 +128,13 @@ namespace Destiny
 			.property("StencilWriteMask", &D3D11_DEPTH_STENCIL_DESC::StencilWriteMask)
 			.property("FrontFace", &D3D11_DEPTH_STENCIL_DESC::FrontFace)
 			.property("BackFace", &D3D11_DEPTH_STENCIL_DESC::BackFace);
+		rttr::registration::class_<D3D11_BLEND_DESC>("D3D11_BLEND_DESC")
+			.constructor<>()
+			(
+				rttr::policy::ctor::as_raw_ptr
+				)
+			.property("AlphaToCoverageEnable", &D3D11_BLEND_DESC::AlphaToCoverageEnable)
+			.property("IndependentBlendEnable", &D3D11_BLEND_DESC::IndependentBlendEnable)
+			.property("RenderTarget", &D3D11_BLEND_DESC::RenderTarget);
 	}
 }

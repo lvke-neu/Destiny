@@ -2,6 +2,7 @@
 #include "Component.h"
 #include "Graphics/RasterizerState.h"
 #include "Graphics/DepthStencilState.h"
+#include "Graphics/BlendState.h"
 #include "Graphics/Color.h"
 #include "Graphics/ConstantBuffer.h"
 #include <DirectXMath.h>
@@ -25,13 +26,16 @@ namespace Destiny
 		GET(std::shared_ptr<Visual3D>, visual3D);
 		GET(D3D11_RASTERIZER_DESC, rasterizerStateDesc);
 		GET(D3D11_DEPTH_STENCIL_DESC, depthStencilStateDesc);
+		GET(D3D11_BLEND_DESC, blendStateDesc);
 		GET_SET(Color, color);
 		void set_rasterizerStateDesc(D3D11_RASTERIZER_DESC rasterizerStateDesc);
 		void set_depthStencilStateDesc(D3D11_DEPTH_STENCIL_DESC depthStencilStateDesc);
+		void set_blendStateDesc(D3D11_BLEND_DESC blendStateDesc);
 	protected:
 		std::shared_ptr<Visual3D> m_visual3D;
 		D3D11_RASTERIZER_DESC m_rasterizerStateDesc;
 		D3D11_DEPTH_STENCIL_DESC m_depthStencilStateDesc;
+		D3D11_BLEND_DESC m_blendStateDesc;
 		Color m_color;
 
 		std::shared_ptr<ConstantBuffer<XMMATRIX>> m_worldMatrix;

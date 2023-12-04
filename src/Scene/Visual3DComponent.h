@@ -24,9 +24,10 @@ namespace Destiny
 		GET_CLASS_NAME(Visual3DComponent);
 		GET(std::shared_ptr<Visual3D>, visual3D);
 		GET(D3D11_RASTERIZER_DESC, rasterizerStateDesc);
-		GET_SET(D3D11_DEPTH_STENCIL_DESC, depthStencilStateDesc);
+		GET(D3D11_DEPTH_STENCIL_DESC, depthStencilStateDesc);
 		GET_SET(Color, color);
 		void set_rasterizerStateDesc(D3D11_RASTERIZER_DESC rasterizerStateDesc);
+		void set_depthStencilStateDesc(D3D11_DEPTH_STENCIL_DESC depthStencilStateDesc);
 	protected:
 		std::shared_ptr<Visual3D> m_visual3D;
 		D3D11_RASTERIZER_DESC m_rasterizerStateDesc;

@@ -51,6 +51,7 @@ Q_DECLARE_METATYPE(D3D11_FILL_MODE);
 Q_DECLARE_METATYPE(D3D11_CULL_MODE);
 Q_DECLARE_METATYPE(D3D11_DEPTH_WRITE_MASK);
 Q_DECLARE_METATYPE(D3D11_COMPARISON_FUNC);
+Q_DECLARE_METATYPE(D3D11_STENCIL_OP);
 
 ComponentDockWidget::ComponentDockWidget(QWidget *parent /*= nullptr*/) : QDockWidget("Property", parent)
 {
@@ -403,6 +404,150 @@ void ComponentDockWidget::reflect(std::shared_ptr<Destiny::Reflection> reflectio
 			hBoxLayout_StencilEnable->addWidget(label_StencilEnable);
 			hBoxLayout_StencilEnable->addWidget(checkBox_StencilEnable);
 
+			QSpinBox* spinBox_StencilReadMask = new QSpinBox(tableWidget);
+			spinBox_StencilReadMask->setMaximum(255);
+			spinBox_StencilReadMask->setMinimum(0);
+			spinBox_StencilReadMask->setValue(desc.StencilReadMask);
+			QHBoxLayout* hBoxLayout_StencilReadMask = new QHBoxLayout();
+			QLabel* label_StencilReadMask = new QLabel("StencilReadMask:");
+			hBoxLayout_StencilReadMask->addWidget(label_StencilReadMask);
+			hBoxLayout_StencilReadMask->addWidget(spinBox_StencilReadMask);
+
+			QSpinBox* spinBox_StencilWriteMask = new QSpinBox(tableWidget);
+			spinBox_StencilWriteMask->setMaximum(255);
+			spinBox_StencilWriteMask->setMinimum(0);
+			spinBox_StencilWriteMask->setValue(desc.StencilWriteMask);
+			QHBoxLayout* hBoxLayout_StencilWriteMask = new QHBoxLayout();
+			QLabel* label_StencilWriteMask = new QLabel("StencilWriteMask:");
+			hBoxLayout_StencilWriteMask->addWidget(label_StencilWriteMask);
+			hBoxLayout_StencilWriteMask->addWidget(spinBox_StencilWriteMask);
+
+			
+			//front
+			QComboBox* comboBox_FrontStencilFailOp = new QComboBox;
+			comboBox_FrontStencilFailOp->addItem("D3D11_STENCIL_OP_KEEP", D3D11_STENCIL_OP::D3D11_STENCIL_OP_KEEP);
+			comboBox_FrontStencilFailOp->addItem("D3D11_STENCIL_OP_ZERO", D3D11_STENCIL_OP::D3D11_STENCIL_OP_ZERO);
+			comboBox_FrontStencilFailOp->addItem("D3D11_STENCIL_OP_REPLACE", D3D11_STENCIL_OP::D3D11_STENCIL_OP_REPLACE);
+			comboBox_FrontStencilFailOp->addItem("D3D11_STENCIL_OP_INCR_SAT", D3D11_STENCIL_OP::D3D11_STENCIL_OP_INCR_SAT);
+			comboBox_FrontStencilFailOp->addItem("D3D11_STENCIL_OP_DECR_SAT", D3D11_STENCIL_OP::D3D11_STENCIL_OP_DECR_SAT);
+			comboBox_FrontStencilFailOp->addItem("D3D11_STENCIL_OP_INVERT", D3D11_STENCIL_OP::D3D11_STENCIL_OP_INVERT);
+			comboBox_FrontStencilFailOp->addItem("D3D11_STENCIL_OP_INCR", D3D11_STENCIL_OP::D3D11_STENCIL_OP_INCR);
+			comboBox_FrontStencilFailOp->addItem("D3D11_STENCIL_OP_DECR", D3D11_STENCIL_OP::D3D11_STENCIL_OP_DECR);
+			comboBox_FrontStencilFailOp->setCurrentIndex(desc.FrontFace.StencilFailOp - 1);
+			QHBoxLayout* hBoxLayout_FrontStencilFailOp = new QHBoxLayout;
+			QLabel* label_FrontStencilFailOp = new QLabel("FrontStencilFailOp:");
+			hBoxLayout_FrontStencilFailOp->addWidget(label_FrontStencilFailOp);
+			hBoxLayout_FrontStencilFailOp->addWidget(comboBox_FrontStencilFailOp);
+
+			QComboBox* comboBox_FrontStencilDepthFailOp = new QComboBox;
+			comboBox_FrontStencilDepthFailOp->addItem("D3D11_STENCIL_OP_KEEP", D3D11_STENCIL_OP::D3D11_STENCIL_OP_KEEP);
+			comboBox_FrontStencilDepthFailOp->addItem("D3D11_STENCIL_OP_ZERO", D3D11_STENCIL_OP::D3D11_STENCIL_OP_ZERO);
+			comboBox_FrontStencilDepthFailOp->addItem("D3D11_STENCIL_OP_REPLACE", D3D11_STENCIL_OP::D3D11_STENCIL_OP_REPLACE);
+			comboBox_FrontStencilDepthFailOp->addItem("D3D11_STENCIL_OP_INCR_SAT", D3D11_STENCIL_OP::D3D11_STENCIL_OP_INCR_SAT);
+			comboBox_FrontStencilDepthFailOp->addItem("D3D11_STENCIL_OP_DECR_SAT", D3D11_STENCIL_OP::D3D11_STENCIL_OP_DECR_SAT);
+			comboBox_FrontStencilDepthFailOp->addItem("D3D11_STENCIL_OP_INVERT", D3D11_STENCIL_OP::D3D11_STENCIL_OP_INVERT);
+			comboBox_FrontStencilDepthFailOp->addItem("D3D11_STENCIL_OP_INCR", D3D11_STENCIL_OP::D3D11_STENCIL_OP_INCR);
+			comboBox_FrontStencilDepthFailOp->addItem("D3D11_STENCIL_OP_DECR", D3D11_STENCIL_OP::D3D11_STENCIL_OP_DECR);
+			comboBox_FrontStencilDepthFailOp->setCurrentIndex(desc.FrontFace.StencilDepthFailOp - 1);
+			QHBoxLayout* hBoxLayout_FrontStencilDepthFailOp = new QHBoxLayout;
+			QLabel* label_FrontStencilDepthFailOp = new QLabel("FrontStencilDepthFailOp:");
+			hBoxLayout_FrontStencilDepthFailOp->addWidget(label_FrontStencilDepthFailOp);
+			hBoxLayout_FrontStencilDepthFailOp->addWidget(comboBox_FrontStencilDepthFailOp);
+
+			QComboBox* comboBox_FrontStencilPassOp = new QComboBox;
+			comboBox_FrontStencilPassOp->addItem("D3D11_STENCIL_OP_KEEP", D3D11_STENCIL_OP::D3D11_STENCIL_OP_KEEP);
+			comboBox_FrontStencilPassOp->addItem("D3D11_STENCIL_OP_ZERO", D3D11_STENCIL_OP::D3D11_STENCIL_OP_ZERO);
+			comboBox_FrontStencilPassOp->addItem("D3D11_STENCIL_OP_REPLACE", D3D11_STENCIL_OP::D3D11_STENCIL_OP_REPLACE);
+			comboBox_FrontStencilPassOp->addItem("D3D11_STENCIL_OP_INCR_SAT", D3D11_STENCIL_OP::D3D11_STENCIL_OP_INCR_SAT);
+			comboBox_FrontStencilPassOp->addItem("D3D11_STENCIL_OP_DECR_SAT", D3D11_STENCIL_OP::D3D11_STENCIL_OP_DECR_SAT);
+			comboBox_FrontStencilPassOp->addItem("D3D11_STENCIL_OP_INVERT", D3D11_STENCIL_OP::D3D11_STENCIL_OP_INVERT);
+			comboBox_FrontStencilPassOp->addItem("D3D11_STENCIL_OP_INCR", D3D11_STENCIL_OP::D3D11_STENCIL_OP_INCR);
+			comboBox_FrontStencilPassOp->addItem("D3D11_STENCIL_OP_DECR", D3D11_STENCIL_OP::D3D11_STENCIL_OP_DECR);
+			comboBox_FrontStencilPassOp->setCurrentIndex(desc.FrontFace.StencilPassOp - 1);
+			QHBoxLayout* hBoxLayout_FrontStencilPassOp = new QHBoxLayout;
+			QLabel* label_FrontStencilPassOp = new QLabel("FrontStencilPassOp:");
+			hBoxLayout_FrontStencilPassOp->addWidget(label_FrontStencilPassOp);
+			hBoxLayout_FrontStencilPassOp->addWidget(comboBox_FrontStencilPassOp);
+
+
+			QComboBox* comboBox_FrontStencilFunc = new QComboBox;
+			comboBox_FrontStencilFunc->addItem("D3D11_COMPARISON_NEVER", D3D11_COMPARISON_FUNC::D3D11_COMPARISON_NEVER);
+			comboBox_FrontStencilFunc->addItem("D3D11_COMPARISON_LESS", D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS);
+			comboBox_FrontStencilFunc->addItem("D3D11_COMPARISON_EQUAL", D3D11_COMPARISON_FUNC::D3D11_COMPARISON_EQUAL);
+			comboBox_FrontStencilFunc->addItem("D3D11_COMPARISON_LESS_EQUAL", D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS_EQUAL);
+			comboBox_FrontStencilFunc->addItem("D3D11_COMPARISON_GREATER", D3D11_COMPARISON_FUNC::D3D11_COMPARISON_GREATER);
+			comboBox_FrontStencilFunc->addItem("D3D11_COMPARISON_NOT_EQUAL", D3D11_COMPARISON_FUNC::D3D11_COMPARISON_NOT_EQUAL);
+			comboBox_FrontStencilFunc->addItem("D3D11_COMPARISON_GREATER_EQUAL", D3D11_COMPARISON_FUNC::D3D11_COMPARISON_GREATER_EQUAL);
+			comboBox_FrontStencilFunc->addItem("D3D11_COMPARISON_ALWAYS", D3D11_COMPARISON_FUNC::D3D11_COMPARISON_ALWAYS);
+			comboBox_FrontStencilFunc->setCurrentIndex(desc.FrontFace.StencilFunc - 1);
+			QHBoxLayout* hBoxLayout_FrontStencilFunc = new QHBoxLayout;
+			QLabel* label_FrontStencilFunc = new QLabel("FrontStencilFunc:");
+			hBoxLayout_FrontStencilFunc->addWidget(label_FrontStencilFunc);
+			hBoxLayout_FrontStencilFunc->addWidget(comboBox_FrontStencilFunc);
+
+
+			//back
+			QComboBox* comboBox_BackStencilFailOp = new QComboBox;
+			comboBox_BackStencilFailOp->addItem("D3D11_STENCIL_OP_KEEP", D3D11_STENCIL_OP::D3D11_STENCIL_OP_KEEP);
+			comboBox_BackStencilFailOp->addItem("D3D11_STENCIL_OP_ZERO", D3D11_STENCIL_OP::D3D11_STENCIL_OP_ZERO);
+			comboBox_BackStencilFailOp->addItem("D3D11_STENCIL_OP_REPLACE", D3D11_STENCIL_OP::D3D11_STENCIL_OP_REPLACE);
+			comboBox_BackStencilFailOp->addItem("D3D11_STENCIL_OP_INCR_SAT", D3D11_STENCIL_OP::D3D11_STENCIL_OP_INCR_SAT);
+			comboBox_BackStencilFailOp->addItem("D3D11_STENCIL_OP_DECR_SAT", D3D11_STENCIL_OP::D3D11_STENCIL_OP_DECR_SAT);
+			comboBox_BackStencilFailOp->addItem("D3D11_STENCIL_OP_INVERT", D3D11_STENCIL_OP::D3D11_STENCIL_OP_INVERT);
+			comboBox_BackStencilFailOp->addItem("D3D11_STENCIL_OP_INCR", D3D11_STENCIL_OP::D3D11_STENCIL_OP_INCR);
+			comboBox_BackStencilFailOp->addItem("D3D11_STENCIL_OP_DECR", D3D11_STENCIL_OP::D3D11_STENCIL_OP_DECR);
+			comboBox_BackStencilFailOp->setCurrentIndex(desc.BackFace.StencilFailOp - 1);
+			QHBoxLayout* hBoxLayout_BackStencilFailOp = new QHBoxLayout;
+			QLabel* label_BackStencilFailOp = new QLabel("BackStencilFailOp:");
+			hBoxLayout_BackStencilFailOp->addWidget(label_BackStencilFailOp);
+			hBoxLayout_BackStencilFailOp->addWidget(comboBox_BackStencilFailOp);
+
+			QComboBox* comboBox_BackStencilDepthFailOp = new QComboBox;
+			comboBox_BackStencilDepthFailOp->addItem("D3D11_STENCIL_OP_KEEP", D3D11_STENCIL_OP::D3D11_STENCIL_OP_KEEP);
+			comboBox_BackStencilDepthFailOp->addItem("D3D11_STENCIL_OP_ZERO", D3D11_STENCIL_OP::D3D11_STENCIL_OP_ZERO);
+			comboBox_BackStencilDepthFailOp->addItem("D3D11_STENCIL_OP_REPLACE", D3D11_STENCIL_OP::D3D11_STENCIL_OP_REPLACE);
+			comboBox_BackStencilDepthFailOp->addItem("D3D11_STENCIL_OP_INCR_SAT", D3D11_STENCIL_OP::D3D11_STENCIL_OP_INCR_SAT);
+			comboBox_BackStencilDepthFailOp->addItem("D3D11_STENCIL_OP_DECR_SAT", D3D11_STENCIL_OP::D3D11_STENCIL_OP_DECR_SAT);
+			comboBox_BackStencilDepthFailOp->addItem("D3D11_STENCIL_OP_INVERT", D3D11_STENCIL_OP::D3D11_STENCIL_OP_INVERT);
+			comboBox_BackStencilDepthFailOp->addItem("D3D11_STENCIL_OP_INCR", D3D11_STENCIL_OP::D3D11_STENCIL_OP_INCR);
+			comboBox_BackStencilDepthFailOp->addItem("D3D11_STENCIL_OP_DECR", D3D11_STENCIL_OP::D3D11_STENCIL_OP_DECR);
+			comboBox_BackStencilDepthFailOp->setCurrentIndex(desc.BackFace.StencilDepthFailOp - 1);
+			QHBoxLayout* hBoxLayout_BackStencilDepthFailOp = new QHBoxLayout;
+			QLabel* label_BackStencilDepthFailOp = new QLabel("BackStencilDepthFailOp:");
+			hBoxLayout_BackStencilDepthFailOp->addWidget(label_BackStencilDepthFailOp);
+			hBoxLayout_BackStencilDepthFailOp->addWidget(comboBox_BackStencilDepthFailOp);
+
+			QComboBox* comboBox_BackStencilPassOp = new QComboBox;
+			comboBox_BackStencilPassOp->addItem("D3D11_STENCIL_OP_KEEP", D3D11_STENCIL_OP::D3D11_STENCIL_OP_KEEP);
+			comboBox_BackStencilPassOp->addItem("D3D11_STENCIL_OP_ZERO", D3D11_STENCIL_OP::D3D11_STENCIL_OP_ZERO);
+			comboBox_BackStencilPassOp->addItem("D3D11_STENCIL_OP_REPLACE", D3D11_STENCIL_OP::D3D11_STENCIL_OP_REPLACE);
+			comboBox_BackStencilPassOp->addItem("D3D11_STENCIL_OP_INCR_SAT", D3D11_STENCIL_OP::D3D11_STENCIL_OP_INCR_SAT);
+			comboBox_BackStencilPassOp->addItem("D3D11_STENCIL_OP_DECR_SAT", D3D11_STENCIL_OP::D3D11_STENCIL_OP_DECR_SAT);
+			comboBox_BackStencilPassOp->addItem("D3D11_STENCIL_OP_INVERT", D3D11_STENCIL_OP::D3D11_STENCIL_OP_INVERT);
+			comboBox_BackStencilPassOp->addItem("D3D11_STENCIL_OP_INCR", D3D11_STENCIL_OP::D3D11_STENCIL_OP_INCR);
+			comboBox_BackStencilPassOp->addItem("D3D11_STENCIL_OP_DECR", D3D11_STENCIL_OP::D3D11_STENCIL_OP_DECR);
+			comboBox_BackStencilPassOp->setCurrentIndex(desc.BackFace.StencilPassOp - 1);
+			QHBoxLayout* hBoxLayout_BackStencilPassOp = new QHBoxLayout;
+			QLabel* label_BackStencilPassOp = new QLabel("BackStencilPassOp:");
+			hBoxLayout_BackStencilPassOp->addWidget(label_BackStencilPassOp);
+			hBoxLayout_BackStencilPassOp->addWidget(comboBox_BackStencilPassOp);
+
+
+			QComboBox* comboBox_BackStencilFunc = new QComboBox;
+			comboBox_BackStencilFunc->addItem("D3D11_COMPARISON_NEVER", D3D11_COMPARISON_FUNC::D3D11_COMPARISON_NEVER);
+			comboBox_BackStencilFunc->addItem("D3D11_COMPARISON_LESS", D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS);
+			comboBox_BackStencilFunc->addItem("D3D11_COMPARISON_EQUAL", D3D11_COMPARISON_FUNC::D3D11_COMPARISON_EQUAL);
+			comboBox_BackStencilFunc->addItem("D3D11_COMPARISON_LESS_EQUAL", D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS_EQUAL);
+			comboBox_BackStencilFunc->addItem("D3D11_COMPARISON_GREATER", D3D11_COMPARISON_FUNC::D3D11_COMPARISON_GREATER);
+			comboBox_BackStencilFunc->addItem("D3D11_COMPARISON_NOT_EQUAL", D3D11_COMPARISON_FUNC::D3D11_COMPARISON_NOT_EQUAL);
+			comboBox_BackStencilFunc->addItem("D3D11_COMPARISON_GREATER_EQUAL", D3D11_COMPARISON_FUNC::D3D11_COMPARISON_GREATER_EQUAL);
+			comboBox_BackStencilFunc->addItem("D3D11_COMPARISON_ALWAYS", D3D11_COMPARISON_FUNC::D3D11_COMPARISON_ALWAYS);
+			comboBox_BackStencilFunc->setCurrentIndex(desc.BackFace.StencilFunc - 1);
+			QHBoxLayout* hBoxLayout_BackStencilFunc = new QHBoxLayout;
+			QLabel* label_BackStencilFunc = new QLabel("BackStencilFunc:");
+			hBoxLayout_BackStencilFunc->addWidget(label_BackStencilFunc);
+			hBoxLayout_BackStencilFunc->addWidget(comboBox_BackStencilFunc);
+
 			auto func =
 				[=]()
 			{
@@ -411,16 +556,46 @@ void ComponentDockWidget::reflect(std::shared_ptr<Destiny::Reflection> reflectio
 				tmpDesc.DepthWriteMask = comboBox_DepthWriteMask->currentData().value<D3D11_DEPTH_WRITE_MASK>();
 				tmpDesc.DepthFunc = comboBox_DepthFunc->currentData().value<D3D11_COMPARISON_FUNC>();
 				tmpDesc.StencilEnable = checkBox_StencilEnable->isChecked();
+				tmpDesc.StencilReadMask = spinBox_StencilReadMask->value();
+				tmpDesc.StencilWriteMask = spinBox_StencilWriteMask->value();
+				tmpDesc.FrontFace.StencilFailOp = comboBox_FrontStencilFailOp->currentData().value<D3D11_STENCIL_OP>();
+				tmpDesc.FrontFace.StencilDepthFailOp = comboBox_FrontStencilDepthFailOp->currentData().value<D3D11_STENCIL_OP>();
+				tmpDesc.FrontFace.StencilPassOp = comboBox_FrontStencilPassOp->currentData().value<D3D11_STENCIL_OP>();
+				tmpDesc.FrontFace.StencilFunc = comboBox_FrontStencilFunc->currentData().value<D3D11_COMPARISON_FUNC>();
+				tmpDesc.BackFace.StencilFailOp = comboBox_BackStencilFailOp->currentData().value<D3D11_STENCIL_OP>();
+				tmpDesc.BackFace.StencilDepthFailOp = comboBox_BackStencilDepthFailOp->currentData().value<D3D11_STENCIL_OP>();
+				tmpDesc.BackFace.StencilPassOp = comboBox_BackStencilPassOp->currentData().value<D3D11_STENCIL_OP>();
+				tmpDesc.BackFace.StencilFunc = comboBox_BackStencilFunc->currentData().value<D3D11_COMPARISON_FUNC>();
 				prop.set_value(reflection, tmpDesc);
 			};
 			connect(checkBox_DepthEnable, &QCheckBox::stateChanged, this, func);
 			connect(comboBox_DepthWriteMask, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, func);
 			connect(comboBox_DepthFunc, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, func);
 			connect(checkBox_StencilEnable, &QCheckBox::stateChanged, this, func);
+			connect(spinBox_StencilReadMask, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, func);
+			connect(spinBox_StencilWriteMask, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, func);
+			connect(comboBox_FrontStencilFailOp, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, func);
+			connect(comboBox_FrontStencilDepthFailOp, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, func);
+			connect(comboBox_FrontStencilPassOp, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, func);
+			connect(comboBox_FrontStencilFunc, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, func);
+			connect(comboBox_BackStencilFailOp, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, func);
+			connect(comboBox_BackStencilDepthFailOp, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, func);
+			connect(comboBox_BackStencilPassOp, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, func);
+			connect(comboBox_BackStencilFunc, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, func);
 			vBoxLayout->addLayout(hBoxLayout_DepthEnable);
 			vBoxLayout->addLayout(hBoxLayout_DepthWriteMask);
 			vBoxLayout->addLayout(hBoxLayout_DepthFunc);
 			vBoxLayout->addLayout(hBoxLayout_StencilEnable);
+			vBoxLayout->addLayout(hBoxLayout_StencilReadMask);
+			vBoxLayout->addLayout(hBoxLayout_StencilWriteMask);
+			vBoxLayout->addLayout(hBoxLayout_FrontStencilFailOp);
+			vBoxLayout->addLayout(hBoxLayout_FrontStencilDepthFailOp);
+			vBoxLayout->addLayout(hBoxLayout_FrontStencilPassOp);
+			vBoxLayout->addLayout(hBoxLayout_FrontStencilFunc);
+			vBoxLayout->addLayout(hBoxLayout_BackStencilFailOp);
+			vBoxLayout->addLayout(hBoxLayout_BackStencilDepthFailOp);
+			vBoxLayout->addLayout(hBoxLayout_BackStencilPassOp);
+			vBoxLayout->addLayout(hBoxLayout_BackStencilFunc);
 
 			widget->setLayout(vBoxLayout);
 			tableWidget->setCellWidget(index, 1, widget);

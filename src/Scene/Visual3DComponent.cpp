@@ -54,6 +54,17 @@ namespace Destiny
 		m_visual3D->setRasterizerState(rasterizerState);
 	}
 
+	void Visual3DComponent::set_depthStencilStateDesc(D3D11_DEPTH_STENCIL_DESC depthStencilStateDesc)
+	{
+		m_depthStencilStateDesc = depthStencilStateDesc;
+		std::shared_ptr<Blob> data = nullptr;
+		data.reset(new Blob(sizeof(D3D11_DEPTH_STENCIL_DESC)));
+		memcpy_s(data->getData(), data->getLength(), &m_depthStencilStateDesc, data->getLength());
+		auto depthStencilState = Engine::GetInstance()->getGraphicsSystem()->createDepthStencilState(data);
+		depthStencilState->load(0);
+		m_visual3D->setDepthStencilState(depthStencilState);
+	}
+
 	void Visual3DComponent::onAttachNode()
 	{
 		m_worldMatrix->update(XMMatrixTranspose(m_node->get_transform3D().getWorldMatrix()));

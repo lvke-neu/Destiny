@@ -15,7 +15,6 @@ namespace Destiny
 		m_rasterizerStateDesc(RasterizerState::Default_Rasterizer_Desc),
 		m_depthStencilStateDesc(DepthStencilState::Default_DepthStencil_Desc),
 		m_blendStateDesc(BlendState::Default_BlendState_Desc),
-		m_color(Color::Green),
 		m_worldMatrix(std::make_shared<ConstantBuffer<XMMATRIX>>()),
 		m_material(Engine::GetInstance()->getGraphicsSystem()->createMaterial()),
 		m_materiaColor(std::make_shared<ConstantBuffer<MateriaColor>>())
@@ -144,7 +143,7 @@ namespace Destiny
 			.property("rasterizerStateDesc", &Visual3DComponent::get_rasterizerStateDesc, &Visual3DComponent::set_rasterizerStateDesc)
 			.property("depthStencilStateDesc", &Visual3DComponent::get_depthStencilStateDesc, &Visual3DComponent::set_depthStencilStateDesc)
 			.property("blendStateDesc", &Visual3DComponent::get_blendStateDesc, &Visual3DComponent::set_blendStateDesc)
-			.property("color", &Visual3DComponent::get_color, &Visual3DComponent::set_color);
+			.property("material", &Visual3DComponent::get_material, &Visual3DComponent::set_material);
 
 		rttr::registration::class_<D3D11_RASTERIZER_DESC>("D3D11_RASTERIZER_DESC")
 			.constructor<>()

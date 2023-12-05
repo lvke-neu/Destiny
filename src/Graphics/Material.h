@@ -7,13 +7,15 @@ namespace Destiny
 {
 	class SamplerState;
 	class Texture;
-	class Material : public Asset
+	class Material : public Asset, public Reflection
 	{
 		friend class MaterialLoader;
+		RTTR_ENABLE(Reflection);
 	public:
 		Material();
 		virtual ~Material();
 	public:
+		GET_CLASS_NAME(Material);
 		GET_SET(Color, ambientColor);
 		GET_SET(Color, diffuseColor);
 		GET_SET(Color, specularColor);

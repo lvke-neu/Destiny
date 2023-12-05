@@ -28,7 +28,7 @@ namespace Destiny
 		GET(D3D11_RASTERIZER_DESC, rasterizerStateDesc);
 		GET(D3D11_DEPTH_STENCIL_DESC, depthStencilStateDesc);
 		GET(D3D11_BLEND_DESC, blendStateDesc);
-		GET_SET(Color, color);
+		GET_SET(std::shared_ptr<Material>, material);
 		void set_rasterizerStateDesc(D3D11_RASTERIZER_DESC rasterizerStateDesc);
 		void set_depthStencilStateDesc(D3D11_DEPTH_STENCIL_DESC depthStencilStateDesc);
 		void set_blendStateDesc(D3D11_BLEND_DESC blendStateDesc);
@@ -38,7 +38,6 @@ namespace Destiny
 		D3D11_RASTERIZER_DESC m_rasterizerStateDesc;
 		D3D11_DEPTH_STENCIL_DESC m_depthStencilStateDesc;
 		D3D11_BLEND_DESC m_blendStateDesc;
-		Color m_color;
 
 		std::shared_ptr<ConstantBuffer<XMMATRIX>> m_worldMatrix;
 		struct MateriaColor

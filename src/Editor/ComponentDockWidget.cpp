@@ -3,6 +3,7 @@
 #include "Scene/Component.h"
 #include "Scene/Transform3D.h"
 #include "Graphics/Color.h"
+#include "Graphics/Material.h"
 #include <DirectXMath.h>
 #include <QTableWidget>
 #include <QHeaderView>
@@ -881,6 +882,18 @@ void ComponentDockWidget::reflect(std::shared_ptr<Destiny::Reflection> reflectio
 			widget->setLayout(vBoxLayout);
 			tableWidget->setCellWidget(index, 1, widget);
 		}
+		else if (prop.get_type().get_name() == "classstd::shared_ptr<classDestiny::Material>")
+		{
+			using namespace Destiny;
+			auto material = prop.get_value(reflection).get_value<std::shared_ptr<Material>>();
+
+			QWidget* widget = new QWidget();
+			QVBoxLayout* vBoxLayout = new QVBoxLayout();
+			widget->setLayout(vBoxLayout);
+
+			reflect(material, vBoxLayout, true);
+			tableWidget->setCellWidget(index, 1, widget);
+		}
 		else
 		{
 			auto name = prop.get_type().get_name();
@@ -902,5 +915,8 @@ void ComponentDockWidget::onChooseNode(std::shared_ptr<Destiny::Node3D> node)
 		reflect(comp, m_layout, false);
 	}
 }
+
+
+
 
 

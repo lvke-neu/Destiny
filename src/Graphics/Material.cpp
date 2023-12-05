@@ -1,4 +1,7 @@
 #include "Material.h"
+#include "Engine/Engine.h"
+#include "GraphicsSystem.h"
+#include "Texture.h"
 
 namespace Destiny
 {
@@ -22,6 +25,30 @@ namespace Destiny
 	Material::~Material()
 	{
 
+	}
+
+	void Material::set_ambientTexturePath(std::string ambientTexturePath)
+	{
+		m_ambientTexturePath = ambientTexturePath;
+		m_ambientTexture.reset();
+		m_ambientTexture = Engine::GetInstance()->getGraphicsSystem()->createTexture(m_ambientTexturePath.c_str());
+		m_ambientTexture->load();
+	}
+
+	void Material::set_diffuseTexturePath(std::string diffuseTexturePath)
+	{
+		m_diffuseTexturePath = diffuseTexturePath;
+		m_diffuseTexture.reset();
+		m_diffuseTexture = Engine::GetInstance()->getGraphicsSystem()->createTexture(m_diffuseTexturePath.c_str());
+		m_diffuseTexture->load();
+	}
+
+	void Material::set_specularTexturePath(std::string specularTexturePath)
+	{
+		m_specularTexturePath = specularTexturePath;
+		m_specularTexture.reset();
+		m_specularTexture = Engine::GetInstance()->getGraphicsSystem()->createTexture(m_specularTexturePath.c_str());
+		m_specularTexture->load();
 	}
 
 	RTTR_REGISTRATION

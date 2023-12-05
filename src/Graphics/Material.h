@@ -19,9 +19,9 @@ namespace Destiny
 		GET_SET(Color, ambientColor);
 		GET_SET(Color, diffuseColor);
 		GET_SET(Color, specularColor);
-		GET_SET(std::string, ambientTexturePath);
-		GET_SET(std::string, diffuseTexturePath);
-		GET_SET(std::string, specularTexturePath);
+		GET(std::string, ambientTexturePath);
+		GET(std::string, diffuseTexturePath);
+		GET(std::string, specularTexturePath);
 		GET_SET(std::shared_ptr<SamplerState>, ambientSamplerState);
 		GET_SET(std::shared_ptr<SamplerState>, diffuseSamplerState);
 		GET_SET(std::shared_ptr<SamplerState>, specularSamplerState);
@@ -29,6 +29,10 @@ namespace Destiny
 		GET(std::shared_ptr<Texture>, ambientTexture);
 		GET(std::shared_ptr<Texture>, diffuseTexture);
 		GET(std::shared_ptr<Texture>, specularTexture);
+
+		void set_ambientTexturePath(std::string ambientTexturePath);
+		void set_diffuseTexturePath(std::string diffuseTexturePath);
+		void set_specularTexturePath(std::string specularTexturePath);
 	private:
 		Color m_ambientColor;
 		Color m_diffuseColor;

@@ -113,24 +113,14 @@ namespace Destiny
 		m_materiaColor->update(materialColor);
 		immediateContext->PSSetConstantBuffers(3, 1, m_materiaColor->getConstantBuffer());
 
-		if (m_material->get_ambientTexture() && m_material->get_ambientTexture()->isLoadingSucceed()
-			&& m_material->get_ambientSamplerState() && m_material->get_ambientSamplerState()->isLoadingSucceed())
-		{
-			immediateContext->PSSetSamplers(0, 1, m_material->get_ambientSamplerState()->getSamplerState());
-			immediateContext->PSSetShaderResources(0, 1, m_material->get_ambientTexture()->getShaderResourceView());
-		}
-		if (m_material->get_diffuseTexture() && m_material->get_diffuseTexture()->isLoadingSucceed()
-			&& m_material->get_diffuseSamplerState() && m_material->get_diffuseSamplerState()->isLoadingSucceed())
-		{
-			immediateContext->PSSetSamplers(1, 1, m_material->get_diffuseSamplerState()->getSamplerState());
-			immediateContext->PSSetShaderResources(1, 1, m_material->get_diffuseTexture()->getShaderResourceView());
-		}
-		if (m_material->get_specularTexture() && m_material->get_specularTexture()->isLoadingSucceed()
-			&& m_material->get_specularSamplerState() && m_material->get_specularSamplerState()->isLoadingSucceed())
-		{
-			immediateContext->PSSetSamplers(1, 1, m_material->get_specularSamplerState()->getSamplerState());
-			immediateContext->PSSetShaderResources(1, 1, m_material->get_specularTexture()->getShaderResourceView());
-		}
+		immediateContext->PSSetSamplers(0, 1, m_material->get_ambientSamplerState()->getSamplerState());
+		immediateContext->PSSetShaderResources(0, 1, m_material->get_ambientTexture()->getShaderResourceView());
+		
+		immediateContext->PSSetSamplers(1, 1, m_material->get_diffuseSamplerState()->getSamplerState());
+		immediateContext->PSSetShaderResources(1, 1, m_material->get_diffuseTexture()->getShaderResourceView());
+
+		immediateContext->PSSetSamplers(1, 1, m_material->get_specularSamplerState()->getSamplerState());
+		immediateContext->PSSetShaderResources(1, 1, m_material->get_specularTexture()->getShaderResourceView());
 	}
 
 	RTTR_REGISTRATION

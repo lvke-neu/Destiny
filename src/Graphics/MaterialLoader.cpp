@@ -29,6 +29,10 @@ namespace Destiny
 			return;
 		}
 
+		material->m_ambientTexture.reset();
+		material->m_diffuseTexture.reset();
+		material->m_specularTexture.reset();
+
 		material->m_ambientTexture = Engine::GetInstance()->getGraphicsSystem()->createTexture(material->m_ambientTexturePath.c_str());
 		material->m_diffuseTexture = Engine::GetInstance()->getGraphicsSystem()->createTexture(material->m_diffuseTexturePath.c_str());
 		material->m_specularTexture = Engine::GetInstance()->getGraphicsSystem()->createTexture(material->m_specularTexturePath.c_str());

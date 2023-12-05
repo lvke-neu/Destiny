@@ -2,6 +2,7 @@
 cbuffer cbView : register(b0)
 {
 	matrix g_view;  
+	float4 g_eyePos;
 }
 
 cbuffer cbProj : register(b1)
@@ -12,6 +13,7 @@ cbuffer cbProj : register(b1)
 cbuffer cbWorld : register(b2)
 {
 	matrix g_world;
+	matrix g_worldInvTranspose;
 }
 
 cbuffer cbMaterialColor : register(b3)
@@ -21,15 +23,22 @@ cbuffer cbMaterialColor : register(b3)
 	float4 g_specularColor;
 }
 
+cbuffer cbDirectLight : register(b4)
+{
+	float4 g_direction;
+}
+
 struct VertexIn
 {
 	float3 positionL : POSITION;
-	float3 normal : NORMAL;
+	float3 normalL : NORMAL;
 	float2 texcoord : TEXCOORD;
 };
 struct VertexOut
 {
 	float4 positionH : SV_POSITION;
+	float4 positionW : POSITION;
+	float3 normalW : NORMAL;
 	float2 texcoord : TEXCOORD;
 };
 

@@ -15,7 +15,7 @@ namespace Destiny
 		m_rasterizerStateDesc(RasterizerState::Default_Rasterizer_Desc),
 		m_depthStencilStateDesc(DepthStencilState::Default_DepthStencil_Desc),
 		m_blendStateDesc(BlendState::Default_BlendState_Desc),
-		m_worldMatrix(std::make_shared<ConstantBuffer<XMMATRIX>>()),
+		m_worldMatrix(std::make_shared<ConstantBuffer<CbWorld>>()),
 		m_material(Engine::GetInstance()->getGraphicsSystem()->createMaterial()),
 		m_materiaColor(std::make_shared<ConstantBuffer<MateriaColor>>())
 	{
@@ -87,12 +87,22 @@ namespace Destiny
 
 	void Visual3DComponent::onAttachNode()
 	{
-		m_worldMatrix->update(XMMatrixTranspose(m_node->get_transform3D().getWorldMatrix()));
+		XMMATRIX world = m_node->get_transform3D().getWorldMatrix();
+		CbWorld cbWorld;
+		cbWorld.world = XMMatrixTranspose(world);
+		world.r[3] = g_XMIdentityR3;
+		cbWorld.worldInvTranspose = XMMatrixTranspose(XMMatrixTranspose(XMMatrixInverse(nullptr, world)));
+		m_worldMatrix->update(cbWorld);
 	}
 
 	void Visual3DComponent::onNodeTransformChanged()
 	{
-		m_worldMatrix->update(XMMatrixTranspose(m_node->get_transform3D().getWorldMatrix()));
+		XMMATRIX world = m_node->get_transform3D().getWorldMatrix();
+		CbWorld cbWorld;
+		cbWorld.world = XMMatrixTranspose(world);
+		world.r[3] = g_XMIdentityR3;
+		cbWorld.worldInvTranspose = XMMatrixTranspose(XMMatrixTranspose(XMMatrixInverse(nullptr, world)));
+		m_worldMatrix->update(cbWorld);
 	}
 
 	void Visual3DComponent::beforeDrawCommand()

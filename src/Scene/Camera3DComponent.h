@@ -35,7 +35,12 @@ namespace Destiny
 		float m_nearz;
 		float m_farz;
 
-		std::shared_ptr<ConstantBuffer<XMMATRIX>> m_viewMatrix;
+		struct CbView
+		{
+			XMMATRIX view;
+			XMFLOAT4 eyePos;
+		};
+		std::shared_ptr<ConstantBuffer<CbView>> m_viewMatrix;
 		std::shared_ptr<ConstantBuffer<XMMATRIX>> m_projMatrix;
 	};
 }

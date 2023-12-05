@@ -7,6 +7,8 @@ VertexOut VS(VertexIn vIn)
 	float4 positionH = mul(positionV, g_proj);
 	VertexOut vOut;
 	vOut.positionH = positionH;
+	vOut.positionW = positionW;
+	vOut.normalW = mul(vIn.normalL, (float3x3)g_worldInvTranspose);
 	vOut.texcoord = vIn.texcoord;
     return vOut;
 }

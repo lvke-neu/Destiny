@@ -12,7 +12,7 @@ namespace Destiny
 		m_nearz(1.0f),
 		m_farz(1000.0f)
 	{
-		m_viewMatrix = std::make_shared<ConstantBuffer<XMMATRIX>>();
+		m_viewMatrix = std::make_shared<ConstantBuffer<CbView>>();
 		m_projMatrix = std::make_shared<ConstantBuffer<XMMATRIX>>();
 		
 		Engine::GetInstance()->getEventSystem()->registerEvent(EventType::WindowResize, std::bind(&Camera3DComponent::onWindowResize, this, std::placeholders::_1));
@@ -25,7 +25,11 @@ namespace Destiny
 
 	void Camera3DComponent::onAttachNode()
 	{
-		m_viewMatrix->update(XMMatrixTranspose(XMMatrixInverse(nullptr, m_node->get_transform3D().getWorldMatrix())));
+		CbView cbView;
+		cbView.view = XMMatrixTranspose(XMMatrixInverse(nullptr, m_node->get_transform3D().getWorldMatrix()));
+		XMFLOAT3 trans = m_node->get_transform3D().get_translation();
+		cbView.eyePos = { trans.x, trans.y, trans.z, 1.0f };
+		m_viewMatrix->update(cbView);
 		m_projMatrix->update(XMMatrixTranspose(XMMatrixPerspectiveFovLH(m_fovy, m_aspect, m_nearz, m_farz)));
 		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->VSSetConstantBuffers(0, 1, m_viewMatrix->getConstantBuffer());
 		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->VSSetConstantBuffers(1, 1, m_projMatrix->getConstantBuffer());
@@ -33,7 +37,11 @@ namespace Destiny
 
 	void Camera3DComponent::onNodeTransformChanged()
 	{
-		m_viewMatrix->update(XMMatrixTranspose(XMMatrixInverse(nullptr, m_node->get_transform3D().getWorldMatrix())));
+		CbView cbView;
+		cbView.view = XMMatrixTranspose(XMMatrixInverse(nullptr, m_node->get_transform3D().getWorldMatrix()));
+		XMFLOAT3 trans = m_node->get_transform3D().get_translation();
+		cbView.eyePos = { trans.x, trans.y, trans.z, 1.0f };
+		m_viewMatrix->update(cbView);
 	}
 
 	void Camera3DComponent::set_fovy(float fovy)

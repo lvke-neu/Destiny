@@ -121,6 +121,10 @@ void ComponentDockWidget::reflect(std::shared_ptr<Destiny::Reflection> reflectio
 				[=]()
 				{
 					prop.set_value(reflection, lineEdit->text().toStdString());
+					if (reflection->get_class_name() == "Material")
+					{
+						((Destiny::Material*)reflection.get())->load();
+					}
 				});
 		}
 		else if (prop.get_type().get_name() == "bool")

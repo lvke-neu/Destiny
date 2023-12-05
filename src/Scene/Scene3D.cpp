@@ -6,6 +6,7 @@
 #include "SphereComponent.h"
 #include "Camera3DComponent.h"
 #include "CameraController.h"
+#include "DirectLightComponent.h"
 
 namespace Destiny
 {
@@ -25,6 +26,14 @@ namespace Destiny
 		m_cameraNode->addComponent(camera3DComponent);
 		auto cameraController = std::make_shared<CameraController>();
 		m_cameraNode->addComponent(cameraController);
+
+		auto directLightNode = std::make_shared<Node3D>();
+		directLightNode->set_name("DirectLight");
+		directLightNode->addToParent(m_rootNode);
+		transform3D.set_translation({ -0.5f, -0.5f, 0.5f });
+		directLightNode->set_transform3D(transform3D);
+		auto directLightComponent = std::make_shared<DirectLightComponent>();
+		directLightNode->addComponent(directLightComponent);
 
 		auto boxNode = std::make_shared<Node3D>();
 		boxNode->set_name("Box");

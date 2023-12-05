@@ -39,7 +39,12 @@ namespace Destiny
 		D3D11_DEPTH_STENCIL_DESC m_depthStencilStateDesc;
 		D3D11_BLEND_DESC m_blendStateDesc;
 
-		std::shared_ptr<ConstantBuffer<XMMATRIX>> m_worldMatrix;
+		struct CbWorld
+		{
+			XMMATRIX world;
+			XMMATRIX worldInvTranspose;
+		};
+		std::shared_ptr<ConstantBuffer<CbWorld>> m_worldMatrix;
 		struct MateriaColor
 		{
 			XMFLOAT4 ambientColor;

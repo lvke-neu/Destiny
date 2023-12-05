@@ -11,7 +11,10 @@ namespace Destiny
 		m_specularTexturePath(""),
 		m_ambientTexture(nullptr),
 		m_diffuseTexture(nullptr),
-		m_specularTexture(nullptr)
+		m_specularTexture(nullptr),
+		m_ambientSamplerState(nullptr),
+		m_diffuseSamplerState(nullptr),
+		m_specularSamplerState(nullptr)
 	{
 
 	}

@@ -6,15 +6,13 @@
 #include "Graphics/VertexShader.h"
 #include "Graphics/PixelShader.h"
 #include "Graphics/InputLayout.h"
-#include "Graphics/Texture.h"
-#include "Graphics/SamplerState.h"
+#include "Graphics/Material.h"
 
 namespace Destiny
 {
 	using namespace DirectX;
 
-	SphereComponent::SphereComponent() :
-		m_texturePath("assets://Texture/brick.dds")
+	SphereComponent::SphereComponent()
 	{
 		std::shared_ptr<Blob> data = nullptr;
 		struct VertexPosColor
@@ -124,38 +122,17 @@ namespace Destiny
 		m_visual3D->setVertexShader(vertexShader);
 		m_visual3D->setPixelShader(pixelShader);
 
-		m_texture = Engine::GetInstance()->getGraphicsSystem()->createTexture(m_texturePath.c_str());
-		m_texture->load();
 
-		data.reset(new Blob(sizeof(D3D11_SAMPLER_DESC)));
-		memcpy_s(data->getData(), data->getLength(), &SamplerState::Default_SamplerState_Desc, data->getLength());
-		m_samplerState = Engine::GetInstance()->getGraphicsSystem()->createSamplerState(data);
-		m_samplerState->load(0);
-
-		m_visual3D->registerBeforeDrawCommands(std::bind(&SphereComponent::beforeDrawCommands, this));
+		m_material->set_ambientColor(Color::Green);
+		m_material->set_diffuseColor(Color::Green);
+		m_material->set_specularColor(Color::Blue);
+		m_material->set_ambientTexturePath("assets://Texture/stone.dds");
+		m_material->set_diffuseTexturePath("assets://Texture/skybox.jpeg");
+		m_material->set_specularTexturePath("assets://Texture/brick.dds");
+		m_material->load();
 	}
 
-	void SphereComponent::set_texturePath(std::string texturePath)
-	{
-		m_texturePath = texturePath;
-		m_texture.reset();
-		m_texture = Engine::GetInstance()->getGraphicsSystem()->createTexture(m_texturePath.c_str());
-		m_texture->load();
-	}
-
-	void SphereComponent::beforeDrawCommands()
-	{
-		if (
-			!m_samplerState || !m_samplerState->isLoadingSucceed() ||
-			!m_texture || !m_texture->isLoadingSucceed()
-			)
-		{
-			return;
-		}
-
-		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetSamplers(0, 1, m_samplerState->getSamplerState());
-		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetShaderResources(0, 1, m_texture->getShaderResourceView());
-	}
+	
 
 	RTTR_REGISTRATION
 	{
@@ -163,7 +140,6 @@ namespace Destiny
 			.constructor<>()
 			(
 				rttr::policy::ctor::as_raw_ptr
-			)
-		    .property("texturePath", &SphereComponent::get_texturePath, &SphereComponent::set_texturePath);
+			);
 	}
 }

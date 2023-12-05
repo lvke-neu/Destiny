@@ -14,6 +14,13 @@ cbuffer cbWorld : register(b2)
 	matrix g_world;
 }
 
+cbuffer cbMaterialColor : register(b3)
+{
+	float4 g_ambientColor;
+	float4 g_diffuseColor;
+	float4 g_specularColor;
+}
+
 struct VertexIn
 {
 	float3 positionL : POSITION;
@@ -25,3 +32,11 @@ struct VertexOut
 	float4 positionH : SV_POSITION;
 	float2 texcoord : TEXCOORD;
 };
+
+
+Texture2D g_ambientTexture : register(t0);
+SamplerState g_ambientSampler : register(s0);
+Texture2D g_diffuseTexture : register(t1);
+SamplerState g_diffuseSampler : register(s1);
+Texture2D g_specularTexture : register(t2);
+SamplerState g_specularSampler : register(s2);

@@ -12,6 +12,7 @@ namespace Destiny
 	using namespace DirectX;
 
 	class Visual3D;
+	class Material;
 	class Visual3DComponent : public Component
 	{
 		RTTR_ENABLE(Component);
@@ -20,7 +21,7 @@ namespace Destiny
 	public:
 		virtual void onAttachNode() override;
 		virtual void onNodeTransformChanged() override;
-		void setWorldMatrix();
+		void beforeDrawCommand();
 	public:
 		GET_CLASS_NAME(Visual3DComponent);
 		GET(std::shared_ptr<Visual3D>, visual3D);
@@ -33,11 +34,19 @@ namespace Destiny
 		void set_blendStateDesc(D3D11_BLEND_DESC blendStateDesc);
 	protected:
 		std::shared_ptr<Visual3D> m_visual3D;
+		std::shared_ptr<Material> m_material;
 		D3D11_RASTERIZER_DESC m_rasterizerStateDesc;
 		D3D11_DEPTH_STENCIL_DESC m_depthStencilStateDesc;
 		D3D11_BLEND_DESC m_blendStateDesc;
 		Color m_color;
 
 		std::shared_ptr<ConstantBuffer<XMMATRIX>> m_worldMatrix;
+		struct MateriaColor
+		{
+			XMFLOAT4 ambientColor;
+			XMFLOAT4 diffuseColor;
+			XMFLOAT4 specularColor;
+		};
+		std::shared_ptr<ConstantBuffer<MateriaColor>> m_materiaColor;
 	};
 }

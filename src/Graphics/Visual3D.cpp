@@ -9,7 +9,6 @@
 #include "RasterizerState.h"
 #include "DepthStencilState.h"
 #include "BlendState.h"
-#include "Material.h"
 #include <d3d11.h>
 
 namespace Destiny
@@ -22,8 +21,7 @@ namespace Destiny
 		m_pixelShader(nullptr),
 		m_rasterizerState(nullptr),
 		m_depthStencilState(nullptr),
-		m_blendState(nullptr),
-		m_material(nullptr)
+		m_blendState(nullptr)
 	{
 
 	}
@@ -59,7 +57,7 @@ namespace Destiny
 		//SHDAER
 		immediateContext->VSSetShader(m_vertexShader->getVertexShader(), nullptr, 0);
 		immediateContext->PSSetShader(m_pixelShader->getPixelShader(), nullptr, 0);
-
+		
 		//RS
 		immediateContext->RSSetViewports(1, graphicsSystem->getViewport());
 		immediateContext->RSSetState(m_rasterizerState->getRasterizerState());

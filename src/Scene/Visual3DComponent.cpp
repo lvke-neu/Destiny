@@ -4,6 +4,8 @@
 #include "Graphics/Visual3D.h"
 #include "Graphics/GraphicsSystem.h"
 #include "Graphics/Material.h"
+#include "Graphics/SamplerState.h"
+#include "Graphics/Texture.h"
 #include "Node3D.h"
 
 namespace Destiny
@@ -14,7 +16,9 @@ namespace Destiny
 		m_depthStencilStateDesc(DepthStencilState::Default_DepthStencil_Desc),
 		m_blendStateDesc(BlendState::Default_BlendState_Desc),
 		m_color(Color::Green),
-		m_worldMatrix(std::make_shared<ConstantBuffer<XMMATRIX>>())
+		m_worldMatrix(std::make_shared<ConstantBuffer<XMMATRIX>>()),
+		m_material(Engine::GetInstance()->getGraphicsSystem()->createMaterial()),
+		m_materiaColor(std::make_shared<ConstantBuffer<MateriaColor>>())
 	{
 		std::shared_ptr<Blob> data = nullptr;
 
@@ -38,17 +42,15 @@ namespace Destiny
 		blendState->load(0);
 		m_visual3D->setBlendState(blendState);
 
-		auto material = Engine::GetInstance()->getGraphicsSystem()->createMaterial();
-		material->set_ambientColor(Color::Red);
-		material->set_diffuseColor(Color::Green);
-		material->set_specularColor(Color::Blue);
-		material->set_ambientTexturePath("assets://Texture/brick.dds");
-		material->set_diffuseTexturePath("assets://Texture/skybox.jpeg");
-		material->set_specularTexturePath("assets://Texture/stone.dds");
-		material->load();
-		m_visual3D->setMaterial(material);
+		m_visual3D->registerBeforeDrawCommands(std::bind(&Visual3DComponent::beforeDrawCommand, this));
 
-		m_visual3D->registerBeforeDrawCommands(std::bind(&Visual3DComponent::setWorldMatrix, this));
+		data.reset(new Blob(sizeof(D3D11_SAMPLER_DESC)));
+		memcpy_s(data->getData(), data->getLength(), &SamplerState::Default_SamplerState_Desc, data->getLength());
+		auto samplerState = Engine::GetInstance()->getGraphicsSystem()->createSamplerState(data);
+		samplerState->load(0);
+		m_material->set_ambientSamplerState(samplerState);
+		m_material->set_diffuseSamplerState(samplerState);
+		m_material->set_specularSamplerState(samplerState);
 	}
 
 	void Visual3DComponent::set_rasterizerStateDesc(D3D11_RASTERIZER_DESC rasterizerStateDesc)
@@ -94,9 +96,42 @@ namespace Destiny
 		m_worldMatrix->update(XMMatrixTranspose(m_node->get_transform3D().getWorldMatrix()));
 	}
 
-	void Visual3DComponent::setWorldMatrix()
+	void Visual3DComponent::beforeDrawCommand()
 	{
-		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->VSSetConstantBuffers(2, 1, m_worldMatrix->getConstantBuffer());
+		auto immediateContext = Engine::GetInstance()->getGraphicsSystem()->getImmediateContext();
+		immediateContext->VSSetConstantBuffers(2, 1, m_worldMatrix->getConstantBuffer());
+
+		if (!m_material || !m_material->isLoadingSucceed())
+		{
+			return;
+		}
+		
+		MateriaColor materialColor;
+		memcpy_s(&materialColor.ambientColor, sizeof(XMFLOAT4), m_material->get_ambientColor().toFloat(), sizeof(XMFLOAT4));
+		memcpy_s(&materialColor.diffuseColor, sizeof(XMFLOAT4), m_material->get_diffuseColor().toFloat(), sizeof(XMFLOAT4));
+		memcpy_s(&materialColor.specularColor, sizeof(XMFLOAT4), m_material->get_specularColor().toFloat(), sizeof(XMFLOAT4));
+
+		m_materiaColor->update(materialColor);
+		immediateContext->PSSetConstantBuffers(3, 1, m_materiaColor->getConstantBuffer());
+
+		if (m_material->get_ambientTexture() && m_material->get_ambientTexture()->isLoadingSucceed()
+			&& m_material->get_ambientSamplerState() && m_material->get_ambientSamplerState()->isLoadingSucceed())
+		{
+			immediateContext->PSSetSamplers(0, 1, m_material->get_ambientSamplerState()->getSamplerState());
+			immediateContext->PSSetShaderResources(0, 1, m_material->get_ambientTexture()->getShaderResourceView());
+		}
+		if (m_material->get_diffuseTexture() && m_material->get_diffuseTexture()->isLoadingSucceed()
+			&& m_material->get_diffuseSamplerState() && m_material->get_diffuseSamplerState()->isLoadingSucceed())
+		{
+			immediateContext->PSSetSamplers(1, 1, m_material->get_diffuseSamplerState()->getSamplerState());
+			immediateContext->PSSetShaderResources(1, 1, m_material->get_diffuseTexture()->getShaderResourceView());
+		}
+		if (m_material->get_specularTexture() && m_material->get_specularTexture()->isLoadingSucceed()
+			&& m_material->get_specularSamplerState() && m_material->get_specularSamplerState()->isLoadingSucceed())
+		{
+			immediateContext->PSSetSamplers(1, 1, m_material->get_specularSamplerState()->getSamplerState());
+			immediateContext->PSSetShaderResources(1, 1, m_material->get_specularTexture()->getShaderResourceView());
+		}
 	}
 
 	RTTR_REGISTRATION

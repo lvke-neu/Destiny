@@ -3,6 +3,7 @@
 #include "Engine/Engine.h"
 #include "Graphics/Visual3D.h"
 #include "Graphics/GraphicsSystem.h"
+#include "Graphics/Material.h"
 #include "Node3D.h"
 
 namespace Destiny
@@ -36,6 +37,16 @@ namespace Destiny
 		auto blendState = Engine::GetInstance()->getGraphicsSystem()->createBlendState(data);
 		blendState->load(0);
 		m_visual3D->setBlendState(blendState);
+
+		auto material = Engine::GetInstance()->getGraphicsSystem()->createMaterial();
+		material->set_ambientColor(Color::Red);
+		material->set_diffuseColor(Color::Green);
+		material->set_specularColor(Color::Blue);
+		material->set_ambientTexturePath("assets://Texture/brick.dds");
+		material->set_diffuseTexturePath("assets://Texture/skybox.jpeg");
+		material->set_specularTexturePath("assets://Texture/stone.dds");
+		material->load();
+		m_visual3D->setMaterial(material);
 
 		m_visual3D->registerBeforeDrawCommands(std::bind(&Visual3DComponent::setWorldMatrix, this));
 	}

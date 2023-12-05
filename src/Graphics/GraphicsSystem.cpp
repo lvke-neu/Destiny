@@ -19,6 +19,7 @@
 #include "SamplerState.h"
 #include "Visual3D.h"
 #include "TextureLoader.h"
+#include "MaterialLoader.h"
 #include "Color.h"
 #include <d3d11.h>
 
@@ -34,7 +35,8 @@ namespace Destiny
 		m_pDepthStencilView(nullptr),
 		m_4xMsaaQuality(0),
 		m_viewport(new D3D11_VIEWPORT),
-		m_textureLoader(nullptr)
+		m_textureLoader(nullptr),
+		m_materialLoader(nullptr)
 	{
 
 	}
@@ -61,6 +63,7 @@ namespace Destiny
 		Engine::GetInstance()->getEventSystem()->registerEvent(EventType::WindowResize, std::bind(&GraphicsSystem::onResize, this, std::placeholders::_1));
 
 		m_textureLoader = std::make_shared<TextureLoader>();
+		m_materialLoader = std::make_shared<MaterialLoader>();
 	}
 
 	void GraphicsSystem::uninitialize()
@@ -228,6 +231,11 @@ namespace Destiny
 		std::shared_ptr<BlobHolder> blobHolder = std::make_shared<BlobHolder>();
 		blobHolder->loadSucceeded__(blob);
 		return m_textureLoader->createAsset(blobHolder);
+	}
+
+	std::shared_ptr<Material> GraphicsSystem::createMaterial()
+	{
+		return m_materialLoader->createAsset();
 	}
 
 	void GraphicsSystem::onResize(void* data)

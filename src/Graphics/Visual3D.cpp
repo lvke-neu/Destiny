@@ -1,14 +1,15 @@
 #include "Visual3D.h"
 #include "Engine/Engine.h"
-#include "Graphics/GraphicsSystem.h"
-#include "Graphics/VertexBuffer.h"
-#include "Graphics/IndexBuffer.h"
-#include "Graphics/VertexShader.h"
-#include "Graphics/PixelShader.h"
-#include "Graphics/InputLayout.h"
-#include "Graphics/RasterizerState.h"
-#include "Graphics/DepthStencilState.h"
-#include "Graphics/BlendState.h"
+#include "GraphicsSystem.h"
+#include "VertexBuffer.h"
+#include "IndexBuffer.h"
+#include "VertexShader.h"
+#include "PixelShader.h"
+#include "InputLayout.h"
+#include "RasterizerState.h"
+#include "DepthStencilState.h"
+#include "BlendState.h"
+#include "Material.h"
 #include <d3d11.h>
 
 namespace Destiny
@@ -21,7 +22,8 @@ namespace Destiny
 		m_pixelShader(nullptr),
 		m_rasterizerState(nullptr),
 		m_depthStencilState(nullptr),
-		m_blendState(nullptr)
+		m_blendState(nullptr),
+		m_material(nullptr)
 	{
 
 	}

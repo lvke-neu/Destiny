@@ -13,6 +13,7 @@ namespace Destiny
 	class RasterizerState;
 	class DepthStencilState;
 	class BlendState;
+	class Material;
 	class Visual3D
 	{
 	public:
@@ -37,6 +38,7 @@ namespace Destiny
 		void setRasterizerState(std::shared_ptr<RasterizerState> rasterizerState);
 		void setDepthStencilState(std::shared_ptr<DepthStencilState> depthStencilState);
 		void setBlendState(std::shared_ptr<BlendState> blendState);
+		void setMaterial(std::shared_ptr<Material> material);
 	private:
 		std::shared_ptr<VertexBuffer> m_vertexBuffer;
 		std::shared_ptr<IndexBuffer> m_indexBuffer;
@@ -46,6 +48,7 @@ namespace Destiny
 		std::shared_ptr<RasterizerState> m_rasterizerState;
 		std::shared_ptr<DepthStencilState> m_depthStencilState;
 		std::shared_ptr<BlendState> m_blendState;
+		std::shared_ptr<Material> m_material;
 
 		std::vector<std::function<void(void)>> m_beforeDrawCommands;
 		std::vector < std::function<void(void)>> m_afterDrawCommands;
@@ -121,5 +124,14 @@ namespace Destiny
 			m_blendState.reset();
 		}
 		m_blendState = blendState;
+	}
+
+	inline void Visual3D::setMaterial(std::shared_ptr<Material> material)
+	{
+		if (m_material)
+		{
+			m_material.reset();
+		}
+		m_material = material;
 	}
 }

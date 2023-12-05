@@ -19,6 +19,8 @@ namespace Destiny
 	class Visual3D;
 	class Texture;
 	class TextureLoader;
+	class Material;
+	class MaterialLoader;
 	class GraphicsSystem
 	{
 	public:
@@ -50,6 +52,7 @@ namespace Destiny
 		std::shared_ptr<BlendState> createBlendState(std::shared_ptr<Blob> blendStateDesc);
 		std::shared_ptr<SamplerState> createSamplerState(std::shared_ptr<Blob> samplerStateDesc);
 		std::shared_ptr<Texture> createTexture(const char* path);
+		std::shared_ptr<Material> createMaterial();
 
 	private:
 		void createDeviceAndContext();
@@ -68,6 +71,7 @@ namespace Destiny
 		D3D11_VIEWPORT* m_viewport;
 		std::vector<std::shared_ptr<Visual3D>> m_visual3Ds;
 		std::shared_ptr<TextureLoader> m_textureLoader;
+		std::shared_ptr<MaterialLoader> m_materialLoader;
 	};
 
 	inline ID3D11Device* GraphicsSystem::getDevice()

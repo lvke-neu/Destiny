@@ -33,6 +33,8 @@ namespace Destiny
 		m_projMatrix->update(XMMatrixTranspose(XMMatrixPerspectiveFovLH(m_fovy, m_aspect, m_nearz, m_farz)));
 		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->VSSetConstantBuffers(0, 1, m_viewMatrix->getConstantBuffer());
 		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->VSSetConstantBuffers(1, 1, m_projMatrix->getConstantBuffer());
+		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetConstantBuffers(0, 1, m_viewMatrix->getConstantBuffer());
+		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetConstantBuffers(1, 1, m_projMatrix->getConstantBuffer());
 	}
 
 	void Camera3DComponent::onNodeTransformChanged()

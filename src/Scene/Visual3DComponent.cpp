@@ -109,6 +109,7 @@ namespace Destiny
 	{
 		auto immediateContext = Engine::GetInstance()->getGraphicsSystem()->getImmediateContext();
 		immediateContext->VSSetConstantBuffers(2, 1, m_worldMatrix->getConstantBuffer());
+		immediateContext->PSSetConstantBuffers(2, 1, m_worldMatrix->getConstantBuffer());
 
 		if (!m_material || !m_material->isLoadingSucceed())
 		{
@@ -122,6 +123,7 @@ namespace Destiny
 
 		m_materiaColor->update(materialColor);
 		immediateContext->PSSetConstantBuffers(3, 1, m_materiaColor->getConstantBuffer());
+		immediateContext->VSSetConstantBuffers(3, 1, m_materiaColor->getConstantBuffer());
 
 		immediateContext->PSSetSamplers(0, 1, m_material->get_ambientSamplerState()->getSamplerState());
 		immediateContext->PSSetShaderResources(0, 1, m_material->get_ambientTexture()->getShaderResourceView());

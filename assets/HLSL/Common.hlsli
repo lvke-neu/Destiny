@@ -25,7 +25,7 @@ cbuffer cbMaterialColor : register(b3)
 
 cbuffer cbDirectLight : register(b4)
 {
-	float4 g_direction;
+	float4 g_directLightDirection;
 }
 
 struct VertexIn

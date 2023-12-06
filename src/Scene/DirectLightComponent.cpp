@@ -15,6 +15,7 @@ namespace Destiny
 		XMFLOAT3 trans = m_node->get_transform3D().get_translation();
 		m_direction->update({ trans.x, trans.y, trans.z, 1.0f });
 		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetConstantBuffers(4, 1, m_direction->getConstantBuffer());
+		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->VSSetConstantBuffers(4, 1, m_direction->getConstantBuffer());
 	}
 
 	void DirectLightComponent::onNodeTransformChanged()

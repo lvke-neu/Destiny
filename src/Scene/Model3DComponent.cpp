@@ -19,7 +19,7 @@ namespace Destiny
 			auto blobHolder = blobLoader->createBlobHolder(path);
 			m_model3D->initialize(nullptr, blobHolder);
 		}
-		m_model3D->load();
+		m_model3D->load(0);
 	}
 
 	void Model3DComponent::onAttachNode()

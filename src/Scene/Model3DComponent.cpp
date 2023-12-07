@@ -2,9 +2,8 @@
 #include "Visual3DComponent.h"
 #include "Model3D.h"
 #include "Node3D.h"
-#include "Engine/Engine.h"
-#include "Engine/BlobLoaderManager.h"
-#include "Engine/BlobLoader.h"
+#include "Engine/Blob.h"
+#include "Engine/BlobHolder.h"
 
 namespace Destiny
 {
@@ -12,13 +11,12 @@ namespace Destiny
 	{
 		m_model3D = std::make_shared<Model3D>();
 		
-		const char* path = "assets://Model/2nrtbod1out/2nrtbod1out.obj";
-		auto blobLoader = Engine::GetInstance()->getBlobLoaderManager()->getBlobLoader(path);
-		if (blobLoader)
-		{
-			auto blobHolder = blobLoader->createBlobHolder(path);
-			m_model3D->initialize(nullptr, blobHolder);
-		}
+		std::string path ="assets://Model/Madara_Uchiha/Madara_Uchiha.obj";
+		auto blob = std::make_shared<Blob>(path.size());
+		memcpy_s(blob->getData(), blob->getLength(), path.c_str(), blob->getLength());
+		auto blobHolder = std::make_shared<BlobHolder>();
+		blobHolder->loadSucceeded__(blob);
+		m_model3D->initialize(nullptr, blobHolder);
 		m_model3D->load(0);
 	}
 

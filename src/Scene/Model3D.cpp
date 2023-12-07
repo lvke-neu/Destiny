@@ -44,9 +44,28 @@ namespace Destiny
 			auto blob = m_blobHolder->getBlob();
 			if (blob)
 			{
+				std::string path((char*)blob->getData(), blob->getLength());
+				size_t pos;
+
+				char buffer[MAX_PATH];
+				GetModuleFileNameA(NULL, buffer, sizeof(buffer));
+				std::string exePath = buffer;
+				pos = exePath.find("Destiny");
+				if (pos != exePath.npos)
+				{
+					exePath = exePath.substr(0, pos + 7);
+				}
+
+				std::string tmpPath = path;
+				pos = tmpPath.find("://");
+				if (pos != tmpPath.npos)
+				{
+					tmpPath = tmpPath.substr(pos + 3);
+				}
+
 				Assimp::Importer importer;
 				importer.SetPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_LINE | aiPrimitiveType_POINT);
-				const aiScene* scene = importer.ReadFileFromMemory(blob->getData(), blob->getLength(), aiProcess_ConvertToLeftHanded | aiProcess_GenBoundingBoxes
+				const aiScene* scene = importer.ReadFile(exePath + "\\assets\\" + tmpPath, aiProcess_ConvertToLeftHanded | aiProcess_GenBoundingBoxes
 					| aiProcess_Triangulate | aiProcess_ImproveCacheLocality | aiProcess_SortByPType);
 
 				if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
@@ -143,37 +162,30 @@ namespace Destiny
 					m_visual3DComponents[i]->get_material()->set_useColor(true);
 					m_visual3DComponents[i]->get_material()->set_ambientColor({ 1.0f, 1.0f, 0.0f, 1.0f });
 					m_visual3DComponents[i]->get_material()->load();
-					////material
-					//Material* material = new Material;
-					//aiMaterial* aimaterial = scene->mMaterials[mesh->mMaterialIndex];
-					//aiString str;
-					//aiColor4D color;
-					//std::string tmpPath;
 
-					//aimaterial->Get(AI_MATKEY_COLOR_AMBIENT, color);
-					//aimaterial->GetTexture(aiTextureType_AMBIENT, 0, &str);
-					//tmpPath = modelBlobHolder->getPath();
-					//tmpPath = "texture://TEXTURE_2D?" + tmpPath.substr(0, tmpPath.rfind("/") + 1) + str.C_Str();
-					//material->set_ambientColor({ color.r, color.g, color.b, color.a });
-					//material->set_ambientTexturePath(tmpPath);
+					//material
+					aiMaterial* aimaterial = scene->mMaterials[mesh->mMaterialIndex];
+					aiString str;
+					aiColor4D color;
 
-					//aimaterial->Get(AI_MATKEY_COLOR_DIFFUSE, color);
-					//aimaterial->GetTexture(aiTextureType_DIFFUSE, 0, &str);
-					//tmpPath = modelBlobHolder->getPath();
-					//tmpPath = "texture://TEXTURE_2D?" + tmpPath.substr(0, tmpPath.rfind("/") + 1) + str.C_Str();
-					//material->set_diffuseColor({ color.r, color.g, color.b, color.a });
-					//material->set_diffuseTexturePath(tmpPath);
+					aimaterial->Get(AI_MATKEY_COLOR_AMBIENT, color);
+					aimaterial->GetTexture(aiTextureType_AMBIENT, 0, &str);
+					m_visual3DComponents[i]->get_material()->set_ambientTexturePath(path.substr(0, path.rfind("/") + 1) + str.C_Str());
+					m_visual3DComponents[i]->get_material()->set_ambientColor({ color.r, color.g, color.b, color.a });
+					
+					aimaterial->Get(AI_MATKEY_COLOR_DIFFUSE, color);
+					aimaterial->GetTexture(aiTextureType_DIFFUSE, 0, &str);
+					m_visual3DComponents[i]->get_material()->set_diffuseTexturePath(path.substr(0, path.rfind("/") + 1) + str.C_Str());
+					m_visual3DComponents[i]->get_material()->set_diffuseColor({ color.r, color.g, color.b, color.a });
 
-					//aimaterial->Get(AI_MATKEY_COLOR_SPECULAR, color);
-					//aimaterial->GetTexture(aiTextureType_SPECULAR, 0, &str);
-					//tmpPath = modelBlobHolder->getPath();
-					//tmpPath = "texture://TEXTURE_2D?" + tmpPath.substr(0, tmpPath.rfind("/") + 1) + str.C_Str();
-					//material->set_specularColor({ color.r, color.g, color.b, color.a });
-					//material->set_specularTexturePath(tmpPath);
+					aimaterial->Get(AI_MATKEY_COLOR_SPECULAR, color);
+					aimaterial->GetTexture(aiTextureType_SPECULAR, 0, &str);
+					m_visual3DComponents[i]->get_material()->set_specularTexturePath(path.substr(0, path.rfind("/") + 1) + str.C_Str());
+					m_visual3DComponents[i]->get_material()->set_specularColor({ color.r, color.g, color.b, color.a });
+					
 
+					m_visual3DComponents[i]->get_material()->load();
 
-					//material->load();
-					//modelBlobHolder->m_materials.push_back(material);
 
 					loadSucceeded__();
 				}

@@ -31,7 +31,6 @@ namespace Destiny
 			m_mtx.unlock();
 			return;
 		}
-
 		std::string path((char*)asset->getBlobHolder()->getBlob()->getData(), asset->getBlobHolder()->getBlob()->getLength());
 		std::string tmpPath = path;
 		size_t prefix = path.find("assets://");

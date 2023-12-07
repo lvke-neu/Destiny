@@ -27,5 +27,8 @@ float4 PS(VertexOut pIn) : SV_Target
 		specularColor = specular * g_specularTexture.Sample(g_specularSampler, pIn.texcoord);
 	}
 
+	//ambientColor = ambient * g_ambientTexture.Sample(g_ambientSampler, pIn.texcoord) * g_ambientColor;;
+	//diffuseColor = diffuse * g_diffuseTexture.Sample(g_diffuseSampler, pIn.texcoord) * g_diffuseColor;
+	//specularColor = specular * g_specularTexture.Sample(g_specularSampler, pIn.texcoord) * g_specularColor;
 	return ambientColor + diffuseColor + specularColor;
 }

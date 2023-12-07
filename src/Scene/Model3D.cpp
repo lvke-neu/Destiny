@@ -65,7 +65,7 @@ namespace Destiny
 
 				Assimp::Importer importer;
 				importer.SetPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_LINE | aiPrimitiveType_POINT);
-				const aiScene* scene = importer.ReadFile(exePath + "\\assets\\" + tmpPath, aiProcess_ConvertToLeftHanded | aiProcess_GenBoundingBoxes
+				const aiScene* scene = importer.ReadFile(exePath + "\\assets\\" + tmpPath, aiProcess_ConvertToLeftHanded 
 					| aiProcess_Triangulate | aiProcess_ImproveCacheLocality | aiProcess_SortByPType);
 
 				if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
@@ -183,7 +183,7 @@ namespace Destiny
 					m_visual3DComponents[i]->get_material()->set_specularTexturePath(path.substr(0, path.rfind("/") + 1) + str.C_Str());
 					m_visual3DComponents[i]->get_material()->set_specularColor({ color.r, color.g, color.b, color.a });
 					
-
+					m_visual3DComponents[i]->get_material()->set_useColor(false);
 					m_visual3DComponents[i]->get_material()->load();
 
 

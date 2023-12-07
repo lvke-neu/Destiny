@@ -63,6 +63,9 @@ namespace Destiny
 		auto modelNode = std::make_shared<Node3D>();
 		modelNode->set_name("Model");
 		modelNode->addToParent(m_rootNode);
+		transform3D.set_translation({ 2.0f, 0.0f, 0.0f });
+		transform3D.set_scale({ 0.05f, 0.05f, 0.05f });
+		modelNode->set_transform3D(transform3D);
 		auto model3DComponent = std::make_shared<Model3DComponent>();
 		modelNode->addComponent(model3DComponent);
 	}

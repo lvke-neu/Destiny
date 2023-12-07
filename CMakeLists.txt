@@ -89,5 +89,5 @@ foreach(HLSL_FILE ${ASSETS_HLSL})
                                 VS_SHADER_ENABLE_DEBUG $<$<CONFIG:Debug>:true>)
 endforeach()
 
-file(COPY 3rdparty/assimp/assimp_d.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Debug)
-file(COPY 3rdparty/assimp/assimp.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Release)
+file(COPY 3rdparty/assimp/assimp-vc140-mtd.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Debug)
+file(COPY 3rdparty/assimp/assimp-vc140-mt.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Release)

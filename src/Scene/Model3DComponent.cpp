@@ -11,7 +11,7 @@ namespace Destiny
 	{
 		m_model3D = std::make_shared<Model3D>();
 		
-		std::string path ="assets://Model/Madara_Uchiha/Madara_Uchiha.obj";
+		std::string path ="assets://Model/walk/Standard Walk.dae";
 		auto blob = std::make_shared<Blob>(path.size());
 		memcpy_s(blob->getData(), blob->getLength(), path.c_str(), blob->getLength());
 		auto blobHolder = std::make_shared<BlobHolder>();
@@ -27,6 +27,8 @@ namespace Destiny
 			m_node->addComponent(v3dComponent);
 		}
 	}
+
+
 
 	RTTR_REGISTRATION
 	{

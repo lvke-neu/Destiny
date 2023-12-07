@@ -8,6 +8,7 @@
 #include "CameraController.h"
 #include "DirectLightComponent.h"
 #include "PlaneComponent.h"
+#include "Model3DComponent.h"
 
 namespace Destiny
 {
@@ -58,5 +59,11 @@ namespace Destiny
 		sphereNode->addToParent(m_rootNode);
 		auto sphereComponent = std::make_shared<SphereComponent>();
 		sphereNode->addComponent(sphereComponent);
+
+		auto modelNode = std::make_shared<Node3D>();
+		modelNode->set_name("Model");
+		modelNode->addToParent(m_rootNode);
+		auto model3DComponent = std::make_shared<Model3DComponent>();
+		modelNode->addComponent(model3DComponent);
 	}
 }

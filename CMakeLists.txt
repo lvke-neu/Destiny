@@ -36,10 +36,14 @@ source_group("assets\\Texture" FILES ${ASSETS_TEXTURE})
 include_directories("3rdparty/spdlog/include")
 include_directories("3rdparty/rapidxml")
 include_directories("3rdparty/rttr/include")
+include_directories("3rdparty/assimp/include")
 include_directories("src/")
 
 link_directories("3rdparty/rttr/lib/")
 link_libraries(rttr_core.lib)
+link_directories("3rdparty/assimp/lib/")
+link_libraries(assimp.lib)
+
 
 find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 
@@ -83,4 +87,5 @@ foreach(HLSL_FILE ${ASSETS_HLSL})
                                 VS_SHADER_ENABLE_DEBUG $<$<CONFIG:Debug>:true>)
 endforeach()
 
-file(COPY assets DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Debug)
+file(COPY 3rdparty/assimp/assimp_d.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Debug)
+file(COPY 3rdparty/assimp/assimp.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Release)

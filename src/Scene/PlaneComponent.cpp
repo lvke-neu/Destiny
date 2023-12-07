@@ -94,4 +94,13 @@ namespace Destiny
 		m_material->set_specularColor(Color::Black);
 		m_material->load();
 	}
+
+	RTTR_REGISTRATION
+	{
+		rttr::registration::class_<PlaneComponent>("PlaneComponent")
+			.constructor<>()
+			(
+				rttr::policy::ctor::as_raw_ptr
+			);
+	}
 }

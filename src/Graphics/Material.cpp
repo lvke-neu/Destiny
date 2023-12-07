@@ -14,7 +14,8 @@ namespace Destiny
 		m_specularTexture(nullptr),
 		m_ambientSamplerState(nullptr),
 		m_diffuseSamplerState(nullptr),
-		m_specularSamplerState(nullptr)
+		m_specularSamplerState(nullptr),
+		m_useColor(true)
 	{
 
 	}
@@ -36,7 +37,8 @@ namespace Destiny
 				.property("specularColor", &Material::get_specularColor, &Material::set_specularColor)
 				.property("ambientTexturePath", &Material::get_ambientTexturePath, &Material::set_ambientTexturePath)
 				.property("diffuseTexturePath", &Material::get_diffuseTexturePath, &Material::set_diffuseTexturePath)
-				.property("specularTexturePath", &Material::get_specularTexturePath, &Material::set_specularTexturePath);
+				.property("specularTexturePath", &Material::get_specularTexturePath, &Material::set_specularTexturePath)
+				.property("useColor", &Material::get_useColor, &Material::set_useColor);
 
 	}
 }

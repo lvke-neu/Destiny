@@ -5,16 +5,27 @@ float4 PS(VertexOut pIn) : SV_Target
 {
 	//float4 color = g_ambientTexture.Sample(g_ambientSampler, pIn.texcoord);
 	//color.a = 0.5f;
+	float4 ambientColor;
+	float4 diffuseColor;
+	float4 specularColor;
 
-	float ambient = 0.2f;
-	float4 ambientColor = ambient * g_ambientColor;
-
-	float diffuse = 0.8 * dot(normalize(-g_directLightDirection.xyz), normalize(pIn.normalW));
-	float4 diffuseColor = diffuse * g_diffuseColor;
-
+	float ambient = 1.0f;
+	float diffuse = 1.0f * dot(normalize(-g_directLightDirection.xyz), normalize(pIn.normalW));
 	float3 v = reflect(g_directLightDirection.xyz, pIn.normalW);
-	float specular = 0.5 * pow(max(dot(normalize(v), normalize(g_eyePos.xyz - pIn.positionW.xyz)), 0.0f), 32.0f);
-	float4 specularColor = specular * g_specularColor;
+	float specular = 1.0f * pow(max(dot(normalize(v), normalize(g_eyePos.xyz - pIn.positionW.xyz)), 0.0f), 32.0f);
+	
+	if (g_useColor.x == 1.0f)
+	{
+		ambientColor = ambient * g_ambientColor;
+		diffuseColor = diffuse * g_diffuseColor;
+		specularColor = specular * g_specularColor;
+	}
+	else
+	{
+		ambientColor = ambient * g_ambientTexture.Sample(g_ambientSampler, pIn.texcoord);
+		diffuseColor = diffuse * g_diffuseTexture.Sample(g_diffuseSampler, pIn.texcoord);
+		specularColor = specular * g_specularTexture.Sample(g_specularSampler, pIn.texcoord);
+	}
 
 	return ambientColor + diffuseColor + specularColor;
 }

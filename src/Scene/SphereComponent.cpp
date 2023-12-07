@@ -122,13 +122,10 @@ namespace Destiny
 		m_visual3D->setVertexShader(vertexShader);
 		m_visual3D->setPixelShader(pixelShader);
 
-
-		m_material->set_ambientColor(Color::White);
-		m_material->set_diffuseColor(Color::White);
-		m_material->set_specularColor(Color::White);
-		m_material->set_ambientTexturePath("assets://Texture/stone.dds");
-		m_material->set_diffuseTexturePath("assets://Texture/skybox.jpeg");
-		m_material->set_specularTexturePath("assets://Texture/brick.dds");
+		m_material->set_useColor(true);
+		m_material->set_ambientColor({0.2f, 0.2f, 0.2f, 1.0f});
+		m_material->set_diffuseColor({ 0.8f, 0.8f, 0.8f, 1.0f });
+		m_material->set_specularColor({ 0.5f, 0.5f, 0.5f, 1.0f });
 		m_material->load();
 	}
 

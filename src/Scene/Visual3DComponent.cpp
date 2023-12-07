@@ -120,8 +120,9 @@ namespace Destiny
 		memcpy_s(&materialColor.ambientColor, sizeof(XMFLOAT4), m_material->get_ambientColor().toFloat(), sizeof(XMFLOAT4));
 		memcpy_s(&materialColor.diffuseColor, sizeof(XMFLOAT4), m_material->get_diffuseColor().toFloat(), sizeof(XMFLOAT4));
 		memcpy_s(&materialColor.specularColor, sizeof(XMFLOAT4), m_material->get_specularColor().toFloat(), sizeof(XMFLOAT4));
-
+		materialColor.useColor.x = m_material->get_useColor();
 		m_materiaColor->update(materialColor);
+
 		immediateContext->PSSetConstantBuffers(3, 1, m_materiaColor->getConstantBuffer());
 		immediateContext->VSSetConstantBuffers(3, 1, m_materiaColor->getConstantBuffer());
 
@@ -131,8 +132,8 @@ namespace Destiny
 		immediateContext->PSSetSamplers(1, 1, m_material->get_diffuseSamplerState()->getSamplerState());
 		immediateContext->PSSetShaderResources(1, 1, m_material->get_diffuseTexture()->getShaderResourceView());
 
-		immediateContext->PSSetSamplers(1, 1, m_material->get_specularSamplerState()->getSamplerState());
-		immediateContext->PSSetShaderResources(1, 1, m_material->get_specularTexture()->getShaderResourceView());
+		immediateContext->PSSetSamplers(2, 1, m_material->get_specularSamplerState()->getSamplerState());
+		immediateContext->PSSetShaderResources(2, 1, m_material->get_specularTexture()->getShaderResourceView());
 	}
 
 	RTTR_REGISTRATION

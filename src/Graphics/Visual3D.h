@@ -2,6 +2,7 @@
 #include <memory>
 #include <functional>
 #include <vector>
+#include <d3d11.h>
 
 namespace Destiny
 {
@@ -37,6 +38,7 @@ namespace Destiny
 		void setRasterizerState(std::shared_ptr<RasterizerState> rasterizerState);
 		void setDepthStencilState(std::shared_ptr<DepthStencilState> depthStencilState);
 		void setBlendState(std::shared_ptr<BlendState> blendState);
+		void setPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY primitiveTopology);
 	private:
 		std::shared_ptr<VertexBuffer> m_vertexBuffer;
 		std::shared_ptr<IndexBuffer> m_indexBuffer;
@@ -49,6 +51,7 @@ namespace Destiny
 
 		std::vector<std::function<void(void)>> m_beforeDrawCommands;
 		std::vector < std::function<void(void)>> m_afterDrawCommands;
+		D3D_PRIMITIVE_TOPOLOGY m_primitiveTopology;
 	};
 
 	inline void Visual3D::setVertexBuffer(std::shared_ptr<VertexBuffer> vertexBuffer)
@@ -121,5 +124,10 @@ namespace Destiny
 			m_blendState.reset();
 		}
 		m_blendState = blendState;
+	}
+
+	inline void Visual3D::setPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY primitiveTopology)
+	{
+		m_primitiveTopology = primitiveTopology;
 	}
 }

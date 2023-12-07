@@ -50,6 +50,7 @@ namespace Destiny
 			XMFLOAT4 ambientColor;
 			XMFLOAT4 diffuseColor;
 			XMFLOAT4 specularColor;
+			XMFLOAT4 useColor;
 		};
 		std::shared_ptr<ConstantBuffer<MateriaColor>> m_materiaColor;
 	};

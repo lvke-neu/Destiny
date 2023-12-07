@@ -21,6 +21,7 @@ cbuffer cbMaterialColor : register(b3)
 	float4 g_ambientColor;
 	float4 g_diffuseColor;
 	float4 g_specularColor;
+	float4 g_useColor;
 }
 
 cbuffer cbDirectLight : register(b4)

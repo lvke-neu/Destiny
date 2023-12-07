@@ -25,6 +25,7 @@ namespace Destiny
 		GET_SET(std::shared_ptr<SamplerState>, ambientSamplerState);
 		GET_SET(std::shared_ptr<SamplerState>, diffuseSamplerState);
 		GET_SET(std::shared_ptr<SamplerState>, specularSamplerState);
+		GET_SET(bool, useColor);
 
 		GET(std::shared_ptr<Texture>, ambientTexture);
 		GET(std::shared_ptr<Texture>, diffuseTexture);
@@ -45,5 +46,7 @@ namespace Destiny
 		std::shared_ptr<SamplerState> m_ambientSamplerState;
 		std::shared_ptr<SamplerState> m_diffuseSamplerState;
 		std::shared_ptr<SamplerState> m_specularSamplerState;
+
+		bool m_useColor;
 	};
 }

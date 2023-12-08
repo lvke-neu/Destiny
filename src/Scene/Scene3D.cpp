@@ -67,6 +67,7 @@ namespace Destiny
 		transform3D.set_scale({ 0.05f, 0.05f, 0.05f });
 		modelNode->set_transform3D(transform3D);
 		auto model3DComponent = std::make_shared<Model3DComponent>();
+		model3DComponent->set_path("assets://Model/walk/Standard Walk.dae");
 		modelNode->addComponent(model3DComponent);
 	}
 }

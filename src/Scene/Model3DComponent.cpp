@@ -9,26 +9,22 @@ namespace Destiny
 {
 	Model3DComponent::Model3DComponent()
 	{
-		m_model3D = std::make_shared<Model3D>();
-		
-		std::string path ="assets://Model/walk/Standard Walk.dae";
-		auto blob = std::make_shared<Blob>(path.size());
-		memcpy_s(blob->getData(), blob->getLength(), path.c_str(), blob->getLength());
+
+	}
+
+
+	void Model3DComponent::set_path(std::string path)
+	{
+		m_path = path;
+		m_model3D.reset();
+		m_model3D = std::make_shared<Model3D>(shared_from_this());
+		auto blob = std::make_shared<Blob>(m_path.size());
+		memcpy_s(blob->getData(), blob->getLength(), m_path.c_str(), blob->getLength());
 		auto blobHolder = std::make_shared<BlobHolder>();
 		blobHolder->loadSucceeded__(blob);
 		m_model3D->initialize(nullptr, blobHolder);
-		m_model3D->load(0);
+		m_model3D->load();
 	}
-
-	void Model3DComponent::onAttachNode()
-	{
-		for (auto v3dComponent : m_model3D->m_visual3DComponents)
-		{
-			m_node->addComponent(v3dComponent);
-		}
-	}
-
-
 
 	RTTR_REGISTRATION
 	{

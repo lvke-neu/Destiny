@@ -1,4 +1,6 @@
 #include "Model3D.h"
+#include "Model3DComponent.h"
+#include "Node3D.h"
 #include "Engine/Blob.h"
 #include "Engine/BlobHolder.h"
 #include "Engine/Utility.h"
@@ -21,9 +23,21 @@ namespace Destiny
 {
 	using namespace DirectX;
 
-	Model3D::Model3D()
+	Model3D::Model3D(std::shared_ptr<Model3DComponent> model3DComponent) :
+		m_model3DComponent(model3DComponent)
 	{
 
+	}
+
+	Model3D::~Model3D()
+	{
+		for (const auto& v3dComponent : m_visual3DComponents)
+		{
+			if (m_model3DComponent && m_model3DComponent->get_node())
+			{
+				m_model3DComponent->get_node()->removeComponent(v3dComponent);
+			}
+		}
 	}
 
 	void Model3D::doLoad()
@@ -159,10 +173,6 @@ namespace Destiny
 					m_visual3DComponents[i]->get_visual3D()->setVertexShader(vertexShader);
 					m_visual3DComponents[i]->get_visual3D()->setPixelShader(pixelShader);
 
-					m_visual3DComponents[i]->get_material()->set_useColor(true);
-					m_visual3DComponents[i]->get_material()->set_ambientColor({ 1.0f, 1.0f, 0.0f, 1.0f });
-					m_visual3DComponents[i]->get_material()->load();
-
 					//material
 					aiMaterial* aimaterial = scene->mMaterials[mesh->mMaterialIndex];
 					aiString str;
@@ -186,9 +196,13 @@ namespace Destiny
 					m_visual3DComponents[i]->get_material()->set_useColor(false);
 					m_visual3DComponents[i]->get_material()->load();
 
-
-					loadSucceeded__();
+					if (m_model3DComponent && m_model3DComponent->get_node())
+					{
+						m_model3DComponent->get_node()->addComponent(m_visual3DComponents[i]);
+					}
 				}
+
+				loadSucceeded__();
 			}
 			else
 			{

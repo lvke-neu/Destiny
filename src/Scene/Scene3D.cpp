@@ -69,5 +69,8 @@ namespace Destiny
 		auto model3DComponent = std::make_shared<Model3DComponent>();
 		model3DComponent->set_path("assets://Model/walk/Standard Walk.dae");
 		modelNode->addComponent(model3DComponent);
+		auto model3DComponent2 = std::make_shared<Model3DComponent>();
+		model3DComponent2->set_path("assets://Model/2nrtbod1out/2nrtbod1out.obj");
+		modelNode->addComponent(model3DComponent2);
 	}
 }

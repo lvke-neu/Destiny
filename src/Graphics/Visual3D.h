@@ -35,6 +35,7 @@ namespace Destiny
 		void setIndexBuffer(std::shared_ptr<IndexBuffer> indexBuffer);
 		void setInputLayout(std::shared_ptr<InputLayout> inputLayout);
 		void setVertexShader(std::shared_ptr<VertexShader> vertexShader);
+		std::shared_ptr<PixelShader> getPixelShader();
 		void setPixelShader(std::shared_ptr<PixelShader> pixelShader);
 		void setGeometryShader(std::shared_ptr<GeometryShader> geometryShader);
 		void setRasterizerState(std::shared_ptr<RasterizerState> rasterizerState);
@@ -91,6 +92,11 @@ namespace Destiny
 			m_vertexShader.reset();
 		}
 		m_vertexShader = vertexShader;
+	}
+
+	inline std::shared_ptr<PixelShader> Visual3D::getPixelShader()
+	{
+		return m_pixelShader;
 	}
 
 	inline void Visual3D::setPixelShader(std::shared_ptr<PixelShader> pixelShader)

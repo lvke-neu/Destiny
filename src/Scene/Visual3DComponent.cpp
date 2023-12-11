@@ -1,11 +1,13 @@
 #include "Visual3DComponent.h"
 #include "Engine/Blob.h"
 #include "Engine/Engine.h"
+#include "Engine/BlobHolder.h"
 #include "Graphics/Visual3D.h"
 #include "Graphics/GraphicsSystem.h"
 #include "Graphics/Material.h"
 #include "Graphics/SamplerState.h"
 #include "Graphics/Texture.h"
+#include "Graphics/PixelShader.h"
 #include "Node3D.h"
 
 namespace Destiny
@@ -17,7 +19,8 @@ namespace Destiny
 		m_blendStateDesc(BlendState::Default_BlendState_Desc),
 		m_worldMatrix(std::make_shared<ConstantBuffer<CbWorld>>()),
 		m_material(Engine::GetInstance()->getGraphicsSystem()->createMaterial()),
-		m_materiaColor(std::make_shared<ConstantBuffer<MateriaColor>>())
+		m_materiaColor(std::make_shared<ConstantBuffer<MateriaColor>>()),
+		m_recompilePixelShader(false)
 	{
 		std::shared_ptr<Blob> data = nullptr;
 
@@ -85,6 +88,33 @@ namespace Destiny
 		m_visual3D->setBlendState(blendState);
 	}
 
+	void Visual3DComponent::set_recompilePixelShader(bool flag)
+	{
+		m_recompilePixelShader = flag;
+		if (!m_recompilePixelShader)
+		{
+			return;
+		}
+
+		if (m_visual3D && m_visual3D->getPixelShader())
+		{
+			std::string tmpPath = ("assets://" + m_visual3D->getPixelShader()->getBlobHolder()->getPath()).c_str();
+			tmpPath = tmpPath.substr(0, tmpPath.rfind(".cso"));
+			tmpPath = tmpPath + ".hlsl";
+
+			auto pixelShader = Engine::GetInstance()->getGraphicsSystem()->compilePixelShader(tmpPath.c_str());
+			
+			if (pixelShader)
+			{
+				pixelShader->load(0);
+				if (pixelShader->isLoadingSucceed())
+				{
+					m_visual3D->setPixelShader(pixelShader);
+				}
+			}
+		}
+	}
+
 	void Visual3DComponent::onAttachNode()
 	{
 		XMMATRIX world = m_node->get_transform3D().getWorldMatrix();
@@ -146,7 +176,8 @@ namespace Destiny
 			.property("rasterizerStateDesc", &Visual3DComponent::get_rasterizerStateDesc, &Visual3DComponent::set_rasterizerStateDesc)
 			.property("depthStencilStateDesc", &Visual3DComponent::get_depthStencilStateDesc, &Visual3DComponent::set_depthStencilStateDesc)
 			.property("blendStateDesc", &Visual3DComponent::get_blendStateDesc, &Visual3DComponent::set_blendStateDesc)
-			.property("material", &Visual3DComponent::get_material, &Visual3DComponent::set_material);
+			.property("material", &Visual3DComponent::get_material, &Visual3DComponent::set_material)
+			.property("recompilePixelShader", &Visual3DComponent::get_recompilePixelShader, &Visual3DComponent::set_recompilePixelShader);
 
 		rttr::registration::class_<D3D11_RASTERIZER_DESC>("D3D11_RASTERIZER_DESC")
 			.constructor<>()

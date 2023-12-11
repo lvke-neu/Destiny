@@ -47,6 +47,7 @@ namespace Destiny
 		std::shared_ptr<Mesh> createMesh(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer);
 		std::shared_ptr<VertexShader> createVertexShader(const char* path);
 		std::shared_ptr<PixelShader> createPixelShader(const char* path);
+		std::shared_ptr<PixelShader> compilePixelShader(const char* path);
 		std::shared_ptr<GeometryShader> createGeometryShader(const char* path);
 		std::shared_ptr<InputLayout> createInputLayout(std::shared_ptr<Blob> inputElements, const char* vsPath);
 		std::shared_ptr<RasterizerState> createRasterizerState(std::shared_ptr<Blob> rasterizerDesc);
@@ -55,7 +56,7 @@ namespace Destiny
 		std::shared_ptr<SamplerState> createSamplerState(std::shared_ptr<Blob> samplerStateDesc);
 		std::shared_ptr<Texture> createTexture(const char* path);
 		std::shared_ptr<Material> createMaterial();
-
+		
 	private:
 		void createDeviceAndContext();
 		void createSwapChain(long long hwnd);

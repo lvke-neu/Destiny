@@ -11,6 +11,7 @@ namespace Destiny
 	class InputLayout;
 	class VertexShader;
 	class PixelShader;
+	class GeometryShader;
 	class RasterizerState;
 	class DepthStencilState;
 	class BlendState;
@@ -35,6 +36,7 @@ namespace Destiny
 		void setInputLayout(std::shared_ptr<InputLayout> inputLayout);
 		void setVertexShader(std::shared_ptr<VertexShader> vertexShader);
 		void setPixelShader(std::shared_ptr<PixelShader> pixelShader);
+		void setGeometryShader(std::shared_ptr<GeometryShader> geometryShader);
 		void setRasterizerState(std::shared_ptr<RasterizerState> rasterizerState);
 		void setDepthStencilState(std::shared_ptr<DepthStencilState> depthStencilState);
 		void setBlendState(std::shared_ptr<BlendState> blendState);
@@ -45,6 +47,7 @@ namespace Destiny
 		std::shared_ptr<InputLayout> m_inputLayout;
 		std::shared_ptr<VertexShader> m_vertexShader;
 		std::shared_ptr<PixelShader> m_pixelShader;
+		std::shared_ptr<GeometryShader> m_geometryShader;
 		std::shared_ptr<RasterizerState> m_rasterizerState;
 		std::shared_ptr<DepthStencilState> m_depthStencilState;
 		std::shared_ptr<BlendState> m_blendState;
@@ -97,6 +100,15 @@ namespace Destiny
 			m_pixelShader.reset();
 		}
 		m_pixelShader = pixelShader;
+	}
+
+	inline void Visual3D::setGeometryShader(std::shared_ptr<GeometryShader> geometryShader)
+	{
+		if (m_geometryShader)
+		{
+			m_geometryShader.reset();
+		}
+		m_geometryShader = geometryShader;
 	}
 
 	inline void Visual3D::setRasterizerState(std::shared_ptr<RasterizerState> rasterizerState)

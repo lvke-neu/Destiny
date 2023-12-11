@@ -10,6 +10,8 @@ namespace Destiny
 	public:
 		Model3DComponent();
 	public:
+		virtual void onNodeTransformChanged() override;
+	public:
 		GET(std::string, path);
 
 		void set_path(std::string path);

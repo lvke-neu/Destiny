@@ -198,7 +198,11 @@ namespace Destiny
 
 					if (m_model3DComponent && m_model3DComponent->get_node())
 					{
-						m_model3DComponent->get_node()->addComponent(m_visual3DComponents[i]);
+						auto meshNode = std::make_shared<Node3D>();
+						meshNode->set_name(mesh->mName.C_Str());
+						meshNode->addToParent(m_model3DComponent->get_node());
+						meshNode->addComponent(m_visual3DComponents[i]);
+						meshNode->set_transform3D(m_model3DComponent->get_node()->get_transform3D());
 					}
 				}
 

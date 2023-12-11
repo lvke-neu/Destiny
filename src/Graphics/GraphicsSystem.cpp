@@ -12,6 +12,7 @@
 #include "Mesh.h"
 #include "VertexShader.h"
 #include "PixelShader.h"
+#include "GeometryShader.h"
 #include "InputLayout.h"
 #include "RasterizerState.h"
 #include "DepthStencilState.h"
@@ -164,6 +165,20 @@ namespace Destiny
 		}
 		
 		return pixelShader;
+	}
+
+	std::shared_ptr<GeometryShader> GraphicsSystem::createGeometryShader(const char* path)
+	{
+		std::shared_ptr<GeometryShader> geometryShader = std::make_shared<GeometryShader>();
+
+		auto blobLoader = Engine::GetInstance()->getBlobLoaderManager()->getBlobLoader(path);
+		if (blobLoader)
+		{
+			auto blobHolder = blobLoader->createBlobHolder(path);
+			geometryShader->initialize(nullptr, blobHolder);
+		}
+
+		return geometryShader;
 	}
 
 	std::shared_ptr<InputLayout> GraphicsSystem::createInputLayout(std::shared_ptr<Blob> inputElements, const char* vsPath)

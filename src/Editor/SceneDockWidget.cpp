@@ -38,28 +38,35 @@ SceneDockWidget::SceneDockWidget(QWidget *parent /*= nullptr*/) : QDockWidget("S
 	QAction* ac2 = new QAction("删除", m_menu);
 	QAction* ac3 = new QAction("复制", m_menu);
 	QAction* ac4 = new QAction("粘贴", m_menu);
+	QAction* ac5 = new QAction("刷新", m_menu);
 
 	m_menu->addAction(ac1);
 	m_menu->addAction(ac2);
 	m_menu->addAction(ac3);
 	m_menu->addAction(ac4);
+	m_menu->addAction(ac5);
 
-	auto rootNode = Engine::GetInstance()->getSceneManager()->getScene3D()->getRootNode();
-
-	QTreeWidgetItem* rootItem = new QTreeWidgetItem(treeWidget);
-	rootItem->setText(0, rootNode->get_name().c_str());
-	rootItem->setData(0, 1, QVariant::fromValue(rootNode));
-	connect(treeWidget, &QTreeWidget::itemClicked, this,
-		[this](QTreeWidgetItem* item)
+	connect(ac5, &QAction::triggered, this,
+		[=]()
 		{
-			emit chooseNode(item->data(0, 1).value<std::shared_ptr<Destiny::Node3D>>());
+			treeWidget->clear();
+			auto rootNode = Engine::GetInstance()->getSceneManager()->getScene3D()->getRootNode();
+
+			QTreeWidgetItem* rootItem = new QTreeWidgetItem(treeWidget);
+			rootItem->setText(0, rootNode->get_name().c_str());
+			rootItem->setData(0, 1, QVariant::fromValue(rootNode));
+			connect(treeWidget, &QTreeWidget::itemClicked, this,
+				[this](QTreeWidgetItem* item)
+				{
+					emit chooseNode(item->data(0, 1).value<std::shared_ptr<Destiny::Node3D>>());
+				});
+
+			for (const auto& node : rootNode->get_childs())
+			{
+				trace(treeWidget, rootItem, node);
+			}
+
 		});
-
-	for (const auto& node : rootNode->get_childs())
-	{
-		trace(treeWidget, rootItem, node);
-	}
-
 }
 
 SceneDockWidget::~SceneDockWidget()

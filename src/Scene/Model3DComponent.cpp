@@ -26,6 +26,19 @@ namespace Destiny
 		m_model3D->load();
 	}
 
+	void Model3DComponent::onNodeTransformChanged()
+	{
+		if (!m_node)
+		{
+			return;
+		}
+		auto childNodes = m_node->get_childs();
+		for (auto& node: childNodes)
+		{
+			node->set_transform3D(m_node->get_transform3D());
+		}
+	}
+
 	RTTR_REGISTRATION
 	{
 		rttr::registration::class_<Model3DComponent>("Model3DComponent")

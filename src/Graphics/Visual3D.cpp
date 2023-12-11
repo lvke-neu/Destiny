@@ -5,6 +5,7 @@
 #include "IndexBuffer.h"
 #include "VertexShader.h"
 #include "PixelShader.h"
+#include "GeometryShader.h"
 #include "InputLayout.h"
 #include "RasterizerState.h"
 #include "DepthStencilState.h"
@@ -57,7 +58,15 @@ namespace Destiny
 		//SHDAER
 		immediateContext->VSSetShader(m_vertexShader->getVertexShader(), nullptr, 0);
 		immediateContext->PSSetShader(m_pixelShader->getPixelShader(), nullptr, 0);
-		
+		if (m_geometryShader && m_geometryShader->isLoadingSucceed())
+		{
+			immediateContext->GSSetShader(m_geometryShader->getGeometryShader(), nullptr, 0);
+		}
+		else
+		{
+			immediateContext->GSSetShader(nullptr, nullptr, 0);
+		}
+
 		//RS
 		immediateContext->RSSetViewports(1, graphicsSystem->getViewport());
 		immediateContext->RSSetState(m_rasterizerState->getRasterizerState());

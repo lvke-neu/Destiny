@@ -99,8 +99,8 @@ void ComponentDockWidget::reflect(std::shared_ptr<Destiny::Reflection> reflectio
 	size_t size = properties.size();
 
 	QTableWidget* tableWidget = new QTableWidget();
-	//tableWidget->horizontalHeader()->setStretchLastSection(true);
-	//tableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+	tableWidget->horizontalHeader()->setStretchLastSection(true);
+	tableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 	tableWidget->clear();
 	tableWidget->setColumnCount(2);
 	tableWidget->setRowCount((int)size);

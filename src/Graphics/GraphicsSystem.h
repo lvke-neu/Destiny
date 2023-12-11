@@ -11,6 +11,7 @@ namespace Destiny
 	class Mesh;
 	class VertexShader;
 	class PixelShader;
+	class GeometryShader;
 	class InputLayout;
 	class RasterizerState;
 	class DepthStencilState;
@@ -46,6 +47,7 @@ namespace Destiny
 		std::shared_ptr<Mesh> createMesh(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer);
 		std::shared_ptr<VertexShader> createVertexShader(const char* path);
 		std::shared_ptr<PixelShader> createPixelShader(const char* path);
+		std::shared_ptr<GeometryShader> createGeometryShader(const char* path);
 		std::shared_ptr<InputLayout> createInputLayout(std::shared_ptr<Blob> inputElements, const char* vsPath);
 		std::shared_ptr<RasterizerState> createRasterizerState(std::shared_ptr<Blob> rasterizerDesc);
 		std::shared_ptr<DepthStencilState> createDepthStencilState(std::shared_ptr<Blob> depthStencilStateDesc);

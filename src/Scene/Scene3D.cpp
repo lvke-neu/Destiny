@@ -9,6 +9,7 @@
 #include "DirectLightComponent.h"
 #include "PlaneComponent.h"
 #include "Model3DComponent.h"
+#include "TestGSComponent.h"
 
 namespace Destiny
 {
@@ -69,8 +70,14 @@ namespace Destiny
 		auto model3DComponent = std::make_shared<Model3DComponent>();
 		model3DComponent->set_path("assets://Model/walk/Standard Walk.dae");
 		modelNode->addComponent(model3DComponent);
-		auto model3DComponent2 = std::make_shared<Model3DComponent>();
-		model3DComponent2->set_path("assets://Model/2nrtbod1out/2nrtbod1out.obj");
-		modelNode->addComponent(model3DComponent2);
+
+		auto gsNode = std::make_shared<Node3D>();
+		gsNode->set_name("GeometryShader");
+		gsNode->addToParent(m_rootNode);
+		auto testGsComponent = std::make_shared<TestGSComponent>();
+		gsNode->addComponent(testGsComponent);
+		//auto model3DComponent2 = std::make_shared<Model3DComponent>();
+		//model3DComponent2->set_path("assets://Model/2nrtbod1out/2nrtbod1out.obj");
+		//modelNode->addComponent(model3DComponent2);
 	}
 }

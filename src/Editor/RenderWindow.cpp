@@ -13,6 +13,7 @@ RenderWindow::RenderWindow(QWidget* parent)
 
 	Destiny::EngineSetting setting{ (long long)winId(), 16 };
 	Destiny::Engine::GetInstance()->initialize(setting);
+	Destiny::Engine::GetInstance()->getEventSystem()->registerEvent(Destiny::EventType::Update, std::bind(&RenderWindow::onUpdate, this, std::placeholders::_1));
 }
 
 RenderWindow::~RenderWindow()
@@ -81,4 +82,17 @@ void RenderWindow::mouseReleaseEvent(QMouseEvent* event)
 	mouse.x = event->pos().x();
 	mouse.y = event->pos().y();
 	Destiny::Engine::GetInstance()->getEventSystem()->dispatchEvent(Destiny::EventType::MouseReleased, &mouse);
+}
+
+
+void RenderWindow::onUpdate(void* data)
+{
+	static float sumTime = 0.0f;
+	sumTime += *(float*)(data);
+	if (sumTime > 1)
+	{
+		float fps = 1 / *(float*)(data);
+		parentWidget()->setWindowTitle(("FPS:" + std::to_string(fps)).c_str());
+		sumTime = 0.0f;
+	}
 }

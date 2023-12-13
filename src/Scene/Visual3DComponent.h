@@ -29,18 +29,27 @@ namespace Destiny
 		GET(D3D11_DEPTH_STENCIL_DESC, depthStencilStateDesc);
 		GET(D3D11_BLEND_DESC, blendStateDesc);
 		GET_SET(std::shared_ptr<Material>, material);
-		GET(bool, recompilePixelShader);
+		GET(int, buttonRecompilePixelShader);
+		GET(int, buttonRecompileGeometryShader);
+
 		void set_rasterizerStateDesc(D3D11_RASTERIZER_DESC rasterizerStateDesc);
 		void set_depthStencilStateDesc(D3D11_DEPTH_STENCIL_DESC depthStencilStateDesc);
 		void set_blendStateDesc(D3D11_BLEND_DESC blendStateDesc);
-		void set_recompilePixelShader(bool flag);
+		void set_buttonRecompilePixelShader(int flag);
+		void set_buttonRecompileGeometryShader(int flag);
+		std::string get_pixelShaderPath();
+		void set_pixelShaderPath(std::string)
+		{
+
+		}
 	protected:
 		std::shared_ptr<Visual3D> m_visual3D;
 		std::shared_ptr<Material> m_material;
 		D3D11_RASTERIZER_DESC m_rasterizerStateDesc;
 		D3D11_DEPTH_STENCIL_DESC m_depthStencilStateDesc;
 		D3D11_BLEND_DESC m_blendStateDesc;
-		bool m_recompilePixelShader;
+		int m_buttonRecompilePixelShader;
+		int m_buttonRecompileGeometryShader;
 
 		struct CbWorld
 		{

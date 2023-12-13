@@ -236,6 +236,60 @@ namespace Destiny
 		return geometryShader;
 	}
 
+	std::shared_ptr<GeometryShader> GraphicsSystem::compileGeometryShader(const char* path)
+	{
+		std::string tmpPath = path;
+		size_t prefix = tmpPath.find("assets://");
+		if (prefix == std::string::npos)
+		{
+			return nullptr;
+		}
+		tmpPath = tmpPath.substr(prefix + 9);
+
+		char buffer[MAX_PATH];
+		GetModuleFileNameA(NULL, buffer, sizeof(buffer));
+
+		std::string exePath = buffer;
+		auto pos = exePath.find("Destiny");
+		if (pos == exePath.npos)
+		{
+			return nullptr; 
+		}
+		exePath = exePath.substr(0, pos + 7);
+
+		tmpPath = exePath + "\\assets\\" + tmpPath;
+
+
+		ID3DBlob* ppBlobOut = nullptr;
+		ID3DBlob* errorBlob = nullptr;
+		HRESULT hr = D3DCompileFromFile(Utility::MultiByte2WideChar(tmpPath).c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "GS", "gs_5_0",
+			D3DCOMPILE_ENABLE_STRICTNESS, 0, &ppBlobOut, &errorBlob);
+
+		if (FAILED(hr))
+		{
+			if (errorBlob != nullptr)
+			{
+				LOG_ERROR("CompileGeometryShader Failed:" + reinterpret_cast<const char*>(errorBlob->GetBufferPointer()));
+			}
+			SAFE_RELEASE(errorBlob);
+			return nullptr;
+		}
+
+		std::shared_ptr<GeometryShader> geometryShader = std::make_shared<GeometryShader>();
+		std::shared_ptr<BlobHolder>  blobHolder = std::make_shared<BlobHolder>();
+		std::shared_ptr<Blob> blob = std::make_shared<Blob>(ppBlobOut->GetBufferSize());
+		memcpy_s(blob->getData(), blob->getLength(), ppBlobOut->GetBufferPointer(), blob->getLength());
+		blobHolder->loadSucceeded__(blob);
+		tmpPath = path;
+		tmpPath = tmpPath.substr(9);
+		tmpPath = tmpPath.substr(0, tmpPath.rfind(".hlsl"));
+		tmpPath += ".cso";
+		blobHolder->setPath(tmpPath);
+		geometryShader->initialize(nullptr, blobHolder);
+
+		return geometryShader;
+	}
+
 	std::shared_ptr<InputLayout> GraphicsSystem::createInputLayout(std::shared_ptr<Blob> inputElements, const char* vsPath)
 	{
 		std::shared_ptr<InputLayout> inputLayout = std::make_shared<InputLayout>(inputElements);

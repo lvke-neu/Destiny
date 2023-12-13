@@ -8,6 +8,7 @@
 #include "Graphics/SamplerState.h"
 #include "Graphics/Texture.h"
 #include "Graphics/PixelShader.h"
+#include "Graphics/GeometryShader.h"
 #include "Node3D.h"
 
 namespace Destiny
@@ -20,7 +21,8 @@ namespace Destiny
 		m_worldMatrix(std::make_shared<ConstantBuffer<CbWorld>>()),
 		m_material(Engine::GetInstance()->getGraphicsSystem()->createMaterial()),
 		m_materiaColor(std::make_shared<ConstantBuffer<MateriaColor>>()),
-		m_recompilePixelShader(false)
+		m_buttonRecompilePixelShader(0),
+		m_buttonRecompileGeometryShader(0)
 	{
 		std::shared_ptr<Blob> data = nullptr;
 
@@ -88,13 +90,9 @@ namespace Destiny
 		m_visual3D->setBlendState(blendState);
 	}
 
-	void Visual3DComponent::set_recompilePixelShader(bool flag)
+	void Visual3DComponent::set_buttonRecompilePixelShader(int flag)
 	{
-		m_recompilePixelShader = flag;
-		if (!m_recompilePixelShader)
-		{
-			return;
-		}
+		m_buttonRecompilePixelShader = flag;
 
 		if (m_visual3D && m_visual3D->getPixelShader())
 		{
@@ -113,6 +111,38 @@ namespace Destiny
 				}
 			}
 		}
+	}
+
+	void Visual3DComponent::set_buttonRecompileGeometryShader(int flag)
+	{
+		m_buttonRecompileGeometryShader = flag;
+
+		if (m_visual3D && m_visual3D->getGeometryShader())
+		{
+			std::string tmpPath = ("assets://" + m_visual3D->getGeometryShader()->getBlobHolder()->getPath()).c_str();
+			tmpPath = tmpPath.substr(0, tmpPath.rfind(".cso"));
+			tmpPath = tmpPath + ".hlsl";
+
+			auto geometryShader = Engine::GetInstance()->getGraphicsSystem()->compileGeometryShader(tmpPath.c_str());
+
+			if (geometryShader)
+			{
+				geometryShader->load(0);
+				if (geometryShader->isLoadingSucceed())
+				{
+					m_visual3D->setGeometryShader(geometryShader);
+				}
+			}
+		}
+	}
+
+	std::string Visual3DComponent::get_pixelShaderPath()
+	{
+		if (m_visual3D && m_visual3D->getPixelShader())
+		{
+			return "assets://" + m_visual3D->getPixelShader()->getBlobHolder()->getPath();
+		}
+		return "";
 	}
 
 	void Visual3DComponent::onAttachNode()
@@ -177,7 +207,9 @@ namespace Destiny
 			.property("depthStencilStateDesc", &Visual3DComponent::get_depthStencilStateDesc, &Visual3DComponent::set_depthStencilStateDesc)
 			.property("blendStateDesc", &Visual3DComponent::get_blendStateDesc, &Visual3DComponent::set_blendStateDesc)
 			.property("material", &Visual3DComponent::get_material, &Visual3DComponent::set_material)
-			.property("recompilePixelShader", &Visual3DComponent::get_recompilePixelShader, &Visual3DComponent::set_recompilePixelShader);
+			.property("pixelShaderPath", &Visual3DComponent::get_pixelShaderPath, &Visual3DComponent::set_pixelShaderPath)
+			.property("buttonRecompilePixelShader", &Visual3DComponent::get_buttonRecompilePixelShader, &Visual3DComponent::set_buttonRecompilePixelShader)
+			.property("buttonRecompileGeometryShader", &Visual3DComponent::get_buttonRecompileGeometryShader, &Visual3DComponent::set_buttonRecompileGeometryShader);
 
 		rttr::registration::class_<D3D11_RASTERIZER_DESC>("D3D11_RASTERIZER_DESC")
 			.constructor<>()

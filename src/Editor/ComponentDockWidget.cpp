@@ -112,6 +112,19 @@ void ComponentDockWidget::reflect(std::shared_ptr<Destiny::Reflection> reflectio
 	{
 		tableWidget->setItem(index, 0, new QTableWidgetItem(prop.get_name().to_string().c_str()));
 
+		if (prop.get_name().to_string().find("button") != std::string::npos)
+		{
+			QPushButton* button = new  QPushButton(tableWidget);
+			tableWidget->setCellWidget(index, 1, button);
+			connect(button, &QPushButton::clicked, this,
+				[=]()
+				{
+					prop.set_value(reflection, (int)1);
+				});
+			index++;
+			continue;
+		}
+
 		if (prop.get_type().get_name() == "classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char> >")
 		{
 			QLineEdit* lineEdit = new QLineEdit(tableWidget);

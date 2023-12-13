@@ -37,6 +37,7 @@ namespace Destiny
 		void setVertexShader(std::shared_ptr<VertexShader> vertexShader);
 		std::shared_ptr<PixelShader> getPixelShader();
 		void setPixelShader(std::shared_ptr<PixelShader> pixelShader);
+		std::shared_ptr<GeometryShader> getGeometryShader();
 		void setGeometryShader(std::shared_ptr<GeometryShader> geometryShader);
 		void setRasterizerState(std::shared_ptr<RasterizerState> rasterizerState);
 		void setDepthStencilState(std::shared_ptr<DepthStencilState> depthStencilState);
@@ -106,6 +107,11 @@ namespace Destiny
 			m_pixelShader.reset();
 		}
 		m_pixelShader = pixelShader;
+	}
+
+	inline  std::shared_ptr<GeometryShader> Visual3D::getGeometryShader()
+	{
+		return m_geometryShader;
 	}
 
 	inline void Visual3D::setGeometryShader(std::shared_ptr<GeometryShader> geometryShader)

@@ -89,7 +89,7 @@ namespace Destiny
 		m_visual3D->setPixelShader(pixelShader);
 
 		m_material->set_useColor(true);
-		m_material->set_ambientColor({ 0.5f, 0.5f, 0.5f, 1.0f});
+		m_material->set_ambientColor(Color::White);
 		m_material->set_diffuseColor(Color::Black);
 		m_material->set_specularColor(Color::Black);
 		m_material->load();

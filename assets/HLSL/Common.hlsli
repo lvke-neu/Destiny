@@ -37,6 +37,7 @@ struct VertexIn
 };
 struct VertexOut
 {
+	float3 positionL : POSITIONL;
 	float4 positionH : SV_POSITION;
 	float4 positionW : POSITION;
 	float3 normalW : NORMAL;

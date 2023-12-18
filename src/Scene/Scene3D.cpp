@@ -10,6 +10,7 @@
 #include "PlaneComponent.h"
 #include "Model3DComponent.h"
 #include "TestGSComponent.h"
+#include "SkyboxComponent.h"
 
 namespace Destiny
 {
@@ -37,6 +38,12 @@ namespace Destiny
 		directLightNode->set_transform3D(transform3D);
 		auto directLightComponent = std::make_shared<DirectLightComponent>();
 		directLightNode->addComponent(directLightComponent);
+
+		auto skyboxNode = std::make_shared<Node3D>();
+		skyboxNode->set_name("Skybox");
+		skyboxNode->addToParent(m_rootNode);
+		auto skyboxComponent = std::make_shared<SkyboxComponent>();
+		skyboxNode->addComponent(skyboxComponent);
 
 		auto planeNode = std::make_shared<Node3D>();
 		planeNode->set_name("Plane");
@@ -68,7 +75,7 @@ namespace Destiny
 		transform3D.set_scale({ 0.05f, 0.05f, 0.05f });
 		modelNode->set_transform3D(transform3D);
 		auto model3DComponent = std::make_shared<Model3DComponent>();
-		model3DComponent->set_path("assets://Model/walk/Standard Walk.dae");
+		//model3DComponent->set_path("assets://Model/walk/Standard Walk.dae");
 		modelNode->addComponent(model3DComponent);
 
 		auto gsNode = std::make_shared<Node3D>();
@@ -79,5 +86,6 @@ namespace Destiny
 		//auto model3DComponent2 = std::make_shared<Model3DComponent>();
 		//model3DComponent2->set_path("assets://Model/2nrtbod1out/2nrtbod1out.obj");
 		//modelNode->addComponent(model3DComponent2);
+
 	}
 }

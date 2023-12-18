@@ -127,7 +127,7 @@ namespace Destiny
 		m_cubeTexture = Engine::GetInstance()->getGraphicsSystem()->createTexture(m_path.c_str());
 		m_cubeTexture->load();
 
-		m_visual3D->registerAfterDrawCommands(std::bind(&SkyboxComponent::beforeDrawCommand, this));
+		m_visual3D->registerBeforeDrawCommands(std::bind(&SkyboxComponent::beforeDrawCommand, this));
 	}
 
 
@@ -139,8 +139,8 @@ namespace Destiny
 			return;
 		}
 		auto immediateContext = Engine::GetInstance()->getGraphicsSystem()->getImmediateContext();
-		immediateContext->PSSetSamplers(3, 1, m_cubeSamplerState->getSamplerState());
-		immediateContext->PSSetShaderResources(3, 1, m_cubeTexture->getShaderResourceView());
+		immediateContext->PSSetSamplers(0, 1, m_cubeSamplerState->getSamplerState());
+		immediateContext->PSSetShaderResources(0, 1, m_cubeTexture->getShaderResourceView());
 	}
 
 	void SkyboxComponent::set_path(std::string path)

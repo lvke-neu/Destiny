@@ -1,7 +1,7 @@
 #include "Common.hlsli"
 
-TextureCube g_cubeTexture : register(t3);
-SamplerState g_cubeSampler : register(s3);
+TextureCube g_cubeTexture : register(t0);
+SamplerState g_cubeSampler : register(s0);
 
 float4 PS(VertexOut pIn) : SV_Target
 {

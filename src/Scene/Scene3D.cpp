@@ -9,7 +9,7 @@
 #include "DirectLightComponent.h"
 #include "PlaneComponent.h"
 #include "Model3DComponent.h"
-#include "TestGSComponent.h"
+#include "BillboardComponent.h"
 #include "SkyboxComponent.h"
 
 namespace Destiny
@@ -81,9 +81,9 @@ namespace Destiny
 		Transform3D transform3DGS;
 		transform3DGS.set_translation({ 3.0f, 0.0f, 0.0f });
 		auto gsNode = std::make_shared<Node3D>();
-		gsNode->set_name("GeometryShader");
+		gsNode->set_name("Billboard");
 		gsNode->addToParent(m_rootNode);
-		auto testGsComponent = std::make_shared<TestGSComponent>();
+		auto testGsComponent = std::make_shared<BillboardComponent>();
 		gsNode->addComponent(testGsComponent);
 		gsNode->set_transform3D(transform3DGS);
 		//auto model3DComponent2 = std::make_shared<Model3DComponent>();

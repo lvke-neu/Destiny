@@ -1,4 +1,4 @@
-#include "TestGSComponent.h"
+#include "BillboardComponent.h"
 #include "Engine/Blob.h"
 #include "Graphics/Visual3D.h"
 #include "Graphics/VertexBuffer.h"
@@ -13,7 +13,7 @@ namespace Destiny
 {
 	using namespace DirectX;
 
-	TestGSComponent::TestGSComponent()
+	BillboardComponent::BillboardComponent()
 	{
 		std::shared_ptr<Blob> data = nullptr;
 		struct VertexPosTexcoord
@@ -23,9 +23,9 @@ namespace Destiny
 			XMFLOAT2 texcoord;
 		};
 		VertexPosTexcoord vertices[3];
-		vertices[0].position = XMFLOAT3(-1.0f, 0.0f, 0.0f);
-		vertices[1].position = XMFLOAT3(0.0f, 1.0f, 0.0f);
-		vertices[2].position = XMFLOAT3(1.0f, 0.0f, 0.0f);
+		vertices[0].position = XMFLOAT3(0.0f, 0.0f, 0.0f);
+		vertices[1].position = XMFLOAT3(0.0f, 0.0f, 0.0f);
+		vertices[2].position = XMFLOAT3(0.0f, 0.0f, 0.0f);
 
 		data.reset(new Blob(3 * sizeof(VertexPosTexcoord)));
 		memcpy_s(data->getData(), data->getLength(), vertices, data->getLength());
@@ -63,14 +63,23 @@ namespace Destiny
 		m_visual3D->setPixelShader(pixelShader);
 		m_visual3D->setGeometryShader(geometryShader);
 
-		m_material->set_useColor(true);
-		m_material->set_ambientColor({ 1.0f, 1.0f, 0.0f, 1.0f });
+		data.reset(new Blob(sizeof(D3D11_BLEND_DESC)));
+		m_blendStateDesc.RenderTarget[0].BlendEnable = true;
+		m_blendStateDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+		m_blendStateDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+		memcpy_s(data->getData(), data->getLength(), &m_blendStateDesc, data->getLength());
+		auto blendState = Engine::GetInstance()->getGraphicsSystem()->createBlendState(data);
+		blendState->load(0);
+		m_visual3D->setBlendState(blendState);
+
+		m_material->set_useColor(false);
+		m_material->set_ambientTexturePath("assets://Texture/tree0.dds");
 		m_material->load();
 	}
 
 	RTTR_REGISTRATION
 	{
-		rttr::registration::class_<TestGSComponent>("TestGSComponent")
+		rttr::registration::class_<BillboardComponent>("BillboardComponent")
 			.constructor<>()
 			(
 				rttr::policy::ctor::as_raw_ptr

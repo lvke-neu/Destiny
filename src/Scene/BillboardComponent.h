@@ -3,12 +3,12 @@
 
 namespace Destiny
 {
-	class TestGSComponent : public Visual3DComponent
+	class BillboardComponent : public Visual3DComponent
 	{
 		RTTR_ENABLE(Visual3DComponent);
 	public:
-		TestGSComponent();
+		BillboardComponent();
 	public:
-		GET_CLASS_NAME(TestGSComponent);
+		GET_CLASS_NAME(BillboardComponent);
 	};
 }

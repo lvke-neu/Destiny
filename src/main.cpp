@@ -153,7 +153,7 @@ int main()
 //	//auto vertexbuffer = Engine::GetInstance()->getGraphicsAssetLoader()->getVertexBufferLoader()->createAsset(blobholder);
 //	//vertexbuffer->load();
 //	using namespace DirectX;
-//	struct VertexPosColor
+//	struct VertexPosTexcoord
 //	{
 //		XMFLOAT3 pos;
 //		XMFLOAT3 normal;
@@ -167,7 +167,7 @@ int main()
 //		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 //	};
 //
-//	VertexPosColor vertices[24];
+//	VertexPosTexcoord vertices[24];
 //	vertices[0].pos = XMFLOAT3(1, 2, 3);
 //	vertices[1].pos = XMFLOAT3(4, 5, 6);
 //	vertices[2].pos = XMFLOAT3(7, 8, 9);
@@ -218,9 +218,9 @@ int main()
 //			20, 21, 22, 22, 23, 20	// 正面(-Z面)
 //	};
 //
-//	std::shared_ptr<Blob> vertexData = std::make_shared<Blob>(24 * sizeof(VertexPosColor));
+//	std::shared_ptr<Blob> vertexData = std::make_shared<Blob>(24 * sizeof(VertexPosTexcoord));
 //	memcpy_s(vertexData->getData(), vertexData->getLength(), vertices, vertexData->getLength());
-//	auto vertexbuffer = Engine::GetInstance()->getGraphicsSystem()->createVertexBuffer(sizeof(VertexPosColor), 0, vertexData);
+//	auto vertexbuffer = Engine::GetInstance()->getGraphicsSystem()->createVertexBuffer(sizeof(VertexPosTexcoord), 0, vertexData);
 //
 //	vertexbuffer->load();
 //

@@ -92,7 +92,7 @@ namespace Destiny
 				m_visual3DComponents.resize(scene->mNumMeshes);
 
 				std::shared_ptr<Blob> data = nullptr;
-				struct VertexPosColor
+				struct VertexPosTexcoord
 				{
 					XMFLOAT3 position;
 					XMFLOAT3 normal;
@@ -122,12 +122,12 @@ namespace Destiny
 
 					aiMesh* mesh = scene->mMeshes[i];
 
-					std::vector<VertexPosColor> vertices;
+					std::vector<VertexPosTexcoord> vertices;
 					vertices.resize(mesh->mNumVertices);
 
 					for (unsigned int j = 0; j < mesh->mNumVertices; j++)
 					{
-						VertexPosColor vertex;
+						VertexPosTexcoord vertex;
 
 						vertex.position.x = mesh->mVertices[j].x;
 						vertex.position.y = mesh->mVertices[j].y;
@@ -146,9 +146,9 @@ namespace Destiny
 						vertices[j] = (vertex);
 					}
 					
-					data.reset(new Blob(vertices.size() * sizeof(VertexPosColor)));
+					data.reset(new Blob(vertices.size() * sizeof(VertexPosTexcoord)));
 					memcpy_s(data->getData(), data->getLength(), vertices.data(), data->getLength());
-					auto vertexBuffer = Engine::GetInstance()->getGraphicsSystem()->createVertexBuffer(sizeof(VertexPosColor), 0, data);
+					auto vertexBuffer = Engine::GetInstance()->getGraphicsSystem()->createVertexBuffer(sizeof(VertexPosTexcoord), 0, data);
 					vertexBuffer->load(0);
 					m_visual3DComponents[i]->get_visual3D()->setVertexBuffer(vertexBuffer);
 

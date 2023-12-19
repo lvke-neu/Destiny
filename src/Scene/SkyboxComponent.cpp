@@ -17,13 +17,13 @@ namespace Destiny
 	SkyboxComponent::SkyboxComponent()
 	{
 		std::shared_ptr<Blob> data = nullptr;
-		struct VertexPosColor
+		struct VertexPosTexcoord
 		{
 			XMFLOAT3 position;
 			XMFLOAT3 normal;
 			XMFLOAT2 texcoord;
 		};
-		VertexPosColor vertices[24];
+		VertexPosTexcoord vertices[24];
 		vertices[0].position = XMFLOAT3(1, -1, -1);
 		vertices[1].position = XMFLOAT3(1, 1, -1);
 		vertices[2].position = XMFLOAT3(1, 1, 1);
@@ -64,9 +64,9 @@ namespace Destiny
 			vertices[i * 4 + 2].texcoord = XMFLOAT2(1.0f, 0.0f);
 			vertices[i * 4 + 3].texcoord = XMFLOAT2(1.0f, 1.0f);
 		}
-		data.reset(new Blob(24 * sizeof(VertexPosColor)));
+		data.reset(new Blob(24 * sizeof(VertexPosTexcoord)));
 		memcpy_s(data->getData(), data->getLength(), vertices, data->getLength());
-		auto vertexBuffer = Engine::GetInstance()->getGraphicsSystem()->createVertexBuffer(sizeof(VertexPosColor), 0, data);
+		auto vertexBuffer = Engine::GetInstance()->getGraphicsSystem()->createVertexBuffer(sizeof(VertexPosTexcoord), 0, data);
 		vertexBuffer->load(0);
 		m_visual3D->setVertexBuffer(vertexBuffer);
 

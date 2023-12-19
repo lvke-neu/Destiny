@@ -78,11 +78,14 @@ namespace Destiny
 		//model3DComponent->set_path("assets://Model/walk/Standard Walk.dae");
 		modelNode->addComponent(model3DComponent);
 
+		Transform3D transform3DGS;
+		transform3DGS.set_translation({ 3.0f, 0.0f, 0.0f });
 		auto gsNode = std::make_shared<Node3D>();
 		gsNode->set_name("GeometryShader");
 		gsNode->addToParent(m_rootNode);
 		auto testGsComponent = std::make_shared<TestGSComponent>();
 		gsNode->addComponent(testGsComponent);
+		gsNode->set_transform3D(transform3DGS);
 		//auto model3DComponent2 = std::make_shared<Model3DComponent>();
 		//model3DComponent2->set_path("assets://Model/2nrtbod1out/2nrtbod1out.obj");
 		//modelNode->addComponent(model3DComponent2);

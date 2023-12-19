@@ -15,7 +15,7 @@ namespace Destiny
 	SphereComponent::SphereComponent()
 	{
 		std::shared_ptr<Blob> data = nullptr;
-		struct VertexPosColor
+		struct VertexPosTexcoord
 		{
 			XMFLOAT3 position;
 			XMFLOAT3 normal;
@@ -27,7 +27,7 @@ namespace Destiny
 		const UINT slices = 20;
 
 		const UINT vertexCount = 2 + (levels - 1) * (slices + 1);
-		VertexPosColor vertices[vertexCount];
+		VertexPosTexcoord vertices[vertexCount];
 
 		DWORD vIndex = 0, iIndex = 0;
 
@@ -36,7 +36,7 @@ namespace Destiny
 		float per_theta = XM_2PI / slices;
 		float x, y, z;
 
-		vertices[vIndex++] = VertexPosColor({ XMFLOAT3(0.0f, radius, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) });
+		vertices[vIndex++] = VertexPosTexcoord({ XMFLOAT3(0.0f, radius, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) });
 
 		for (UINT i = 1; i < levels; ++i)
 		{
@@ -52,14 +52,14 @@ namespace Destiny
 				XMFLOAT3 pos = XMFLOAT3(x, y, z), normal;
 				XMStoreFloat3(&normal, XMVector3Normalize(XMLoadFloat3(&pos)));
 
-				vertices[vIndex++] = VertexPosColor({ pos, normal, XMFLOAT2(theta / XM_2PI, phi / XM_PI) });
+				vertices[vIndex++] = VertexPosTexcoord({ pos, normal, XMFLOAT2(theta / XM_2PI, phi / XM_PI) });
 			}
 		}
-		vertices[vIndex++] = VertexPosColor({ XMFLOAT3(0.0f, -radius, 0.0f), XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) });
+		vertices[vIndex++] = VertexPosTexcoord({ XMFLOAT3(0.0f, -radius, 0.0f), XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) });
 		
-		data.reset(new Blob(vertexCount * sizeof(VertexPosColor)));
+		data.reset(new Blob(vertexCount * sizeof(VertexPosTexcoord)));
 		memcpy_s(data->getData(), data->getLength(), vertices, data->getLength());
-		auto vertexBuffer = Engine::GetInstance()->getGraphicsSystem()->createVertexBuffer(sizeof(VertexPosColor), 0, data);
+		auto vertexBuffer = Engine::GetInstance()->getGraphicsSystem()->createVertexBuffer(sizeof(VertexPosTexcoord), 0, data);
 		vertexBuffer->load(0);
 		m_visual3D->setVertexBuffer(vertexBuffer);
 

@@ -17,14 +17,14 @@ namespace Destiny
 	{
 		std::shared_ptr<Blob> data = nullptr;
 
-		struct VertexPosColor
+		struct VertexPosTexcoord
 		{
 			XMFLOAT3 position;
 			XMFLOAT3 normal;
 			XMFLOAT2 texcoord;
 		};
 
-		std::vector<VertexPosColor> vertices;
+		std::vector<VertexPosTexcoord> vertices;
 		vertices.resize(m_height * m_width);
 
 		for (int i = 1; i <= m_height; i++)
@@ -37,9 +37,9 @@ namespace Destiny
 			}
 		}
 
-		data.reset(new Blob(m_width * m_height * sizeof(VertexPosColor)));
+		data.reset(new Blob(m_width * m_height * sizeof(VertexPosTexcoord)));
 		memcpy_s(data->getData(), data->getLength(), vertices.data(), data->getLength());
-		auto vertexBuffer = Engine::GetInstance()->getGraphicsSystem()->createVertexBuffer(sizeof(VertexPosColor), 0, data);
+		auto vertexBuffer = Engine::GetInstance()->getGraphicsSystem()->createVertexBuffer(sizeof(VertexPosTexcoord), 0, data);
 		vertexBuffer->load(0);
 		m_visual3D->setVertexBuffer(vertexBuffer);
 

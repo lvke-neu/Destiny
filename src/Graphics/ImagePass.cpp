@@ -17,7 +17,7 @@
 //{
 //	using namespace DirectX;
 //
-//	struct VertexPosColor
+//	struct VertexPosTexcoord
 //	{
 //		DirectX::XMFLOAT3 pos;
 //		DirectX::XMFLOAT3 normal;
@@ -25,7 +25,7 @@
 //		static D3D11_INPUT_ELEMENT_DESC inputLayout[3]; 
 //	};
 //
-//	D3D11_INPUT_ELEMENT_DESC VertexPosColor::inputLayout[3] =
+//	D3D11_INPUT_ELEMENT_DESC VertexPosTexcoord::inputLayout[3] =
 //	{
 //			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 //	{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -41,7 +41,7 @@
 //	ID3D11RasterizerState* rs;
 //	ImagePass::ImagePass()
 //	{
-//		VertexPosColor vertices[24];
+//		VertexPosTexcoord vertices[24];
 //		vertices[0].pos = XMFLOAT3(1, -1, -1);
 //		vertices[1].pos = XMFLOAT3(1, 1, -1);
 //		vertices[2].pos = XMFLOAT3(1, 1, 1);
@@ -94,9 +94,9 @@
 //		auto device = Engine::GetInstance()->getGraphicsSystem()->getDevice();
 //		auto immediateContext = Engine::GetInstance()->getGraphicsSystem()->getImmediateContext();
 //
-//		m_vertexShader = std::make_unique<VertexShader>(device, L"HLSL/Phong_VS.cso", VertexPosColor::inputLayout, ARRAYSIZE(VertexPosColor::inputLayout));
+//		m_vertexShader = std::make_unique<VertexShader>(device, L"HLSL/Phong_VS.cso", VertexPosTexcoord::inputLayout, ARRAYSIZE(VertexPosTexcoord::inputLayout));
 //		m_pixelShader = std::make_unique<PixelShader>(device, L"HLSL/Phong_PS.cso");
-//		m_vertexBuffer = std::make_unique<VertexBuffer>(device, sizeof(VertexPosColor), 0, vertices, sizeof(vertices));
+//		m_vertexBuffer = std::make_unique<VertexBuffer>(device, sizeof(VertexPosTexcoord), 0, vertices, sizeof(vertices));
 //		m_indexBuffer = std::make_unique<IndexBuffer>(device, DXGI_FORMAT_R32_UINT, indices, sizeof(indices));
 //		m_constantBuffer = std::make_unique<ConstantBuffer>(device, sizeof(ConstantData));
 //		m_texture = std::make_unique<Texture>(device, L"Texture/brick.dds");

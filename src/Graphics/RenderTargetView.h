@@ -14,7 +14,7 @@ namespace Destiny
 	public:
 		virtual void doLoad() override;
 		ID3D11Texture2D* getTexture2D();
-		ID3D11RenderTargetView* getRenderTargetView();
+		ID3D11RenderTargetView** getRenderTargetView();
 		ID3D11ShaderResourceView** getShaderResourceView();
 	private:
 		ID3D11Texture2D* m_texture;
@@ -29,9 +29,9 @@ namespace Destiny
 		return m_texture;
 	}
 
-	inline ID3D11RenderTargetView* RenderTargetView::getRenderTargetView()
+	inline ID3D11RenderTargetView** RenderTargetView::getRenderTargetView()
 	{
-		return m_renderTargetView;
+		return &m_renderTargetView;
 	}
 
 	inline ID3D11ShaderResourceView** RenderTargetView::getShaderResourceView()

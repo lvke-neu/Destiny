@@ -22,6 +22,7 @@
 #include "TextureLoader.h"
 #include "MaterialLoader.h"
 #include "Color.h"
+#include "RenderTargetView.h"
 #include <d3d11.h>
 #include <d3dcompiler.h>
 
@@ -360,6 +361,12 @@ namespace Destiny
 	std::shared_ptr<Material> GraphicsSystem::createMaterial()
 	{
 		return m_materialLoader->createAsset();
+	}
+
+	std::shared_ptr<RenderTargetView> GraphicsSystem::createRenderTargetView(unsigned int with, unsigned int height)
+	{
+		std::shared_ptr<RenderTargetView> renderTargetView = std::make_shared<RenderTargetView>(with, height);
+		return renderTargetView;
 	}
 
 	void GraphicsSystem::onResize(void* data)

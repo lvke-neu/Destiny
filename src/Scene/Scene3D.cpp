@@ -11,6 +11,7 @@
 #include "Model3DComponent.h"
 #include "BillboardComponent.h"
 #include "SkyboxComponent.h"
+#include "RenderToTextureComponent.h"
 
 namespace Destiny
 {
@@ -75,7 +76,7 @@ namespace Destiny
 		transform3D.set_scale({ 0.05f, 0.05f, 0.05f });
 		modelNode->set_transform3D(transform3D);
 		auto model3DComponent = std::make_shared<Model3DComponent>();
-		//model3DComponent->set_path("assets://Model/walk/Standard Walk.dae");
+		model3DComponent->set_path("assets://Model/walk/Standard Walk.dae");
 		modelNode->addComponent(model3DComponent);
 
 		Transform3D transform3DGS;
@@ -90,5 +91,11 @@ namespace Destiny
 		//model3DComponent2->set_path("assets://Model/2nrtbod1out/2nrtbod1out.obj");
 		//modelNode->addComponent(model3DComponent2);
 
+
+		auto renderToTextureNode = std::make_shared<Node3D>();
+		renderToTextureNode->set_name("RenderToTexture");
+		renderToTextureNode->addToParent(m_rootNode);
+		auto renderToTextureComponent = std::make_shared<RenderToTextureComponent>();
+		renderToTextureNode->addComponent(renderToTextureComponent);
 	}
 }

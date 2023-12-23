@@ -12,6 +12,7 @@ namespace Destiny
 		virtual ~Texture();
 	public:
 		ID3D11ShaderResourceView** getShaderResourceView();
+		void create(ID3D11Resource* resource, ID3D11ShaderResourceView* shaderResourceView);
 	private:
 		ID3D11Resource* m_resource;
 		ID3D11ShaderResourceView* m_shaderResourceView;
@@ -20,5 +21,21 @@ namespace Destiny
 	inline ID3D11ShaderResourceView** Texture::getShaderResourceView()
 	{
 		return &m_shaderResourceView;
+	}
+
+	inline void Texture::create(ID3D11Resource* resource, ID3D11ShaderResourceView* shaderResourceView)
+	{
+		if (!resource || !shaderResourceView)
+		{
+			loadFailed__();
+			return;
+		}
+
+		resource->AddRef();
+		shaderResourceView->AddRef();
+
+		m_resource = resource;
+		m_shaderResourceView = shaderResourceView;
+		loadSucceeded__();
 	}
 }

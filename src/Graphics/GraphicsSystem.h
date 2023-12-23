@@ -22,6 +22,7 @@ namespace Destiny
 	class TextureLoader;
 	class Material;
 	class MaterialLoader;
+	class RenderTargetView;
 	class GraphicsSystem
 	{
 	public:
@@ -57,6 +58,7 @@ namespace Destiny
 		std::shared_ptr<SamplerState> createSamplerState(std::shared_ptr<Blob> samplerStateDesc);
 		std::shared_ptr<Texture> createTexture(const char* path);
 		std::shared_ptr<Material> createMaterial();
+		std::shared_ptr<RenderTargetView> createRenderTargetView(unsigned int with, unsigned int height);
 		
 	private:
 		void createDeviceAndContext();

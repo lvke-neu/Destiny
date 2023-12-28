@@ -29,6 +29,7 @@ namespace Destiny
 		GET(std::vector<std::shared_ptr<Node3D>>, childs);
 		GET(std::vector<std::shared_ptr<Component>>, components);
 		GET(Transform3D, transform3D);
+		GET(std::shared_ptr<Node3D>, parent);
 
 		void set_transform3D(Transform3D transform3D);
 	private:

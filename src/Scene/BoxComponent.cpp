@@ -7,6 +7,9 @@
 #include "Graphics/PixelShader.h"
 #include "Graphics/InputLayout.h"
 #include "Graphics/Material.h"
+#include "Graphics/RenderTargetView.h"
+#include "Graphics/DepthStencilView.h"
+#include "Engine/EventSystem.h"
 
 namespace Destiny
 {
@@ -107,9 +110,53 @@ namespace Destiny
 		m_material->set_diffuseTexturePath("assets://Texture/box_diffuse.png");
 		m_material->set_specularTexturePath("assets://Texture/box_specular.png");
 		m_material->load();
+
+		m_visual3D->registerBeforeDrawCommands(std::bind(&BoxComponent::beforeDrawCommand, this));
+		m_visual3D->registerAfterDrawCommands(std::bind(&BoxComponent::afterDrawCommand, this));
+
+		Engine::GetInstance()->getEventSystem()->registerEvent(EventType::WindowResize, std::bind(&BoxComponent::onResize, this, std::placeholders::_1));
 	}
 
+	void BoxComponent::beforeDrawCommand()
+	{
+		if (!m_renderTargetView || !m_renderTargetView->isLoadingSucceed() ||
+			!m_depthStencilView || !m_depthStencilView->isLoadingSucceed())
+		{
+			return;
+		}
 
+		auto immediateContext = Engine::GetInstance()->getGraphicsSystem()->getImmediateContext();
+		immediateContext->ClearRenderTargetView(*m_renderTargetView->getRenderTargetView(), Color::White.toFloat());
+		immediateContext->ClearDepthStencilView(m_depthStencilView->getDepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+		immediateContext->OMSetRenderTargets(1, m_renderTargetView->getRenderTargetView(), m_depthStencilView->getDepthStencilView());
+	}
+
+	void BoxComponent::afterDrawCommand()
+	{
+		auto immediateContext = Engine::GetInstance()->getGraphicsSystem()->getImmediateContext();
+		ID3D11RenderTargetView* pRTV = nullptr;
+		immediateContext->OMSetRenderTargets(1, &pRTV, nullptr);
+	}
+
+	BoxComponent::~BoxComponent()
+	{
+		Engine::GetInstance()->getEventSystem()->unRegisterEvent(EventType::WindowResize, std::bind(&BoxComponent::onResize, this, std::placeholders::_1));
+	}
+
+	void BoxComponent::onResize(void* data)
+	{
+		WindowResizeData windowResizeData = *(WindowResizeData*)data;
+
+		m_renderTargetView.reset();
+		m_depthStencilView.reset();
+
+		m_renderTargetView = std::make_shared<RenderTargetView>(windowResizeData.width, windowResizeData.height);
+		m_renderTargetView->load(0);
+
+		m_depthStencilView = std::make_shared<DepthStencilView>(windowResizeData.width, windowResizeData.height);
+		m_depthStencilView->load(0);
+	}
 	RTTR_REGISTRATION
 	{
 		rttr::registration::class_<BoxComponent>("BoxComponent")

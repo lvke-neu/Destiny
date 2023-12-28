@@ -1,5 +1,6 @@
 #include "RenderToTextureComponent.h"
 #include "Engine/Blob.h"
+#include "Engine/EventSystem.h"
 #include "Graphics/Visual3D.h"
 #include "Graphics/VertexBuffer.h"
 #include "Graphics/IndexBuffer.h"
@@ -10,7 +11,10 @@
 #include "Graphics/Texture.h"
 #include "Graphics/RenderTargetView.h"
 #include "Graphics/DepthStencilView.h"
-#include "Engine/EventSystem.h"
+#include "Graphics/SamplerState.h"
+#include "Node3D.h"
+#include "BoxComponent.h"
+
 
 namespace Destiny
 {
@@ -32,8 +36,8 @@ namespace Destiny
 		vertices[3].position = XMFLOAT3(0.5f, -1.0f, 0.0f);
 		vertices[0].texcoord = XMFLOAT2(0.0f, 0.0f);
 		vertices[1].texcoord = XMFLOAT2(1.0f, 0.0f);
-		vertices[2].texcoord = XMFLOAT2(0.0f, 1.0f);
-		vertices[3].texcoord = XMFLOAT2(1.0f, 1.0f);
+		vertices[2].texcoord = XMFLOAT2(1.0f, 1.0f);
+		vertices[3].texcoord = XMFLOAT2(0.0f, 1.0f);
 
 		data.reset(new Blob(4 * sizeof(VertexPosTexcoord)));
 		memcpy_s(data->getData(), data->getLength(), vertices, data->getLength());
@@ -68,44 +72,24 @@ namespace Destiny
 		m_visual3D->setVertexShader(vertexShader);
 		m_visual3D->setPixelShader(pixelShader);
 
+		data.reset(new Blob(sizeof(D3D11_SAMPLER_DESC)));
+		D3D11_SAMPLER_DESC samplerDesc = SamplerState::Default_SamplerState_Desc;
+		samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+		memcpy_s(data->getData(), data->getLength(), &samplerDesc, data->getLength());
+		m_samplerState = Engine::GetInstance()->getGraphicsSystem()->createSamplerState(data);
+		m_samplerState->load(0);
 
 		m_visual3D->registerBeforeDrawCommands(std::bind(&RenderToTextureComponent::beforeDrawCommand, this));
 
-		Engine::GetInstance()->getEventSystem()->registerEvent(EventType::WindowResize, std::bind(&RenderToTextureComponent::onResize, this, std::placeholders::_1));
-	}
-
-	RenderToTextureComponent::~RenderToTextureComponent()
-	{
-		Engine::GetInstance()->getEventSystem()->unRegisterEvent(EventType::WindowResize, std::bind(&RenderToTextureComponent::onResize, this, std::placeholders::_1));
 	}
 
 	void RenderToTextureComponent::beforeDrawCommand()
 	{
-		if (!m_renderTargetView || !m_renderTargetView->isLoadingSucceed() ||
-			!m_depthStencilView || !m_depthStencilView->isLoadingSucceed())
-		{
-			return;
-		}
-
 		auto immediateContext = Engine::GetInstance()->getGraphicsSystem()->getImmediateContext();
-		immediateContext->ClearRenderTargetView(*m_renderTargetView->getRenderTargetView(), Color::Black.toFloat());
-		immediateContext->ClearDepthStencilView(m_depthStencilView->getDepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-		
-		immediateContext->OMSetRenderTargets(1, m_renderTargetView->getRenderTargetView(), m_depthStencilView->getDepthStencilView());
-	}
-
-	void RenderToTextureComponent::onResize(void* data)
-	{
-		WindowResizeData windowResizeData = *(WindowResizeData*)data;
-
-		m_renderTargetView.reset();
-		m_depthStencilView.reset();
-
-		m_renderTargetView = std::make_shared<RenderTargetView>(windowResizeData.width, windowResizeData.height);
-		m_renderTargetView->load(0);
-
-		m_depthStencilView = std::make_shared<DepthStencilView>(windowResizeData.width, windowResizeData.height);
-		m_depthStencilView->load(0);
+		immediateContext->PSSetSamplers(0, 1, m_samplerState->getSamplerState());
+		immediateContext->PSSetShaderResources(0, 1, ((BoxComponent*)m_node->get_parent()->get_childs()[4]->get_components()[0].get())->m_renderTargetView->getShaderResourceView());
 	}
 
 	RTTR_REGISTRATION

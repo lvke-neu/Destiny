@@ -69,15 +69,25 @@ namespace Destiny
 		auto sphereComponent = std::make_shared<SphereComponent>();
 		sphereNode->addComponent(sphereComponent);
 
-		auto modelNode = std::make_shared<Node3D>();
-		modelNode->set_name("Model");
-		modelNode->addToParent(m_rootNode);
-		transform3D.set_translation({ 2.0f, 0.0f, 0.0f });
-		transform3D.set_scale({ 0.05f, 0.05f, 0.05f });
-		modelNode->set_transform3D(transform3D);
-		auto model3DComponent = std::make_shared<Model3DComponent>();
-		//model3DComponent->set_path("assets://Model/walk/Standard Walk.dae");
-		modelNode->addComponent(model3DComponent);
+		Transform3D transformModel;
+		auto powerplantNode = std::make_shared<Node3D>();
+		powerplantNode->set_name("powerplant");
+		powerplantNode->addToParent(m_rootNode);
+		transformModel.set_translation({ 0.0f, 0.0f, 5.0f });
+		transformModel.set_scale({ 0.05f, 0.05f, 0.05f });
+		powerplantNode->set_transform3D(transformModel);
+		auto powerplantComponent = std::make_shared<Model3DComponent>();
+		powerplantNode->addComponent(powerplantComponent);
+		powerplantComponent->set_path("assets://Model/powerplant/powerplant.gltf");
+
+		auto walkNode = std::make_shared<Node3D>();
+		walkNode->set_name("walk");
+		walkNode->addToParent(m_rootNode);
+		transformModel.set_scale({ 0.03f, 0.03f, 0.03f });
+		walkNode->set_transform3D(transformModel);
+		auto walkComponent = std::make_shared<Model3DComponent>();
+		walkNode->addComponent(walkComponent);
+		walkComponent->set_path("assets://Model/walk/Standard Walk.dae");
 
 		Transform3D transform3DGS;
 		transform3DGS.set_translation({ 3.0f, 0.0f, 0.0f });
@@ -87,9 +97,7 @@ namespace Destiny
 		auto testGsComponent = std::make_shared<BillboardComponent>();
 		gsNode->addComponent(testGsComponent);
 		gsNode->set_transform3D(transform3DGS);
-		//auto model3DComponent2 = std::make_shared<Model3DComponent>();
-		//model3DComponent2->set_path("assets://Model/2nrtbod1out/2nrtbod1out.obj");
-		//modelNode->addComponent(model3DComponent2);
+
 
 
 		auto renderToTextureNode = std::make_shared<Node3D>();

@@ -23,23 +23,6 @@ namespace Destiny
 {
 	using namespace DirectX;
 
-	Model3D::Model3D(std::shared_ptr<Model3DComponent> model3DComponent) :
-		m_model3DComponent(model3DComponent)
-	{
-
-	}
-
-	Model3D::~Model3D()
-	{
-		for (const auto& v3dComponent : m_visual3DComponents)
-		{
-			if (m_model3DComponent && m_model3DComponent->get_node())
-			{
-				m_model3DComponent->get_node()->removeComponent(v3dComponent);
-			}
-		}
-	}
-
 	void Model3D::doLoad()
 	{
 		if (m_blobHolder)
@@ -117,10 +100,12 @@ namespace Destiny
 
 				for (unsigned int i = 0; i < scene->mNumMeshes; i++)
 				{
-
-					m_visual3DComponents[i] = std::make_shared<Visual3DComponent>();
-
 					aiMesh* mesh = scene->mMeshes[i];
+
+					m_visual3DComponents[i] = std::make_pair(mesh->mName.C_Str(), std::make_shared<Visual3DComponent>());
+					auto rsDesc = RasterizerState::Default_Rasterizer_Desc;
+					rsDesc.CullMode = D3D11_CULL_NONE;
+					m_visual3DComponents[i].second->set_rasterizerStateDesc(rsDesc);
 
 					std::vector<VertexPosTexcoord> vertices;
 					vertices.resize(mesh->mNumVertices);
@@ -150,7 +135,7 @@ namespace Destiny
 					memcpy_s(data->getData(), data->getLength(), vertices.data(), data->getLength());
 					auto vertexBuffer = Engine::GetInstance()->getGraphicsSystem()->createVertexBuffer(sizeof(VertexPosTexcoord), 0, data);
 					vertexBuffer->load(0);
-					m_visual3DComponents[i]->get_visual3D()->setVertexBuffer(vertexBuffer);
+					m_visual3DComponents[i].second->get_visual3D()->setVertexBuffer(vertexBuffer);
 
 					std::vector<unsigned int> indices;
 
@@ -165,13 +150,13 @@ namespace Destiny
 					memcpy_s(data->getData(), data->getLength(), indices.data(), data->getLength());
 					auto indexBuffer = Engine::GetInstance()->getGraphicsSystem()->createIndexBuffer(DXGI_FORMAT_R32_UINT, data);
 					indexBuffer->load(0);
-					m_visual3DComponents[i]->get_visual3D()->setIndexBuffer(indexBuffer);
+					m_visual3DComponents[i].second->get_visual3D()->setIndexBuffer(indexBuffer);
 				
 
-					m_visual3DComponents[i]->get_visual3D()->setInputLayout(inputLayout);
+					m_visual3DComponents[i].second->get_visual3D()->setInputLayout(inputLayout);
 
-					m_visual3DComponents[i]->get_visual3D()->setVertexShader(vertexShader);
-					m_visual3DComponents[i]->get_visual3D()->setPixelShader(pixelShader);
+					m_visual3DComponents[i].second->get_visual3D()->setVertexShader(vertexShader);
+					m_visual3DComponents[i].second->get_visual3D()->setPixelShader(pixelShader);
 
 					//material
 					aiMaterial* aimaterial = scene->mMaterials[mesh->mMaterialIndex];
@@ -180,32 +165,31 @@ namespace Destiny
 
 					aimaterial->Get(AI_MATKEY_COLOR_AMBIENT, color);
 					aimaterial->GetTexture(aiTextureType_AMBIENT, 0, &str);
-					m_visual3DComponents[i]->get_material()->set_ambientTexturePath(path.substr(0, path.rfind("/") + 1) + str.C_Str());
-					m_visual3DComponents[i]->get_material()->set_ambientColor({ color.r, color.g, color.b, color.a });
+					m_visual3DComponents[i].second->get_material()->set_ambientTexturePath(path.substr(0, path.rfind("/") + 1) + str.C_Str());
+					m_visual3DComponents[i].second->get_material()->set_ambientColor({ color.r, color.g, color.b, color.a });
 					
 					aimaterial->Get(AI_MATKEY_COLOR_DIFFUSE, color);
 					aimaterial->GetTexture(aiTextureType_DIFFUSE, 0, &str);
-					m_visual3DComponents[i]->get_material()->set_diffuseTexturePath(path.substr(0, path.rfind("/") + 1) + str.C_Str());
-					m_visual3DComponents[i]->get_material()->set_diffuseColor({ color.r, color.g, color.b, color.a });
+					m_visual3DComponents[i].second->get_material()->set_diffuseTexturePath(path.substr(0, path.rfind("/") + 1) + str.C_Str());
+					m_visual3DComponents[i].second->get_material()->set_diffuseColor({ color.r, color.g, color.b, color.a });
 
 					aimaterial->Get(AI_MATKEY_COLOR_SPECULAR, color);
 					aimaterial->GetTexture(aiTextureType_SPECULAR, 0, &str);
-					m_visual3DComponents[i]->get_material()->set_specularTexturePath(path.substr(0, path.rfind("/") + 1) + str.C_Str());
-					m_visual3DComponents[i]->get_material()->set_specularColor({ color.r, color.g, color.b, color.a });
+					m_visual3DComponents[i].second->get_material()->set_specularTexturePath(path.substr(0, path.rfind("/") + 1) + str.C_Str());
+					m_visual3DComponents[i].second->get_material()->set_specularColor({ color.r, color.g, color.b, color.a });
 					
-					m_visual3DComponents[i]->get_material()->set_useColor(false);
-					m_visual3DComponents[i]->get_material()->load();
+					m_visual3DComponents[i].second->get_material()->set_useColor(false);
+					m_visual3DComponents[i].second->get_material()->load();
 
-					if (m_model3DComponent && m_model3DComponent->get_node())
-					{
-						auto meshNode = std::make_shared<Node3D>();
-						meshNode->set_name(mesh->mName.C_Str());
-						meshNode->addToParent(m_model3DComponent->get_node());
-						meshNode->addComponent(m_visual3DComponents[i]);
-						meshNode->set_transform3D(m_model3DComponent->get_node()->get_transform3D());
-					}
+					//if (m_model3DComponent && m_model3DComponent->get_node())
+					//{
+					//	auto meshNode = std::make_shared<Node3D>();
+					//	meshNode->set_name(mesh->mName.C_Str());
+					//	meshNode->addToParent(m_model3DComponent->get_node());
+					//	meshNode->addComponent(m_visual3DComponents[i]);
+					//	meshNode->set_transform3D(m_model3DComponent->get_node()->get_transform3D());
+					//}
 				}
-
 				loadSucceeded__();
 			}
 			else

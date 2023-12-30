@@ -18,6 +18,13 @@ namespace Destiny
 	class Visual3D
 	{
 	public:
+		enum RenderToMask
+		{
+			render_to_scene = 1,
+			render_to_texture = 2,
+			render_to_shadow_map = 4
+		};
+	public:
 		Visual3D();
 		~Visual3D();
 	public:
@@ -43,6 +50,7 @@ namespace Destiny
 		void setDepthStencilState(std::shared_ptr<DepthStencilState> depthStencilState);
 		void setBlendState(std::shared_ptr<BlendState> blendState);
 		void setPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY primitiveTopology);
+		void setRenderToMask(RenderToMask mask);
 	private:
 		std::shared_ptr<VertexBuffer> m_vertexBuffer;
 		std::shared_ptr<IndexBuffer> m_indexBuffer;
@@ -57,6 +65,7 @@ namespace Destiny
 		std::vector<std::function<void(void)>> m_beforeDrawCommands;
 		std::vector < std::function<void(void)>> m_afterDrawCommands;
 		D3D_PRIMITIVE_TOPOLOGY m_primitiveTopology;
+		RenderToMask m_renderToMask;
 	};
 
 	inline void Visual3D::setVertexBuffer(std::shared_ptr<VertexBuffer> vertexBuffer)
@@ -153,5 +162,10 @@ namespace Destiny
 	inline void Visual3D::setPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY primitiveTopology)
 	{
 		m_primitiveTopology = primitiveTopology;
+	}
+
+	inline void Visual3D::setRenderToMask(RenderToMask mask)
+	{
+		m_renderToMask = mask;
 	}
 }

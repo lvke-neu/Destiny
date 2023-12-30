@@ -128,6 +128,7 @@ namespace Destiny
 		m_cubeTexture->load();
 
 		m_visual3D->registerBeforeDrawCommands(std::bind(&SkyboxComponent::beforeDrawCommand, this));
+		m_visual3D->setRenderToMask(Visual3D::RenderToMask(Visual3D::render_to_scene | Visual3D::render_to_texture));
 	}
 
 

@@ -23,6 +23,7 @@
 #include "MaterialLoader.h"
 #include "Color.h"
 #include "RenderTargetView.h"
+#include "DepthStencilView.h"
 #include <d3d11.h>
 #include <d3dcompiler.h>
 
@@ -39,7 +40,9 @@ namespace Destiny
 		m_4xMsaaQuality(0),
 		m_viewport(new D3D11_VIEWPORT),
 		m_textureLoader(nullptr),
-		m_materialLoader(nullptr)
+		m_materialLoader(nullptr),
+		m_renderToTextureRTV(nullptr),
+		m_renderToTextureDSV(nullptr)
 	{
 
 	}
@@ -78,6 +81,9 @@ namespace Destiny
 	{
 		m_pD3D11ImmediateDeviceContext->ClearRenderTargetView(m_pRenderTargetView, Color::Black.toFloat());
 		m_pD3D11ImmediateDeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+		m_pD3D11ImmediateDeviceContext->ClearRenderTargetView(*m_renderToTextureRTV->getRenderTargetView(), Color::Black.toFloat());
+		m_pD3D11ImmediateDeviceContext->ClearDepthStencilView(m_renderToTextureDSV->getDepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	}
 
 	void GraphicsSystem::end()
@@ -363,12 +369,6 @@ namespace Destiny
 		return m_materialLoader->createAsset();
 	}
 
-	std::shared_ptr<RenderTargetView> GraphicsSystem::createRenderTargetView(unsigned int with, unsigned int height)
-	{
-		std::shared_ptr<RenderTargetView> renderTargetView = std::make_shared<RenderTargetView>(with, height);
-		return renderTargetView;
-	}
-
 	void GraphicsSystem::onResize(void* data)
 	{
 		WindowResizeData wrd = *(WindowResizeData*)data;
@@ -416,6 +416,13 @@ namespace Destiny
 
 		m_pD3D11ImmediateDeviceContext->RSSetViewports(1, m_viewport);
 		//m_pD3D11DeferredDeviceContext->RSSetViewports(1, m_viewport);
+
+		m_renderToTextureRTV.reset();
+		m_renderToTextureDSV.reset();
+		m_renderToTextureRTV = std::make_shared<RenderTargetView>(width, height);
+		m_renderToTextureDSV = std::make_shared<DepthStencilView>(width, height);
+		m_renderToTextureRTV->load(0);
+		m_renderToTextureDSV->load(0);
 	}
 
 	void GraphicsSystem::createDeviceAndContext()

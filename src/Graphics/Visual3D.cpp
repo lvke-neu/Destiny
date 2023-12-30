@@ -10,6 +10,8 @@
 #include "RasterizerState.h"
 #include "DepthStencilState.h"
 #include "BlendState.h"
+#include "RenderTargetView.h"
+#include "DepthStencilView.h"
 
 namespace Destiny
 {
@@ -22,7 +24,8 @@ namespace Destiny
 		m_rasterizerState(nullptr),
 		m_depthStencilState(nullptr),
 		m_blendState(nullptr),
-		m_primitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST)
+		m_primitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST),
+		m_renderToMask(RenderToMask::render_to_scene)
 	{
 
 	}
@@ -70,24 +73,49 @@ namespace Destiny
 		//RS
 		immediateContext->RSSetViewports(1, graphicsSystem->getViewport());
 		immediateContext->RSSetState(m_rasterizerState->getRasterizerState());
-		//OM
-		immediateContext->OMSetRenderTargets(1, graphicsSystem->getRenderTargetView(), graphicsSystem->getDepthStencilView());
-		immediateContext->OMSetDepthStencilState(m_depthStencilState->getDepthStencilState(), 0);
+		//
 		immediateContext->OMSetBlendState(m_blendState->getBlendState(), nullptr, 0xFFFFFFFF);
+		immediateContext->OMSetDepthStencilState(m_depthStencilState->getDepthStencilState(), 0);
 
-		for (const auto& command : m_beforeDrawCommands)
+		if (m_renderToMask & RenderToMask::render_to_scene)
 		{
-			if (command)
+			immediateContext->OMSetRenderTargets(1, graphicsSystem->getRenderTargetView(), graphicsSystem->getDepthStencilView());
+			
+			for (const auto& command : m_beforeDrawCommands)
 			{
-				command();
+				if (command)
+				{
+					command();
+				}
+			}
+			immediateContext->DrawIndexed(m_indexBuffer->getCount(), 0, 0);
+			for (const auto& command : m_afterDrawCommands)
+			{
+				if (command)
+				{
+					command();
+				}
 			}
 		}
-		immediateContext->DrawIndexed(m_indexBuffer->getCount(), 0, 0);
-		for (const auto& command : m_afterDrawCommands)
+
+		if (m_renderToMask & RenderToMask::render_to_texture)
 		{
-			if (command)
+			immediateContext->OMSetRenderTargets(1, graphicsSystem->getRenderToTextureRTV()->getRenderTargetView(), graphicsSystem->getRenderToTextureDSV()->getDepthStencilView());
+
+			for (const auto& command : m_beforeDrawCommands)
 			{
-				command();
+				if (command)
+				{
+					command();
+				}
+			}
+			immediateContext->DrawIndexed(m_indexBuffer->getCount(), 0, 0);
+			for (const auto& command : m_afterDrawCommands)
+			{
+				if (command)
+				{
+					command();
+				}
 			}
 		}
 	}

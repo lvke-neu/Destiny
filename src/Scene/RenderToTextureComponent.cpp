@@ -12,9 +12,7 @@
 #include "Graphics/RenderTargetView.h"
 #include "Graphics/DepthStencilView.h"
 #include "Graphics/SamplerState.h"
-#include "Node3D.h"
-#include "BoxComponent.h"
-
+#include "Graphics/GraphicsSystem.h"
 
 namespace Destiny
 {
@@ -82,14 +80,13 @@ namespace Destiny
 		m_samplerState->load(0);
 
 		m_visual3D->registerBeforeDrawCommands(std::bind(&RenderToTextureComponent::beforeDrawCommand, this));
-
 	}
 
 	void RenderToTextureComponent::beforeDrawCommand()
 	{
 		auto immediateContext = Engine::GetInstance()->getGraphicsSystem()->getImmediateContext();
 		immediateContext->PSSetSamplers(0, 1, m_samplerState->getSamplerState());
-		immediateContext->PSSetShaderResources(0, 1, ((BoxComponent*)m_node->get_parent()->get_childs()[4]->get_components()[0].get())->m_renderTargetView->getShaderResourceView());
+		immediateContext->PSSetShaderResources(0, 1, Engine::GetInstance()->getGraphicsSystem()->getRenderToTextureRTV()->getShaderResourceView());
 	}
 
 	RTTR_REGISTRATION

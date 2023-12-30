@@ -23,6 +23,7 @@ namespace Destiny
 	class Material;
 	class MaterialLoader;
 	class RenderTargetView;
+	class DepthStencilView;
 	class GraphicsSystem
 	{
 	public:
@@ -40,6 +41,8 @@ namespace Destiny
 		ID3D11RenderTargetView** getRenderTargetView();
 		ID3D11DepthStencilView* getDepthStencilView();
 		D3D11_VIEWPORT* getViewport();
+		std::shared_ptr<RenderTargetView> getRenderToTextureRTV();
+		std::shared_ptr<DepthStencilView> getRenderToTextureDSV();
 	public:
 		void commitVisual3D(std::shared_ptr<Visual3D> visual3D);
 	public:
@@ -58,7 +61,6 @@ namespace Destiny
 		std::shared_ptr<SamplerState> createSamplerState(std::shared_ptr<Blob> samplerStateDesc);
 		std::shared_ptr<Texture> createTexture(const char* path);
 		std::shared_ptr<Material> createMaterial();
-		std::shared_ptr<RenderTargetView> createRenderTargetView(unsigned int with, unsigned int height);
 		
 	private:
 		void createDeviceAndContext();
@@ -78,6 +80,9 @@ namespace Destiny
 		std::vector<std::shared_ptr<Visual3D>> m_visual3Ds;
 		std::shared_ptr<TextureLoader> m_textureLoader;
 		std::shared_ptr<MaterialLoader> m_materialLoader;
+
+		std::shared_ptr<RenderTargetView> m_renderToTextureRTV;
+		std::shared_ptr<DepthStencilView> m_renderToTextureDSV;
 	};
 
 	inline ID3D11Device* GraphicsSystem::getDevice()
@@ -110,4 +115,13 @@ namespace Destiny
 		return m_viewport;
 	}
 
+	inline std::shared_ptr<RenderTargetView> GraphicsSystem::getRenderToTextureRTV()
+	{
+		return m_renderToTextureRTV;
+	}
+
+	inline std::shared_ptr<DepthStencilView> GraphicsSystem::getRenderToTextureDSV()
+	{
+		return m_renderToTextureDSV;
+	}
 }

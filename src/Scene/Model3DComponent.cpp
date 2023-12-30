@@ -37,13 +37,14 @@ namespace Destiny
 		m_model3D->load();
 	}
 
-	void Model3DComponent::set_enable(bool enable)
+	void Model3DComponent::set_show(bool show)
 	{
 		if (m_model3D->isLoadingFinished())
 		{
+			m_show = show;
 			for (const auto& v3dComp : m_model3D->m_visual3DComponents)
 			{
-				v3dComp.second->set_enable(get_enable());
+				v3dComp.second->set_enable(m_show);
 			}
 		}
 	}
@@ -84,6 +85,7 @@ namespace Destiny
 			(
 				rttr::policy::ctor::as_raw_ptr
 			)
-			.property("path", &Model3DComponent::get_path, &Model3DComponent::set_path);
+			.property("path", &Model3DComponent::get_path, &Model3DComponent::set_path)
+			.property("show", &Model3DComponent::get_show, &Model3DComponent::set_show);
 	}
 }

@@ -25,9 +25,9 @@ namespace Destiny
 
 	void DepthStencilView::doLoad()
 	{
-		CD3D11_TEXTURE2D_DESC texDesc(DXGI_FORMAT_D24_UNORM_S8_UINT,
+		CD3D11_TEXTURE2D_DESC texDesc(DXGI_FORMAT_R24G8_TYPELESS,
 			m_width, m_height, 1, 1,
-			D3D11_BIND_DEPTH_STENCIL);
+			D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE);
 
 
 		HRESULT hr;
@@ -50,16 +50,16 @@ namespace Destiny
 			return;
 		}
 
-		//CD3D11_SHADER_RESOURCE_VIEW_DESC srvDesc(m_texture, D3D11_SRV_DIMENSION_TEXTURE2D, DXGI_FORMAT_R24_UNORM_X8_TYPELESS);
-		//hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateShaderResourceView(m_texture, &srvDesc, &m_shaderResourceView);
-		//if (!SUCCEEDED(hr))
-		//{
-		//	LOG_ERROR("DepthStencilView:shaderResourceView load failed");
-		//	loadFailed__();
-		//	SAFE_RELEASE(m_texture);
-		//	SAFE_RELEASE(m_depthStencilView);
-		//	return;
-		//}
+		CD3D11_SHADER_RESOURCE_VIEW_DESC srvDesc(m_texture, D3D11_SRV_DIMENSION_TEXTURE2D, DXGI_FORMAT_R24_UNORM_X8_TYPELESS);
+		hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateShaderResourceView(m_texture, &srvDesc, &m_shaderResourceView);
+		if (!SUCCEEDED(hr))
+		{
+			LOG_ERROR("DepthStencilView:shaderResourceView load failed");
+			loadFailed__();
+			SAFE_RELEASE(m_texture);
+			SAFE_RELEASE(m_depthStencilView);
+			return;
+		}
 
 		loadSucceeded__();
 	}

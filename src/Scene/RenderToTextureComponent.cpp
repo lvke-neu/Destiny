@@ -86,7 +86,7 @@ namespace Destiny
 	{
 		auto immediateContext = Engine::GetInstance()->getGraphicsSystem()->getImmediateContext();
 		immediateContext->PSSetSamplers(0, 1, m_samplerState->getSamplerState());
-		immediateContext->PSSetShaderResources(0, 1, Engine::GetInstance()->getGraphicsSystem()->getRenderToTextureRTV()->getShaderResourceView());
+		immediateContext->PSSetShaderResources(0, 1, Engine::GetInstance()->getGraphicsSystem()->getRenderToTextureDSV()->getShaderResourceView());
 	}
 
 	RTTR_REGISTRATION

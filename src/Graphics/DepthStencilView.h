@@ -15,11 +15,11 @@ namespace Destiny
 		virtual void doLoad() override;
 		ID3D11Texture2D* getTexture2D();
 		ID3D11DepthStencilView* getDepthStencilView();
-		//ID3D11ShaderResourceView** getShaderResourceView();
+		ID3D11ShaderResourceView** getShaderResourceView();
 	private:
 		ID3D11Texture2D* m_texture;
 		ID3D11DepthStencilView* m_depthStencilView;
-		//ID3D11ShaderResourceView* m_shaderResourceView;
+		ID3D11ShaderResourceView* m_shaderResourceView;
 		unsigned int m_width;
 		unsigned int m_height;
 	};
@@ -34,8 +34,8 @@ namespace Destiny
 		return m_depthStencilView;
 	}
 
-	//inline ID3D11ShaderResourceView** DepthStencilView::getShaderResourceView()
-	//{
-	//	return &m_shaderResourceView;
-	//}
+	inline ID3D11ShaderResourceView** DepthStencilView::getShaderResourceView()
+	{
+		return &m_shaderResourceView;
+	}
 }

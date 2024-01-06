@@ -18,6 +18,16 @@ namespace Destiny
 			XMMatrixTranslationFromVector(XMLoadFloat3(&m_translation));
 	}
 
+	XMFLOAT3 Destiny::Transform3D::getAtDirection()
+	{
+		XMFLOAT3 radiansRotation{ XMConvertToRadians(m_rotation.x), XMConvertToRadians(m_rotation.y), XMConvertToRadians(m_rotation.z) };
+		XMMATRIX rotMatrix = XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&radiansRotation));
+		XMFLOAT3 dir;
+		XMStoreFloat3(&dir, rotMatrix.r[2]);
+
+		return dir;
+	}
+
 	void Transform3D::moveZAxis(float distance)
 	{
 		XMFLOAT3 radiansRotation{ XMConvertToRadians(m_rotation.x), XMConvertToRadians(m_rotation.y), XMConvertToRadians(m_rotation.z) };

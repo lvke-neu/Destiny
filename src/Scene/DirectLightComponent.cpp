@@ -12,16 +12,16 @@ namespace Destiny
 
 	void DirectLightComponent::onAttachNode()
 	{
-		XMFLOAT3 trans = m_node->get_transform3D().get_translation();
-		m_direction->update({ trans.x, trans.y, trans.z, 1.0f });
+		XMFLOAT3 dir = m_node->get_transform3D().getAtDirection();
+		m_direction->update({ dir.x, dir.y, dir.z, 1.0f });
 		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetConstantBuffers(4, 1, m_direction->getConstantBuffer());
 		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->VSSetConstantBuffers(4, 1, m_direction->getConstantBuffer());
 	}
 
 	void DirectLightComponent::onNodeTransformChanged()
 	{
-		XMFLOAT3 trans = m_node->get_transform3D().get_translation();
-		m_direction->update({ trans.x, trans.y, trans.z, 1.0f });
+		XMFLOAT3 dir = m_node->get_transform3D().getAtDirection();
+		m_direction->update({ dir.x, dir.y, dir.z, 1.0f });
 	}
 
 	RTTR_REGISTRATION

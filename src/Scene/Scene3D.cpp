@@ -35,7 +35,7 @@ namespace Destiny
 		auto directLightNode = std::make_shared<Node3D>();
 		directLightNode->set_name("DirectLight");
 		directLightNode->addToParent(m_rootNode);
-		transform3D.set_translation({ -0.5f, -0.5f, 0.5f });
+		//transform3D.set_translation({ -0.5f, -0.5f, 0.5f });
 		directLightNode->set_transform3D(transform3D);
 		auto directLightComponent = std::make_shared<DirectLightComponent>();
 		directLightNode->addComponent(directLightComponent);

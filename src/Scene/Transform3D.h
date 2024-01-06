@@ -12,6 +12,7 @@ namespace Destiny
 		Transform3D();
 	public:
 		XMMATRIX getWorldMatrix();
+		XMFLOAT3 getAtDirection();
 		void moveZAxis(float distance);
 		void moveXAxis(float distance);
 		void rotateXAxis(float angle);

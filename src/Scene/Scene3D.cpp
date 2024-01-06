@@ -49,12 +49,16 @@ namespace Destiny
 		auto planeNode = std::make_shared<Node3D>();
 		planeNode->set_name("Plane");
 		planeNode->addToParent(m_rootNode);
-		transform3D.set_translation({ -50.0f, 0.0f, 50.0f });
+		transform3D = Transform3D();
+		transform3D.set_translation({ 0.0f, -1.0f, 0.0f });
+		transform3D.set_scale({ 50.0f, 50.0f, 1.0f });
+		transform3D.set_rotation({90.0f, 0.0f, 0.0f});
 		planeNode->set_transform3D(transform3D);
 		auto planeComponent = std::make_shared<PlaneComponent>();
 		planeNode->addComponent(planeComponent);
 
 		auto boxNode = std::make_shared<Node3D>();
+		transform3D = Transform3D();
 		boxNode->set_name("Box");
 		boxNode->addToParent(m_rootNode);
 		auto boxComponent = std::make_shared<BoxComponent>();

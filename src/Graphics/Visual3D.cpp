@@ -25,7 +25,8 @@ namespace Destiny
 		m_depthStencilState(nullptr),
 		m_blendState(nullptr),
 		m_primitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST),
-		m_renderToMask(RenderToMask::render_to_scene)
+		m_renderToMask(RenderToMask::render_to_scene),
+		m_drawType(DrawType::DrawIndex)
 	{
 
 	}
@@ -88,7 +89,14 @@ namespace Destiny
 					command();
 				}
 			}
-			immediateContext->DrawIndexed(m_indexBuffer->getCount(), 0, 0);
+			if (m_drawType == DrawType::DrawVertex)
+			{
+				immediateContext->Draw(m_vertexBuffer->getCount(), 0);
+			}
+			else if (m_drawType == DrawType::DrawIndex)
+			{
+				immediateContext->DrawIndexed(m_indexBuffer->getCount(), 0, 0);
+			}
 			for (const auto& command : m_afterDrawCommands)
 			{
 				if (command)
@@ -109,7 +117,14 @@ namespace Destiny
 					command();
 				}
 			}
-			immediateContext->DrawIndexed(m_indexBuffer->getCount(), 0, 0);
+			if (m_drawType == DrawType::DrawVertex)
+			{
+				immediateContext->Draw(m_vertexBuffer->getCount(), 0);
+			}
+			else if (m_drawType == DrawType::DrawIndex)
+			{
+				immediateContext->DrawIndexed(m_indexBuffer->getCount(), 0, 0);
+			}
 			for (const auto& command : m_afterDrawCommands)
 			{
 				if (command)

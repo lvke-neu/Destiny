@@ -10,7 +10,8 @@ namespace Destiny
 	VertexBuffer::VertexBuffer() :
 		m_stride(0),
 		m_offset(0),
-		m_vertexBuffer(nullptr)
+		m_vertexBuffer(nullptr),
+		m_count(0)
 	{
 
 	}
@@ -51,6 +52,8 @@ namespace Destiny
 				D3D11_SUBRESOURCE_DATA InitData;
 				ZeroMemory(&InitData, sizeof(InitData));
 				InitData.pSysMem = (char*)blob->getData() + sizeof(unsigned int) * 2;
+
+				m_count = (unsigned int)(blob->getLength() - sizeof(unsigned int) * 2) / m_stride;
 
 				HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateBuffer(&vbd, &InitData, &m_vertexBuffer);
 

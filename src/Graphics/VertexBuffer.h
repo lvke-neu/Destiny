@@ -15,10 +15,12 @@ namespace Destiny
 		ID3D11Buffer** getVertexBuffer();
 		unsigned int* getStride();
 		unsigned int* getOffset();
+		unsigned int getCount();
 	private:
 		unsigned int m_stride;
 		unsigned int m_offset;
 		ID3D11Buffer* m_vertexBuffer;
+		unsigned int m_count;
 	};
 
 	inline ID3D11Buffer** VertexBuffer::getVertexBuffer()
@@ -34,5 +36,10 @@ namespace Destiny
 	inline unsigned int* VertexBuffer::getOffset()
 	{
 		return &m_offset;
+	}
+
+	inline unsigned int VertexBuffer::getCount()
+	{
+		return m_count;
 	}
 }

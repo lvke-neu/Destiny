@@ -12,6 +12,7 @@
 #include "BillboardComponent.h"
 #include "SkyboxComponent.h"
 #include "RenderToTextureComponent.h"
+#include "ParticleComponent.h"
 
 namespace Destiny
 {
@@ -109,5 +110,11 @@ namespace Destiny
 		renderToTextureNode->addToParent(m_rootNode);
 		auto renderToTextureComponent = std::make_shared<RenderToTextureComponent>();
 		renderToTextureNode->addComponent(renderToTextureComponent);
+
+		auto particleNode = std::make_shared<Node3D>();
+		particleNode->set_name("Particle");
+		particleNode->addToParent(m_rootNode);
+		auto particleComponent = std::make_shared<ParticleComponent>();
+		particleNode->addComponent(renderToTextureComponent);
 	}
 }

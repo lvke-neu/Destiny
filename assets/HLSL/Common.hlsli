@@ -44,6 +44,17 @@ struct VertexOut
 	float2 texcoord : TEXCOORD;
 };
 
+struct ParticleVertexIn
+{
+	float3 positionL : POSITION;
+	float4 color : COLOR;
+};
+struct ParticleVertexOut
+{
+	float4 positionH : POSITIONL;
+	float4 color : COLOR;
+};
+
 
 Texture2D g_ambientTexture : register(t0);
 SamplerState g_ambientSampler : register(s0);

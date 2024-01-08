@@ -51,7 +51,7 @@ namespace Destiny
 
 	void Model3DComponent::update(void* data)
 	{
-		if (m_model3D->isLoadingSucceed())
+		if (m_model3D && m_model3D->isLoadingSucceed())
 		{
 			for (const auto& v3dComp : m_model3D->m_visual3DComponents)
 			{

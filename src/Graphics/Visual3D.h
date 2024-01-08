@@ -24,6 +24,12 @@ namespace Destiny
 			render_to_texture = 2,
 			render_to_shadow_map = 4
 		};
+
+		enum DrawType
+		{
+			DrawVertex,
+			DrawIndex
+		};
 	public:
 		Visual3D();
 		~Visual3D();
@@ -51,6 +57,7 @@ namespace Destiny
 		void setBlendState(std::shared_ptr<BlendState> blendState);
 		void setPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY primitiveTopology);
 		void setRenderToMask(RenderToMask mask);
+		void setDrawType(DrawType drawType);
 	private:
 		std::shared_ptr<VertexBuffer> m_vertexBuffer;
 		std::shared_ptr<IndexBuffer> m_indexBuffer;
@@ -66,6 +73,7 @@ namespace Destiny
 		std::vector < std::function<void(void)>> m_afterDrawCommands;
 		D3D_PRIMITIVE_TOPOLOGY m_primitiveTopology;
 		RenderToMask m_renderToMask;
+		DrawType m_drawType;
 	};
 
 	inline void Visual3D::setVertexBuffer(std::shared_ptr<VertexBuffer> vertexBuffer)
@@ -167,5 +175,10 @@ namespace Destiny
 	inline void Visual3D::setRenderToMask(RenderToMask mask)
 	{
 		m_renderToMask = mask;
+	}
+
+	inline void Visual3D::setDrawType(DrawType drawType)
+	{
+		m_drawType = drawType;
 	}
 }

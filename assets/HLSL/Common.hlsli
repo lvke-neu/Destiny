@@ -44,6 +44,7 @@ struct VertexOut
 	float4 positionW : POSITION;
 	float3 normalW : NORMAL;
 	float2 texcoord : TEXCOORD;
+	float4 shadowMapPositionH : TEXCOORD1;
 };
 
 struct ParticleVertexIn

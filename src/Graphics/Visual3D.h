@@ -21,8 +21,7 @@ namespace Destiny
 		enum RenderToMask
 		{
 			render_to_scene = 1,
-			render_to_texture = 2,
-			render_to_shadow_map = 4
+			render_to_shadow_map = 2
 		};
 
 		enum DrawType
@@ -34,7 +33,7 @@ namespace Destiny
 		Visual3D();
 		~Visual3D();
 	public:
-		void draw();
+		void draw(RenderToMask mask);
 		void registerBeforeDrawCommands(std::function<void(void)> beforeDrawCommand)
 		{
 			m_beforeDrawCommands.push_back(beforeDrawCommand);
@@ -56,7 +55,8 @@ namespace Destiny
 		void setDepthStencilState(std::shared_ptr<DepthStencilState> depthStencilState);
 		void setBlendState(std::shared_ptr<BlendState> blendState);
 		void setPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY primitiveTopology);
-		void setRenderToMask(RenderToMask mask);
+		unsigned int getRenderToMask();
+		void setRenderToMask(unsigned int mask);
 		void setDrawType(DrawType drawType);
 	private:
 		std::shared_ptr<VertexBuffer> m_vertexBuffer;
@@ -72,7 +72,7 @@ namespace Destiny
 		std::vector<std::function<void(void)>> m_beforeDrawCommands;
 		std::vector < std::function<void(void)>> m_afterDrawCommands;
 		D3D_PRIMITIVE_TOPOLOGY m_primitiveTopology;
-		RenderToMask m_renderToMask;
+		unsigned int m_renderToMask;
 		DrawType m_drawType;
 	};
 
@@ -172,7 +172,12 @@ namespace Destiny
 		m_primitiveTopology = primitiveTopology;
 	}
 
-	inline void Visual3D::setRenderToMask(RenderToMask mask)
+	inline unsigned int Visual3D::getRenderToMask()
+	{
+		return m_renderToMask;
+	}
+
+	inline void Visual3D::setRenderToMask(unsigned int mask)
 	{
 		m_renderToMask = mask;
 	}

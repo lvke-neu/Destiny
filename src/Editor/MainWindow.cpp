@@ -21,8 +21,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	connect(m_sceneDockWidget, &SceneDockWidget::chooseNode, m_componentDockWidget, &ComponentDockWidget::onChooseNode);
 
-	this->setWindowState(Qt::WindowMaximized);
-	//this->setMaximumSize(100, 100);
+	//this->setWindowState(Qt::WindowMaximized);
+	this->setMaximumSize(2048, 2048);
 
 	this->setWindowTitle("Destiny");
 }

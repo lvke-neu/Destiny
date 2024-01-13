@@ -27,6 +27,8 @@ cbuffer cbMaterialColor : register(b3)
 cbuffer cbDirectLight : register(b4)
 {
 	float4 g_directLightDirection;
+	matrix g_directLightView;
+	matrix g_directLightProj;
 }
 
 struct VertexIn
@@ -62,3 +64,6 @@ Texture2D g_diffuseTexture : register(t1);
 SamplerState g_diffuseSampler : register(s1);
 Texture2D g_specularTexture : register(t2);
 SamplerState g_specularSampler : register(s2);
+
+Texture2D g_shadowMapTexture : register(t3);
+SamplerComparisonState g_shadowMapSampler : register(s3);

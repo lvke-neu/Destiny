@@ -55,6 +55,8 @@ namespace Destiny
 		m_material->set_ambientSamplerState(samplerState);
 		m_material->set_diffuseSamplerState(samplerState);
 		m_material->set_specularSamplerState(samplerState);
+
+		m_visual3D->setRenderToMask(Visual3D::RenderToMask::render_to_scene);
 	}
 
 	void Visual3DComponent::set_rasterizerStateDesc(D3D11_RASTERIZER_DESC rasterizerStateDesc)

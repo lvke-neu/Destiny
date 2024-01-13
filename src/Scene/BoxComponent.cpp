@@ -108,7 +108,7 @@ namespace Destiny
 		m_material->set_specularTexturePath("assets://Texture/box_specular.png");
 		m_material->load();
 
-		m_visual3D->setRenderToMask(Visual3D::RenderToMask(Visual3D::render_to_scene | Visual3D::render_to_texture));
+		//m_visual3D->setRenderToMask(Visual3D::RenderToMask(Visual3D::render_to_scene | Visual3D::render_to_texture));
 	}
 
 

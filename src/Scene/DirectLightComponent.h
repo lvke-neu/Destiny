@@ -18,6 +18,12 @@ namespace Destiny
 	public:
 		GET_CLASS_NAME(DirectLightComponent);
 	private:
-		std::shared_ptr<ConstantBuffer<XMFLOAT4>> m_direction;
+		struct cbDirectLight
+		{
+			XMFLOAT4 direction;
+			XMMATRIX view;
+			XMMATRIX proj;
+		};
+		std::shared_ptr<ConstantBuffer<cbDirectLight>> m_direction;
 	};
 }

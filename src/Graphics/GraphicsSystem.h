@@ -41,8 +41,10 @@ namespace Destiny
 		ID3D11RenderTargetView** getRenderTargetView();
 		ID3D11DepthStencilView* getDepthStencilView();
 		D3D11_VIEWPORT* getViewport();
-		std::shared_ptr<RenderTargetView> getRenderToTextureRTV();
-		std::shared_ptr<DepthStencilView> getRenderToTextureDSV();
+		std::shared_ptr<RenderTargetView> getRenderToShadowMapRTV();
+		std::shared_ptr<DepthStencilView> getRenderToShadowMapDSV();
+		std::shared_ptr<VertexShader> getShadowMapVertexShader();
+		std::shared_ptr<SamplerState> getShadowMapSamplerState();
 	public:
 		void commitVisual3D(std::shared_ptr<Visual3D> visual3D);
 	public:
@@ -81,8 +83,10 @@ namespace Destiny
 		std::shared_ptr<TextureLoader> m_textureLoader;
 		std::shared_ptr<MaterialLoader> m_materialLoader;
 
-		std::shared_ptr<RenderTargetView> m_renderToTextureRTV;
-		std::shared_ptr<DepthStencilView> m_renderToTextureDSV;
+		std::shared_ptr<RenderTargetView> m_renderToShadowMapRTV;
+		std::shared_ptr<DepthStencilView> m_renderToShadowMapDSV;
+		std::shared_ptr<VertexShader> m_shadowMapVertexShader;
+		std::shared_ptr<SamplerState> m_shadowMapSamplerState;
 	};
 
 	inline ID3D11Device* GraphicsSystem::getDevice()
@@ -115,13 +119,23 @@ namespace Destiny
 		return m_viewport;
 	}
 
-	inline std::shared_ptr<RenderTargetView> GraphicsSystem::getRenderToTextureRTV()
+	inline std::shared_ptr<RenderTargetView> GraphicsSystem::getRenderToShadowMapRTV()
 	{
-		return m_renderToTextureRTV;
+		return m_renderToShadowMapRTV;
 	}
 
-	inline std::shared_ptr<DepthStencilView> GraphicsSystem::getRenderToTextureDSV()
+	inline std::shared_ptr<DepthStencilView> GraphicsSystem::getRenderToShadowMapDSV()
 	{
-		return m_renderToTextureDSV;
+		return m_renderToShadowMapDSV;
+	}
+
+	inline std::shared_ptr<VertexShader> GraphicsSystem::getShadowMapVertexShader()
+	{
+		return m_shadowMapVertexShader;
+	}
+
+	inline std::shared_ptr<SamplerState> GraphicsSystem::getShadowMapSamplerState()
+	{
+		return m_shadowMapSamplerState;
 	}
 }

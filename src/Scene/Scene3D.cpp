@@ -13,6 +13,7 @@
 #include "SkyboxComponent.h"
 #include "RenderToTextureComponent.h"
 #include "ParticleComponent.h"
+#include "Graphics/Visual3D.h"
 
 namespace Destiny
 {
@@ -36,7 +37,8 @@ namespace Destiny
 		auto directLightNode = std::make_shared<Node3D>();
 		directLightNode->set_name("DirectLight");
 		directLightNode->addToParent(m_rootNode);
-		//transform3D.set_translation({ -0.5f, -0.5f, 0.5f });
+		transform3D = Transform3D();
+		transform3D.set_translation({ 0.0f, 0.0f, -4.0f });
 		directLightNode->set_transform3D(transform3D);
 		auto directLightComponent = std::make_shared<DirectLightComponent>();
 		directLightNode->addComponent(directLightComponent);
@@ -66,13 +68,14 @@ namespace Destiny
 		boxNode->addComponent(boxComponent);
 		transform3D.set_translation({ -2.0f, 0.0f, 0.0f });
 		boxNode->set_transform3D(transform3D);
-
+		boxComponent->get_visual3D()->setRenderToMask(Visual3D::RenderToMask::render_to_scene | Visual3D::RenderToMask::render_to_shadow_map);
 
 		auto sphereNode = std::make_shared<Node3D>();
 		sphereNode->set_name("Sphere");
 		sphereNode->addToParent(m_rootNode);
 		auto sphereComponent = std::make_shared<SphereComponent>();
 		sphereNode->addComponent(sphereComponent);
+		sphereComponent->get_visual3D()->setRenderToMask(Visual3D::RenderToMask::render_to_scene | Visual3D::RenderToMask::render_to_shadow_map);
 
 		Transform3D transformModel;
 		auto powerplantNode = std::make_shared<Node3D>();
@@ -115,6 +118,6 @@ namespace Destiny
 		particleNode->set_name("Particle");
 		particleNode->addToParent(m_rootNode);
 		auto particleComponent = std::make_shared<ParticleComponent>();
-		particleNode->addComponent(renderToTextureComponent);
+		particleNode->addComponent(particleComponent);
 	}
 }

@@ -12,6 +12,7 @@
 #include "BlendState.h"
 #include "RenderTargetView.h"
 #include "DepthStencilView.h"
+#include "SamplerState.h"
 
 namespace Destiny
 {
@@ -36,7 +37,7 @@ namespace Destiny
 
 	}
 
-	void Visual3D::draw()
+	void Visual3D::draw(RenderToMask mask)
 	{
 		if (
 			!m_vertexBuffer || !m_vertexBuffer->isLoadingSucceed() ||
@@ -78,10 +79,10 @@ namespace Destiny
 		immediateContext->OMSetBlendState(m_blendState->getBlendState(), nullptr, 0xFFFFFFFF);
 		immediateContext->OMSetDepthStencilState(m_depthStencilState->getDepthStencilState(), 0);
 
-		if (m_renderToMask & RenderToMask::render_to_scene)
+		if (mask == RenderToMask::render_to_shadow_map)
 		{
-			immediateContext->OMSetRenderTargets(1, graphicsSystem->getRenderTargetView(), graphicsSystem->getDepthStencilView());
-			
+			immediateContext->OMSetRenderTargets(1, graphicsSystem->getRenderToShadowMapRTV()->getRenderTargetView(), graphicsSystem->getRenderToShadowMapDSV()->getDepthStencilView());
+
 			for (const auto& command : m_beforeDrawCommands)
 			{
 				if (command)
@@ -89,6 +90,10 @@ namespace Destiny
 					command();
 				}
 			}
+
+			immediateContext->VSSetShader(graphicsSystem->getShadowMapVertexShader()->getVertexShader(), nullptr, 0);
+			immediateContext->PSSetShader(nullptr, nullptr, 0);
+
 			if (m_drawType == DrawType::DrawVertex)
 			{
 				immediateContext->Draw(m_vertexBuffer->getCount(), 0);
@@ -105,33 +110,36 @@ namespace Destiny
 				}
 			}
 		}
-
-		if (m_renderToMask & RenderToMask::render_to_texture)
+		else if (mask == RenderToMask::render_to_scene)
 		{
-			immediateContext->OMSetRenderTargets(1, graphicsSystem->getRenderToTextureRTV()->getRenderTargetView(), graphicsSystem->getRenderToTextureDSV()->getDepthStencilView());
+			 immediateContext->OMSetRenderTargets(1, graphicsSystem->getRenderTargetView(), graphicsSystem->getDepthStencilView());
 
-			for (const auto& command : m_beforeDrawCommands)
-			{
-				if (command)
-				{
-					command();
-				}
-			}
-			if (m_drawType == DrawType::DrawVertex)
-			{
-				immediateContext->Draw(m_vertexBuffer->getCount(), 0);
-			}
-			else if (m_drawType == DrawType::DrawIndex)
-			{
-				immediateContext->DrawIndexed(m_indexBuffer->getCount(), 0, 0);
-			}
-			for (const auto& command : m_afterDrawCommands)
-			{
-				if (command)
-				{
-					command();
-				}
-			}
+			 for (const auto& command : m_beforeDrawCommands)
+			 {
+				 if (command)
+				 {
+					 command();
+				 }
+			 }
+
+			 immediateContext->PSSetSamplers(3, 1, graphicsSystem->getShadowMapSamplerState()->getSamplerState());
+			 immediateContext->PSSetShaderResources(3, 1, graphicsSystem->getRenderToShadowMapDSV()->getShaderResourceView());
+
+			 if (m_drawType == DrawType::DrawVertex)
+			 {
+				 immediateContext->Draw(m_vertexBuffer->getCount(), 0);
+			 }
+			 else if (m_drawType == DrawType::DrawIndex)
+			 {
+				 immediateContext->DrawIndexed(m_indexBuffer->getCount(), 0, 0);
+			 }
+			 for (const auto& command : m_afterDrawCommands)
+			 {
+				 if (command)
+				 {
+					 command();
+				 }
+			 }
 		}
 	}
 }

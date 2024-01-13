@@ -7,21 +7,40 @@ namespace Destiny
 {
 	DirectLightComponent::DirectLightComponent()
 	{
-		m_direction = std::make_shared<ConstantBuffer<XMFLOAT4>>();
+		m_direction = std::make_shared<ConstantBuffer<cbDirectLight>>();
 	}
 
 	void DirectLightComponent::onAttachNode()
 	{
+		cbDirectLight directLight;
 		XMFLOAT3 dir = m_node->get_transform3D().getAtDirection();
-		m_direction->update({ dir.x, dir.y, dir.z, 1.0f });
+		directLight.direction = { dir.x, dir.y, dir.z, 1.0f };
+		directLight.view = XMMatrixTranspose(XMMatrixInverse(nullptr, m_node->get_transform3D().getWorldMatrix()));
+		directLight.proj = XMMatrixTranspose(XMMatrixOrthographicLH(40.0f, 40.0f, 20.0f, 100.0f));
+		
+		XMFLOAT4 row0;
+		XMFLOAT4 row1;
+		XMFLOAT4 row2;
+		XMFLOAT4 row3;
+		XMStoreFloat4(&row0, directLight.proj.r[0]);
+		XMStoreFloat4(&row1, directLight.proj.r[1]);
+		XMStoreFloat4(&row2, directLight.proj.r[2]);
+		XMStoreFloat4(&row3, directLight.proj.r[3]);
+
+
+		m_direction->update(directLight);
 		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetConstantBuffers(4, 1, m_direction->getConstantBuffer());
 		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->VSSetConstantBuffers(4, 1, m_direction->getConstantBuffer());
 	}
 
 	void DirectLightComponent::onNodeTransformChanged()
 	{
+		cbDirectLight directLight;
 		XMFLOAT3 dir = m_node->get_transform3D().getAtDirection();
-		m_direction->update({ dir.x, dir.y, dir.z, 1.0f });
+		directLight.direction = { dir.x, dir.y, dir.z, 1.0f };
+		directLight.view = XMMatrixTranspose(XMMatrixInverse(nullptr, m_node->get_transform3D().getWorldMatrix()));
+		directLight.proj = XMMatrixTranspose(XMMatrixOrthographicLH(400.0f, 400.0f, 20.0f, 6000.0f));
+		m_direction->update(directLight);
 	}
 
 	RTTR_REGISTRATION

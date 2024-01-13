@@ -41,8 +41,10 @@ namespace Destiny
 		m_viewport(new D3D11_VIEWPORT),
 		m_textureLoader(nullptr),
 		m_materialLoader(nullptr),
-		m_renderToTextureRTV(nullptr),
-		m_renderToTextureDSV(nullptr)
+		m_renderToShadowMapRTV(nullptr),
+		m_renderToShadowMapDSV(nullptr),
+		m_shadowMapVertexShader(nullptr),
+		m_shadowMapSamplerState(nullptr)
 	{
 
 	}
@@ -70,6 +72,24 @@ namespace Destiny
 
 		m_textureLoader = std::make_shared<TextureLoader>();
 		m_materialLoader = std::make_shared<MaterialLoader>();
+
+		m_shadowMapVertexShader = createVertexShader("assets://HLSL/ShadowMap_VS.cso");
+		m_shadowMapVertexShader->load(0);
+
+		std::shared_ptr<Blob> data = nullptr;
+		data.reset(new Blob(sizeof(D3D11_SAMPLER_DESC)));
+		D3D11_SAMPLER_DESC desc = SamplerState::Default_SamplerState_Desc;
+		desc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_LINEAR_MIP_POINT;
+		desc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+		desc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+		desc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+		desc.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL;
+		desc.BorderColor[0] = { 1.0f };
+		desc.MinLOD = 0;
+		desc.MaxLOD = D3D11_FLOAT32_MAX;
+		memcpy_s(data->getData(), data->getLength(), &desc, data->getLength());
+		m_shadowMapSamplerState = Engine::GetInstance()->getGraphicsSystem()->createSamplerState(data);
+		m_shadowMapSamplerState->load(0);
 	}
 
 	void GraphicsSystem::uninitialize()
@@ -82,15 +102,36 @@ namespace Destiny
 		m_pD3D11ImmediateDeviceContext->ClearRenderTargetView(m_pRenderTargetView, Color::Black.toFloat());
 		m_pD3D11ImmediateDeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-		m_pD3D11ImmediateDeviceContext->ClearRenderTargetView(*m_renderToTextureRTV->getRenderTargetView(), Color::Black.toFloat());
-		m_pD3D11ImmediateDeviceContext->ClearDepthStencilView(m_renderToTextureDSV->getDepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+		m_pD3D11ImmediateDeviceContext->ClearRenderTargetView(*m_renderToShadowMapRTV->getRenderTargetView(), Color::Black.toFloat());
+		m_pD3D11ImmediateDeviceContext->ClearDepthStencilView(m_renderToShadowMapDSV->getDepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	}
 
 	void GraphicsSystem::end()
 	{
+		std::vector<std::shared_ptr<Visual3D>> renderToShadowMapVisual3Ds;
+		std::vector<std::shared_ptr<Visual3D>> renderToSceneVisual3Ds;
+
 		for (const auto& visual3D : m_visual3Ds)
 		{
-			visual3D->draw();
+			if (visual3D->getRenderToMask() & Visual3D::RenderToMask::render_to_shadow_map)
+			{
+				renderToShadowMapVisual3Ds.push_back(visual3D);
+			}
+
+			if (visual3D->getRenderToMask() & Visual3D::RenderToMask::render_to_scene)
+			{
+				renderToSceneVisual3Ds.push_back(visual3D);
+			}
+		}
+
+		for (const auto& visual3D : renderToShadowMapVisual3Ds)
+		{
+			visual3D->draw(Visual3D::RenderToMask::render_to_shadow_map);
+		}
+
+		for (const auto& visual3D : renderToSceneVisual3Ds)
+		{
+			visual3D->draw(Visual3D::RenderToMask::render_to_scene);
 		}
 
 		m_pDXGISwapChain->Present(0, 0);
@@ -417,12 +458,12 @@ namespace Destiny
 		m_pD3D11ImmediateDeviceContext->RSSetViewports(1, m_viewport);
 		//m_pD3D11DeferredDeviceContext->RSSetViewports(1, m_viewport);
 
-		m_renderToTextureRTV.reset();
-		m_renderToTextureDSV.reset();
-		m_renderToTextureRTV = std::make_shared<RenderTargetView>(width, height);
-		m_renderToTextureDSV = std::make_shared<DepthStencilView>(width, height);
-		m_renderToTextureRTV->load(0);
-		m_renderToTextureDSV->load(0);
+		m_renderToShadowMapRTV.reset();
+		m_renderToShadowMapDSV.reset();
+		m_renderToShadowMapRTV = std::make_shared<RenderTargetView>(width, height);
+		m_renderToShadowMapDSV = std::make_shared<DepthStencilView>(width, height);
+		m_renderToShadowMapRTV->load(0);
+		m_renderToShadowMapDSV->load(0);
 	}
 
 	void GraphicsSystem::createDeviceAndContext()

@@ -15,12 +15,10 @@ namespace Destiny
 		cbDirectLight directLight;
 		XMFLOAT3 dir = m_node->get_transform3D().getAtDirection();
 		directLight.direction = { dir.x, dir.y, dir.z, 1.0f };
-
-		
-
-		directLight.view = XMMatrixLookAtLH(XMLoadFloat3(&dir), g_XMZero, g_XMIdentityR1);
-		directLight.proj = XMMatrixTranspose(XMMatrixOrthographicLH(40.0f, 40.0f, 20.0f, 100.0f));
+		directLight.view = XMMatrixTranspose(XMMatrixInverse(nullptr, m_node->get_transform3D().getWorldMatrix()));
+		directLight.proj = XMMatrixTranspose(XMMatrixOrthographicLH(40.0f, 40.0f, 1.0f, 100.0f));
 		m_direction->update(directLight);
+
 		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetConstantBuffers(4, 1, m_direction->getConstantBuffer());
 		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->VSSetConstantBuffers(4, 1, m_direction->getConstantBuffer());
 	}
@@ -30,9 +28,8 @@ namespace Destiny
 		cbDirectLight directLight;
 		XMFLOAT3 dir = m_node->get_transform3D().getAtDirection();
 		directLight.direction = { dir.x, dir.y, dir.z, 1.0f };
-
-		directLight.view = XMMatrixLookAtLH(XMLoadFloat3(&dir), g_XMZero, g_XMIdentityR1);
-		directLight.proj = XMMatrixTranspose(XMMatrixOrthographicLH(40.0f, 40.0f, 20.0f, 100.0f));
+		directLight.view = XMMatrixTranspose(XMMatrixInverse(nullptr, m_node->get_transform3D().getWorldMatrix()));
+		directLight.proj = XMMatrixTranspose(XMMatrixOrthographicLH(40.0f, 40.0f, 1.0f, 100.0f));
 		m_direction->update(directLight);
 	}
 

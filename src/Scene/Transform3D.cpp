@@ -23,9 +23,9 @@ namespace Destiny
 		XMFLOAT3 radiansRotation{ XMConvertToRadians(m_rotation.x), XMConvertToRadians(m_rotation.y), XMConvertToRadians(m_rotation.z) };
 		XMMATRIX rotMatrix = XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&radiansRotation));
 		XMFLOAT3 dir;
-		XMStoreFloat3(&dir, rotMatrix.r[2]);
+		XMStoreFloat3(&dir, XMVector3Normalize(rotMatrix.r[2]));
 
-		return dir;
+		return XMFLOAT3(0.0f, -0.5f, 0.5f);
 	}
 
 	void Transform3D::moveZAxis(float distance)

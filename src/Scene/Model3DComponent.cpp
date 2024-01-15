@@ -20,6 +20,11 @@ namespace Destiny
 
 	void Model3DComponent::set_path(std::string path)
 	{
+		if (!get_node())
+		{
+			return;
+		}
+
 		for (auto& node : get_node()->get_childs())
 		{
 			node->removeFromParent();

@@ -93,7 +93,7 @@ namespace Destiny
 
 			immediateContext->VSSetShader(graphicsSystem->getShadowMapVertexShader()->getVertexShader(), nullptr, 0);
 			immediateContext->PSSetShader(nullptr, nullptr, 0);
-
+			immediateContext->RSSetViewports(1, graphicsSystem->getShadowMapViewport());
 			if (m_drawType == DrawType::DrawVertex)
 			{
 				immediateContext->Draw(m_vertexBuffer->getCount(), 0);

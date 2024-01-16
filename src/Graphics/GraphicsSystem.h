@@ -45,6 +45,7 @@ namespace Destiny
 		std::shared_ptr<DepthStencilView> getRenderToShadowMapDSV();
 		std::shared_ptr<VertexShader> getShadowMapVertexShader();
 		std::shared_ptr<SamplerState> getShadowMapSamplerState();
+		D3D11_VIEWPORT* getShadowMapViewport();
 	public:
 		void commitVisual3D(std::shared_ptr<Visual3D> visual3D);
 	public:
@@ -87,6 +88,9 @@ namespace Destiny
 		std::shared_ptr<DepthStencilView> m_renderToShadowMapDSV;
 		std::shared_ptr<VertexShader> m_shadowMapVertexShader;
 		std::shared_ptr<SamplerState> m_shadowMapSamplerState;
+		unsigned int m_shadowMapWidth;
+		unsigned int m_shadowMapHeight;
+		D3D11_VIEWPORT* m_shadowMapViewport;
 	};
 
 	inline ID3D11Device* GraphicsSystem::getDevice()
@@ -137,5 +141,10 @@ namespace Destiny
 	inline std::shared_ptr<SamplerState> GraphicsSystem::getShadowMapSamplerState()
 	{
 		return m_shadowMapSamplerState;
+	}
+
+	inline D3D11_VIEWPORT* GraphicsSystem::getShadowMapViewport()
+	{
+		return m_shadowMapViewport;
 	}
 }

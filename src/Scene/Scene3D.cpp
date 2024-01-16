@@ -27,7 +27,8 @@ namespace Destiny
 		m_cameraNode->set_name("Camera");
 		m_cameraNode->addToParent(m_rootNode);
 		Transform3D transform3D;
-		transform3D.set_translation({ 0.0f, 2.0f, -10.0f });
+		transform3D.set_translation({ 0.0f, 5.0f, -5.0f });
+		transform3D.set_rotation({ 50.0f, 0.0f, 0.0f });
 		m_cameraNode->set_transform3D(transform3D);
 		auto camera3DComponent = std::make_shared<Camera3DComponent>();
 		m_cameraNode->addComponent(camera3DComponent);

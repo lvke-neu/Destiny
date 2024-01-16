@@ -44,7 +44,10 @@ namespace Destiny
 		m_renderToShadowMapRTV(nullptr),
 		m_renderToShadowMapDSV(nullptr),
 		m_shadowMapVertexShader(nullptr),
-		m_shadowMapSamplerState(nullptr)
+		m_shadowMapSamplerState(nullptr),
+		m_shadowMapWidth(2048),
+		m_shadowMapHeight(2048),
+		m_shadowMapViewport(new D3D11_VIEWPORT)
 	{
 
 	}
@@ -90,6 +93,18 @@ namespace Destiny
 		memcpy_s(data->getData(), data->getLength(), &desc, data->getLength());
 		m_shadowMapSamplerState = Engine::GetInstance()->getGraphicsSystem()->createSamplerState(data);
 		m_shadowMapSamplerState->load(0);
+
+		m_shadowMapViewport->TopLeftX = 0;
+		m_shadowMapViewport->TopLeftY = 0;
+		m_shadowMapViewport->Width = static_cast<float>(m_shadowMapWidth);
+		m_shadowMapViewport->Height = static_cast<float>(m_shadowMapHeight);
+		m_shadowMapViewport->MinDepth = 0.0f;
+		m_shadowMapViewport->MaxDepth = 1.0f;
+
+		m_renderToShadowMapRTV = std::make_shared<RenderTargetView>(m_shadowMapWidth, m_shadowMapHeight);
+		m_renderToShadowMapDSV = std::make_shared<DepthStencilView>(m_shadowMapWidth, m_shadowMapHeight);
+		m_renderToShadowMapRTV->load(0);
+		m_renderToShadowMapDSV->load(0);
 	}
 
 	void GraphicsSystem::uninitialize()
@@ -458,12 +473,12 @@ namespace Destiny
 		m_pD3D11ImmediateDeviceContext->RSSetViewports(1, m_viewport);
 		//m_pD3D11DeferredDeviceContext->RSSetViewports(1, m_viewport);
 
-		m_renderToShadowMapRTV.reset();
-		m_renderToShadowMapDSV.reset();
-		m_renderToShadowMapRTV = std::make_shared<RenderTargetView>(width, height);
-		m_renderToShadowMapDSV = std::make_shared<DepthStencilView>(width, height);
-		m_renderToShadowMapRTV->load(0);
-		m_renderToShadowMapDSV->load(0);
+		//m_renderToShadowMapRTV.reset();
+		//m_renderToShadowMapDSV.reset();
+		//m_renderToShadowMapRTV = std::make_shared<RenderTargetView>(width, height);
+		//m_renderToShadowMapDSV = std::make_shared<DepthStencilView>(width, height);
+		//m_renderToShadowMapRTV->load(0);
+		//m_renderToShadowMapDSV->load(0);
 	}
 
 	void GraphicsSystem::createDeviceAndContext()

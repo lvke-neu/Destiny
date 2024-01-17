@@ -109,8 +109,6 @@ namespace Destiny
 		gsNode->addComponent(testGsComponent);
 		gsNode->set_transform3D(transform3DGS);
 
-
-
 		auto renderToTextureNode = std::make_shared<Node3D>();
 		renderToTextureNode->set_name("RenderToTexture");
 		renderToTextureNode->addToParent(m_rootNode);
@@ -122,5 +120,6 @@ namespace Destiny
 		particleNode->addToParent(m_rootNode);
 		auto particleComponent = std::make_shared<ParticleComponent>();
 		particleNode->addComponent(particleComponent);
+		particleComponent->get_visual3D()->setRenderToMask(Visual3D::RenderToMask::render_to_scene | Visual3D::RenderToMask::render_to_shadow_map);
 	}
 }

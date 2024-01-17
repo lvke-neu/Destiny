@@ -21,7 +21,7 @@ namespace Destiny
 			XMFLOAT4 color;
 		};
 
-		int count = 100;
+		int count = 1000;
 		std::vector<ParticleVertex> vertices;
 		vertices.resize(count);
 		for (int i = 0; i < count; i++)

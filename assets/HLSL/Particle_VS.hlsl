@@ -6,7 +6,7 @@ ParticleVertexOut VS(ParticleVertexIn vIn)
 	float4 positionV = mul(positionW, g_view);
 	float4 positionH = mul(positionV, g_proj);
 	ParticleVertexOut vOut;
-	vOut.positionH = float4(vIn.positionL, 1.0f);
+	vOut.positionH = positionH;
 	vOut.color = vIn.color;
 
     return vOut;

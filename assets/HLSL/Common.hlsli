@@ -68,4 +68,4 @@ Texture2D g_specularTexture : register(t2);
 SamplerState g_specularSampler : register(s2);
 
 Texture2D g_shadowMapTexture : register(t3);
-SamplerComparisonState g_shadowMapSampler : register(s3);
+SamplerState g_shadowMapSampler : register(s3);

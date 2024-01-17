@@ -23,6 +23,7 @@ namespace Destiny
 			XMFLOAT4 direction;
 			XMMATRIX view;
 			XMMATRIX proj;
+			XMMATRIX T;
 		};
 		std::shared_ptr<ConstantBuffer<cbDirectLight>> m_direction;
 	};

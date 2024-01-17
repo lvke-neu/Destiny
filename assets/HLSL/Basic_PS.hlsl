@@ -9,6 +9,7 @@ float CalcShadowFactor(SamplerComparisonState samShadow,
 	// 透视除法
 	shadowPosH.xyz /= shadowPosH.w;
 
+	shadowPosH.xy = shadowPosH.xy * float2(0.5, -0.5) + float2(0.5, 0.5);
 	// NDC空间的深度值
 	float depth = shadowPosH.z;
 

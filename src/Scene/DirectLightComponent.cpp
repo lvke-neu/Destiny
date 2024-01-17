@@ -19,6 +19,13 @@ namespace Destiny
 		//auto eyePos = m_node->get_transform3D().get_translation();
 		//directLight.view = XMMatrixTranspose(XMMatrixLookAtLH(XMLoadFloat3(&eyePos), g_XMZero, g_XMIdentityR1));
 		directLight.proj = XMMatrixTranspose(XMMatrixOrthographicLH(40.0f, 40.0f, 1.0f, 100.0f));
+		directLight.T = 
+		{
+			0.5f, 0.0f, 0.0f, 0.0f,
+			0.0f, -0.5f, 0.0f, 0.0f,
+			0.0f, 0.0f, 1.0f, 0.0f,
+			0.5f, 0.5f, 0.0f, 1.0f
+		};
 		m_direction->update(directLight);
 
 		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetConstantBuffers(4, 1, m_direction->getConstantBuffer());
@@ -32,6 +39,13 @@ namespace Destiny
 		directLight.direction = { dir.x, dir.y, dir.z, 1.0f };
 		directLight.view = XMMatrixTranspose(XMMatrixInverse(nullptr, m_node->get_transform3D().getWorldMatrix()));
 		directLight.proj = XMMatrixTranspose(XMMatrixOrthographicLH(40.0f, 40.0f, 1.0f, 100.0f));
+		directLight.T =
+		{
+			0.5f, 0.0f, 0.0f, 0.0f,
+			0.0f, -0.5f, 0.0f, 0.0f,
+			0.0f, 0.0f, 1.0f, 0.0f,
+			0.5f, 0.5f, 0.0f, 1.0f
+		};
 		m_direction->update(directLight);
 	}
 

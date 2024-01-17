@@ -29,6 +29,7 @@ cbuffer cbDirectLight : register(b4)
 	float4 g_directLightDirection;
 	matrix g_directLightView;
 	matrix g_directLightProj;
+	matrix g_T;
 }
 
 struct VertexIn

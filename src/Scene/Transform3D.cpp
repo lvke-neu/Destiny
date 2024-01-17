@@ -25,7 +25,7 @@ namespace Destiny
 		XMFLOAT3 dir;
 		XMStoreFloat3(&dir, XMVector3Normalize(rotMatrix.r[2]));
 
-		return XMFLOAT3(0.0f, -0.5f, 0.5f);
+		return dir;
 	}
 
 	void Transform3D::moveZAxis(float distance)

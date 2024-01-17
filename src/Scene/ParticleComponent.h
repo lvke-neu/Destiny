@@ -10,5 +10,7 @@ namespace Destiny
 		ParticleComponent();
 	public:
 		GET_CLASS_NAME(ParticleComponent);
+	private:
+		void update(void* data);
 	};
 }

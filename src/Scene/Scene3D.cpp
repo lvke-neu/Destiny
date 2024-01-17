@@ -75,6 +75,9 @@ namespace Destiny
 		auto sphereNode = std::make_shared<Node3D>();
 		sphereNode->set_name("Sphere");
 		sphereNode->addToParent(m_rootNode);
+		transform3D = Transform3D();
+		transform3D.set_translation({ 3.0f, 0.0f, 0.0f });
+		sphereNode->set_transform3D(transform3D);
 		auto sphereComponent = std::make_shared<SphereComponent>();
 		sphereNode->addComponent(sphereComponent);
 		sphereComponent->get_visual3D()->setRenderToMask(Visual3D::RenderToMask::render_to_scene | Visual3D::RenderToMask::render_to_shadow_map);
@@ -108,6 +111,7 @@ namespace Destiny
 		auto testGsComponent = std::make_shared<BillboardComponent>();
 		gsNode->addComponent(testGsComponent);
 		gsNode->set_transform3D(transform3DGS);
+		testGsComponent->set_enable(false);
 
 		auto renderToTextureNode = std::make_shared<Node3D>();
 		renderToTextureNode->set_name("RenderToTexture");
@@ -115,10 +119,17 @@ namespace Destiny
 		auto renderToTextureComponent = std::make_shared<RenderToTextureComponent>();
 		renderToTextureNode->addComponent(renderToTextureComponent);
 
-		auto particleNode = std::make_shared<Node3D>();
-		particleNode->set_name("Particle");
-		particleNode->addToParent(m_rootNode);
-		auto particleComponent = std::make_shared<ParticleComponent>();
-		particleNode->addComponent(particleComponent);
+		for (int i = -10; i < 10; i++)
+		{
+			auto particleNode = std::make_shared<Node3D>();
+			particleNode->set_name("Particle");
+			particleNode->addToParent(m_rootNode);
+			transform3D = Transform3D();
+			transform3D.set_translation({ (float)i, 50.0f, 0.0f });
+			particleNode->set_transform3D(transform3D);
+			auto particleComponent = std::make_shared<ParticleComponent>();
+			particleNode->addComponent(particleComponent);
+		}
+
 	}
 }

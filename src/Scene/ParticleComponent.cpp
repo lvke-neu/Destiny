@@ -7,6 +7,10 @@
 #include "Graphics/PixelShader.h"
 #include "Graphics/InputLayout.h"
 #include "Graphics/Material.h"
+#include "Engine/Engine.h"
+#include "Engine/EventSystem.h"
+#include "Node3D.h"
+#include "Transform3D.h"
 
 namespace Destiny
 {
@@ -21,12 +25,12 @@ namespace Destiny
 			XMFLOAT4 color;
 		};
 
-		int count = 1000;
+		int count = 100;
 		std::vector<ParticleVertex> vertices;
 		vertices.resize(count);
 		for (int i = 0; i < count; i++)
 		{
-			vertices[i].position = XMFLOAT3(i / 100.0f, 0.0f, 0.0f);
+			vertices[i].position = XMFLOAT3(0.0f, i / 100.0f, 0.0f);
 			vertices[i].color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 		}
 
@@ -68,6 +72,31 @@ namespace Destiny
 		
 		m_visual3D->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 		m_visual3D->setDrawType(Visual3D::DrawType::DrawVertex);
+
+		Engine::GetInstance()->getEventSystem()->registerEvent(EventType::Update, std::bind(&ParticleComponent::update, this, std::placeholders::_1));
+	}
+
+	void ParticleComponent::update(void* data)
+	{
+		if (!m_node)
+		{
+			return;
+		}
+		float deltaTime = *(float*)data;
+		static float gravity = 9.8f;
+		auto transform3D = m_node->get_transform3D();
+		auto translation = transform3D.get_translation();
+		static float sumDeltaTime = 0.0f;
+		sumDeltaTime += deltaTime;
+		float speed = gravity * sumDeltaTime;
+		translation.y = translation.y - speed * sumDeltaTime;
+		if (translation.y < 0.0f)
+		{
+			translation.y = 50.0f;
+			sumDeltaTime = 0.0f;
+		}
+		transform3D.set_translation(translation);
+		m_node->set_transform3D(transform3D);
 	}
 
 	RTTR_REGISTRATION

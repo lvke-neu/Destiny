@@ -22,27 +22,13 @@ namespace Destiny
 		};
 
 		int count = 100;
-		std::vector<ParticleVertex> vertices = {
-			{
-				{-1.0f, 0.0f, 0.5f},
-				{1.0f, 1.0f, 1.0f, 1.0f}
-			},
-			{
-				{0.0f, 1.0f, 0.5f},
-				{1.0f, 1.0f, 1.0f, 1.0f}
-			},
-			{
-				{1.0f, 0.0f, 0.5f},
-				{1.0f, 1.0f, 1.0f, 1.0f}
-			}
-		};
-		//vertices.resize(count);
-
-		//for (int i = 0; i < count; i++)
-		//{
-		//	vertices[i].position = XMFLOAT3(i / 100.0f, 0.0f, 0.0f);
-		//	vertices[i].color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-		//}
+		std::vector<ParticleVertex> vertices;
+		vertices.resize(count);
+		for (int i = 0; i < count; i++)
+		{
+			vertices[i].position = XMFLOAT3(i / 100.0f, 0.0f, 0.0f);
+			vertices[i].color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+		}
 
 		data.reset(new Blob(vertices.size() * sizeof(ParticleVertex)));
 		memcpy_s(data->getData(), data->getLength(), vertices.data(), data->getLength());
@@ -80,10 +66,9 @@ namespace Destiny
 		m_visual3D->setVertexShader(vertexShader);
 		m_visual3D->setPixelShader(pixelShader);
 		
-		m_visual3D->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		m_visual3D->setDrawType(Visual3D::DrawType::DrawIndex);
+		m_visual3D->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+		m_visual3D->setDrawType(Visual3D::DrawType::DrawVertex);
 	}
-
 
 	RTTR_REGISTRATION
 	{

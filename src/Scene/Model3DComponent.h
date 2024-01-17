@@ -17,6 +17,7 @@ namespace Destiny
 	public:
 		GET(std::string, path);
 		GET(bool, show);
+		SET(unsigned int, renderToMask);
 		void set_path(std::string path);
 		void set_show(bool show);
 	private:
@@ -25,5 +26,6 @@ namespace Destiny
 		std::shared_ptr<Model3D> m_model3D;
 		std::string m_path;
 		bool m_show;
+		unsigned int m_renderToMask;
 	};
 }

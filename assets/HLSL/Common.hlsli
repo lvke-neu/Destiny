@@ -55,7 +55,7 @@ struct ParticleVertexIn
 };
 struct ParticleVertexOut
 {
-	float4 positionH : POSITIONL;
+	float4 positionH : SV_POSITION;
 	float4 color : COLOR;
 };
 

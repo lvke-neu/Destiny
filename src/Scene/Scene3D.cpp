@@ -96,8 +96,9 @@ namespace Destiny
 		transformModel.set_scale({ 0.03f, 0.03f, 0.03f });
 		walkNode->set_transform3D(transformModel);
 		auto walkComponent = std::make_shared<Model3DComponent>();
-		//walkNode->addComponent(walkComponent);
+		walkNode->addComponent(walkComponent);
 		walkComponent->set_path("assets://Model/walk/Standard Walk.dae");
+		walkComponent->set_renderToMask(Visual3D::RenderToMask::render_to_scene | Visual3D::RenderToMask::render_to_shadow_map);
 
 		Transform3D transform3DGS;
 		transform3DGS.set_translation({ 3.0f, 0.0f, 0.0f });

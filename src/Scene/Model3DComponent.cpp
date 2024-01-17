@@ -5,10 +5,12 @@
 #include "Engine/Blob.h"
 #include "Engine/BlobHolder.h"
 #include "Engine/EventSystem.h"
+#include "Graphics/Visual3D.h"
 
 namespace Destiny
 {
-	Model3DComponent::Model3DComponent()
+	Model3DComponent::Model3DComponent() :
+		m_renderToMask(1)
 	{
 		Engine::GetInstance()->getEventSystem()->registerEvent(EventType::Update, std::bind(&Model3DComponent::update, this, std::placeholders::_1));
 	}
@@ -65,6 +67,7 @@ namespace Destiny
 				meshNode->addToParent(get_node());
 				meshNode->addComponent(v3dComp.second);
 				meshNode->set_transform3D(get_node()->get_transform3D());
+				v3dComp.second->get_visual3D()->setRenderToMask(m_renderToMask);
 			}
 			m_model3D->loadFinished_();
 		}

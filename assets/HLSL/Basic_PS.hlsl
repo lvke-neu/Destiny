@@ -6,39 +6,49 @@ float CalcShadowFactor(SamplerComparisonState samShadow,
 	Texture2D shadowMap,
 	float4 shadowPosH)
 {
-	// Í¸ÊÓ³ı·¨
+	//// é€è§†é™¤æ³•
+	//shadowPosH.xyz /= shadowPosH.w;
+
+	//shadowPosH.xy = shadowPosH.xy * float2(0.5, -0.5) + float2(0.5, 0.5);
+	//// NDCç©ºé—´çš„æ·±åº¦å€¼
+	//float depth = shadowPosH.z;
+
+	//// çº¹ç´ åœ¨çº¹ç†åæ ‡ä¸‹çš„å®½é«˜
+	//const float dx = SMAP_DX;
+
+	//float percentLit = 0.0f;
+	//const float2 offsets[9] =
+	//{
+	//	float2(-dx, -dx), float2(0.0f, -dx), float2(dx, -dx),
+	//	float2(-dx, 0.0f), float2(0.0f, 0.0f), float2(dx, 0.0f),
+	//	float2(-dx, +dx), float2(0.0f, +dx), float2(dx, +dx)
+	//};
+
+	//// samShadowä¸ºcompareValue <= sampleValueæ—¶ä¸º1.0f(åä¹‹ä¸º0.0f), å¯¹ç›¸é‚»å››ä¸ªçº¹ç´ è¿›è¡Œé‡‡æ ·æ¯”è¾ƒ
+	//// å¹¶æ ¹æ®é‡‡æ ·ç‚¹ä½ç½®è¿›è¡ŒåŒçº¿æ€§æ’å€¼
+	//// float result0 = depth <= s0;  // .s0      .s1          
+	//// float result1 = depth <= s1;
+	//// float result2 = depth <= s2;  //     .depth
+	//// float result3 = depth <= s3;  // .s2      .s3
+	//// float result = BilinearLerp(result0, result1, result2, result3, a, b);  // a bä¸ºç®—å‡ºçš„æ’å€¼ç›¸å¯¹ä½ç½®                           
+	//[unroll]
+	//for (int i = 0; i < 9; ++i)
+	//{
+	//	percentLit += shadowMap.SampleCmpLevelZero(samShadow,
+	//		shadowPosH.xy + offsets[i], depth).r;
+	//}
+
+	//return percentLit /= 9.0f;
+
 	shadowPosH.xyz /= shadowPosH.w;
-
 	shadowPosH.xy = shadowPosH.xy * float2(0.5, -0.5) + float2(0.5, 0.5);
-	// NDC¿Õ¼äµÄÉî¶ÈÖµ
 	float depth = shadowPosH.z;
-
-	// ÎÆËØÔÚÎÆÀí×ø±êÏÂµÄ¿í¸ß
-	const float dx = SMAP_DX;
-
-	float percentLit = 0.0f;
-	const float2 offsets[9] =
+	float bias = 0.005f;
+	if (depth  <= shadowMap.Sample(g_ambientSampler, shadowPosH.xy).r + bias)
 	{
-		float2(-dx, -dx), float2(0.0f, -dx), float2(dx, -dx),
-		float2(-dx, 0.0f), float2(0.0f, 0.0f), float2(dx, 0.0f),
-		float2(-dx, +dx), float2(0.0f, +dx), float2(dx, +dx)
-	};
-
-	// samShadowÎªcompareValue <= sampleValueÊ±Îª1.0f(·´Ö®Îª0.0f), ¶ÔÏàÁÚËÄ¸öÎÆËØ½øĞĞ²ÉÑù±È½Ï
-	// ²¢¸ù¾İ²ÉÑùµãÎ»ÖÃ½øĞĞË«ÏßĞÔ²åÖµ
-	// float result0 = depth <= s0;  // .s0      .s1          
-	// float result1 = depth <= s1;
-	// float result2 = depth <= s2;  //     .depth
-	// float result3 = depth <= s3;  // .s2      .s3
-	// float result = BilinearLerp(result0, result1, result2, result3, a, b);  // a bÎªËã³öµÄ²åÖµÏà¶ÔÎ»ÖÃ                           
-	[unroll]
-	for (int i = 0; i < 9; ++i)
-	{
-		percentLit += shadowMap.SampleCmpLevelZero(samShadow,
-			shadowPosH.xy + offsets[i], depth).r;
+		return 1.0f;
 	}
-
-	return percentLit /= 9.0f;
+	return 0.0f;
 }
 	
 float4 PS(VertexOut pIn) : SV_Target
@@ -73,4 +83,5 @@ float4 PS(VertexOut pIn) : SV_Target
 	//specularColor = specular * g_specularTexture.Sample(g_specularSampler, pIn.texcoord) * g_specularColor;
 	
 	return shadow * (ambientColor + diffuseColor + specularColor);
+	//return ambientColor + shadow * (diffuseColor + specularColor);
 }

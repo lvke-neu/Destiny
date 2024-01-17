@@ -68,7 +68,7 @@ namespace Destiny
 		boxNode->addToParent(m_rootNode);
 		auto boxComponent = std::make_shared<BoxComponent>();
 		boxNode->addComponent(boxComponent);
-		transform3D.set_translation({ -2.0f, 0.0f, 0.0f });
+		transform3D.set_translation({ -3.0f, 0.0f, 0.0f });
 		boxNode->set_transform3D(transform3D);
 		boxComponent->get_visual3D()->setRenderToMask(Visual3D::RenderToMask::render_to_scene | Visual3D::RenderToMask::render_to_shadow_map);
 
@@ -120,6 +120,5 @@ namespace Destiny
 		particleNode->addToParent(m_rootNode);
 		auto particleComponent = std::make_shared<ParticleComponent>();
 		particleNode->addComponent(particleComponent);
-		particleComponent->get_visual3D()->setRenderToMask(Visual3D::RenderToMask::render_to_scene | Visual3D::RenderToMask::render_to_shadow_map);
 	}
 }

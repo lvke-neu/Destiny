@@ -16,7 +16,9 @@ namespace Destiny
 {
 	using namespace DirectX;
 
-	ParticleComponent::ParticleComponent()
+	ParticleComponent::ParticleComponent() :
+		m_sumDeltaTime(0.0f),
+		m_initY(20.0f)
 	{
 		std::shared_ptr<Blob> data = nullptr;
 		struct ParticleVertex
@@ -72,7 +74,7 @@ namespace Destiny
 		//m_visual3D->setDrawType(Visual3D::DrawType::DrawVertex);
 
 		m_material->set_useColor(false);
-		m_material->set_ambientTexturePath("assets://Texture/flare0.dds");
+		m_material->set_ambientTexturePath("assets://Texture/raindrop.dds");
 		m_material->load();
 
 
@@ -94,39 +96,17 @@ namespace Destiny
 		{
 			return;
 		}
-		//float deltaTime = *(float*)data;
-		//static float gravity = 9.8f;
-		//auto transform3D = m_node->get_transform3D();
-		//auto translation = transform3D.get_translation();
-		//static float sumDeltaTime = 0.0f;
-		//sumDeltaTime += deltaTime;
-		//float speed = gravity * sumDeltaTime;
-		////translation.y = translation.y - speed * sumDeltaTime;
-
-		//XMVECTOR translationVec = XMLoadFloat3(&translation);
-		//static XMVECTOR a = { 0.0f, -9.8f, 0.0f };
-		//static XMVECTOR v0 = { 0.0f, 0.0f, 0.0f };
-		//
-		//translationVec = (1.0f / 2.0f) * deltaTime * deltaTime * a + deltaTime * v0 + translationVec;
-		//v0 = deltaTime * a + v0;
-
-		//XMStoreFloat3(&translation, translationVec);
 
 		float deltaTime = *(float*)data;
-
-		static float sumDeltaTime = 0.0f;
-		sumDeltaTime += deltaTime;
+		m_sumDeltaTime += deltaTime;
 
 		auto transform3D = m_node->get_transform3D();
 		auto translation = transform3D.get_translation();
 
-		static float initY = 50.0f;
-
-		translation.y = 0.5f * sumDeltaTime * sumDeltaTime * (-9.8f) + sumDeltaTime * 0.0f + initY; 
+		translation.y = 0.5f * m_sumDeltaTime * m_sumDeltaTime * (-9.8f) + m_sumDeltaTime * 0.0f + m_initY;
 		if (translation.y < 0.0f)
 		{
-			initY = 50.0f;
-			sumDeltaTime = 0.0f;
+			m_sumDeltaTime = 0.0f;
 		}
 		transform3D.set_translation(translation);
 		m_node->set_transform3D(transform3D);

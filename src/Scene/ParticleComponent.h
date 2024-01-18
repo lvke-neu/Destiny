@@ -12,5 +12,8 @@ namespace Destiny
 		GET_CLASS_NAME(ParticleComponent);
 	private:
 		void update(void* data);
+	public:
+		float m_sumDeltaTime;
+		float m_initY;
 	};
 }

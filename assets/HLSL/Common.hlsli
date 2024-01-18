@@ -51,12 +51,12 @@ struct VertexOut
 struct ParticleVertexIn
 {
 	float3 positionL : POSITION;
-	float4 color : COLOR;
+	float2 texcoord : TEXCOORD;
 };
 struct ParticleVertexOut
 {
 	float4 positionH : SV_POSITION;
-	float4 color : COLOR;
+	float2 texcoord : TEXCOORD;
 };
 
 

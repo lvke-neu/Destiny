@@ -119,17 +119,17 @@ namespace Destiny
 		auto renderToTextureComponent = std::make_shared<RenderToTextureComponent>();
 		renderToTextureNode->addComponent(renderToTextureComponent);
 
-		for (int i = -10; i < 10; i++)
-		{
+		//for (int i = -10; i < 10; i++)
+		//{
 			auto particleNode = std::make_shared<Node3D>();
 			particleNode->set_name("Particle");
 			particleNode->addToParent(m_rootNode);
 			transform3D = Transform3D();
-			transform3D.set_translation({ (float)i, 50.0f, 0.0f });
+			transform3D.set_translation({ 0.0f, 0.0f, 0.0f });
 			particleNode->set_transform3D(transform3D);
 			auto particleComponent = std::make_shared<ParticleComponent>();
 			particleNode->addComponent(particleComponent);
-		}
+		//}
 
 	}
 }

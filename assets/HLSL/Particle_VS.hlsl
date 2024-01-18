@@ -7,7 +7,7 @@ ParticleVertexOut VS(ParticleVertexIn vIn)
 	float4 positionH = mul(positionV, g_proj);
 	ParticleVertexOut vOut;
 	vOut.positionH = positionH;
-	vOut.color = vIn.color;
+	vOut.texcoord = vIn.texcoord;
 
     return vOut;
 }

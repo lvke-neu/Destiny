@@ -74,7 +74,7 @@ namespace Destiny
 		//m_visual3D->setDrawType(Visual3D::DrawType::DrawVertex);
 
 		m_material->set_useColor(false);
-		m_material->set_ambientTexturePath("assets://Texture/raindrop.dds");
+		m_material->set_ambientTexturePath("assets://Texture/flare0.dds");
 		m_material->load();
 
 

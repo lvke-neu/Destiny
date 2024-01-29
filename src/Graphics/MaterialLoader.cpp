@@ -28,6 +28,7 @@ namespace Destiny
 			m_mtx.unlock();
 			return;
 		}
+		material->loadPending_();
 
 		material->m_ambientTexture.reset();
 		material->m_diffuseTexture.reset();

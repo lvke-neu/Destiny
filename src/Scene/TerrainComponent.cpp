@@ -12,8 +12,18 @@ namespace Destiny
 {
 	using namespace DirectX;
 	TerrainComponent::TerrainComponent() :
-		m_width(100),
-		m_height(100)
+		m_width(200),
+		m_height(200),
+		m_m(200),
+		m_n(200)
+	{
+		updateMesh();
+		m_material->set_useColor(false);
+		m_material->set_ambientTexturePath("assets://Texture/stone.dds");
+		m_material->load();
+	}
+
+	void TerrainComponent::updateMesh()
 	{
 		std::shared_ptr<Blob> data = nullptr;
 
@@ -25,43 +35,53 @@ namespace Destiny
 		};
 
 		std::vector<VertexPosTexcoord> vertices;
-		vertices.resize(m_height * m_width);
+		vertices.resize(m_m * m_n);
 
-		for (int i = 1; i <= m_height; i++)
+		float halfWidth = 0.5f * m_width;
+		float halfHeight = 0.5f * m_height;
+		float dx = ((float)m_width) / (m_n - 1);
+		float dz = ((float)m_height) / (m_m - 1);
+		float du = 1.0f / (m_n - 1);
+		float dv = 1.0f / (m_m - 1);
+
+		for (int i = 0; i < m_m; i++)
 		{
-			for (int j = 1; j <= m_width; j++)
+			float z = halfHeight - i * dz;
+			for (int j = 0; j < m_n; j++)
 			{
-				vertices[(i - 1) * m_width + j - 1].position = XMFLOAT3((float)(j - 1) * 5, 0, (float)-(i - 1) * 5);
-				vertices[(i - 1) * m_width + j - 1].normal = XMFLOAT3(0, 1, 0);
-				vertices[(i - 1) * m_width + j - 1].texcoord = XMFLOAT2(0, 0);
+				float x = -halfWidth + j * dx;
+
+				float y = 0.1f * (z * sinf(0.1f * x) + x * cosf(0.1f * z));
+				vertices[i * m_n + j].position = XMFLOAT3(x, y, z);
+				vertices[i * m_n + j].normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
+				vertices[i * m_n + j].texcoord = XMFLOAT2(j * du, i * dv);
 			}
 		}
 
-		data.reset(new Blob(m_width * m_height * sizeof(VertexPosTexcoord)));
+		data.reset(new Blob(vertices.size() * sizeof(VertexPosTexcoord)));
 		memcpy_s(data->getData(), data->getLength(), vertices.data(), data->getLength());
 		auto vertexBuffer = Engine::GetInstance()->getGraphicsSystem()->createVertexBuffer(sizeof(VertexPosTexcoord), 0, data);
 		vertexBuffer->load(0);
 		m_visual3D->setVertexBuffer(vertexBuffer);
 
 		std::vector<unsigned int> indices;
-		for (int i = 0; i < m_height; i++)
+		indices.resize(2 * (m_m - 1) * (m_n - 1) * 3);
+		int k = 0;
+		for (int i = 0; i < m_m - 1; ++i)
 		{
-			for (int j = 0; j < m_width - 1; j++)
+			for (int j = 0; j < m_n - 1; ++j)
 			{
-				indices.push_back(i * m_width + j);
-				indices.push_back(i * m_width + j + 1);
-			}
-		}
-		for (int i = 0; i < m_width; i++)
-		{
-			for (int j = 0; j < m_height - 1; j++)
-			{
-				indices.push_back(j * m_width + i);
-				indices.push_back((j + 1) * m_width + i);
+				indices[k] = i * m_n + j;
+				indices[k + 1] = i * m_n + j + 1;
+				indices[k + 2] = (i + 1) * m_n + j;
+				indices[k + 3] = (i + 1) * m_n + j;
+				indices[k + 4] = i * m_n + j + 1;
+				indices[k + 5] = (i + 1) * m_n + j + 1;
+				k += 6;
 			}
 		}
 
-		data.reset(new Blob(sizeof(unsigned int) * indices.size()));
+		data.reset(new Blob(indices.size() * sizeof(unsigned int)));
 		memcpy_s(data->getData(), data->getLength(), indices.data(), data->getLength());
 		auto indexBuffer = Engine::GetInstance()->getGraphicsSystem()->createIndexBuffer(DXGI_FORMAT_R32_UINT, data);
 		indexBuffer->load(0);
@@ -79,7 +99,6 @@ namespace Destiny
 		auto inputLayout = Engine::GetInstance()->getGraphicsSystem()->createInputLayout(data, "assets://HLSL/Basic_VS.cso");
 		inputLayout->load(0);
 		m_visual3D->setInputLayout(inputLayout);
-		m_visual3D->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 
 		auto vertexShader = Engine::GetInstance()->getGraphicsSystem()->createVertexShader("assets://HLSL/Basic_VS.cso");
 		vertexShader->load(0);
@@ -88,11 +107,14 @@ namespace Destiny
 		m_visual3D->setVertexShader(vertexShader);
 		m_visual3D->setPixelShader(pixelShader);
 
-		m_material->set_useColor(true);
-		m_material->set_ambientColor(Color::White);
-		m_material->set_diffuseColor(Color::Black);
-		m_material->set_specularColor(Color::Black);
-		m_material->load();
+		//m_material->set_useColor(true);
+		//m_material->set_ambientColor({ 145.0f / 255.0f, 178.0f / 255.0f, 164.0f / 255.0f, 1.0f });
+		//m_material->set_diffuseColor(Color::Black);
+		//m_material->set_specularColor({ 0.5f, 0.5f, 0.5f, 1.0f });
+		//m_material->set_useColor(false);
+		//m_material->set_ambientTexturePath("assets://Texture/stone.dds");
+
+		//m_material->load();
 	}
 
 	RTTR_REGISTRATION

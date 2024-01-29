@@ -8,11 +8,12 @@
 namespace Destiny
 {
 	class Component;
+	class Scene3D;
 	class Node3D : public Reflection, public std::enable_shared_from_this<Node3D>
 	{
 		RTTR_ENABLE(Reflection);
 	public:
-		Node3D();
+		Node3D(std::shared_ptr<Scene3D> scene3D = nullptr);
 	public:
 		void addToParent(std::shared_ptr<Node3D> parent);
 		void removeFromParent();
@@ -30,7 +31,7 @@ namespace Destiny
 		GET(std::vector<std::shared_ptr<Component>>, components);
 		GET(Transform3D, transform3D);
 		GET(std::shared_ptr<Node3D>, parent);
-
+		GET(std::shared_ptr<Scene3D>, scene3D);
 		void set_transform3D(Transform3D transform3D);
 	private:
 		std::string m_uuid;
@@ -39,5 +40,6 @@ namespace Destiny
 		std::vector<std::shared_ptr<Node3D>> m_childs;
 		std::vector<std::shared_ptr<Component>> m_components;
 		Transform3D m_transform3D;
+		std::shared_ptr<Scene3D> m_scene3D;
 	};
 }

@@ -24,6 +24,7 @@ namespace Destiny
 		void loadFinished_();
 		void loadSucceeded__();
 		void loadFailed__();
+		void loadPending_();
 		std::shared_ptr<BlobHolder> getBlobHolder() const;
 		bool isLoadingFinished();
 		bool isLoadingSucceed();
@@ -54,6 +55,11 @@ namespace Destiny
 	inline void Asset::loadFinished_()
 	{
 		m_state = loading_state_finished;
+	}
+	
+	inline void Asset::loadPending_()
+	{
+		m_state = loading_state_pending;;
 	}
 
 	inline bool Asset::isLoadingFinished()

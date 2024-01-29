@@ -11,7 +11,11 @@ namespace Destiny
 	public:
 		GET_CLASS_NAME(TerrainComponent);
 	private:
+		void updateMesh();
+	private:
 		int m_width;
 		int m_height;
+		int m_m;
+		int m_n;
 	};
 }

@@ -21,6 +21,7 @@ namespace Destiny
 	void SceneManager::initialize()
 	{
 		m_scene3D = std::make_shared<Scene3D>();
+		m_scene3D->initialize();
 	}
 
 	void SceneManager::uninitialize()

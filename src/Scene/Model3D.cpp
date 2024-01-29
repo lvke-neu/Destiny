@@ -63,7 +63,7 @@ namespace Destiny
 				Assimp::Importer importer;
 				importer.SetPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_LINE | aiPrimitiveType_POINT);
 				const aiScene* scene = importer.ReadFile(exePath + "\\assets\\" + tmpPath, aiProcess_ConvertToLeftHanded 
-					| aiProcess_Triangulate | aiProcess_ImproveCacheLocality | aiProcess_SortByPType);
+					| aiProcess_GenNormals | aiProcess_GenUVCoords | aiProcess_JoinIdenticalVertices| aiProcess_Triangulate | aiProcess_ImproveCacheLocality | aiProcess_SortByPType);
 
 				if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 				{

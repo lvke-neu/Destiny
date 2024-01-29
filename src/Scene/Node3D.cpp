@@ -4,11 +4,12 @@
 
 namespace Destiny
 {
-	Node3D::Node3D() : 
+	Node3D::Node3D(std::shared_ptr<Scene3D> scene3D) :
 		m_uuid(Utility::GenerateUUID()),
 		m_name("Default Name"), 
 		m_parent(nullptr),
-		m_transform3D(Transform3D())
+		m_transform3D(Transform3D()),
+		m_scene3D(scene3D)
 	{
 
 	}
@@ -29,6 +30,7 @@ namespace Destiny
 		removeFromParent();
 		parent->m_childs.emplace_back(shared_from_this());
 		m_parent = parent;
+		m_scene3D = m_parent->m_scene3D;
 	}
 
 	void Node3D::removeFromParent()

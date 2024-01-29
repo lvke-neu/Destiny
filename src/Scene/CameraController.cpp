@@ -7,7 +7,7 @@
 namespace Destiny
 {
 	CameraController::CameraController() :
-		m_speed(10.0f),
+		m_speed(50.0f),
 		m_oldMousePosX(0.0f),
 		m_oldMousePosY(0.0f),
 		m_deltaMousePosX(0.0f),

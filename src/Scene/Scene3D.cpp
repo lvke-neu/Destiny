@@ -20,7 +20,12 @@ namespace Destiny
 {
 	Scene3D::Scene3D() 
 	{
-		m_rootNode = std::make_shared<Node3D>();
+		
+	}
+
+	void Scene3D::initialize()
+	{
+		m_rootNode = std::make_shared<Node3D>(shared_from_this());
 		m_rootNode->set_name("Root");
 
 
@@ -28,8 +33,8 @@ namespace Destiny
 		m_cameraNode->set_name("Camera");
 		m_cameraNode->addToParent(m_rootNode);
 		Transform3D transform3D;
-		transform3D.set_translation({ 0.0f, 5.0f, -5.0f });
-		transform3D.set_rotation({ 50.0f, 0.0f, 0.0f });
+		transform3D.set_translation({ 0.0f, 5.0f, -20.0f });
+		//transform3D.set_rotation({ 50.0f, 0.0f, 0.0f });
 		m_cameraNode->set_transform3D(transform3D);
 		auto camera3DComponent = std::make_shared<Camera3DComponent>();
 		m_cameraNode->addComponent(camera3DComponent);
@@ -52,16 +57,16 @@ namespace Destiny
 		auto skyboxComponent = std::make_shared<SkyboxComponent>();
 		skyboxNode->addComponent(skyboxComponent);
 
-		auto planeNode = std::make_shared<Node3D>();
-		planeNode->set_name("Plane");
-		planeNode->addToParent(m_rootNode);
-		transform3D = Transform3D();
-		transform3D.set_translation({ 0.0f, -1.0f, 0.0f });
-		transform3D.set_scale({ 50.0f, 50.0f, 1.0f });
-		transform3D.set_rotation({90.0f, 0.0f, 0.0f});
-		planeNode->set_transform3D(transform3D);
-		auto planeComponent = std::make_shared<PlaneComponent>();
-		planeNode->addComponent(planeComponent);
+		//auto planeNode = std::make_shared<Node3D>();
+		//planeNode->set_name("Plane");
+		//planeNode->addToParent(m_rootNode);
+		//transform3D = Transform3D();
+		//transform3D.set_translation({ 0.0f, -1.0f, 0.0f });
+		//transform3D.set_scale({ 50.0f, 50.0f, 1.0f });
+		//transform3D.set_rotation({90.0f, 0.0f, 0.0f});
+		//planeNode->set_transform3D(transform3D);
+		//auto planeComponent = std::make_shared<PlaneComponent>();
+		//planeNode->addComponent(planeComponent);
 
 		auto terrainNode = std::make_shared<Node3D>();
 		terrainNode->set_name("Terrain");
@@ -94,36 +99,32 @@ namespace Destiny
 		sphereNode->addComponent(sphereComponent);
 		sphereComponent->get_visual3D()->setRenderToMask(Visual3D::RenderToMask::render_to_scene | Visual3D::RenderToMask::render_to_shadow_map);
 
-		Transform3D transformModel;
-		auto powerplantNode = std::make_shared<Node3D>();
-		powerplantNode->set_name("powerplant");
-		powerplantNode->addToParent(m_rootNode);
-		transformModel.set_translation({ 0.0f, 0.0f, 5.0f });
-		transformModel.set_scale({ 0.05f, 0.05f, 0.05f });
-		powerplantNode->set_transform3D(transformModel);
-		auto powerplantComponent = std::make_shared<Model3DComponent>();
-		//powerplantNode->addComponent(powerplantComponent);
-		powerplantComponent->set_path("assets://Model/powerplant/powerplant.gltf");
+
+		auto modelNode = std::make_shared<Node3D>();
+		modelNode->set_name("Model");
+		modelNode->addToParent(m_rootNode);
+		transform3D = Transform3D();
 
 		auto walkNode = std::make_shared<Node3D>();
-		walkNode->set_name("walk");
-		walkNode->addToParent(m_rootNode);
-		transformModel.set_scale({ 0.03f, 0.03f, 0.03f });
-		walkNode->set_transform3D(transformModel);
+		walkNode->addToParent(modelNode);
+		walkNode->set_name("Walk");
+		transform3D.set_scale({ 0.05f, 0.05f, 0.05f });
+		transform3D.set_translation({ -5.0f, 0.0f, 0.0f });
+		walkNode->set_transform3D(transform3D);
 		auto walkComponent = std::make_shared<Model3DComponent>();
 		walkNode->addComponent(walkComponent);
 		walkComponent->set_path("assets://Model/walk/Standard Walk.dae");
 		walkComponent->set_renderToMask(Visual3D::RenderToMask::render_to_scene | Visual3D::RenderToMask::render_to_shadow_map);
 
-		Transform3D transform3DGS;
-		transform3DGS.set_translation({ 3.0f, 0.0f, 0.0f });
-		auto gsNode = std::make_shared<Node3D>();
-		gsNode->set_name("Billboard");
-		gsNode->addToParent(m_rootNode);
-		auto testGsComponent = std::make_shared<BillboardComponent>();
-		gsNode->addComponent(testGsComponent);
-		gsNode->set_transform3D(transform3DGS);
-		testGsComponent->set_enable(false);
+		auto ymcaNode = std::make_shared<Node3D>();
+		ymcaNode->addToParent(modelNode);
+		ymcaNode->set_name("Ymca");
+		transform3D.set_translation({ 5.0f, 0.0f, 0.0f });
+		ymcaNode->set_transform3D(transform3D);
+		auto ymcaComponent = std::make_shared<Model3DComponent>();
+		ymcaNode->addComponent(ymcaComponent);
+		ymcaComponent->set_path("assets://Model/Ymca Dance/Ymca Dance.dae");
+		ymcaComponent->set_renderToMask(Visual3D::RenderToMask::render_to_scene | Visual3D::RenderToMask::render_to_shadow_map);
 
 		auto renderToTextureNode = std::make_shared<Node3D>();
 		renderToTextureNode->set_name("RenderToTexture");
@@ -131,19 +132,19 @@ namespace Destiny
 		auto renderToTextureComponent = std::make_shared<RenderToTextureComponent>();
 		renderToTextureNode->addComponent(renderToTextureComponent);
 
+		auto particleNode = std::make_shared<Node3D>();
+		particleNode->set_name("Particle");
+		particleNode->addToParent(m_rootNode);
 		for (int i = -10; i < 10; i++)
 		{
-			auto particleNode = std::make_shared<Node3D>();
-			particleNode->set_name("Particle");
-			particleNode->addToParent(m_rootNode);
+			auto tmpParticleNode = std::make_shared<Node3D>();
 			auto particleComponent = std::make_shared<ParticleComponent>();
 			particleComponent->m_initY = (float)(rand() % 20) + 10;
 			transform3D = Transform3D();
 			transform3D.set_translation({ (float)i, particleComponent->m_initY, 0.0f });
-			particleNode->set_transform3D(transform3D);
-			particleNode->addComponent(particleComponent);
-			
+			tmpParticleNode->set_transform3D(transform3D);
+			tmpParticleNode->addComponent(particleComponent);
+			tmpParticleNode->addToParent(particleNode);
 		}
-
 	}
 }

@@ -11,9 +11,9 @@
 namespace Destiny
 {
 	using namespace DirectX;
-	PlaneComponent::PlaneComponent():
-		m_width(100),
-		m_height(100)
+	PlaneComponent::PlaneComponent() :
+		m_width(20),
+		m_height(20)
 	{
 		std::shared_ptr<Blob> data = nullptr;
 
@@ -25,59 +25,41 @@ namespace Destiny
 		};
 
 		std::vector<VertexPosTexcoord> vertices;
-		vertices.resize(4);
-		vertices[0].position = { -1.0f, -1.0f, 0.0f };
-		vertices[1].position = { -1.0f, 1.0f, 0.0f };
-		vertices[2].position = { 1.0f, 1.0f, 0.0f };
-		vertices[3].position = { 1.0f, -1.0f, 0.0f };
+		vertices.resize(m_height * m_width);
 
-		vertices[0].normal = { 0.0f, 0.0f, -1.0f };
-		vertices[1].normal = { 0.0f, 0.0f, -1.0f };
-		vertices[2].normal = { 0.0f, 0.0f, -1.0f };
-		vertices[3].normal = { 0.0f, 0.0f, -1.0f };
+		for (int i = 1; i <= m_height; i++)
+		{
+			for (int j = 1; j <= m_width; j++)
+			{
+				vertices[(i - 1) * m_width + j - 1].position = XMFLOAT3((float)(j - 1) * 5, 0, (float)-(i - 1) * 5);
+				vertices[(i - 1) * m_width + j - 1].normal = XMFLOAT3(0, 1, 0);
+				vertices[(i - 1) * m_width + j - 1].texcoord = XMFLOAT2(0, 0);
+			}
+		}
 
-		vertices[0].texcoord = { 0.0f, 1.0f };
-		vertices[1].texcoord = { 0.0f, 0.0f };
-		vertices[2].texcoord = { 1.0f, 0.0f };
-		vertices[3].texcoord = { 0.0f, 1.0f };
-
-		//for (int i = 1; i <= m_height; i++)
-		//{
-		//	for (int j = 1; j <= m_width; j++)
-		//	{
-		//		vertices[(i - 1) * m_width + j - 1].position = XMFLOAT3((float)(j - 1) * 5, 0, (float)-(i - 1) * 5);
-		//		vertices[(i - 1) * m_width + j - 1].normal = XMFLOAT3(0, 1, 0);
-		//		vertices[(i - 1) * m_width + j - 1].texcoord = XMFLOAT2(0, 0);
-		//	}
-		//}
-
-		data.reset(new Blob(vertices.size() * sizeof(VertexPosTexcoord)));
+		data.reset(new Blob(m_width * m_height * sizeof(VertexPosTexcoord)));
 		memcpy_s(data->getData(), data->getLength(), vertices.data(), data->getLength());
 		auto vertexBuffer = Engine::GetInstance()->getGraphicsSystem()->createVertexBuffer(sizeof(VertexPosTexcoord), 0, data);
 		vertexBuffer->load(0);
 		m_visual3D->setVertexBuffer(vertexBuffer);
 
-		std::vector<unsigned int> indices =
+		std::vector<unsigned int> indices;
+		for (int i = 0; i < m_height; i++)
 		{
-			0, 1, 2, 0, 2, 3
-		};
-
-		//for (int i = 0; i < m_height; i++)
-		//{
-		//	for (int j = 0; j < m_width - 1; j++)
-		//	{
-		//		indices.push_back(i * m_width + j);
-		//		indices.push_back(i * m_width + j + 1);
-		//	}
-		//}
-		//for (int i = 0; i < m_width; i++)
-		//{
-		//	for (int j = 0; j < m_height - 1; j++)
-		//	{
-		//		indices.push_back(j * m_width + i);
-		//		indices.push_back((j + 1) * m_width + i);
-		//	}
-		//}
+			for (int j = 0; j < m_width - 1; j++)
+			{
+				indices.push_back(i * m_width + j);
+				indices.push_back(i * m_width + j + 1);
+			}
+		}
+		for (int i = 0; i < m_width; i++)
+		{
+			for (int j = 0; j < m_height - 1; j++)
+			{
+				indices.push_back(j * m_width + i);
+				indices.push_back((j + 1) * m_width + i);
+			}
+		}
 
 		data.reset(new Blob(sizeof(unsigned int) * indices.size()));
 		memcpy_s(data->getData(), data->getLength(), indices.data(), data->getLength());
@@ -85,7 +67,7 @@ namespace Destiny
 		indexBuffer->load(0);
 		m_visual3D->setIndexBuffer(indexBuffer);
 
-		
+
 		D3D11_INPUT_ELEMENT_DESC inputElements[3] =
 		{
 			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -97,7 +79,7 @@ namespace Destiny
 		auto inputLayout = Engine::GetInstance()->getGraphicsSystem()->createInputLayout(data, "assets://HLSL/Basic_VS.cso");
 		inputLayout->load(0);
 		m_visual3D->setInputLayout(inputLayout);
-		//m_visual3D->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+		m_visual3D->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 
 		auto vertexShader = Engine::GetInstance()->getGraphicsSystem()->createVertexShader("assets://HLSL/Basic_VS.cso");
 		vertexShader->load(0);
@@ -107,9 +89,9 @@ namespace Destiny
 		m_visual3D->setPixelShader(pixelShader);
 
 		m_material->set_useColor(true);
-		m_material->set_ambientColor({ 145.0f / 255.0f, 178.0f / 255.0f, 164.0f / 255.0f, 1.0f });
+		m_material->set_ambientColor(Color::White);
 		m_material->set_diffuseColor(Color::Black);
-		m_material->set_specularColor({ 0.5f, 0.5f, 0.5f, 1.0f });
+		m_material->set_specularColor(Color::Black);
 		m_material->load();
 	}
 

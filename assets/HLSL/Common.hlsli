@@ -32,6 +32,12 @@ cbuffer cbDirectLight : register(b4)
 	matrix g_T;
 }
 
+cbuffer cbPointLight : register(b5)
+{
+	float4 g_pointLightPosition;
+	float4 g_pointLightColor;
+}
+
 struct VertexIn
 {
 	float3 positionL : POSITION;

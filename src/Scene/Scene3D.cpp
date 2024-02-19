@@ -57,7 +57,7 @@ namespace Destiny
 		pointLightNode->set_name("PointLight");
 		pointLightNode->addToParent(m_rootNode);
 		transform3D = Transform3D();
-		transform3D.set_translation({ 3.0f, 7.0f, -10.0f });
+		transform3D.set_translation({ 8.0f, 9.0f, -10.0f });
 		transform3D.set_scale({ 0.2f, 0.2f, 0.2f });
 		pointLightNode->set_transform3D(transform3D);
 		auto pointLightComponent = std::make_shared<PointLightComponent>();
@@ -83,9 +83,10 @@ namespace Destiny
 		pbrNode->set_name("PBR");
 		pbrNode->addToParent(m_rootNode);
 		transform3D = Transform3D();
-		for (int x = -3; x <= 12; x += 4)
-		{
-			for (int y = 12; y >= -3; y -= 4)
+		const int count = 16;
+		for (int x = 0; x <= count; x += 4)
+		{	
+			for (int y = count; y >= 0; y -= 4)
 			{
 				auto tmpNode = std::make_shared<Node3D>();
 				tmpNode->addToParent(pbrNode);
@@ -93,8 +94,17 @@ namespace Destiny
 				tmpNode->set_transform3D(transform3D);
 				auto pbrSphereComponent = std::make_shared<PBRSphereComponent>();
 				tmpNode->addComponent(pbrSphereComponent);
+				auto roughness = x / (float)count;
+				if (roughness == 0.0f)
+				{
+					roughness = 0.05f;
+				}
+		
+				pbrSphereComponent->set_metallic(y / (float)count);
+				pbrSphereComponent->set_roughness(roughness);	
 			}
 		}
+
 
 		//auto terrainNode = std::make_shared<Node3D>();
 		//terrainNode->set_name("Terrain");

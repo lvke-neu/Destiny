@@ -20,8 +20,8 @@ namespace Destiny
 	private:
 		struct cbPointLight
 		{
-			XMFLOAT4 position;
-			XMFLOAT4 color;
+			XMFLOAT4 position[5];
+			XMFLOAT4 color[5];
 		};
 		std::shared_ptr<ConstantBuffer<cbPointLight>> m_direction;
 	};

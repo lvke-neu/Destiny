@@ -34,8 +34,8 @@ cbuffer cbDirectLight : register(b4)
 
 cbuffer cbPointLight : register(b5)
 {
-	float4 g_pointLightPosition;
-	float4 g_pointLightColor;
+	float4 g_pointLightPosition[5];
+	float4 g_pointLightColor[5];
 }
 
 struct VertexIn

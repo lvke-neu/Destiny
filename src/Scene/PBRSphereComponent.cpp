@@ -127,9 +127,49 @@ namespace Destiny
 		m_material->set_diffuseColor({ 0.8f, 0.8f, 0.8f, 1.0f });
 		m_material->set_specularColor({ 0.5f, 0.5f, 0.5f, 1.0f });
 		m_material->load();
+
+		m_albedo = Color::Red;
+		m_metallic = 0.5f;
+		m_roughness = 0.5f;
+		m_ao = 1.0f;
+
+
+		m_pbrMaterial = std::make_shared<ConstantBuffer<cbPBRMaterial>>();
+		m_visual3D->registerBeforeDrawCommands(std::bind(&PBRSphereComponent::updateConstantbuffer, this));
 	}
 
-	
+	void PBRSphereComponent::set_albedo(Color albedo)
+	{
+		m_albedo = albedo;
+	}
+
+	void PBRSphereComponent::set_metallic(float metallic)
+	{
+		m_metallic = metallic;
+	}
+
+	void PBRSphereComponent::set_roughness(float roughness)
+	{
+		m_roughness = roughness;
+	}
+
+	void PBRSphereComponent::set_ao(float ao)
+	{
+		m_ao = ao;
+	}
+
+	void PBRSphereComponent::updateConstantbuffer()
+	{
+		cbPBRMaterial pbrMaterial;
+		pbrMaterial.albedo = { m_albedo.get_r(), m_albedo.get_g(), m_albedo.get_b(), m_albedo.get_a() };
+		pbrMaterial.metallic = m_metallic;
+		pbrMaterial.roughness = m_roughness;
+		pbrMaterial.ao = m_ao;
+
+		m_pbrMaterial->update(pbrMaterial);
+
+		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetConstantBuffers(6, 1, m_pbrMaterial->getConstantBuffer());
+	}
 
 	RTTR_REGISTRATION
 	{
@@ -137,6 +177,10 @@ namespace Destiny
 			.constructor<>()
 			(
 				rttr::policy::ctor::as_raw_ptr
-			);
+			)
+			.property("albedo", &PBRSphereComponent::get_albedo, &PBRSphereComponent::set_albedo)
+			.property("metallic", &PBRSphereComponent::get_metallic, &PBRSphereComponent::set_metallic)
+			.property("roughness", &PBRSphereComponent::get_roughness, &PBRSphereComponent::set_roughness)
+			.property("ao", &PBRSphereComponent::get_ao, &PBRSphereComponent::set_ao);
 	}
 }

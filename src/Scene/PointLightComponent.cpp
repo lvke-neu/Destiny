@@ -20,10 +20,17 @@ namespace Destiny
 		Visual3DComponent::onAttachNode();
 
 		cbPointLight pointLight;
-		
-		XMFLOAT3 pos = m_node->get_transform3D().get_translation();
-		pointLight.position = { pos.x, pos.y, pos.z, 1.0f };
-		pointLight.color = { 1.0f, 1.0f, 1.0f, 1.0f };
+		auto pos = m_node->get_transform3D().get_translation();
+		pointLight.position[0] = { pos.x, pos.y, pos.z, 1.0f };
+		pointLight.color[0] = { 0.0f, 0.0f, 300.0f, 1.0f };
+		pointLight.position[1] = { 2.0f, 14.0f, -10.f, 1.0f };
+		pointLight.color[1] = { 300.0f, 300.0f, 300.0f, 1.0f };
+		pointLight.position[2] = { 12.0f, 14.0f, -10.f, 1.0f };
+		pointLight.color[2] = { 300.0f, 300.0f, 300.0f, 1.0f };
+		pointLight.position[3] = { 12.0f, 4.0f, -10.f, 1.0f };
+		pointLight.color[3] = { 300.0f, 300.0f, 300.0f, 1.0f };
+		pointLight.position[4] = { 2.0f, 4.0f, -10.f, 1.0f };
+		pointLight.color[4] = { 300.0f, 300.0f, 300.0f, 1.0f };
 
 		m_direction->update(pointLight);
 
@@ -36,10 +43,17 @@ namespace Destiny
 		Visual3DComponent::onNodeTransformChanged();
 
 		cbPointLight pointLight;
-
-		XMFLOAT3 pos = m_node->get_transform3D().get_translation();
-		pointLight.position = { pos.x, pos.y, pos.z, 1.0f };
-		pointLight.color = { 1.0f, 1.0f, 1.0f, 1.0f };
+		auto pos = m_node->get_transform3D().get_translation();
+		pointLight.position[0] = { pos.x, pos.y, pos.z, 1.0f };
+		pointLight.color[0] = { 0.0f, 0.0f, 300.0f, 1.0f };
+		pointLight.position[1] = { 2.0f, 14.0f, -10.f, 1.0f };
+		pointLight.color[1] = { 300.0f, 300.0f, 300.0f, 1.0f };
+		pointLight.position[2] = { 12.0f, 14.0f, -10.f, 1.0f };
+		pointLight.color[2] = { 300.0f, 300.0f, 300.0f, 1.0f };
+		pointLight.position[3] = { 12.0f, 4.0f, -10.f, 1.0f };
+		pointLight.color[3] = { 300.0f, 300.0f, 300.0f, 1.0f };
+		pointLight.position[4] = { 2.0f, 4.0f, -10.f, 1.0f };
+		pointLight.color[4] = { 300.0f, 300.0f, 300.0f, 1.0f };
 
 		m_direction->update(pointLight);
 	}

@@ -134,14 +134,10 @@ void Application::initialize(HINSTANCE hInstance)
 		return ;
 	}
 
+	Destiny::Engine::GetInstance()->initialize({ (long long)m_hwnd, 4 });
+
 	ShowWindow(m_hwnd, SW_SHOW);
 	UpdateWindow(m_hwnd);
-
-	Destiny::Engine::GetInstance()->initialize({(long long)m_hwnd, 4 });
-	//Destiny::WindowResizeData data;
-	//data.width = width;
-	//data.height = height;
-	//Destiny::Engine::GetInstance()->getEventSystem()->dispatchEvent(Destiny::EventType::WindowResize, &data);
 }
 
 void Application::run()

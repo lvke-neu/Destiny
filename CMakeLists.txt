@@ -9,7 +9,7 @@ endif()
 
 add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 
-file(GLOB SRC_MAIN src/main.cpp)
+file(GLOB SRC_MAIN src/*)
 file(GLOB SRC_ENGINE src/Engine/*)
 file(GLOB SRC_ENGINE_DETAIL src/Engine/Detail/*)
 file(GLOB SRC_EDITOR src/Editor/*)
@@ -52,7 +52,7 @@ find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 file(GLOB file_ui src/Editor/*.ui)
 QT5_WRAP_UI(ui_FILES ${file_ui} )
 
-add_executable(Destiny ${SRC_MAIN} ${SRC_ENGINE} ${SRC_ENGINE_DETAIL} ${SRC_EDITOR} ${SRC_GRAPHICS} ${SRC_SCENE} ${ASSETS} ${ASSETS_HLSL} ${ASSETS_TEXTURE})
+add_executable(Destiny WIN32 ${SRC_MAIN} ${SRC_ENGINE} ${SRC_ENGINE_DETAIL} ${SRC_EDITOR} ${SRC_GRAPHICS} ${SRC_SCENE} ${ASSETS} ${ASSETS_HLSL} ${ASSETS_TEXTURE})
 target_link_libraries(Destiny d3d11.lib dxgi.lib dxguid.lib D3DCompiler.lib d2d1.lib dwrite.lib winmm.lib Qt5::Core Qt5::Gui Qt5::Widgets)
 
 foreach(HLSL_FILE ${ASSETS_HLSL})

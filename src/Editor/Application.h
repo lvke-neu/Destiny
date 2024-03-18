@@ -1,14 +1,17 @@
 #pragma once
-#include <QtWidgets/QApplication>
-#include <memory>
+#include <Windows.h>
 
-class MainWindow;
-class Application : public QApplication
+class Application
 {
 public:
-	Application(int argc = 0, char* argv[] = nullptr);
+	Application();
+public:
+	void initialize(HINSTANCE hInstance);
+	void run();
+	void uninitialize();
 private:
-	std::shared_ptr<MainWindow> m_mainWindow;
+	HWND m_hwnd;
+	HINSTANCE m_hInstance;
 };
 
 	

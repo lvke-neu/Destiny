@@ -5,8 +5,7 @@
 #include "ThreadPool.h"
 #include "Timer.h"
 #include "Graphics/GraphicsSystem.h"
-#include "Scene/SceneManager.h"
-#include "Detail/ResourceBlobLoader.h"
+#include "Detail/BuiltinResourceBlobLoader.h"
 
 namespace Destiny
 {
@@ -18,18 +17,16 @@ namespace Destiny
 		m_eventSystem = std::make_shared<EventSystem>();
 		m_dataLoadThreadPool = std::make_shared<ThreadPool>();
 		m_graphicsSystem = std::make_shared<GraphicsSystem>();
-		m_sceneManager = std::make_shared<SceneManager>();
 	}
 
 	void Engine::initialize(const EngineSetting& setting)
 	{
-		m_blobLoaderManager->registerBlobLoader(std::shared_ptr<BlobLoader>((BlobLoader*)new ResourceBlobLoader));
+		m_blobLoaderManager->registerBlobLoader(std::shared_ptr<BlobLoader>((BlobLoader*)new BuiltinResourceBlobLoader));
 
 		m_logManager->initialize();
 		m_eventSystem->initialize();
 		m_dataLoadThreadPool->initialize(setting.DataLoadingThreadCount);
 		m_graphicsSystem->initialize(setting.Hwnd);
-		m_sceneManager->initialize();
 	}
 
 	void Engine::uninitialize()
@@ -38,15 +35,11 @@ namespace Destiny
 		m_eventSystem->uninitialize();
 		m_dataLoadThreadPool->uninitialize();
 		m_graphicsSystem->uninitialize();
-		m_sceneManager->uninitialize();
 	}
 
 	void Engine::update()
 	{
 		m_timer->update();
 		m_eventSystem->dispatchEvent(EventType::Update, m_timer->deltaTime());
-		m_graphicsSystem->begin();
-		m_sceneManager->update();
-		m_graphicsSystem->end();
 	}
 }

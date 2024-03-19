@@ -12,8 +12,7 @@ namespace Destiny
 		{
 			loading_state_pending,
 			loading_state_failed,
-			loading_state_succeeded,
-			loading_state_finished
+			loading_state_succeeded
 		};
 	public:
 		Asset();
@@ -21,7 +20,6 @@ namespace Destiny
 	public:
 		void initialize(std::shared_ptr<AssetLoader> assetLoader, std::shared_ptr<BlobHolder> blobHolder);
 		void load(int priority = 1);
-		void loadFinished_();
 		void loadSucceeded__();
 		void loadFailed__();
 		void loadPending_();
@@ -52,18 +50,8 @@ namespace Destiny
 		return m_state == loading_state_pending;
 	}
 
-	inline void Asset::loadFinished_()
-	{
-		m_state = loading_state_finished;
-	}
-	
 	inline void Asset::loadPending_()
 	{
 		m_state = loading_state_pending;;
-	}
-
-	inline bool Asset::isLoadingFinished()
-	{
-		return m_state == loading_state_finished;
 	}
 }

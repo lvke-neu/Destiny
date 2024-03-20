@@ -53,6 +53,14 @@ namespace Destiny
 		Engine::GetInstance()->getEventSystem()->unRegisterEvent(EventType::WindowResize, std::bind(&GraphicsSystem::onResize, this, std::placeholders::_1));
 	}
 
+	void GraphicsSystem::update()
+	{
+		static float color[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+		m_pD3D11ImmediateDeviceContext->ClearRenderTargetView(m_pRenderTargetView, color);
+		m_pD3D11ImmediateDeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+		m_pDXGISwapChain->Present(0, 0);
+	}
+
 	void GraphicsSystem::onResize(void* data)
 	{
 		WindowResizeData wrd = *(WindowResizeData*)data;

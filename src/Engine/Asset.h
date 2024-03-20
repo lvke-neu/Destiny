@@ -1,10 +1,10 @@
 #pragma once
+#include "Object.h"
 #include <memory>
 
 namespace Destiny
 {
 	class AssetLoader;
-	class BlobHolder;
 	class Asset : public std::enable_shared_from_this<Asset>
 	{
 	public:
@@ -18,12 +18,11 @@ namespace Destiny
 		Asset();
 		virtual ~Asset() = default;
 	public:
-		void initialize(std::shared_ptr<AssetLoader> assetLoader, std::shared_ptr<BlobHolder> blobHolder);
+		void initialize(std::shared_ptr<AssetLoader> assetLoader);
 		void load(int priority = 1);
 		void loadSucceeded__();
 		void loadFailed__();
 		void loadPending_();
-		std::shared_ptr<BlobHolder> getBlobHolder() const;
 		bool isLoadingFinished();
 		bool isLoadingSucceed();
 		bool isLoadingPending();
@@ -31,14 +30,8 @@ namespace Destiny
 		virtual void doLoad();
 	protected:
 		std::shared_ptr<AssetLoader> m_assetLoader;
-		std::shared_ptr<BlobHolder> m_blobHolder;
 		LoadingState m_state;
 	};
-
-	inline std::shared_ptr<BlobHolder> Asset::getBlobHolder() const
-	{
-		return m_blobHolder;
-	}
 
 	inline bool Asset::isLoadingSucceed()
 	{

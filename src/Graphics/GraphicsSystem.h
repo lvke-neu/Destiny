@@ -32,6 +32,7 @@ namespace Destiny
 	public:
 		void initialize(long long hwnd);
 		void uninitialize();
+		void update();
 	public:
 		ID3D11Device* getDevice();
 		ID3D11DeviceContext* getImmediateContext();

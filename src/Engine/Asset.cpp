@@ -8,16 +8,14 @@ namespace Destiny
 {
 	Asset::Asset() : 
 		m_assetLoader(nullptr),
-		m_blobHolder(nullptr),
 		m_state(loading_state_pending)
 	{
 
 	}
 
-	void Asset::initialize(std::shared_ptr<AssetLoader> assetLoader, std::shared_ptr<BlobHolder> blobHolder)
+	void Asset::initialize(std::shared_ptr<AssetLoader> assetLoader)
 	{
 		m_assetLoader = assetLoader;
-		m_blobHolder = blobHolder;
 	}
 
 	void Asset::load(int priority)

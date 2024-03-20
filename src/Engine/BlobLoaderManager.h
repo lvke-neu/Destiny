@@ -9,6 +9,8 @@ namespace Destiny
 	class BlobLoaderManager
 	{
 	public:
+		BlobLoaderManager();
+	public:
 		void registerBlobLoader(std::shared_ptr<BlobLoader> blobLoader);
 		std::shared_ptr<BlobLoader> getBlobLoader(const std::string& path);
 	private:

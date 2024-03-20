@@ -1,9 +1,15 @@
 #include "BlobLoaderManager.h"
 #include "BlobLoader.h"
 #include "Utility.h"
+#include "Detail/BuiltinResourceBlobLoader.h"
 
 namespace Destiny
 {
+	BlobLoaderManager::BlobLoaderManager()
+	{
+		registerBlobLoader(std::shared_ptr<BlobLoader>((BlobLoader*)new BuiltinResourceBlobLoader));
+	}
+
 	void BlobLoaderManager::registerBlobLoader(std::shared_ptr<BlobLoader> blobLoader)
 	{
 		if (!blobLoader)

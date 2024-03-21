@@ -6,6 +6,7 @@
 #include "Engine/BlobLoaderManager.h"
 #include "Graphics/IndexBuffer.h"
 #include "Graphics/VertexBuffer.h"
+#include "Graphics/Renderer.h"
 
 namespace Destiny
 {
@@ -39,6 +40,10 @@ namespace Destiny
 		std::shared_ptr<VertexBuffer> vertexBuffer = std::make_shared<VertexBuffer>(12, 0, data);
 		vertexBuffer->load(0);
 
+		std::shared_ptr<Renderer> renderer = std::make_shared<Renderer>("builtin://renderer/basic.rdr");
+		renderer->load(0);
+		int i = 0;
+		i++;
 	}
 
 	void SceneManager::uninitialize()

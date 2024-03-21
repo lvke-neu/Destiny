@@ -56,6 +56,7 @@ namespace Destiny
 
 		ifs.close();
 
+		blobHolder->setFullPath(path);
 		blobHolder->loadSucceeded__(blob);
 
 		m_mtx.unlock();

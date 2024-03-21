@@ -18,6 +18,7 @@ namespace Destiny
 
 	VertexBuffer::~VertexBuffer()
 	{
+		m_data.reset();
 		SAFE_RELEASE(m_vertexBuffer);
 	}
 
@@ -26,7 +27,7 @@ namespace Destiny
 		if (!m_data)
 		{
 			loadFailed__();
-			LOG_ERROR("Thread {0}, VertexBuffer load failed : {1}", std::to_string((*(uint32_t*)&std::this_thread::get_id())));
+			LOG_ERROR("Thread {0}, VertexBuffer load failed", std::to_string((*(uint32_t*)&std::this_thread::get_id())));
 			return;
 		}
 

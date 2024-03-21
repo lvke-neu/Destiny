@@ -5,6 +5,7 @@
 #include "Engine/BlobHolder.h"
 #include "Engine/BlobLoaderManager.h"
 #include "Graphics/IndexBuffer.h"
+#include "Graphics/VertexBuffer.h"
 
 namespace Destiny
 {
@@ -34,6 +35,10 @@ namespace Destiny
 		std::shared_ptr<Blob> data = std::make_shared<Blob>(250);
 		std::shared_ptr<IndexBuffer> indexBuffer = std::make_shared<IndexBuffer>(IndexBuffer::IndexType::Index16, data);
 		indexBuffer->load(0);
+
+		std::shared_ptr<VertexBuffer> vertexBuffer = std::make_shared<VertexBuffer>(12, 0, data);
+		vertexBuffer->load(0);
+
 	}
 
 	void SceneManager::uninitialize()

@@ -1,4 +1,4 @@
-#include "IndexBuffer.h"
+#include "VertexBuffer.h"
 #include "Engine/Blob.h"
 #include "Engine/Utility.h"
 #include "Engine/Engine.h"
@@ -7,40 +7,41 @@
 
 namespace Destiny
 {
-	IndexBuffer::IndexBuffer(IndexType indexType, std::shared_ptr<Blob> data) :
-		m_indexType(indexType),
-		m_indexBuffer(nullptr),
+	VertexBuffer::VertexBuffer(unsigned int stride, unsigned int offset, std::shared_ptr<Blob> data) :
+		m_stride(stride),
+		m_offset(offset),
+		m_vertexBuffer(nullptr),
 		m_data(data)
 	{
 
 	}
 
-	IndexBuffer::~IndexBuffer()
+	VertexBuffer::~VertexBuffer()
 	{
-		SAFE_RELEASE(m_indexBuffer);
+		SAFE_RELEASE(m_vertexBuffer);
 	}
 
-	void IndexBuffer::doLoad()
+	void VertexBuffer::doLoad()
 	{
 		if (!m_data)
 		{
 			loadFailed__();
-			LOG_ERROR("Thread {0}, IndexBuffer load failed : {1}", std::to_string((*(uint32_t*)&std::this_thread::get_id())));
+			LOG_ERROR("Thread {0}, VertexBuffer load failed : {1}", std::to_string((*(uint32_t*)&std::this_thread::get_id())));
 			return;
 		}
-		
+
 		D3D11_BUFFER_DESC ibd;
 		ZeroMemory(&ibd, sizeof(ibd));
 		ibd.Usage = D3D11_USAGE_IMMUTABLE;
 		ibd.ByteWidth = (UINT)m_data->getLength();
-		ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+		ibd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 		ibd.CPUAccessFlags = 0;
 
 		D3D11_SUBRESOURCE_DATA InitData;
 		ZeroMemory(&InitData, sizeof(InitData));
 		InitData.pSysMem = m_data->getData();
 
-		HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateBuffer(&ibd, &InitData, &m_indexBuffer);
+		HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateBuffer(&ibd, &InitData, &m_vertexBuffer);
 
 		if (SUCCEEDED(hr))
 		{

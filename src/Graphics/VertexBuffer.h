@@ -13,9 +13,9 @@ namespace Destiny
 	public:
 		virtual void doLoad() override;
 	private:
-		unsigned int m_stride;
-		unsigned int m_offset;
-		ID3D11Buffer* m_vertexBuffer;
-		std::shared_ptr<Blob> m_data;
+		unsigned int			m_stride;
+		unsigned int			m_offset;
+		ID3D11Buffer*			m_vertexBuffer;
+		std::shared_ptr<Blob>	m_data;
 	};
 }

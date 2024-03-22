@@ -30,11 +30,11 @@ namespace Destiny
 		bool isLoadingSucceed();
 		bool isLoadingPending();
 	protected:
-		std::shared_ptr<Blob> m_blob;
+		std::shared_ptr<Blob>		m_blob;
 		std::shared_ptr<BlobLoader> m_blobLoader;
-		LoadingState m_state;
-		std::string m_path;
-		std::string m_fullPath;
+		LoadingState				m_state;
+		std::string					m_path;
+		std::string					m_fullPath;
 	};
 
 	inline const std::string& BlobHolder::getPath() const

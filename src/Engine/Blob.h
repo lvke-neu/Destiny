@@ -8,7 +8,7 @@ namespace Destiny
 		Blob(size_t length);
 		~Blob();
 	public:
-		void* getData();
+		void*  getData();
 		size_t getLength();
 	private:
 		void*	m_data{ nullptr };

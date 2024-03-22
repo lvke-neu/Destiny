@@ -19,9 +19,9 @@ namespace Destiny
 	public:
 		virtual void doLoad() override;
 	private:
-		IndexType m_indexType;
-		ID3D11Buffer* m_indexBuffer;
-		std::shared_ptr<Blob> m_data;
+		IndexType				m_indexType;
+		ID3D11Buffer*			m_indexBuffer;
+		std::shared_ptr<Blob>	m_data;
 	};
 
 }

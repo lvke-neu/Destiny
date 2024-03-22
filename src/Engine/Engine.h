@@ -30,20 +30,20 @@ namespace Destiny
 		void uninitialize();
 		void update();
 	public:
-		std::shared_ptr<LogManager> getLogManager();
-		std::shared_ptr<BlobLoaderManager> getBlobLoaderManager();
-		std::shared_ptr<EventSystem> getEventSystem();
-		std::shared_ptr<ThreadPool> getThreadPool();
-		std::shared_ptr<GraphicsSystem> getGraphicsSystem();
-		std::shared_ptr<SceneManager> getSceneManager();
+		std::shared_ptr<LogManager>			getLogManager();
+		std::shared_ptr<BlobLoaderManager>	getBlobLoaderManager();
+		std::shared_ptr<EventSystem>		getEventSystem();
+		std::shared_ptr<ThreadPool>			getThreadPool();
+		std::shared_ptr<GraphicsSystem>		getGraphicsSystem();
+		std::shared_ptr<SceneManager>		getSceneManager();
 	private:
-		std::shared_ptr<Timer> m_timer;
-		std::shared_ptr<LogManager> m_logManager;
-		std::shared_ptr<BlobLoaderManager> m_blobLoaderManager;
-		std::shared_ptr<EventSystem> m_eventSystem;
-		std::shared_ptr<ThreadPool> m_dataLoadThreadPool;
-		std::shared_ptr<GraphicsSystem> m_graphicsSystem;
-		std::shared_ptr<SceneManager> m_sceneManager;
+		std::shared_ptr<Timer>				m_timer;
+		std::shared_ptr<LogManager>			m_logManager;
+		std::shared_ptr<BlobLoaderManager>	m_blobLoaderManager;
+		std::shared_ptr<EventSystem>		m_eventSystem;
+		std::shared_ptr<ThreadPool>			m_dataLoadThreadPool;
+		std::shared_ptr<GraphicsSystem>		m_graphicsSystem;
+		std::shared_ptr<SceneManager>		m_sceneManager;
 	};
 
 	inline std::shared_ptr<LogManager> Engine::getLogManager()

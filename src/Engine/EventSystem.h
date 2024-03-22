@@ -569,8 +569,8 @@ namespace Destiny
         bool isKeyPressed(KeyCode keyCode);
         bool isMousePressed(MouseCode mouseCode);
 	private:
-		std::unordered_map<EventType, std::vector<Event>> m_events;
-        std::unordered_map<KeyCode, bool> m_keyTriggers;
-        std::unordered_map<MouseCode, bool> m_MouseTriggers;
+		std::unordered_map<EventType, std::vector<Event>>   m_events;
+        std::unordered_map<KeyCode, bool>                   m_keyTriggers;
+        std::unordered_map<MouseCode, bool>                 m_MouseTriggers;
 	};
 }

@@ -29,8 +29,8 @@ namespace Destiny
 	private:
 		virtual void doLoad();
 	protected:
-		std::shared_ptr<AssetLoader> m_assetLoader;
-		LoadingState m_state;
+		std::shared_ptr<AssetLoader>	m_assetLoader;
+		LoadingState					m_state;
 	};
 
 	inline bool Asset::isLoadingSucceed()

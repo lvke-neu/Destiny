@@ -21,7 +21,7 @@ namespace Destiny
 		m_pDepthStencilBuffer(nullptr),
 		m_pDepthStencilView(nullptr),
 		m_4xMsaaQuality(0),
-		m_viewport(new D3D11_VIEWPORT)
+		m_viewport(std::make_shared<D3D11_VIEWPORT>())
 	{
 
 	}
@@ -36,7 +36,6 @@ namespace Destiny
 		SAFE_RELEASE(m_pRenderTargetView);
 		SAFE_RELEASE(m_pDepthStencilBuffer);
 		SAFE_RELEASE(m_pDepthStencilView);
-		SAFE_DELETE(m_viewport);
 	}
 
 	void GraphicsSystem::initialize(long long hwnd)
@@ -106,7 +105,7 @@ namespace Destiny
 		m_viewport->MinDepth = 0.0f;
 		m_viewport->MaxDepth = 1.0f;
 
-		m_pD3D11ImmediateDeviceContext->RSSetViewports(1, m_viewport);
+		m_pD3D11ImmediateDeviceContext->RSSetViewports(1, m_viewport.get());
 		//m_pD3D11DeferredDeviceContext->RSSetViewports(1, m_viewport);
 
 		//m_renderToShadowMapRTV.reset();

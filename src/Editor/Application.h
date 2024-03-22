@@ -10,8 +10,8 @@ public:
 	void run();
 	void uninitialize();
 private:
-	HWND m_hwnd;
-	HINSTANCE m_hInstance;
+	HWND		m_hwnd;
+	HINSTANCE	m_hInstance;
 };
 
 	

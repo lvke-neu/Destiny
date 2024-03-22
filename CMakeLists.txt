@@ -35,15 +35,3 @@ target_link_libraries(Destiny d3d11.lib dxgi.lib dxguid.lib D3DCompiler.lib d2d1
 
 file(COPY builtin DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Debug)
 file(COPY builtin DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Release)
-
-
-# 定义要复制的源目录和目标目录
-set(SOURCE_DIR "${BUILTIN_RENDERER}")
-set(DESTINATION_DIR "${CMAKE_CURRENT_BINARY_DIR}/Debug")
- 
-# 创建一个自定义的目标
-add_custom_target(CopyData
-  COMMAND ${CMAKE_COMMAND} -E copy_directory
-  ${SOURCE_DIR}
-  ${DESTINATION_DIR}
-)

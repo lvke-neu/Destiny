@@ -8,7 +8,6 @@
 #include "Graphics/VertexBuffer.h"
 #include "Graphics/Renderer.h"
 #include "Graphics/RenderStates.h"
-#include <d3d11.h>
 
 namespace Destiny
 {
@@ -45,7 +44,7 @@ namespace Destiny
 		std::shared_ptr<Renderer> renderer = std::make_shared<Renderer>("builtin://renderer/basic.rdr");
 		renderer->load(0);
 
-		std::shared_ptr<RenderStates> renderStates = std::make_shared<RenderStates>(std::shared_ptr<CD3D11_RASTERIZER_DESC>(new CD3D11_RASTERIZER_DESC(CD3D11_DEFAULT())), std::shared_ptr<CD3D11_DEPTH_STENCIL_DESC>(new CD3D11_DEPTH_STENCIL_DESC(CD3D11_DEFAULT())), std::shared_ptr<CD3D11_BLEND_DESC>(new CD3D11_BLEND_DESC(CD3D11_DEFAULT())));
+		std::shared_ptr<RenderStates> renderStates = RenderStates::CreateDefault();
 		renderStates->load(0);
 		
 		int i = 0;

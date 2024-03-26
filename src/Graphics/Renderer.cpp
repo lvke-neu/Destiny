@@ -1,5 +1,6 @@
 #include "Renderer.h"
 #include "Engine/Engine.h"
+#include "Engine/Blob.h"
 #include "Engine/BlobHolder.h"
 #include "Engine/BlobLoader.h"
 #include "Engine/BlobLoaderManager.h"
@@ -31,7 +32,7 @@ namespace Destiny
 
 	void Renderer::doLoad()
 	{
-		if (!m_blobHolder)
+		if (!m_blobHolder || !m_blobHolder->isLoadingSucceed() || !m_blobHolder->getBlob())
 		{
 			loadFailed__();
 			return;
@@ -54,18 +55,18 @@ namespace Destiny
 		ID3DBlob* ppBlobOut = nullptr;
 		ID3DBlob* errorBlob = nullptr;
 
-		HRESULT hr = D3DCompileFromFile(Utility::MultiByte2WideChar(m_blobHolder->getFullPath()).c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "VS", "vs_5_0",
+		auto blob = m_blobHolder->getBlob();
+		HRESULT hr = D3DCompile(blob->getData(), blob->getLength(), m_blobHolder->getFullPath().c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "VS", "vs_5_0",
 			D3DCOMPILE_ENABLE_STRICTNESS, 0, &ppBlobOut, &errorBlob);
-
 		if (FAILED(hr))
 		{
 			if (errorBlob != nullptr)
 			{
-				LOG_ERROR("CompileVertexShader {0} Failed:{1}", m_blobHolder->getFullPath(), reinterpret_cast<const char*>(errorBlob->GetBufferPointer()));
+				LOG_ERROR("CompileShader Failed:{0}", reinterpret_cast<const char*>(errorBlob->GetBufferPointer()));
 			}
 			else
 			{
-				LOG_ERROR("CompileVertexShader {0} Failed:{1}", m_blobHolder->getFullPath(), "path error");
+				LOG_ERROR("CompileShader {0} Failed:{1}", m_blobHolder->getFullPath(), "path error");
 			}
 			SAFE_RELEASE(errorBlob);
 			return false;
@@ -88,18 +89,18 @@ namespace Destiny
 		ID3DBlob* ppBlobOut = nullptr;
 		ID3DBlob* errorBlob = nullptr;
 
-		HRESULT hr = D3DCompileFromFile(Utility::MultiByte2WideChar(m_blobHolder->getFullPath()).c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "PS", "ps_5_0",
+		auto blob = m_blobHolder->getBlob();
+		HRESULT hr = D3DCompile(blob->getData(), blob->getLength(), m_blobHolder->getFullPath().c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "PS", "ps_5_0",
 			D3DCOMPILE_ENABLE_STRICTNESS, 0, &ppBlobOut, &errorBlob);
-
 		if (FAILED(hr))
 		{
 			if (errorBlob != nullptr)
 			{
-				LOG_ERROR("CreatePixelShader {0} Failed:{1}", m_blobHolder->getFullPath(), reinterpret_cast<const char*>(errorBlob->GetBufferPointer()));
+				LOG_ERROR("CreateShader Failed:{0}", reinterpret_cast<const char*>(errorBlob->GetBufferPointer()));
 			}
 			else
 			{
-				LOG_ERROR("CreatePixelShader {0} Failed:{1}", m_blobHolder->getFullPath(), "path error");
+				LOG_ERROR("CreateShader {0} Failed:{1}", m_blobHolder->getFullPath(), "path error");
 			}
 			SAFE_RELEASE(errorBlob);
 			return false;

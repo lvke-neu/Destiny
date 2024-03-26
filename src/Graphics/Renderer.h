@@ -4,6 +4,7 @@
 
 struct ID3D11VertexShader;
 struct ID3D11PixelShader;
+struct ID3D10Blob;
 namespace Destiny
 {
 	class BlobHolder;
@@ -20,6 +21,7 @@ namespace Destiny
 	private:
 		ID3D11VertexShader*			m_vertexShader;
 		ID3D11PixelShader*			m_pixelShader;
+		ID3D10Blob* m_inputSignatureBlob;
 		std::shared_ptr<BlobHolder> m_blobHolder;
 	};
 }

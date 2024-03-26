@@ -28,6 +28,7 @@ namespace Destiny
 		m_blobHolder.reset();
 		SAFE_RELEASE(m_vertexShader);
 		SAFE_RELEASE(m_pixelShader);
+		SAFE_RELEASE(m_inputSignatureBlob);
 	}
 
 	void Renderer::doLoad()
@@ -38,16 +39,7 @@ namespace Destiny
 			return;
 		}
 
-		if (createVertexShader() && createPixelShader())
-		{
-			loadSucceeded__();
-			m_blobHolder.reset();
-		}
-		else
-		{
-			loadFailed__();
-			m_blobHolder.reset();
-		}	
+		(createVertexShader() && createPixelShader()) ? loadSucceeded__() : loadFailed__();
 	}
 
 	bool Renderer::createVertexShader()
@@ -80,6 +72,7 @@ namespace Destiny
 			return false;
 		}
 
+		D3DGetInputSignatureBlob(ppBlobOut->GetBufferPointer(), ppBlobOut->GetBufferSize(), &m_inputSignatureBlob);
 		SAFE_RELEASE(ppBlobOut);
 		return true;
 	}

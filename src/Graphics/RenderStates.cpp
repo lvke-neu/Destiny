@@ -58,7 +58,7 @@ namespace Destiny
 		loadSucceeded__();
 	}
 
-	std::shared_ptr<RenderStates> RenderStates::CreateDefault()
+	std::shared_ptr<RenderStates> RenderStates::Create_Default()
 	{
 		return std::make_shared<RenderStates>(std::shared_ptr<CD3D11_RASTERIZER_DESC>(new CD3D11_RASTERIZER_DESC(CD3D11_DEFAULT())), std::shared_ptr<CD3D11_DEPTH_STENCIL_DESC>(new CD3D11_DEPTH_STENCIL_DESC(CD3D11_DEFAULT())), std::shared_ptr<CD3D11_BLEND_DESC>(new CD3D11_BLEND_DESC(CD3D11_DEFAULT())));
 	}

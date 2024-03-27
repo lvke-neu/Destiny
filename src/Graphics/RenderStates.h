@@ -17,7 +17,7 @@ namespace Destiny
 	public:
 		virtual void doLoad() override;
 	public:
-		static std::shared_ptr<RenderStates> CreateDefault();
+		static std::shared_ptr<RenderStates> Create_Default();
 	private:
 		std::shared_ptr<D3D11_RASTERIZER_DESC>		m_rasterizerStateDesc;
 		std::shared_ptr<D3D11_DEPTH_STENCIL_DESC>	m_depthStencilStateDesc;

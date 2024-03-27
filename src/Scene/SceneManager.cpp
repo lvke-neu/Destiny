@@ -45,7 +45,7 @@ namespace Destiny
 		std::shared_ptr<Renderer> renderer = std::make_shared<Renderer>("builtin://renderer/basic.rdr");
 		renderer->load(0);
 
-		std::shared_ptr<RenderStates> renderStates = RenderStates::CreateDefault();
+		std::shared_ptr<RenderStates> renderStates = RenderStates::Create_Default();
 		renderStates->load(0);
 		
 		std::shared_ptr<InputLayout> inputLayout = InputLayout::Create_PositionNormalTexcoord(renderer->getInputSignatureBlob());

@@ -17,7 +17,6 @@ namespace Destiny
 
 	IndexBuffer::~IndexBuffer()
 	{
-		m_data.reset();
 		SAFE_RELEASE(m_indexBuffer);
 	}
 

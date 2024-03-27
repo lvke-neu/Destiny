@@ -16,8 +16,6 @@ namespace Destiny
 
 	InputLayout::~InputLayout()
 	{
-		m_inputLayoutDesc.reset();
-		m_inputSignatureBlob.reset();
 		SAFE_RELEASE(m_inputLayout);
 	}
 
@@ -27,6 +25,8 @@ namespace Destiny
 		{
 			loadFailed__();
 			LOG_ERROR("CreateInputLayout failed");
+			m_inputLayoutDesc.reset();
+			m_inputSignatureBlob.reset();
 			return;
 		}
 
@@ -37,11 +37,15 @@ namespace Destiny
 		if (SUCCEEDED(hr))
 		{
 			loadSucceeded__();
+			m_inputLayoutDesc.reset();
+			m_inputSignatureBlob.reset();
 		}
 		else
 		{
 			LOG_ERROR("CreateInputLayout failed");
 			loadFailed__();
+			m_inputLayoutDesc.reset();
+			m_inputSignatureBlob.reset();
 		}
 	}
 

@@ -26,8 +26,6 @@ namespace Destiny
 
 	Renderer::~Renderer()
 	{
-		m_inputSignatureBlob.reset();
-		m_blobHolder.reset();
 		SAFE_RELEASE(m_vertexShader);
 		SAFE_RELEASE(m_pixelShader);
 	}
@@ -37,10 +35,13 @@ namespace Destiny
 		if (!m_blobHolder || !m_blobHolder->isLoadingSucceed() || !m_blobHolder->getBlob())
 		{
 			loadFailed__();
+			m_inputSignatureBlob.reset();
+			m_blobHolder.reset();
 			return;
 		}
 
 		(createVertexShader() && createPixelShader()) ? loadSucceeded__() : loadFailed__();
+		m_blobHolder.reset();
 	}
 
 	bool Renderer::createVertexShader()

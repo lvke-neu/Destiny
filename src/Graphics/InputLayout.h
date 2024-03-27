@@ -16,8 +16,8 @@ namespace Destiny
 	public:
 		static std::shared_ptr<InputLayout> Create_PositionNormalTexcoord(std::shared_ptr<Blob> inputSignatureBlob);
 	private:
-		ID3D11InputLayout* m_inputLayout;
-		std::shared_ptr<Blob> m_inputLayoutDesc;
-		std::shared_ptr<Blob> m_inputSignatureBlob;
+		ID3D11InputLayout*		m_inputLayout;
+		std::shared_ptr<Blob>	m_inputLayoutDesc;
+		std::shared_ptr<Blob>	m_inputSignatureBlob;
 	};
 }

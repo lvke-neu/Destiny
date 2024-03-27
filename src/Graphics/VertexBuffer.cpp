@@ -18,7 +18,6 @@ namespace Destiny
 
 	VertexBuffer::~VertexBuffer()
 	{
-		m_data.reset();
 		SAFE_RELEASE(m_vertexBuffer);
 	}
 

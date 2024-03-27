@@ -13,6 +13,7 @@ namespace Destiny
 	Renderer::Renderer(const char* path) :
 		m_vertexShader(nullptr),
 		m_pixelShader(nullptr),
+		m_inputSignatureBlob(nullptr),
 		m_blobHolder(nullptr)
 	{
 		auto blobLoader = Engine::GetInstance()->getBlobLoaderManager()->getBlobLoader(path);
@@ -25,10 +26,10 @@ namespace Destiny
 
 	Renderer::~Renderer()
 	{
+		m_inputSignatureBlob.reset();
 		m_blobHolder.reset();
 		SAFE_RELEASE(m_vertexShader);
 		SAFE_RELEASE(m_pixelShader);
-		SAFE_RELEASE(m_inputSignatureBlob);
 	}
 
 	void Renderer::doLoad()
@@ -72,7 +73,16 @@ namespace Destiny
 			return false;
 		}
 
-		D3DGetInputSignatureBlob(ppBlobOut->GetBufferPointer(), ppBlobOut->GetBufferSize(), &m_inputSignatureBlob);
+		ID3D10Blob* inputSignatureBlob = nullptr;
+
+		hr = D3DGetInputSignatureBlob(ppBlobOut->GetBufferPointer(), ppBlobOut->GetBufferSize(), &inputSignatureBlob);
+		if (SUCCEEDED(hr))
+		{
+			m_inputSignatureBlob = std::make_shared<Blob>(inputSignatureBlob->GetBufferSize());
+			memcpy_s(m_inputSignatureBlob->getData(), m_inputSignatureBlob->getLength(), inputSignatureBlob->GetBufferPointer(), inputSignatureBlob->GetBufferSize());
+		}
+
+		SAFE_RELEASE(inputSignatureBlob);
 		SAFE_RELEASE(ppBlobOut);
 		return true;
 	}

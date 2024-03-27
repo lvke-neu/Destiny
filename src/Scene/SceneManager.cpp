@@ -8,6 +8,7 @@
 #include "Graphics/VertexBuffer.h"
 #include "Graphics/Renderer.h"
 #include "Graphics/RenderStates.h"
+#include "Graphics/InputLayout.h"
 
 namespace Destiny
 {
@@ -47,6 +48,9 @@ namespace Destiny
 		std::shared_ptr<RenderStates> renderStates = RenderStates::CreateDefault();
 		renderStates->load(0);
 		
+		std::shared_ptr<InputLayout> inputLayout = InputLayout::Create_PositionNormalTexcoord(renderer->getInputSignatureBlob());
+		inputLayout->load(0);
+
 		int i = 0;
 		i++;
 	}

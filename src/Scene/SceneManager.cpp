@@ -9,6 +9,7 @@
 #include "Graphics/Renderer.h"
 #include "Graphics/RenderStates.h"
 #include "Graphics/InputLayout.h"
+#include "Graphics/Mesh.h"
 
 namespace Destiny
 {
@@ -42,6 +43,14 @@ namespace Destiny
 		std::shared_ptr<VertexBuffer> vertexBuffer = std::make_shared<VertexBuffer>(12, 0, data);
 		vertexBuffer->load(0);
 
+		DirectX::BoundingBox aabb({ 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f });
+		Mesh::DrawCall dc;
+		dc.drawMethod = Mesh::DrawMethod::DrawIndexed;
+		dc.primitiveTopology = Mesh::PrimitiveTopology::TriangleList;
+
+		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(aabb, dc, vertexBuffer, indexBuffer);
+		mesh->load(0);
+	
 		std::shared_ptr<Renderer> renderer = std::make_shared<Renderer>("builtin://renderer/basic.rdr");
 		renderer->load(0);
 

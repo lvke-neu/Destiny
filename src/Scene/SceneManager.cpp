@@ -40,7 +40,7 @@ namespace Destiny
 		std::shared_ptr<IndexBuffer> indexBuffer = std::make_shared<IndexBuffer>(IndexBuffer::IndexType::Index16, data);
 		indexBuffer->load(0);
 
-		std::shared_ptr<VertexBuffer> vertexBuffer = std::make_shared<VertexBuffer>(12, 0, data);
+		std::shared_ptr<VertexBuffer> vertexBuffer = std::make_shared<VertexBuffer>(InputLayout::Create_PositionNormalTexcoord(), 12, 0, data);
 		vertexBuffer->load(0);
 
 		DirectX::BoundingBox aabb({ 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f });
@@ -57,8 +57,6 @@ namespace Destiny
 		std::shared_ptr<RenderStates> renderStates = RenderStates::Create_Default();
 		renderStates->load(0);
 		
-		std::shared_ptr<InputLayout> inputLayout = InputLayout::Create_PositionNormalTexcoord(renderer->getInputSignatureBlob());
-		inputLayout->load(0);
 
 		int i = 0;
 		i++;

@@ -7,7 +7,8 @@
 
 namespace Destiny
 {
-	VertexBuffer::VertexBuffer(unsigned int stride, unsigned int offset, std::shared_ptr<Blob> data) :
+	VertexBuffer::VertexBuffer(std::shared_ptr<InputLayout> inputLayout, unsigned int stride, unsigned int offset, std::shared_ptr<Blob> data) :
+		m_inputLayout(inputLayout),
 		m_stride(stride),
 		m_offset(offset),
 		m_vertexBuffer(nullptr),
@@ -23,7 +24,7 @@ namespace Destiny
 
 	void VertexBuffer::doLoad()
 	{
-		if (!m_data)
+		if (!m_inputLayout || !m_data)
 		{
 			loadFailed__();
 			LOG_ERROR("Thread {0}, VertexBuffer load failed", std::to_string((*(uint32_t*)&std::this_thread::get_id())));

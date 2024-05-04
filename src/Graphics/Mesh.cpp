@@ -2,6 +2,8 @@
 #include "Engine/Utility.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
+#include "RenderParameters.h"
+#include "InputLayout.h"
 
 namespace Destiny
 {
@@ -47,5 +49,28 @@ namespace Destiny
 		{
 			loadSucceeded__();
 		}
+	}
+
+	void Mesh::fillRenderParameters(std::shared_ptr<RenderParameters> renderParameters, std::shared_ptr<Blob> inputSignatureBlob)
+	{
+		if (!renderParameters || !m_vertexBuffer || !m_vertexBuffer->m_inputLayout ||!m_indexBuffer)
+		{
+			return;
+		}
+
+		renderParameters->vertexBuffer = m_vertexBuffer->m_vertexBuffer;
+		renderParameters->stride = m_vertexBuffer->m_stride;
+		renderParameters->offset = m_vertexBuffer->m_offset;
+
+		renderParameters->indexBuffer = m_indexBuffer->m_indexBuffer;
+		renderParameters->format = (short)m_indexBuffer->m_indexType;
+
+		renderParameters->primitiveTopology = (short)m_drawCall.primitiveTopology;
+
+		renderParameters->inputLayout = m_vertexBuffer->m_inputLayout->getInputLayout(inputSignatureBlob);
+		
+		renderParameters->drawType = (short)m_drawCall.drawMethod;
+		renderParameters->indexCount = m_drawCall.indexCount;
+		renderParameters->vertexCount = m_drawCall.vertexCount;
 	}
 }

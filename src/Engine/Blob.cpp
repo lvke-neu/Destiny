@@ -1,4 +1,5 @@
 #include "Blob.h"
+#include <Windows.h>
 
 namespace Destiny
 {
@@ -11,5 +12,13 @@ namespace Destiny
 	Blob::~Blob()
 	{
 		delete[] m_data;
+	}
+
+	void Blob::copyfrom(void* data, size_t length)
+	{
+		if (length <= m_length)
+		{
+			memcpy_s(m_data, length, data, length);
+		}
 	}
 }

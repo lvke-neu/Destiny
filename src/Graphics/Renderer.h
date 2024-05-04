@@ -10,6 +10,7 @@ namespace Destiny
 	class BlobHolder;
 	class Renderer : public Asset
 	{
+		friend class Effect;
 	public:
 		Renderer(const char* path);
 		virtual ~Renderer();
@@ -21,10 +22,10 @@ namespace Destiny
 		bool createVertexShader();
 		bool createPixelShader();
 	private:
-		ID3D11VertexShader*			m_vertexShader;
-		ID3D11PixelShader*			m_pixelShader;
-		std::shared_ptr<Blob>		m_inputSignatureBlob;
-		std::shared_ptr<BlobHolder> m_blobHolder;
+		ID3D11VertexShader*				m_vertexShader;
+		ID3D11PixelShader*				m_pixelShader;
+		std::shared_ptr<Blob>			m_inputSignatureBlob;
+		std::shared_ptr<BlobHolder>		m_blobHolder;
 	};
 
 	inline std::shared_ptr<Blob> Renderer::getInputSignatureBlob()

@@ -5,10 +5,10 @@
 
 namespace Destiny
 {
-	RenderStates::RenderStates(std::shared_ptr<D3D11_RASTERIZER_DESC> rasterizerStateDesc, std::shared_ptr <D3D11_DEPTH_STENCIL_DESC> depthStencilStateDesc, std::shared_ptr <D3D11_BLEND_DESC> blendStateDesc) :
-		m_rasterizerStateDesc(rasterizerStateDesc),
-		m_depthStencilStateDesc(depthStencilStateDesc),
-		m_blendStateDesc(blendStateDesc),
+	RenderStates::RenderStates() :
+		m_rasterizerStateDesc(std::make_shared<CD3D11_RASTERIZER_DESC>(CD3D11_DEFAULT())),
+		m_depthStencilStateDesc(std::make_shared<CD3D11_DEPTH_STENCIL_DESC>(CD3D11_DEFAULT())),
+		m_blendStateDesc(std::make_shared<CD3D11_BLEND_DESC>(CD3D11_DEFAULT())),
 		m_rasterizerState(nullptr),
 		m_depthStencilState(nullptr),
 		m_blendState(nullptr)
@@ -56,10 +56,5 @@ namespace Destiny
 		}
 		
 		loadSucceeded__();
-	}
-
-	std::shared_ptr<RenderStates> RenderStates::Create_Default()
-	{
-		return std::make_shared<RenderStates>(std::shared_ptr<CD3D11_RASTERIZER_DESC>(new CD3D11_RASTERIZER_DESC(CD3D11_DEFAULT())), std::shared_ptr<CD3D11_DEPTH_STENCIL_DESC>(new CD3D11_DEPTH_STENCIL_DESC(CD3D11_DEFAULT())), std::shared_ptr<CD3D11_BLEND_DESC>(new CD3D11_BLEND_DESC(CD3D11_DEFAULT())));
 	}
 }

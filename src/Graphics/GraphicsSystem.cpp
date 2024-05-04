@@ -1,5 +1,6 @@
 #define NOMINMAX
 #include "GraphicsSystem.h"
+#include "RenderParameters.h"
 #include "Engine/Engine.h"
 #include "Engine/EventSystem.h"
 #include "Engine/Utility.h"
@@ -54,10 +55,17 @@ namespace Destiny
 
 	void GraphicsSystem::update()
 	{
+		render();
+		m_pDXGISwapChain->Present(0, 0);
 		static float color[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 		m_pD3D11ImmediateDeviceContext->ClearRenderTargetView(m_pRenderTargetView, color);
 		m_pD3D11ImmediateDeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-		m_pDXGISwapChain->Present(0, 0);
+		m_renderParameters.clear();
+	}
+
+	void GraphicsSystem::commitRenderParameters(std::shared_ptr<RenderParameters> renderParameters)
+	{
+		m_renderParameters.emplace(renderParameters);
 	}
 
 	void GraphicsSystem::onResize(void* data)
@@ -114,6 +122,37 @@ namespace Destiny
 		//m_renderToShadowMapDSV = std::make_shared<DepthStencilView>(width, height);
 		//m_renderToShadowMapRTV->load(0);
 		//m_renderToShadowMapDSV->load(0);
+	}
+
+	void GraphicsSystem::render()
+	{
+		for (const auto& renderParameters : m_renderParameters)
+		{
+			if (!renderParameters)
+			{
+				continue;
+			}
+
+			m_pD3D11ImmediateDeviceContext->IASetVertexBuffers(0, 1, &renderParameters->vertexBuffer, &renderParameters->stride, &renderParameters->offset);
+			m_pD3D11ImmediateDeviceContext->IASetIndexBuffer(renderParameters->indexBuffer, (DXGI_FORMAT)renderParameters->format, 0);
+			m_pD3D11ImmediateDeviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)renderParameters->primitiveTopology);
+			m_pD3D11ImmediateDeviceContext->IASetInputLayout(renderParameters->inputLayout);
+
+			m_pD3D11ImmediateDeviceContext->VSSetShader(renderParameters->vertexShader, nullptr, 0);
+			m_pD3D11ImmediateDeviceContext->PSSetShader(renderParameters->pixelShader, nullptr, 0);
+
+			m_pD3D11ImmediateDeviceContext->RSSetState(renderParameters->rasterizerState);
+			m_pD3D11ImmediateDeviceContext->OMSetDepthStencilState(renderParameters->depthStencilState, 0);
+			m_pD3D11ImmediateDeviceContext->OMSetBlendState(renderParameters->blendState, nullptr, 0xFFFFFFFF);
+		
+			switch (renderParameters->drawType)
+			{
+			case 1 :
+				m_pD3D11ImmediateDeviceContext->Draw(renderParameters->vertexCount, 0);
+			case 2:
+				m_pD3D11ImmediateDeviceContext->DrawIndexed(renderParameters->indexCount, 0, 0);
+			}
+		}
 	}
 
 	void GraphicsSystem::createDeviceAndContext()

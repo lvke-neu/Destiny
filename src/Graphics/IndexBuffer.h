@@ -7,6 +7,7 @@ namespace Destiny
 	class Blob;
 	class IndexBuffer : public Asset
 	{
+		friend class Mesh;
 	public:
 		enum class IndexType
 		{

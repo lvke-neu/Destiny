@@ -10,6 +10,9 @@
 #include "Graphics/RenderStates.h"
 #include "Graphics/InputLayout.h"
 #include "Graphics/Mesh.h"
+#include "Graphics/Effect.h"
+#include "Graphics/RenderParameters.h"
+#include "Graphics/GraphicsSystem.h"
 
 namespace Destiny
 {
@@ -22,42 +25,50 @@ namespace Destiny
 	{
 
 	}
-
+	std::shared_ptr<Mesh> mesh = nullptr;
+	std::shared_ptr<Effect> effect = nullptr;
+	std::shared_ptr<RenderParameters> renderParameters = std::make_shared<RenderParameters>();
 	void SceneManager::initialize()
 	{
-		//const char* path = "builtin://1.txt";
-		//auto blobloader = Engine::GetInstance()->getBlobLoaderManager()->getBlobLoader(path);
-		//if (blobloader)
-		//{
-		//	auto blobholder = blobloader->createBlobHolder(path);
-		//	if (blobholder)
-		//	{
-		//		blobholder->load(1);
-		//	}
-		//}
-		
-		std::shared_ptr<Blob> data = std::make_shared<Blob>(250);
+		std::shared_ptr<Blob> data = nullptr;
+
+
+		//VertexBuffer
+		struct Vertex
+		{
+			DirectX::XMFLOAT3 position;
+		};
+		std::vector<Vertex> vertices;
+		vertices.resize(3);
+		vertices[0] = { { -0.5f, 0.0f, 0.0f } };
+		vertices[1] = { {  0.0f, 0.5f, 0.0f } };
+		vertices[2] = { {  0.5f, 0.0f, 0.0f } };
+		data.reset(new Blob(vertices.size() * sizeof(Vertex)));
+		data->copyfrom(vertices.data(), vertices.size() * sizeof(Vertex));
+		std::shared_ptr<VertexBuffer> vertexBuffer = std::make_shared<VertexBuffer>(InputLayout::Create_Position(), (unsigned int)sizeof(Vertex), 0, data);
+
+		//IndexBuffer
+		std::vector<unsigned short> indices{ 0 ,1, 2 };
+		data.reset(new Blob(indices.size() * sizeof(unsigned short)));
+		data->copyfrom(indices.data(), indices.size() * sizeof(unsigned short));
 		std::shared_ptr<IndexBuffer> indexBuffer = std::make_shared<IndexBuffer>(IndexBuffer::IndexType::Index16, data);
-		indexBuffer->load(0);
 
-		std::shared_ptr<VertexBuffer> vertexBuffer = std::make_shared<VertexBuffer>(InputLayout::Create_PositionNormalTexcoord(), 12, 0, data);
-		vertexBuffer->load(0);
-
+		//Mesh
 		DirectX::BoundingBox aabb({ 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f });
-		Mesh::DrawCall dc;
-		dc.drawMethod = Mesh::DrawMethod::DrawIndexed;
-		dc.primitiveTopology = Mesh::PrimitiveTopology::TriangleList;
-
-		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(aabb, dc, vertexBuffer, indexBuffer);
+		Mesh::DrawCall drawCall;
+		drawCall.drawMethod = Mesh::DrawMethod::DrawIndexed;
+		drawCall.primitiveTopology = Mesh::PrimitiveTopology::TriangleList;
+		drawCall.indexCount = (unsigned int)indices.size();
+		mesh = std::make_shared<Mesh>(aabb, drawCall, vertexBuffer, indexBuffer);
 		mesh->load(0);
-	
-		std::shared_ptr<Renderer> renderer = std::make_shared<Renderer>("builtin://renderer/basic.rdr");
-		renderer->load(0);
 
-		std::shared_ptr<RenderStates> renderStates = RenderStates::Create_Default();
-		renderStates->load(0);
-		
+		//Effect
+		effect = std::make_shared<Effect>("builtin://renderer/basic.rdr");
+		effect->load(0);
 
+
+		mesh->fillRenderParameters(renderParameters, effect->getInputSignatureBlob());
+		effect->fillRenderParameters(renderParameters);
 		int i = 0;
 		i++;
 	}
@@ -69,6 +80,6 @@ namespace Destiny
 
 	void SceneManager::update()
 	{
-		
+		Engine::GetInstance()->getGraphicsSystem()->commitRenderParameters(renderParameters);
 	}
 }

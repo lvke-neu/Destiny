@@ -10,6 +10,8 @@ namespace Destiny
 	public:
 		void*  getData();
 		size_t getLength();
+	public:
+		void copyfrom(void* data, size_t length);
 	private:
 		void*	m_data{ nullptr };
 		size_t	m_length{ 0 };
@@ -24,5 +26,4 @@ namespace Destiny
 	{
 		return m_length;
 	}
-
 }

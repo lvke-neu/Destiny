@@ -1,4 +1,5 @@
 #include "Renderer.h"
+#include "RenderStates.h"
 #include "Engine/Engine.h"
 #include "Engine/Blob.h"
 #include "Engine/BlobHolder.h"
@@ -80,7 +81,7 @@ namespace Destiny
 		if (SUCCEEDED(hr))
 		{
 			m_inputSignatureBlob = std::make_shared<Blob>(inputSignatureBlob->GetBufferSize());
-			memcpy_s(m_inputSignatureBlob->getData(), m_inputSignatureBlob->getLength(), inputSignatureBlob->GetBufferPointer(), inputSignatureBlob->GetBufferSize());
+			m_inputSignatureBlob->copyfrom(inputSignatureBlob->GetBufferPointer(), inputSignatureBlob->GetBufferSize());
 		}
 
 		SAFE_RELEASE(inputSignatureBlob);

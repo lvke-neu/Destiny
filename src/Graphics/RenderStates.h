@@ -11,13 +11,13 @@ namespace Destiny
 {
 	class RenderStates : public Asset
 	{
+		friend class Effect;
 	public:
-		RenderStates(std::shared_ptr<D3D11_RASTERIZER_DESC> rasterizerStateDesc, std::shared_ptr <D3D11_DEPTH_STENCIL_DESC> depthStencilStateDesc, std::shared_ptr <D3D11_BLEND_DESC> blendStateDesc);
+		//Create_Default
+		RenderStates();
 		virtual ~RenderStates();
 	public:
 		virtual void doLoad() override;
-	public:
-		static std::shared_ptr<RenderStates> Create_Default();
 	private:
 		std::shared_ptr<D3D11_RASTERIZER_DESC>		m_rasterizerStateDesc;
 		std::shared_ptr<D3D11_DEPTH_STENCIL_DESC>	m_depthStencilStateDesc;

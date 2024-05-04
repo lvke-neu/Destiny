@@ -8,6 +8,7 @@ namespace Destiny
 	class InputLayout;
 	class VertexBuffer : public Asset
 	{
+		friend class Mesh;
 	public:
 		VertexBuffer(std::shared_ptr<InputLayout> inputLayout, unsigned int stride, unsigned int offset, std::shared_ptr<Blob> data);
 		virtual ~VertexBuffer();

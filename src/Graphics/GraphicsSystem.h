@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include <vector>
+#include <unordered_set>
 
 struct ID3D11Device;
 struct ID3D11DeviceContext;
@@ -31,6 +32,7 @@ namespace Destiny
 	class MaterialLoader;
 	class RenderTargetView;
 	class DepthStencilView;
+	class RenderParameters;
 	class GraphicsSystem
 	{
 	public:
@@ -40,6 +42,7 @@ namespace Destiny
 		void initialize(long long hwnd);
 		void uninitialize();
 		void update();
+		void commitRenderParameters(std::shared_ptr<RenderParameters> renderParameters);
 	public:
 		ID3D11Device*				getDevice();
 		ID3D11DeviceContext*		getImmediateContext();
@@ -51,16 +54,18 @@ namespace Destiny
 		void createSwapChain(long long hwnd);
 		void onResize(void* data);
 		void onResize_(unsigned int width, unsigned int height);
+		void render();
 	private:
-		ID3D11Device*					m_pD3D11Device;
-		ID3D11DeviceContext*			m_pD3D11ImmediateDeviceContext;
-		ID3D11DeviceContext*			m_pD3D11DeferredDeviceContext;
-		IDXGISwapChain*					m_pDXGISwapChain;
-		ID3D11RenderTargetView*			m_pRenderTargetView;
-		ID3D11Texture2D*				m_pDepthStencilBuffer;
-		ID3D11DepthStencilView*			m_pDepthStencilView;
-		unsigned int					m_4xMsaaQuality;
-		std::shared_ptr<D3D11_VIEWPORT> m_viewport;
+		ID3D11Device*												m_pD3D11Device;
+		ID3D11DeviceContext*										m_pD3D11ImmediateDeviceContext;
+		ID3D11DeviceContext*										m_pD3D11DeferredDeviceContext;
+		IDXGISwapChain*												m_pDXGISwapChain;
+		ID3D11RenderTargetView*										m_pRenderTargetView;
+		ID3D11Texture2D*											m_pDepthStencilBuffer;
+		ID3D11DepthStencilView*										m_pDepthStencilView;
+		unsigned int												m_4xMsaaQuality;
+		std::shared_ptr<D3D11_VIEWPORT>								m_viewport;
+		std::unordered_set<std::shared_ptr<RenderParameters>>		m_renderParameters;
 	};
 
 	inline ID3D11Device* GraphicsSystem::getDevice()

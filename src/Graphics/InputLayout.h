@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 
+struct ID3D11InputLayout;
 namespace Destiny
 {
 	class Blob;
@@ -8,9 +9,14 @@ namespace Destiny
 	{
 	public:
 		InputLayout(std::shared_ptr<Blob> inputLayoutDesc);
+		~InputLayout();
 	public:
+		ID3D11InputLayout* getInputLayout(std::shared_ptr<Blob> inputSignatureBlob);
+	public:
+		static std::shared_ptr<InputLayout> Create_Position();
 		static std::shared_ptr<InputLayout> Create_PositionNormalTexcoord();
 	private:
 		std::shared_ptr<Blob>	m_inputLayoutDesc;
+		ID3D11InputLayout*		m_inputLayout;
 	};
 }

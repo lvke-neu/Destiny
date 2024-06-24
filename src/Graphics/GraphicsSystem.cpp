@@ -68,6 +68,11 @@ namespace Destiny
 		m_renderParameters.emplace(renderParameters);
 	}
 
+	void GraphicsSystem::commitRenderParameters(const std::unordered_set<std::shared_ptr<RenderParameters>>& renderParameters)
+	{
+		m_renderParameters.insert(renderParameters.begin(), renderParameters.end());
+	}
+
 	void GraphicsSystem::onResize(void* data)
 	{
 		WindowResizeData wrd = *(WindowResizeData*)data;

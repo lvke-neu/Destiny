@@ -11,8 +11,12 @@
 #include "Graphics/InputLayout.h"
 #include "Graphics/Mesh.h"
 #include "Graphics/Effect.h"
+#include "Graphics/EffectPass.h"
+#include "Graphics/EffectTechnique.h"
 #include "Graphics/RenderParameters.h"
 #include "Graphics/GraphicsSystem.h"
+#include "Graphics/Visual3D.h"
+#include <d3d11.h>
 
 namespace Destiny
 {
@@ -24,10 +28,10 @@ namespace Destiny
 	SceneManager::~SceneManager()
 	{
 
-	}
-	std::shared_ptr<Mesh> mesh = nullptr;
-	std::shared_ptr<Effect> effect = nullptr;
-	std::shared_ptr<RenderParameters> renderParameters = std::make_shared<RenderParameters>();
+	}	
+
+	std::shared_ptr<Visual3D> visual3d = nullptr;
+
 	void SceneManager::initialize()
 	{
 		std::shared_ptr<Blob> data = nullptr;
@@ -59,18 +63,39 @@ namespace Destiny
 		drawCall.drawMethod = Mesh::DrawMethod::DrawIndexed;
 		drawCall.primitiveTopology = Mesh::PrimitiveTopology::TriangleList;
 		drawCall.indexCount = (unsigned int)indices.size();
-		mesh = std::make_shared<Mesh>(aabb, drawCall, vertexBuffer, indexBuffer);
+		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(aabb, drawCall, vertexBuffer, indexBuffer);
 		mesh->load(0);
 
 		//Effect
-		effect = std::make_shared<Effect>("builtin://renderer/basic.rdr");
-		effect->load(0);
+		std::shared_ptr<Renderer> renderer = std::make_shared<Renderer>("builtin://renderer/basic.rdr");
+		renderer->load(0);
+		std::shared_ptr<RenderStates> renderStates = std::make_shared<RenderStates>();
+		renderStates->load(0);
 
+		std::shared_ptr<EffectPass> effectPass = std::make_shared<EffectPass>();
+		effectPass->setRenderer(renderer);
+		effectPass->setRenderStates(renderStates);
 
-		mesh->fillRenderParameters(renderParameters, effect->getInputSignatureBlob());
-		effect->fillRenderParameters(renderParameters);
-		int i = 0;
-		i++;
+		std::shared_ptr<Renderer> renderer2 = std::make_shared<Renderer>("builtin://renderer/basic2.rdr");
+		renderer2->load(0);
+		std::shared_ptr<RenderStates> renderStates2 = std::make_shared<RenderStates>();
+		renderStates2->getRasterizerStateDesc()->FillMode = D3D11_FILL_WIREFRAME;
+		renderStates2->load(0);
+		std::shared_ptr<EffectPass> effectPass2 = std::make_shared<EffectPass>();
+		effectPass2->setRenderer(renderer2);
+		effectPass2->setRenderStates(renderStates2);
+
+		std::shared_ptr<EffectTechnique> effectTechnique = std::make_shared<EffectTechnique>();
+		effectTechnique->addEffectPass(effectPass);
+		effectTechnique->addEffectPass(effectPass2);
+
+		std::shared_ptr<Effect> effect = std::make_shared<Effect>();
+		effect->addEffectTechnique(effectTechnique);
+
+		//Visual3D
+		visual3d = std::make_shared<Visual3D>();
+		visual3d->setEffect(effect);
+		visual3d->setMesh(mesh);
 	}
 
 	void SceneManager::uninitialize()
@@ -80,6 +105,6 @@ namespace Destiny
 
 	void SceneManager::update()
 	{
-		Engine::GetInstance()->getGraphicsSystem()->commitRenderParameters(renderParameters);
+		Engine::GetInstance()->getGraphicsSystem()->commitRenderParameters(visual3d->getRenderParameters());
 	}
 }

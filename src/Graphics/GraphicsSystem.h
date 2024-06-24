@@ -43,6 +43,7 @@ namespace Destiny
 		void uninitialize();
 		void update();
 		void commitRenderParameters(std::shared_ptr<RenderParameters> renderParameters);
+		void commitRenderParameters(const std::unordered_set<std::shared_ptr<RenderParameters>>& renderParameters);
 	public:
 		ID3D11Device*				getDevice();
 		ID3D11DeviceContext*		getImmediateContext();

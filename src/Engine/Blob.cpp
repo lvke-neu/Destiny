@@ -21,4 +21,9 @@ namespace Destiny
 			memcpy_s(m_data, length, data, length);
 		}
 	}
+
+	void Blob::memset0()
+	{
+		memset(m_data, 0, m_length);
+	}
 }

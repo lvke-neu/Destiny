@@ -12,6 +12,7 @@ namespace Destiny
 		size_t getLength();
 	public:
 		void copyfrom(void* data, size_t length);
+		void memset0();
 	private:
 		void*	m_data{ nullptr };
 		size_t	m_length{ 0 };

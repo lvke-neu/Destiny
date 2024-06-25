@@ -1,6 +1,7 @@
 #define NOMINMAX
 #include "GraphicsSystem.h"
 #include "RenderParameters.h"
+#include "ConstantBuffer.h"
 #include "Engine/Engine.h"
 #include "Engine/EventSystem.h"
 #include "Engine/Utility.h"
@@ -149,7 +150,15 @@ namespace Destiny
 			m_pD3D11ImmediateDeviceContext->RSSetState(renderParameters->rasterizerState);
 			m_pD3D11ImmediateDeviceContext->OMSetDepthStencilState(renderParameters->depthStencilState, 0);
 			m_pD3D11ImmediateDeviceContext->OMSetBlendState(renderParameters->blendState, nullptr, 0xFFFFFFFF);
-		
+			
+			for (const auto& constantBuffer : renderParameters->constantBuffers)
+			{
+				if (constantBuffer.second)
+				{
+					constantBuffer.second->bind(m_pD3D11ImmediateDeviceContext);
+				}
+			}
+
 			switch (renderParameters->drawType)
 			{
 			case 1 :

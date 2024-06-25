@@ -1,4 +1,6 @@
 #pragma once
+#include <memory>
+#include <unordered_map>
 
 struct ID3D11Buffer;
 struct ID3D11InputLayout;
@@ -9,6 +11,7 @@ struct ID3D11DepthStencilState;
 struct ID3D11BlendState;
 namespace Destiny
 {
+	class ConstantBuffer;
 	class RenderParameters
 	{
 	public:
@@ -30,5 +33,6 @@ namespace Destiny
 		short drawType									= 0;
 		unsigned int indexCount							= 0;
 		unsigned int vertexCount						= 0;
+		std::unordered_map<std::string, std::shared_ptr<ConstantBuffer>>	constantBuffers;
 	};
 }

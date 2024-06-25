@@ -1,9 +1,10 @@
 #include "Renderer.h"
 #include "RenderStates.h"
+
 #include "GraphicsSystem.h"
 #include "RenderParameters.h"
 #include "Engine/Engine.h"
-#include "Engine/Blob.h"
+
 #include "Engine/BlobHolder.h"
 #include "Engine/BlobLoader.h"
 #include "Engine/BlobLoaderManager.h"
@@ -12,8 +13,6 @@
 
 namespace Destiny
 {
-	#define per_object_constant_buffer_names "cbPerObject"
-
 	Renderer::Renderer(const char* path) :
 		m_vertexShader(nullptr),
 		m_pixelShader(nullptr),
@@ -50,6 +49,11 @@ namespace Destiny
 
 		(createVertexShader() && createPixelShader()) ? loadSucceeded__() : loadFailed__();
 		m_blobHolder.reset();
+
+		collectReflectionInfo(m_vsCompiledBlob, 0);
+		collectReflectionInfo(m_psCompiledBlob, 1);
+		SAFE_RELEASE(m_vsCompiledBlob);
+		SAFE_RELEASE(m_psCompiledBlob);
 	}
 
 	bool Renderer::createVertexShader()
@@ -124,28 +128,64 @@ namespace Destiny
 		return true;
 	}
 
-	void Renderer::setFloat(const char* name, float data)
+	void Renderer::collectReflectionInfo(ID3D10Blob* compiledBlob, short flag)
 	{
+		if (!compiledBlob)
+		{
+			return;
+		}
+
 		HRESULT hr = 0;
 		ID3D11ShaderReflection* shaderReflection = nullptr;
-		if (m_vsCompiledBlob)
+
+
+		hr = D3DReflect(compiledBlob->GetBufferPointer(), compiledBlob->GetBufferSize(), __uuidof(ID3D11ShaderReflection), (void**)(&shaderReflection));
+		if (SUCCEEDED(hr))
 		{
-			hr = D3DReflect(m_vsCompiledBlob->GetBufferPointer(), m_vsCompiledBlob->GetBufferSize(), __uuidof(ID3D11ShaderReflection), (void**)(&shaderReflection));
+			D3D11_SHADER_DESC shaderDesc;
+			hr = shaderReflection->GetDesc(&shaderDesc);
 			if (SUCCEEDED(hr))
 			{
-				ID3D11ShaderReflectionConstantBuffer* reflectionConstantBuffer = nullptr;
-				reflectionConstantBuffer = shaderReflection->GetConstantBufferByName(per_object_constant_buffer_names);
-				if (reflectionConstantBuffer)
+				for (unsigned int i = 0; i < shaderDesc.ConstantBuffers; i++)
 				{
-					ID3D11ShaderReflectionVariable* reflectionVariable = reflectionConstantBuffer->GetVariableByName(name);
-					if (reflectionVariable)
+					ID3D11ShaderReflectionConstantBuffer* reflectionConstantBuffer = nullptr;
+					reflectionConstantBuffer = shaderReflection->GetConstantBufferByIndex(i);
+					if (reflectionConstantBuffer)
 					{
-						delete reflectionVariable;
+						D3D11_SHADER_BUFFER_DESC shaderBufferDesc;
+						hr = reflectionConstantBuffer->GetDesc(&shaderBufferDesc);
+
+						if (SUCCEEDED(hr))
+						{
+							D3D11_SHADER_INPUT_BIND_DESC shaderInputBindDesc;
+							hr = shaderReflection->GetResourceBindingDescByName(shaderBufferDesc.Name, &shaderInputBindDesc);
+
+							if (SUCCEEDED(hr))
+							{
+								auto iter = m_constantBuffers.find(shaderBufferDesc.Name);
+								if (iter == m_constantBuffers.end())
+								{
+									m_constantBuffers[shaderBufferDesc.Name] = std::make_shared<ConstantBuffer>(shaderInputBindDesc.BindPoint, shaderBufferDesc.Size);
+									for (unsigned int j = 0; j < shaderBufferDesc.Variables; j++)
+									{
+										ID3D11ShaderReflectionVariable* shaderReflectionVariable = reflectionConstantBuffer->GetVariableByIndex(j);
+										if (shaderReflectionVariable)
+										{
+											D3D11_SHADER_VARIABLE_DESC shaderVariableDesc;
+											hr = shaderReflectionVariable->GetDesc(&shaderVariableDesc);
+											if (SUCCEEDED(hr))
+											{
+												m_constantBuffers[shaderBufferDesc.Name]->addVariable(shaderVariableDesc.Name, { shaderVariableDesc.StartOffset, shaderVariableDesc.Size });
+												m_variableLinkConstant[shaderVariableDesc.Name] = shaderBufferDesc.Name;
+											}
+										}
+									}
+								}
+								m_constantBuffers[shaderBufferDesc.Name]->setConstantBufferBindFlag((ConstantBufferBindFlag)flag, true);
+							}
+						}
 					}
-					
-					delete reflectionConstantBuffer;
 				}
-				SAFE_RELEASE(shaderReflection);
 			}
 		}
 	}
@@ -159,5 +199,6 @@ namespace Destiny
 
 		renderParameters->vertexShader = m_vertexShader;
 		renderParameters->pixelShader = m_pixelShader;
+		renderParameters->constantBuffers = m_constantBuffers;
 	}
 }

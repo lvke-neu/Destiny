@@ -69,6 +69,8 @@ namespace Destiny
 		//Effect
 		std::shared_ptr<Renderer> renderer = std::make_shared<Renderer>("builtin://renderer/basic.rdr");
 		renderer->load(0);
+		renderer->setValue("u_color", DirectX::XMFLOAT4{ 1.0f, 0.0f, 1.0f, 1.0f });
+		renderer->setValue("u_color2", DirectX::XMFLOAT4{ 0.0f, 0.0f, 1.0f, 1.0f });
 		std::shared_ptr<RenderStates> renderStates = std::make_shared<RenderStates>();
 		renderStates->load(0);
 

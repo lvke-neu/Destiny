@@ -56,7 +56,7 @@ namespace Destiny
 				if (effectPass)
 				{
 					effectPass->fillRenderParameters(renderParameters);
-					if (m_mesh)
+					if (m_mesh && effectPass->getRenderer())
 					{
 						m_mesh->fillRenderParameters(renderParameters, effectPass->getRenderer()->getInputSignatureBlob());
 					}

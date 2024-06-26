@@ -1,4 +1,5 @@
 #pragma once
+#include "Object.h"
 #include <string>
 #include <memory>
 
@@ -6,7 +7,7 @@ namespace Destiny
 {
 	class Blob;
 	class BlobLoader;
-	class BlobHolder : public std::enable_shared_from_this<BlobHolder>
+	class BlobHolder : public std::enable_shared_from_this<BlobHolder>, public Object
 	{
 	public:
 		enum LoadingState
@@ -28,6 +29,7 @@ namespace Destiny
 		void setFullPath(const std::string& path);
 		std::shared_ptr<Blob> getBlob() const;
 		bool isLoadingSucceed();
+		bool isLoadingFailed();
 		bool isLoadingPending();
 	protected:
 		std::shared_ptr<Blob>		m_blob;
@@ -60,6 +62,11 @@ namespace Destiny
 	inline bool BlobHolder::isLoadingSucceed()
 	{
 		return m_state == loading_state_succeeded;
+	}
+
+	inline bool BlobHolder::isLoadingFailed()
+	{
+		return m_state == loading_state_failed;
 	}
 
 	inline bool BlobHolder::isLoadingPending()

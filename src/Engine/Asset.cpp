@@ -13,9 +13,10 @@ namespace Destiny
 
 	}
 
-	void Asset::initialize(std::shared_ptr<AssetLoader> assetLoader)
+	void Asset::initialize(std::shared_ptr<AssetLoader> assetLoader, std::shared_ptr<Object> creationParam)
 	{
 		m_assetLoader = assetLoader;
+		m_creationParam = creationParam;
 	}
 
 	void Asset::load(int priority)

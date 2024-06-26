@@ -16,6 +16,7 @@
 #include "Graphics/RenderParameters.h"
 #include "Graphics/GraphicsSystem.h"
 #include "Graphics/Visual3D.h"
+#include "Graphics/Texture.h"
 #include <d3d11.h>
 
 namespace Destiny
@@ -72,7 +73,10 @@ namespace Destiny
 		renderer->load(0);
 		renderer->setConstant("a", 1.0f);
 		renderer->setConstant("b", 0.9f);
-			
+		
+		auto texture = Texture::Create("builtin://texture/box_diffuse.png");
+		texture->load();
+
 		std::shared_ptr<RenderStates> renderStates = std::make_shared<RenderStates>();
 		renderStates->load(0);
 

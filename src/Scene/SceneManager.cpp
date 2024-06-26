@@ -41,15 +41,16 @@ namespace Destiny
 		struct Vertex
 		{
 			DirectX::XMFLOAT3 position;
+			DirectX::XMFLOAT2 texcoord;
 		};
 		std::vector<Vertex> vertices;
 		vertices.resize(3);
-		vertices[0] = { { -0.5f, 0.0f, 0.0f } };
-		vertices[1] = { {  0.0f, 0.5f, 0.0f } };
-		vertices[2] = { {  0.5f, 0.0f, 0.0f } };
+		vertices[0] = { { -0.5f, 0.0f, 0.0f }, {0.0f, 1.0f} };
+		vertices[1] = { {  0.0f, 0.5f, 0.0f }, {0.5f, 0.0f} };
+		vertices[2] = { {  0.5f, 0.0f, 0.0f }, {1.0f, 1.0f} };
 		data.reset(new Blob(vertices.size() * sizeof(Vertex)));
 		data->copyfrom(vertices.data(), vertices.size() * sizeof(Vertex));
-		std::shared_ptr<VertexBuffer> vertexBuffer = std::make_shared<VertexBuffer>(InputLayout::Create_Position(), (unsigned int)sizeof(Vertex), 0, data);
+		std::shared_ptr<VertexBuffer> vertexBuffer = std::make_shared<VertexBuffer>(InputLayout::Create_PositionTexcoord(), (unsigned int)sizeof(Vertex), 0, data);
 
 		//IndexBuffer
 		std::vector<unsigned short> indices{ 0 ,1, 2 };
@@ -69,8 +70,9 @@ namespace Destiny
 		//Effect
 		std::shared_ptr<Renderer> renderer = std::make_shared<Renderer>("builtin://renderer/basic.rdr");
 		renderer->load(0);
-		renderer->setValue("u_color", DirectX::XMFLOAT4{ 1.0f, 0.0f, 1.0f, 1.0f });
-		renderer->setValue("u_color2", DirectX::XMFLOAT4{ 0.0f, 0.0f, 1.0f, 1.0f });
+		renderer->setConstant("a", 1.0f);
+		renderer->setConstant("b", 0.9f);
+			
 		std::shared_ptr<RenderStates> renderStates = std::make_shared<RenderStates>();
 		renderStates->load(0);
 

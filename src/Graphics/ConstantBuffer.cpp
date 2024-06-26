@@ -24,8 +24,10 @@ namespace Destiny
 		if (FAILED(hr))
 		{
 			LOG_ERROR("Create ConstantBuffer Failed");
+			return;
 		}
 
+		m_backData = std::make_shared<Blob>(m_byteWidth);
 	}
 
 	ConstantBuffer::~ConstantBuffer()
@@ -41,7 +43,7 @@ namespace Destiny
 			return;
 		}
 
-		if (!m_constantBuffer || !data || iter->second.size != data->getLength() || iter->second.offset + data->getLength() > m_byteWidth)
+		if (!m_constantBuffer ||!m_backData || !data || iter->second.size != data->getLength() || iter->second.offset + data->getLength() > m_byteWidth)
 		{
 			return;
 		}
@@ -50,7 +52,8 @@ namespace Destiny
 		HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->Map(m_constantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData);
 		if (SUCCEEDED(hr))
 		{
-			memcpy_s((char*)mappedData.pData + iter->second.offset, data->getLength(), data->getData(), data->getLength());
+			memcpy_s((char*)m_backData->getData() + iter->second.offset, data->getLength(), data->getData(), data->getLength());
+			memcpy_s(mappedData.pData, m_backData->getLength(), m_backData->getData(), m_backData->getLength());
 			Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->Unmap(m_constantBuffer, 0);
 		}
 	}
@@ -60,13 +63,8 @@ namespace Destiny
 		m_constantBufferBindFlag[bindFlag] = value;
 	}
 
-	void ConstantBuffer::bind(ID3D11DeviceContext* deviceContext)
+	void ConstantBuffer::bind()
 	{
-		if (!deviceContext)
-		{
-			return;
-		}
-		
 		for (const auto& constantBufferBindFlag : m_constantBufferBindFlag)
 		{
 			if (constantBufferBindFlag.second)
@@ -74,10 +72,10 @@ namespace Destiny
 				switch (constantBufferBindFlag.first)
 				{
 				case ConstantBufferBindFlag::BindVS :
-					deviceContext->VSSetConstantBuffers(m_startSlot, 1, &m_constantBuffer);
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->VSSetConstantBuffers(m_startSlot, 1, &m_constantBuffer);
 					break;
 				case ConstantBufferBindFlag::BindPS:
-					deviceContext->PSSetConstantBuffers(m_startSlot, 1, &m_constantBuffer);
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetConstantBuffers(m_startSlot, 1, &m_constantBuffer);
 					break;
 				}
 			}

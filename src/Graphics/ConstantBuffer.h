@@ -29,12 +29,13 @@ namespace Destiny
 		void addVariable(const std::string& name, ConstantBufferVariable variable);
 		void setVariable(const std::string& name, std::shared_ptr<Blob> data);
 		void setConstantBufferBindFlag(ConstantBufferBindFlag bindFlag, bool value);
-		void bind(ID3D11DeviceContext* deviceContext);
+		void bind();
 	private:
 		unsigned int m_startSlot;
 		unsigned int m_byteWidth;
 		std::unordered_map<std::string, ConstantBufferVariable> m_variables;
 		std::unordered_map<ConstantBufferBindFlag, bool> m_constantBufferBindFlag;
+		std::shared_ptr<Blob> m_backData;
 		ID3D11Buffer* m_constantBuffer;
 	};
 

@@ -155,7 +155,7 @@ namespace Destiny
 			{
 				if (constantBuffer.second)
 				{
-					constantBuffer.second->bind(m_pD3D11ImmediateDeviceContext);
+					constantBuffer.second->bind();
 				}
 			}
 

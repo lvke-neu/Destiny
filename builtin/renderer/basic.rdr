@@ -2,19 +2,24 @@
 
 cbuffer cbPerObject : register(b0)
 {
-	float4 u_color;
-	float4 u_color2;
+	float a;
+
+	float b;
+
 }
 
 
 struct VertexIn
 {
 	float3 positionL : POSITION;
+	float2 texcoord  : TEXCOORD;
 };
+
 
 struct VertexOut
 {
 	float4 positionH : SV_POSITION;
+	float2 texcoord  : TEXCOORD;
 };
 
 VertexOut VS(VertexIn vIn)
@@ -25,8 +30,11 @@ VertexOut VS(VertexIn vIn)
 	return vOut;
 }
 
+Texture2D g_ambientTexture : register(t0);
+SamplerState g_ambientSampler : register(s0);
+
 float4 PS(VertexOut pIn) : SV_Target
 {
-	return u_color2;
+	return g_ambientTexture.Sample(g_ambientSampler, pIn.texcoord);
 }
 

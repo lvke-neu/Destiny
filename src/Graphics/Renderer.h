@@ -27,7 +27,7 @@ namespace Destiny
 		void fillRenderParameters(std::shared_ptr<RenderParameters> renderParameters);
 	public:
 		template<typename T>
-		void setValue(const char* name, T value);
+		void setConstant(const char* name, T value);
 	private:
 		bool createVertexShader();
 		bool createPixelShader();
@@ -49,7 +49,7 @@ namespace Destiny
 	}
 
 	template<typename T>
-	void Renderer::setValue(const char* name, T value)
+	void Renderer::setConstant(const char* name, T value)
 	{
 		auto iter = m_variableLinkConstant.find(name);
 		if (iter == m_variableLinkConstant.end())

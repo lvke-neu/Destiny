@@ -24,7 +24,13 @@ namespace Destiny
 	void TextureLoader::loadAsset(std::shared_ptr<Asset> asset)
 	{
 		m_mtx.lock();
-	
+		
+		if (asset->isLoadingSucceed())
+		{
+			m_mtx.unlock();
+			return;
+		}
+
 		if (!asset || !dynamic_cast<Texture*>(asset.get()))
 		{
 			asset->loadFailed__();

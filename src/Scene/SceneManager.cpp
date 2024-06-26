@@ -32,7 +32,7 @@ namespace Destiny
 	}	
 
 	std::shared_ptr<Visual3D> visual3d = nullptr;
-
+	std::vector< std::shared_ptr<Texture>> vec;
 	void SceneManager::initialize()
 	{
 		std::shared_ptr<Blob> data = nullptr;
@@ -74,8 +74,13 @@ namespace Destiny
 		renderer->setConstant("a", 1.0f);
 		renderer->setConstant("b", 0.9f);
 		
-		auto texture = Texture::Create("builtin://texture/box_diffuse.png");
-		texture->load();
+		for (int i = 0; i < 1000; i++)
+		{
+			auto texture = Texture::Create("builtin://texture/box_diffuse.png");
+			texture->load();
+			vec.push_back(texture);
+		}
+
 
 		std::shared_ptr<RenderStates> renderStates = std::make_shared<RenderStates>();
 		renderStates->load(0);

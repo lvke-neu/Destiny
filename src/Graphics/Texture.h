@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/Asset.h"
+#include <unordered_map>
 
 struct ID3D11Resource;
 struct ID3D11ShaderResourceView;
@@ -18,6 +19,7 @@ namespace Destiny
 	private:
 		ID3D11Resource* m_resource;
 		ID3D11ShaderResourceView* m_shaderResourceView;
+		static std::unordered_map<std::string, std::shared_ptr<Texture>> m_cache;
 	};
 
 }

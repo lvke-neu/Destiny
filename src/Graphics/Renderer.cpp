@@ -1,5 +1,6 @@
 #include "Renderer.h"
 #include "Texture.h"
+#include "SamplerState.h"
 #include "RenderStates.h"
 
 #include "GraphicsSystem.h"
@@ -67,6 +68,18 @@ namespace Destiny
 
 		m_textures[name].second.reset();
 		m_textures[name].second = texture;
+	}
+
+	void Renderer::setSamplerSate(const char* name, std::shared_ptr<SamplerState> samplerState)
+	{
+		auto iter = m_samplerStates.find(name);
+		if (iter == m_samplerStates.end())
+		{
+			return;
+		}
+
+		m_samplerStates[name].second.reset();
+		m_samplerStates[name].second = samplerState;
 	}
 
 	bool Renderer::createVertexShader()
@@ -155,6 +168,7 @@ namespace Destiny
 		{
 			collectReflectionConstantInfo(shaderReflection, flag);
 			collectReflectionTextureInfo(shaderReflection, flag);
+			collectReflectionSamplerStateInfo(shaderReflection, flag);
 		}
 	}
 
@@ -248,6 +262,41 @@ namespace Destiny
 		}
 	}
 
+	void Destiny::Renderer::collectReflectionSamplerStateInfo(ID3D11ShaderReflection* shaderReflection, short flag)
+	{
+		if (!shaderReflection)
+		{
+			return;
+		}
+
+		HRESULT hr = 0;
+		D3D11_SHADER_DESC shaderDesc;
+		hr = shaderReflection->GetDesc(&shaderDesc);
+		if (SUCCEEDED(hr))
+		{
+			for (unsigned int i = 0; ; i++)
+			{
+				D3D11_SHADER_INPUT_BIND_DESC shaderInputBindDesc;
+				hr = shaderReflection->GetResourceBindingDesc(i, &shaderInputBindDesc);
+				if (FAILED(hr))
+				{
+					break;
+				}
+
+				if (shaderInputBindDesc.Type == D3D_SIT_SAMPLER)
+				{
+					auto iter = m_samplerStates.find(shaderInputBindDesc.Name);
+					if (iter == m_samplerStates.end())
+					{
+						m_samplerStates[shaderInputBindDesc.Name] = std::make_pair<std::shared_ptr<SamplerStateDesc>, std::shared_ptr<SamplerState>>(std::make_shared<SamplerStateDesc>(), nullptr);
+					}
+					m_samplerStates[shaderInputBindDesc.Name].first->startSlot = shaderInputBindDesc.BindPoint;
+					m_samplerStates[shaderInputBindDesc.Name].first->samplerStateBindFlag[(SamplerStateBindFlag)flag] = true;
+				}
+			}
+		}
+	}
+
 	void Renderer::fillRenderParameters(std::shared_ptr<RenderParameters> renderParameters)
 	{
 		if (!renderParameters)
@@ -259,5 +308,6 @@ namespace Destiny
 		renderParameters->pixelShader = m_pixelShader;
 		renderParameters->constantBuffers = m_constantBuffers;
 		renderParameters->textures = m_textures;
+		renderParameters->samplerStates = m_samplerStates;
 	}
 }

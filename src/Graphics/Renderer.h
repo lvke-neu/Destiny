@@ -18,6 +18,8 @@ namespace Destiny
 	class  ConstantBuffer;
 	class  Texture;
 	struct TextureDesc;
+	class  SamplerState;
+	struct SamplerStateDesc;
 	class Renderer : public Asset
 	{
 	public:
@@ -32,12 +34,14 @@ namespace Destiny
 		template<typename T>
 		void setConstant(const char* name, T value);
 		void setShaderResource(const char* name, std::shared_ptr<Texture> texture);
+		void setSamplerSate(const char* name, std::shared_ptr<SamplerState> samplerState);
 	private:
 		bool createVertexShader();
 		bool createPixelShader();
 		void collectReflectionInfo(ID3D10Blob* compiledBlob, short flag);
 		void collectReflectionConstantInfo(ID3D11ShaderReflection* shaderReflection, short flag);
 		void collectReflectionTextureInfo(ID3D11ShaderReflection* shaderReflection, short flag);
+		void collectReflectionSamplerStateInfo(ID3D11ShaderReflection* shaderReflection, short flag);
 	private:
 		ID3D11VertexShader*				m_vertexShader;
 		ID3D11PixelShader*				m_pixelShader;
@@ -48,6 +52,7 @@ namespace Destiny
 		std::unordered_map<std::string, std::shared_ptr<ConstantBuffer>> m_constantBuffers;
 		std::unordered_map<std::string, std::string> m_variableLinkConstant;
 		std::unordered_map<std::string, std::pair<std::shared_ptr<TextureDesc>, std::shared_ptr<Texture>>> m_textures;
+		std::unordered_map<std::string, std::pair<std::shared_ptr<SamplerStateDesc>, std::shared_ptr<SamplerState>>> m_samplerStates;
 	};
 
 	inline std::shared_ptr<Blob> Renderer::getInputSignatureBlob()

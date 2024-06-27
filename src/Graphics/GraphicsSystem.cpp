@@ -3,6 +3,7 @@
 #include "RenderParameters.h"
 #include "ConstantBuffer.h"
 #include "Texture.h"
+#include "SamplerState.h"
 #include "Engine/Engine.h"
 #include "Engine/EventSystem.h"
 #include "Engine/Utility.h"
@@ -165,6 +166,14 @@ namespace Destiny
 				if (texture.second.second)
 				{
 					texture.second.second->bind(texture.second.first);
+				}
+			}
+
+			for (const auto& samplerState : renderParameters->samplerStates)
+			{
+				if (samplerState.second.second)
+				{
+					samplerState.second.second->bind(samplerState.second.first);
 				}
 			}
 

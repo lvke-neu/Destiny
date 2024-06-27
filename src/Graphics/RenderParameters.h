@@ -14,6 +14,8 @@ namespace Destiny
 	class  ConstantBuffer;
 	class  Texture;
 	struct TextureDesc;
+	class  SamplerState;
+	struct SamplerStateDesc;
 	class RenderParameters
 	{
 	public:
@@ -37,5 +39,6 @@ namespace Destiny
 		unsigned int vertexCount						= 0;
 		std::unordered_map<std::string, std::shared_ptr<ConstantBuffer>>	constantBuffers;
 		std::unordered_map<std::string, std::pair<std::shared_ptr<TextureDesc>, std::shared_ptr<Texture>>>	textures;
+		std::unordered_map<std::string, std::pair<std::shared_ptr<SamplerStateDesc>, std::shared_ptr<SamplerState>>> samplerStates;
 	};
 }

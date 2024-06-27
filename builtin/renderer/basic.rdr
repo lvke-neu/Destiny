@@ -36,9 +36,10 @@ VertexOut VS(VertexIn vIn)
 Texture2D g_ambientTexture : register(t0);
 Texture2D g_ambientTexture2 : register(t1);
 SamplerState g_ambientSampler : register(s0);
+SamplerState g_ambientSampler2 : register(s1);
 float4 PS(VertexOut pIn) : SV_Target
 {
-	return g_ambientTexture.Sample(g_ambientSampler, pIn.texcoord) - g_ambientTexture2.Sample(g_ambientSampler, pIn.texcoord);
+	return g_ambientTexture.Sample(g_ambientSampler, pIn.texcoord) - g_ambientTexture2.Sample(g_ambientSampler2, pIn.texcoord);
 	//return float4(a,b,0.0f, 1.0f);
 }
 

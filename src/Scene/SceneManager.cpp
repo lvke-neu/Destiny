@@ -17,6 +17,7 @@
 #include "Graphics/GraphicsSystem.h"
 #include "Graphics/Visual3D.h"
 #include "Graphics/Texture.h"
+#include "Graphics/SamplerState.h"
 #include <d3d11.h>
 
 namespace Destiny
@@ -73,6 +74,16 @@ namespace Destiny
 		renderer->load(0);
 		renderer->setConstant("a", 1.0f);
 		renderer->setConstant("b", 0.1f);
+
+		std::shared_ptr<SamplerState> samplerState = std::make_shared<SamplerState>();
+		samplerState->getSamplerDesc()->Filter = D3D11_FILTER_MIN_LINEAR_MAG_POINT_MIP_LINEAR;
+		samplerState->load(0);
+		renderer->setSamplerSate("g_ambientSampler", samplerState);
+
+		std::shared_ptr<SamplerState> samplerState2 = std::make_shared<SamplerState>();
+		samplerState2->getSamplerDesc()->Filter = D3D11_FILTER_ANISOTROPIC;
+		samplerState2->load(0);
+		renderer->setSamplerSate("g_ambientSampler2", samplerState2);
 
 		std::shared_ptr<Texture> texture = Texture::Create("builtin://texture/box_diffuse.png");
 		texture->load();

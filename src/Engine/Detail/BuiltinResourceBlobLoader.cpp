@@ -61,4 +61,27 @@ namespace Destiny
 
 		m_mtx.unlock();
 	}
+
+	std::string BuiltinResourceBlobLoader::getFullPath(const std::string& path)
+	{
+		std::string resPath{ "" };
+
+		char buffer[MAX_PATH];
+		GetModuleFileNameA(NULL, buffer, sizeof(buffer));
+
+		std::string exePath = buffer;
+		auto pos = exePath.find("Destiny.exe");
+		if (pos != exePath.npos)
+		{
+			exePath = exePath.substr(0, pos);
+			auto pos2 = path.find("://");
+			if (pos2 != path.npos)
+			{
+				resPath = exePath + "builtin\\" + path.substr(pos2 + 3);
+			}
+
+		}
+
+		return resPath;
+	}
 }

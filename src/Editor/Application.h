@@ -10,6 +10,8 @@ public:
 	void run();
 	void uninitialize();
 private:
+	void initImGui();
+private:
 	HWND		m_hwnd;
 	HINSTANCE	m_hInstance;
 };

@@ -1,7 +1,7 @@
 #include "ConstantBuffer.h"
+#include "GraphicsSystem.h"
 #include "Engine/Utility.h"
 #include "Engine/Blob.h"
-#include "Graphics/GraphicsSystem.h"
 #include <d3d11.h>
 
 namespace Destiny

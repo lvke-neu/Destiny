@@ -72,15 +72,14 @@ namespace Destiny
 		std::shared_ptr<Renderer> renderer = std::make_shared<Renderer>("builtin://renderer/basic.rdr");
 		renderer->load(0);
 		renderer->setConstant("a", 1.0f);
-		renderer->setConstant("b", 0.9f);
-		
-		for (int i = 0; i < 1000; i++)
-		{
-			auto texture = Texture::Create("builtin://texture/box_diffuse.png");
-			texture->load();
-			vec.push_back(texture);
-		}
+		renderer->setConstant("b", 0.1f);
 
+		std::shared_ptr<Texture> texture = Texture::Create("builtin://texture/box_diffuse.png");
+		texture->load();
+		renderer->setShaderResource("g_ambientTexture", texture);
+		std::shared_ptr<Texture> texture2 = Texture::Create("builtin://texture/brick.dds");
+		texture2->load();
+		renderer->setShaderResource("g_ambientTexture2", texture2);
 
 		std::shared_ptr<RenderStates> renderStates = std::make_shared<RenderStates>();
 		renderStates->load(0);

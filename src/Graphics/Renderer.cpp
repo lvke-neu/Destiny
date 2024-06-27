@@ -1,4 +1,5 @@
 #include "Renderer.h"
+#include "Texture.h"
 #include "RenderStates.h"
 
 #include "GraphicsSystem.h"
@@ -54,6 +55,18 @@ namespace Destiny
 		collectReflectionInfo(m_psCompiledBlob, 1);
 		SAFE_RELEASE(m_vsCompiledBlob);
 		SAFE_RELEASE(m_psCompiledBlob);
+	}
+
+	void Renderer::setShaderResource(const char* name, std::shared_ptr<Texture> texture)
+	{
+		auto iter = m_textures.find(name);
+		if (iter == m_textures.end())
+		{
+			return;
+		}
+
+		m_textures[name].second.reset();
+		m_textures[name].second = texture;
 	}
 
 	bool Renderer::createVertexShader()
@@ -137,54 +150,99 @@ namespace Destiny
 
 		HRESULT hr = 0;
 		ID3D11ShaderReflection* shaderReflection = nullptr;
-
-
 		hr = D3DReflect(compiledBlob->GetBufferPointer(), compiledBlob->GetBufferSize(), __uuidof(ID3D11ShaderReflection), (void**)(&shaderReflection));
 		if (SUCCEEDED(hr))
 		{
-			D3D11_SHADER_DESC shaderDesc;
-			hr = shaderReflection->GetDesc(&shaderDesc);
-			if (SUCCEEDED(hr))
+			collectReflectionConstantInfo(shaderReflection, flag);
+			collectReflectionTextureInfo(shaderReflection, flag);
+		}
+	}
+
+	void Renderer::collectReflectionConstantInfo(ID3D11ShaderReflection* shaderReflection, short flag)
+	{
+		if (!shaderReflection)
+		{
+			return;
+		}
+
+		HRESULT hr = 0;
+		D3D11_SHADER_DESC shaderDesc;
+		hr = shaderReflection->GetDesc(&shaderDesc);
+		if (SUCCEEDED(hr))
+		{
+			for (unsigned int i = 0; i < shaderDesc.ConstantBuffers; i++)
 			{
-				for (unsigned int i = 0; i < shaderDesc.ConstantBuffers; i++)
+				ID3D11ShaderReflectionConstantBuffer* reflectionConstantBuffer = nullptr;
+				reflectionConstantBuffer = shaderReflection->GetConstantBufferByIndex(i);
+				if (reflectionConstantBuffer)
 				{
-					ID3D11ShaderReflectionConstantBuffer* reflectionConstantBuffer = nullptr;
-					reflectionConstantBuffer = shaderReflection->GetConstantBufferByIndex(i);
-					if (reflectionConstantBuffer)
+					D3D11_SHADER_BUFFER_DESC shaderBufferDesc;
+					hr = reflectionConstantBuffer->GetDesc(&shaderBufferDesc);
+
+					if (SUCCEEDED(hr))
 					{
-						D3D11_SHADER_BUFFER_DESC shaderBufferDesc;
-						hr = reflectionConstantBuffer->GetDesc(&shaderBufferDesc);
+						D3D11_SHADER_INPUT_BIND_DESC shaderInputBindDesc;
+						hr = shaderReflection->GetResourceBindingDescByName(shaderBufferDesc.Name, &shaderInputBindDesc);
 
 						if (SUCCEEDED(hr))
 						{
-							D3D11_SHADER_INPUT_BIND_DESC shaderInputBindDesc;
-							hr = shaderReflection->GetResourceBindingDescByName(shaderBufferDesc.Name, &shaderInputBindDesc);
-
-							if (SUCCEEDED(hr))
+							auto iter = m_constantBuffers.find(shaderBufferDesc.Name);
+							if (iter == m_constantBuffers.end())
 							{
-								auto iter = m_constantBuffers.find(shaderBufferDesc.Name);
-								if (iter == m_constantBuffers.end())
+								m_constantBuffers[shaderBufferDesc.Name] = std::make_shared<ConstantBuffer>(shaderInputBindDesc.BindPoint, shaderBufferDesc.Size);
+								for (unsigned int j = 0; j < shaderBufferDesc.Variables; j++)
 								{
-									m_constantBuffers[shaderBufferDesc.Name] = std::make_shared<ConstantBuffer>(shaderInputBindDesc.BindPoint, shaderBufferDesc.Size);
-									for (unsigned int j = 0; j < shaderBufferDesc.Variables; j++)
+									ID3D11ShaderReflectionVariable* shaderReflectionVariable = reflectionConstantBuffer->GetVariableByIndex(j);
+									if (shaderReflectionVariable)
 									{
-										ID3D11ShaderReflectionVariable* shaderReflectionVariable = reflectionConstantBuffer->GetVariableByIndex(j);
-										if (shaderReflectionVariable)
+										D3D11_SHADER_VARIABLE_DESC shaderVariableDesc;
+										hr = shaderReflectionVariable->GetDesc(&shaderVariableDesc);
+										if (SUCCEEDED(hr))
 										{
-											D3D11_SHADER_VARIABLE_DESC shaderVariableDesc;
-											hr = shaderReflectionVariable->GetDesc(&shaderVariableDesc);
-											if (SUCCEEDED(hr))
-											{
-												m_constantBuffers[shaderBufferDesc.Name]->addVariable(shaderVariableDesc.Name, { shaderVariableDesc.StartOffset, shaderVariableDesc.Size });
-												m_variableLinkConstant[shaderVariableDesc.Name] = shaderBufferDesc.Name;
-											}
+											m_constantBuffers[shaderBufferDesc.Name]->addVariable(shaderVariableDesc.Name, { shaderVariableDesc.StartOffset, shaderVariableDesc.Size });
+											m_variableLinkConstant[shaderVariableDesc.Name] = shaderBufferDesc.Name;
 										}
 									}
 								}
-								m_constantBuffers[shaderBufferDesc.Name]->setConstantBufferBindFlag((ConstantBufferBindFlag)flag, true);
 							}
+							m_constantBuffers[shaderBufferDesc.Name]->setConstantBufferBindFlag((ConstantBufferBindFlag)flag, true);
 						}
 					}
+				}
+			}
+		}
+	}
+
+	void Renderer::collectReflectionTextureInfo(ID3D11ShaderReflection* shaderReflection, short flag)
+	{
+		if (!shaderReflection)
+		{
+			return;
+		}
+
+		HRESULT hr = 0;
+		D3D11_SHADER_DESC shaderDesc;
+		hr = shaderReflection->GetDesc(&shaderDesc);
+		if (SUCCEEDED(hr))
+		{
+			for (unsigned int i = 0; ; i++)
+			{
+				D3D11_SHADER_INPUT_BIND_DESC shaderInputBindDesc;
+				hr = shaderReflection->GetResourceBindingDesc(i, &shaderInputBindDesc);
+				if (FAILED(hr))
+				{
+					break;
+				}
+
+				if (shaderInputBindDesc.Type == D3D_SIT_TEXTURE)
+				{
+					auto iter = m_textures.find(shaderInputBindDesc.Name);
+					if (iter == m_textures.end())
+					{
+						m_textures[shaderInputBindDesc.Name] = std::make_pair<std::shared_ptr<TextureDesc>, std::shared_ptr<Texture>> (std::make_shared<TextureDesc>(), nullptr);
+					}
+					m_textures[shaderInputBindDesc.Name].first->startSlot = shaderInputBindDesc.BindPoint;
+					m_textures[shaderInputBindDesc.Name].first->textureBindFlag[(TextureBindFlag)flag] = true;
 				}
 			}
 		}
@@ -200,5 +258,6 @@ namespace Destiny
 		renderParameters->vertexShader = m_vertexShader;
 		renderParameters->pixelShader = m_pixelShader;
 		renderParameters->constantBuffers = m_constantBuffers;
+		renderParameters->textures = m_textures;
 	}
 }

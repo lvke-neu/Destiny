@@ -1,5 +1,6 @@
 #include "Texture.h"
 #include "TextureLoader.h"
+#include "GraphicsSystem.h"
 #include "Engine/BlobLoaderManager.h"
 #include "Engine/BlobHolder.h"
 #include "Engine/BlobLoader.h"
@@ -42,5 +43,29 @@ namespace Destiny
 		m_cache[path] = texture;
 
 		return texture;
+	}
+
+	void Texture::bind(std::shared_ptr<TextureDesc> desc)
+	{
+		if (!desc)
+		{
+			return;
+		}
+
+		for (const auto& textureBindFlag : desc->textureBindFlag)
+		{
+			if (textureBindFlag.second)
+			{
+				switch (textureBindFlag.first)
+				{
+				case TextureBindFlag::BindVS:
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->VSSetShaderResources(desc->startSlot, 1, &m_shaderResourceView);
+					break;
+				case TextureBindFlag::BindPS:
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetShaderResources(desc->startSlot, 1, &m_shaderResourceView);
+					break;
+				}
+			}
+		}
 	}
 }

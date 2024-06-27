@@ -11,7 +11,9 @@ struct ID3D11DepthStencilState;
 struct ID3D11BlendState;
 namespace Destiny
 {
-	class ConstantBuffer;
+	class  ConstantBuffer;
+	class  Texture;
+	struct TextureDesc;
 	class RenderParameters
 	{
 	public:
@@ -34,5 +36,6 @@ namespace Destiny
 		unsigned int indexCount							= 0;
 		unsigned int vertexCount						= 0;
 		std::unordered_map<std::string, std::shared_ptr<ConstantBuffer>>	constantBuffers;
+		std::unordered_map<std::string, std::pair<std::shared_ptr<TextureDesc>, std::shared_ptr<Texture>>>	textures;
 	};
 }

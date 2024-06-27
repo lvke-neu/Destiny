@@ -71,6 +71,7 @@ namespace Destiny
 
 		if (SUCCEEDED(hr))
 		{
+			asset->getCreationParam().reset();
 			asset->loadSucceeded__();
 		}
 		else

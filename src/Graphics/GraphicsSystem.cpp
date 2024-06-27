@@ -2,6 +2,7 @@
 #include "GraphicsSystem.h"
 #include "RenderParameters.h"
 #include "ConstantBuffer.h"
+#include "Texture.h"
 #include "Engine/Engine.h"
 #include "Engine/EventSystem.h"
 #include "Engine/Utility.h"
@@ -156,6 +157,14 @@ namespace Destiny
 				if (constantBuffer.second)
 				{
 					constantBuffer.second->bind();
+				}
+			}
+
+			for(const auto& texture : renderParameters->textures)
+			{ 
+				if (texture.second.second)
+				{
+					texture.second.second->bind(texture.second.first);
 				}
 			}
 

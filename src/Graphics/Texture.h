@@ -6,6 +6,27 @@ struct ID3D11Resource;
 struct ID3D11ShaderResourceView;
 namespace Destiny
 {
+	enum class TextureBindFlag
+	{
+		BindVS,
+		BindPS
+	};
+
+	struct TextureDesc
+	{
+		TextureDesc() :
+			startSlot(-1)
+		{
+			textureBindFlag =
+			{
+				{TextureBindFlag::BindVS, false },
+				{TextureBindFlag::BindPS, false }
+			};
+		}
+		std::unordered_map<TextureBindFlag, bool> textureBindFlag;
+		unsigned int startSlot;
+	};
+
 	class TextureLoader;
 	class Texture : public Asset
 	{
@@ -16,6 +37,8 @@ namespace Destiny
 	public:
 		static std::shared_ptr<TextureLoader> s_textureLoader;
 		static std::shared_ptr<Texture> Create(const char* path);
+	public:
+		void bind(std::shared_ptr<TextureDesc> desc);
 	private:
 		ID3D11Resource* m_resource;
 		ID3D11ShaderResourceView* m_shaderResourceView;

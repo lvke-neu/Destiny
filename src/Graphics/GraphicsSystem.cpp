@@ -4,6 +4,8 @@
 #include "ConstantBuffer.h"
 #include "Texture.h"
 #include "SamplerState.h"
+#include "RenderTargetView.h"
+#include "DepthStencilView.h"
 #include "Engine/Engine.h"
 #include "Engine/EventSystem.h"
 #include "Engine/Utility.h"
@@ -25,7 +27,9 @@ namespace Destiny
 		m_pDepthStencilBuffer(nullptr),
 		m_pDepthStencilView(nullptr),
 		m_4xMsaaQuality(0),
-		m_viewport(std::make_shared<D3D11_VIEWPORT>())
+		m_viewport(std::make_shared<D3D11_VIEWPORT>()),
+		m_pRTTRenderTargetView(nullptr),
+		m_pRTTDepthStencilView(nullptr)
 	{
 
 	}
@@ -60,9 +64,6 @@ namespace Destiny
 	{
 		render();
 		m_pDXGISwapChain->Present(0, 0);
-		static float color[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-		m_pD3D11ImmediateDeviceContext->ClearRenderTargetView(m_pRenderTargetView, color);
-		m_pD3D11ImmediateDeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 		m_renderParameters.clear();
 	}
 
@@ -79,7 +80,21 @@ namespace Destiny
 	void GraphicsSystem::onResize(void* data)
 	{
 		WindowResizeData wrd = *(WindowResizeData*)data;
-		onResize_(wrd.width, wrd.height);
+
+		m_viewport->TopLeftX = 0;
+		m_viewport->TopLeftY = 0;
+		m_viewport->Width = static_cast<float>(wrd.width);
+		m_viewport->Height = static_cast<float>(wrd.height);
+		m_viewport->MinDepth = 0.0f;
+		m_viewport->MaxDepth = 1.0f;
+		m_pD3D11ImmediateDeviceContext->RSSetViewports(1, m_viewport.get());
+
+		m_pRTTRenderTargetView.reset();
+		m_pRTTDepthStencilView.reset();
+		m_pRTTRenderTargetView = std::make_shared<RenderTargetView>(wrd.width, wrd.height);
+		m_pRTTDepthStencilView = std::make_shared<DepthStencilView>(wrd.width, wrd.height);
+		m_pRTTRenderTargetView->load(0);
+		m_pRTTDepthStencilView->load(0);
 	}
 
 	void GraphicsSystem::onResize_(unsigned int width, unsigned int height)
@@ -111,29 +126,19 @@ namespace Destiny
 		m_pD3D11Device->CreateDepthStencilView(m_pDepthStencilBuffer, nullptr, &m_pDepthStencilView);
 
 		m_pD3D11ImmediateDeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
-		//m_pD3D11DeferredDeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
-
-
-		m_viewport->TopLeftX = 0;
-		m_viewport->TopLeftY = 0;
-		m_viewport->Width = static_cast<float>(width);
-		m_viewport->Height = static_cast<float>(height);
-		m_viewport->MinDepth = 0.0f;
-		m_viewport->MaxDepth = 1.0f;
-
-		m_pD3D11ImmediateDeviceContext->RSSetViewports(1, m_viewport.get());
-		//m_pD3D11DeferredDeviceContext->RSSetViewports(1, m_viewport);
-
-		//m_renderToShadowMapRTV.reset();
-		//m_renderToShadowMapDSV.reset();
-		//m_renderToShadowMapRTV = std::make_shared<RenderTargetView>(width, height);
-		//m_renderToShadowMapDSV = std::make_shared<DepthStencilView>(width, height);
-		//m_renderToShadowMapRTV->load(0);
-		//m_renderToShadowMapDSV->load(0);
 	}
 
 	void GraphicsSystem::render()
 	{
+		if (!m_pRTTRenderTargetView || !m_pRTTDepthStencilView)
+		{
+			return;
+		}
+
+		m_pD3D11ImmediateDeviceContext->OMSetRenderTargets(1, m_pRTTRenderTargetView->getRenderTargetView(), m_pRTTDepthStencilView->getDepthStencilView());
+		static float color[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+		m_pD3D11ImmediateDeviceContext->ClearRenderTargetView(*m_pRTTRenderTargetView->getRenderTargetView(), color);
+		m_pD3D11ImmediateDeviceContext->ClearDepthStencilView(m_pRTTDepthStencilView->getDepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 		for (const auto& renderParameters : m_renderParameters)
 		{
 			if (!renderParameters)
@@ -185,6 +190,8 @@ namespace Destiny
 				m_pD3D11ImmediateDeviceContext->DrawIndexed(renderParameters->indexCount, 0, 0);
 			}
 		}
+
+		m_pD3D11ImmediateDeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
 	}
 
 	void GraphicsSystem::createDeviceAndContext()

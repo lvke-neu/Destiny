@@ -39,10 +39,16 @@ namespace Destiny
 		static std::shared_ptr<Texture> Create(const char* path);
 	public:
 		void bind(std::shared_ptr<TextureDesc> desc);
+		ID3D11ShaderResourceView* getShaderResourceView();
 	private:
 		ID3D11Resource* m_resource;
 		ID3D11ShaderResourceView* m_shaderResourceView;
 		static std::unordered_map<std::string, std::shared_ptr<Texture>> m_cache;
 	};
+
+	inline ID3D11ShaderResourceView* Texture::getShaderResourceView()
+	{
+		return m_shaderResourceView;
+	}
 
 }

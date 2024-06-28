@@ -48,13 +48,20 @@ namespace Destiny
 		ID3D11Device*				getDevice();
 		ID3D11DeviceContext*		getImmediateContext();
 		ID3D11DeviceContext*		getDeferredContext();
+		//swapchain
 		ID3D11RenderTargetView**	getRenderTargetView();
+		//swapchain
 		ID3D11DepthStencilView*		getDepthStencilView();
+		std::shared_ptr<RenderTargetView> getRTTRenderTargetView();
+	public:
+		//for viewport resize
+		void onResize(void* data);
+		//for window resize
+		void onResize_(unsigned int width, unsigned int height);
 	private:
 		void createDeviceAndContext();
 		void createSwapChain(long long hwnd);
-		void onResize(void* data);
-		void onResize_(unsigned int width, unsigned int height);
+	
 		void render();
 	private:
 		ID3D11Device*												m_pD3D11Device;
@@ -67,6 +74,8 @@ namespace Destiny
 		unsigned int												m_4xMsaaQuality;
 		std::shared_ptr<D3D11_VIEWPORT>								m_viewport;
 		std::unordered_set<std::shared_ptr<RenderParameters>>		m_renderParameters;
+		std::shared_ptr<RenderTargetView>							m_pRTTRenderTargetView;
+		std::shared_ptr<DepthStencilView>							m_pRTTDepthStencilView;
 	};
 
 	inline ID3D11Device* GraphicsSystem::getDevice()
@@ -92,5 +101,10 @@ namespace Destiny
 	inline ID3D11DepthStencilView* GraphicsSystem::getDepthStencilView()
 	{
 		return m_pDepthStencilView;
+	}
+
+	inline std::shared_ptr<RenderTargetView> GraphicsSystem::getRTTRenderTargetView()
+	{
+		return m_pRTTRenderTargetView;
 	}
 }

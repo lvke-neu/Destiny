@@ -80,17 +80,9 @@ namespace Destiny
 		samplerState->load(0);
 		renderer->setSamplerSate("g_ambientSampler", samplerState);
 
-		std::shared_ptr<SamplerState> samplerState2 = std::make_shared<SamplerState>();
-		samplerState2->getSamplerDesc()->Filter = D3D11_FILTER_ANISOTROPIC;
-		samplerState2->load(0);
-		renderer->setSamplerSate("g_ambientSampler2", samplerState2);
-
 		std::shared_ptr<Texture> texture = Texture::Create("builtin://texture/box_diffuse.png");
 		texture->load();
 		renderer->setShaderResource("g_ambientTexture", texture);
-		std::shared_ptr<Texture> texture2 = Texture::Create("builtin://texture/brick.dds");
-		texture2->load();
-		renderer->setShaderResource("g_ambientTexture2", texture2);
 
 		std::shared_ptr<RenderStates> renderStates = std::make_shared<RenderStates>();
 		renderStates->load(0);

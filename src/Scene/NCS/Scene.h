@@ -1,20 +1,15 @@
 #pragma once
-#include <memory>
 
 namespace Destiny
 {
-	class Scene;
-	class SceneManager
+	class Scene
 	{
 	public:
-		SceneManager();
-		~SceneManager();
+		Scene();
+		~Scene();
 	public:
 		void initialize();
 		void uninitialize();
 		void update(float deltaTime);
-	private:
-		std::shared_ptr<Scene> m_scene;
 	};
-
 }

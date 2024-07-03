@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/Asset.h"
+#include <string>
 #include <unordered_map>
 
 struct ID3D11Resource;

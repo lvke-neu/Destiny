@@ -42,7 +42,7 @@ namespace Destiny
 	{
 		m_timer->update();
 		m_eventSystem->dispatchEvent(EventType::Update, m_timer->deltaTime());
-		m_sceneManager->update();
+		m_sceneManager->update(*m_timer->deltaTime());
 		m_graphicsSystem->update();
 	}
 }

@@ -1,5 +1,8 @@
 #include "Application.h"
 #include "ViewPortPanel.h"
+#include "ScenePanel.h"
+#include "ComponentPanel.h"
+#include "AssetPanel.h"
 #include "Engine/Engine.h"
 #include "Engine/EventSystem.h"
 #include "Engine/Detail/BuiltinResourceBlobLoader.h"
@@ -104,7 +107,10 @@ LRESULT CALLBACK MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 Application::Application() : 
 	m_hwnd(nullptr),
 	m_hInstance(nullptr),
-	m_viewPortPanel(std::make_shared<ViewPortPanel>())
+	m_viewPortPanel(std::make_shared<ViewPortPanel>()),
+	m_scenePanel(std::make_shared<ScenePanel>()),
+	m_componentPanel(std::make_shared<ComponentPanel>()),
+	m_assetPanel(std::make_shared<AssetPanel>())
 {
 	AllocConsole();
 }
@@ -132,8 +138,8 @@ void Application::initialize(HINSTANCE hInstance)
 	}
 
 	// Compute window rectangle dimensions based on requested client area dimensions.
-	const unsigned int width = 1000;
-	const unsigned int height = 500;
+	const unsigned int width = 2000;
+	const unsigned int height = 1000;
 
 	RECT R = { 0, 0, width, height };
 	AdjustWindowRect(&R, WS_OVERLAPPEDWINDOW, false);
@@ -319,7 +325,7 @@ void Application::drawDock()
 	//menu bar
 	if (ImGui::BeginMenuBar())
 	{
-		if (ImGui::BeginMenu("Debug"))
+		if (ImGui::BeginMenu("File"))
 		{
 			ImGui::EndMenu();
 		}
@@ -327,6 +333,9 @@ void Application::drawDock()
 	}
 
 	m_viewPortPanel->update();
+	m_scenePanel->update();
+	m_componentPanel->update();
+	m_assetPanel->update();
 
 	ImGui::End();
 }

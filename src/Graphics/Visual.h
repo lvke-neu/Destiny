@@ -7,17 +7,17 @@ namespace Destiny
 	class Effect;
 	class Mesh;
 	class RenderParameters;
-	class Visual3D
+	class Visual
 	{
 	public:
-		Visual3D();
+		Visual();
 	public:
 		std::shared_ptr<Effect> getEffect();
 		void setEffect(std::shared_ptr<Effect> effect);
 		std::shared_ptr<Mesh> getMesh();
 		void setMesh(std::shared_ptr<Mesh> mesh);
 	public:
-		std::unordered_set<std::shared_ptr<RenderParameters>> getRenderParameters();
+		const std::unordered_set<std::shared_ptr<RenderParameters>>& getRenderParameters();
 	private:
 		void createRenderParameters();
 	private:
@@ -26,12 +26,12 @@ namespace Destiny
 		std::unordered_set<std::shared_ptr<RenderParameters>> m_renderParameters;
 	};
 
-	inline std::shared_ptr<Effect> Visual3D::getEffect()
+	inline std::shared_ptr<Effect> Visual::getEffect()
 	{
 		return m_effect;
 	}
 
-	inline std::shared_ptr<Mesh> Visual3D::getMesh()
+	inline std::shared_ptr<Mesh> Visual::getMesh()
 	{
 		return m_mesh;
 	}

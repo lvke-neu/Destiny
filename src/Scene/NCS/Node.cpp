@@ -4,7 +4,14 @@
 namespace Destiny
 {
 	Node::Node() :
-		m_name("Default Name"), 
+		m_name("Default Name"),
+		m_parent(nullptr)
+	{
+
+	}
+
+	Node::Node(const std::string& name) :
+		m_name(name),
 		m_parent(nullptr)
 	{
 

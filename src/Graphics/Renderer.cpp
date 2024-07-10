@@ -15,6 +15,8 @@
 
 namespace Destiny
 {
+	std::unordered_map<std::string, std::shared_ptr<Renderer>> Renderer::m_cache;
+
 	Renderer::Renderer(const char* path) :
 		m_vertexShader(nullptr),
 		m_pixelShader(nullptr),
@@ -41,6 +43,11 @@ namespace Destiny
 
 	void Renderer::doLoad()
 	{
+		if (isLoadingSucceed())
+		{
+			return;
+		}
+
 		if (!m_blobHolder || !m_blobHolder->isLoadingSucceed() || !m_blobHolder->getBlob())
 		{
 			loadFailed__();
@@ -309,5 +316,19 @@ namespace Destiny
 		renderParameters->constantBuffers = m_constantBuffers;
 		renderParameters->textures = m_textures;
 		renderParameters->samplerStates = m_samplerStates;
+	}
+
+	std::shared_ptr<Renderer> Renderer::Create(const char* path)
+	{
+		auto iter = m_cache.find(path);
+		if (iter != m_cache.end())
+		{
+			return m_cache[path];
+		}
+
+		std::shared_ptr<Renderer> renderer = std::make_shared<Renderer>(path);
+		m_cache[path] = renderer;
+
+		return renderer;
 	}
 }

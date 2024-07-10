@@ -1,4 +1,4 @@
-#include "Visual3D.h"
+#include "Visual.h"
 #include "Effect.h"
 #include "Mesh.h"
 #include "RenderParameters.h"
@@ -8,14 +8,14 @@
 
 namespace Destiny
 {
-	Visual3D::Visual3D() :
+	Visual::Visual() :
 		m_effect(nullptr),
 		m_mesh(nullptr)
 	{
 
 	}
 
-	void Visual3D::setEffect(std::shared_ptr<Effect> effect)
+	void Visual::setEffect(std::shared_ptr<Effect> effect)
 	{
 		if (!effect)
 		{
@@ -26,7 +26,7 @@ namespace Destiny
 		m_effect = effect;
 	}
 
-	void Visual3D::setMesh(std::shared_ptr<Mesh> mesh)
+	void Visual::setMesh(std::shared_ptr<Mesh> mesh)
 	{
 		if (!mesh)
 		{
@@ -37,7 +37,7 @@ namespace Destiny
 		m_mesh = mesh;
 	}
 
-	std::unordered_set<std::shared_ptr<RenderParameters>>  Visual3D::getRenderParameters()
+	const std::unordered_set<std::shared_ptr<RenderParameters>>& Visual::getRenderParameters()
 	{
 		if (m_renderParameters.empty())
 		{
@@ -46,7 +46,7 @@ namespace Destiny
 		return m_renderParameters;
 	}
 
-	void Visual3D::createRenderParameters()
+	void Visual::createRenderParameters()
 	{
 		for (const auto& effectTechnique : m_effect->getEffectTechniques())
 		{

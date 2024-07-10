@@ -12,11 +12,14 @@ namespace Destiny
 		RTTR_ENABLE(Object);
 	public:
 		Node();
+		Node(const std::string& name);
 	public:
 		void addToParent(std::shared_ptr<Node> parent);
 		void removeFromParent();
 		void addComponent(std::shared_ptr<Component> component);
 		void removeComponent(std::shared_ptr<Component> component);
+		const std::vector<std::shared_ptr<Component>>& getComponents();
+		const std::vector<std::shared_ptr<Node>>& getChilds();
 	public:
 		GET_CLASS_NAME(Node);
 		GET_SET(std::string, name);
@@ -26,4 +29,14 @@ namespace Destiny
 		std::vector<std::shared_ptr<Node>> m_childs;
 		std::vector<std::shared_ptr<Component>> m_components;
 	};
+
+	inline const std::vector<std::shared_ptr<Component>>& Node::getComponents()
+	{
+		return m_components;
+	}
+
+	inline const std::vector<std::shared_ptr<Node>>& Node::getChilds()
+	{
+		return m_childs;
+	}
 }

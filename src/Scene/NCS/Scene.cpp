@@ -1,4 +1,5 @@
 #include "Scene.h"
+#include "Node.h"
 #include "Engine/Engine.h"
 #include "Engine/Blob.h"
 #include "Engine/BlobLoader.h"
@@ -15,14 +16,16 @@
 #include "Graphics/EffectTechnique.h"
 #include "Graphics/RenderParameters.h"
 #include "Graphics/GraphicsSystem.h"
-#include "Graphics/Visual3D.h"
+#include "Graphics/Visual.h"
 #include "Graphics/Texture.h"
 #include "Graphics/SamplerState.h"
+#include "../VisualComponent.h"
 #include <d3d11.h>
 
 namespace Destiny
 {
-	Scene::Scene()
+	Scene::Scene() : 
+		m_rootNode(std::make_shared<Node>("RootNode"))
 	{
 		
 	}
@@ -32,8 +35,6 @@ namespace Destiny
 
 	}
 
-	std::shared_ptr<Visual3D> visual3d = nullptr;
-	std::vector< std::shared_ptr<Texture>> vec;
 	void Scene::initialize()
 	{
 		std::shared_ptr<Blob> data = nullptr;
@@ -70,7 +71,7 @@ namespace Destiny
 		mesh->load(0);
 
 		//Effect
-		std::shared_ptr<Renderer> renderer = std::make_shared<Renderer>("builtin://renderer/basic.rdr");
+		std::shared_ptr<Renderer> renderer = Renderer::Create("builtin://renderer/basic.rdr");
 		renderer->load(0);
 		renderer->setConstant("a", 1.0f);
 		renderer->setConstant("b", 0.1f);
@@ -91,7 +92,7 @@ namespace Destiny
 		effectPass->setRenderer(renderer);
 		effectPass->setRenderStates(renderStates);
 
-		std::shared_ptr<Renderer> renderer2 = std::make_shared<Renderer>("builtin://renderer/basic2.rdr");
+		std::shared_ptr<Renderer> renderer2 = Renderer::Create("builtin://renderer/basic2.rdr");
 		renderer2->load(0);
 		std::shared_ptr<RenderStates> renderStates2 = std::make_shared<RenderStates>();
 		renderStates2->getRasterizerStateDesc()->FillMode = D3D11_FILL_WIREFRAME;
@@ -107,10 +108,11 @@ namespace Destiny
 		std::shared_ptr<Effect> effect = std::make_shared<Effect>();
 		effect->addEffectTechnique(effectTechnique);
 
-		//Visual3D
-		visual3d = std::make_shared<Visual3D>();
-		visual3d->setEffect(effect);
-		visual3d->setMesh(mesh);
+		std::shared_ptr<VisualComponent> visualComponent = std::make_shared<VisualComponent>();
+		visualComponent->setEffect(effect);
+		visualComponent->setMesh(mesh);
+
+		m_rootNode->addComponent(visualComponent);
 	}
 
 	void Scene::uninitialize()
@@ -120,6 +122,6 @@ namespace Destiny
 
 	void Scene::update(float deltaTime)
 	{
-		Engine::GetInstance()->getGraphicsSystem()->commitRenderParameters(visual3d->getRenderParameters());
+		
 	}
 }

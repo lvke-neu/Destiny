@@ -5,6 +5,7 @@
 
 namespace Destiny
 {
+	class Scene;
 	class Node;
 	class Component : public Object
 	{

@@ -18,6 +18,9 @@ namespace Destiny
 	public:
 		virtual void onAddToNode(std::shared_ptr<Node> node) override;
 		virtual void onNodeTransformChanged(const Transform& transform) override;
+
+		void onCameraViewChanged(const DirectX::XMMATRIX& cameraView);
+		void onCameraProjChanged(const DirectX::XMMATRIX& cameraProj);
 	public:
 		void setEffect(std::shared_ptr<Effect> effect);
 		void setMesh(std::shared_ptr<Mesh> mesh);

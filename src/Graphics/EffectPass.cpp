@@ -13,20 +13,20 @@ namespace Destiny
 
 	void EffectPass::setRenderer(std::shared_ptr<Renderer> renderer)
 	{
-		if (!renderer)
-		{
-			return;
-		}
+		//if (!renderer)
+		//{
+		//	return;
+		//}
 
-		if (renderer->isLoadingPending())
-		{
-			renderer->load(0);
-		}
+		//if (renderer->isLoadingPending())
+		//{
+		//	renderer->load(0);
+		//}
 
-		if (!renderer->isLoadingSucceed())
-		{
-			return;
-		}
+		//if (!renderer->isLoadingSucceed())
+		//{
+		//	return;
+		//}
 
 		m_renderer.reset();
 		m_renderer = renderer;

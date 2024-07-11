@@ -38,6 +38,46 @@ namespace Destiny
 		}
 	}
 
+	void VisualComponent::onCameraViewChanged(const DirectX::XMMATRIX& cameraView)
+	{
+		if (!m_visual->getEffect())
+		{
+			return;
+		}
+
+		for (const auto& effectTechnique : m_visual->getEffect()->getEffectTechniques())
+		{
+			for (const auto& effectPass : effectTechnique->getEffectPasses())
+			{
+				auto renderer = effectPass->getRenderer();
+				if (renderer)
+				{
+					renderer->setConstant("g_view", cameraView);
+				}
+			}
+		}
+	}
+
+	void VisualComponent::onCameraProjChanged(const DirectX::XMMATRIX& cameraProj)
+	{
+		if (!m_visual->getEffect())
+		{
+			return;
+		}
+
+		for (const auto& effectTechnique : m_visual->getEffect()->getEffectTechniques())
+		{
+			for (const auto& effectPass : effectTechnique->getEffectPasses())
+			{
+				auto renderer = effectPass->getRenderer();
+				if (renderer)
+				{
+					renderer->setConstant("g_proj", cameraProj);
+				}
+			}
+		}
+	}
+
 	RTTR_REGISTRATION
 	{
 		rttr::registration::class_<VisualComponent>("VisualComponent")

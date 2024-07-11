@@ -35,19 +35,15 @@ namespace Destiny
 
 	}
 
-	std::shared_ptr<Node> boxNode;
-	std::shared_ptr<Renderer> renderer;
 	void Scene::initialize()
 	{
 		//Effect
-		 renderer = Renderer::Create("builtin://renderer/basic.rdr");
-		renderer->load();
-		DirectX::XMFLOAT3 trans = { 0.0f, 0.0f, 13.0f };
-		renderer->setConstant("u_worldMatrix", DirectX::XMMatrixTranspose(DirectX::XMMatrixTranslationFromVector(XMLoadFloat3(&trans))));
+		auto renderer = Renderer::Create("builtin://renderer/basic.rdr");
+		renderer->load(0);
 		renderer->setConstant("g_proj", DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(45.0f), 284.0f / 55, 0.1f, 1000.f)));
 
 		std::shared_ptr<RenderStates> renderStates = std::make_shared<RenderStates>();
-		renderStates->load();
+		renderStates->load(0);
 
 		std::shared_ptr<EffectPass> effectPass = std::make_shared<EffectPass>();
 		effectPass->setRenderer(renderer);
@@ -60,13 +56,13 @@ namespace Destiny
 		effect->addEffectTechnique(effectTechnique);
 
 		auto boxMesh = Mesh::Create_Box_PositionNormalTexcoord();
-		boxMesh->load();
+		boxMesh->load(0);
 		std::shared_ptr<VisualComponent> visualComponent = std::make_shared<VisualComponent>();
 		visualComponent->setEffect(effect);
 		visualComponent->setMesh(boxMesh);
 
 
-		boxNode = std::make_shared<Node>();
+		auto boxNode = std::make_shared<Node>();
 		boxNode->addComponent(visualComponent);
 		Transform transform;
 		transform.set_translation({ 0.0f, 0.0f, 5.0f });
@@ -83,8 +79,6 @@ namespace Destiny
 
 	void Scene::update(float deltaTime)
 	{
-		DirectX::XMFLOAT3 trans = { 0.0f, 0.0f, 13.0f };
-		renderer->setConstant("u_worldMatrix", DirectX::XMMatrixTranspose(DirectX::XMMatrixTranslationFromVector(XMLoadFloat3(&trans))));
-		renderer->setConstant("g_proj", DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(45.0f), 284.0f / 55, 0.1f, 1000.f)));
+
 	}
 }

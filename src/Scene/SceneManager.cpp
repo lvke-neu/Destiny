@@ -31,6 +31,7 @@ namespace Destiny
 
 	void SceneManager::update(float deltaTime)
 	{
+		m_scene->update(deltaTime);
 		bfs(m_scene->getRootNode());
 	}
 

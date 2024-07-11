@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/Object.h"
+#include "Transform.h"
 #include <string>
 #include <memory>
 #include <vector>
@@ -13,6 +14,7 @@ namespace Destiny
 	public:
 		Node();
 		Node(const std::string& name);
+		virtual ~Node() = default;
 	public:
 		void addToParent(std::shared_ptr<Node> parent);
 		void removeFromParent();
@@ -23,11 +25,14 @@ namespace Destiny
 	public:
 		GET_CLASS_NAME(Node);
 		GET_SET(std::string, name);
+		GET(Transform, transform);
+		void set_transform(const Transform& transform);
 	private:
 		std::string m_name;
 		std::shared_ptr<Node> m_parent;
 		std::vector<std::shared_ptr<Node>> m_childs;
 		std::vector<std::shared_ptr<Component>> m_components;
+		Transform m_transform;
 	};
 
 	inline const std::vector<std::shared_ptr<Component>>& Node::getComponents()

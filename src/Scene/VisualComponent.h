@@ -16,6 +16,9 @@ namespace Destiny
 	public:
 		GET_CLASS_NAME(VisualComponent);
 	public:
+		virtual void onAddToNode(std::shared_ptr<Node> node) override;
+		virtual void onNodeTransformChanged(const Transform& transform) override;
+	public:
 		void setEffect(std::shared_ptr<Effect> effect);
 		void setMesh(std::shared_ptr<Mesh> mesh);
 		const std::unordered_set<std::shared_ptr<RenderParameters>>& getRenderParameters();

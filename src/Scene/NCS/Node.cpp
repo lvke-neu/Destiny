@@ -63,7 +63,7 @@ namespace Destiny
 		{
 			return;
 		}
-
+		component->onAddToNode(shared_from_this());
 		m_components.emplace_back(component);
 	}
 
@@ -81,6 +81,23 @@ namespace Destiny
 		}
 
 		m_components.erase(iter);
+	}
+
+	void Node::set_transform(const Transform& transform)
+	{
+		if (m_transform == transform)
+		{
+			return;
+		}
+
+		m_transform = transform;
+		for (const auto& component : m_components)
+		{
+			if (component)
+			{
+				component->onNodeTransformChanged(transform);
+			}
+		}
 	}
 
 	RTTR_REGISTRATION

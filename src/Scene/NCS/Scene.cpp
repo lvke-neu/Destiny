@@ -35,12 +35,12 @@ namespace Destiny
 
 	}
 
+	std::shared_ptr<Node> boxNode;
 	void Scene::initialize()
 	{
 		//Effect
 		std::shared_ptr<Renderer> renderer = Renderer::Create("builtin://renderer/basic.rdr");
 		renderer->load(0);
-
 		DirectX::XMFLOAT3 trans = { 0.0f, 0.0f, 13.0f };
 		renderer->setConstant("u_worldMatrix", DirectX::XMMatrixTranspose(DirectX::XMMatrixTranslationFromVector(XMLoadFloat3(&trans))));
 		renderer->setConstant("g_proj", DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(45.0f), 284.0f / 55, 0.1f, 1000.f)));
@@ -64,7 +64,15 @@ namespace Destiny
 		visualComponent->setEffect(effect);
 		visualComponent->setMesh(boxMesh);
 
-		m_rootNode->addComponent(visualComponent);
+
+		boxNode = std::make_shared<Node>();
+		boxNode->addComponent(visualComponent);
+		Transform transform;
+		transform.set_translation({ 0.0f, 0.0f, 5.0f });
+		transform.set_rotation({ 90.0f, 0.0f, 0.0f });
+		transform.set_scale({ 2.0f, 1.0f, 1.0f });
+		boxNode->set_transform(transform);
+		boxNode->addToParent(m_rootNode);
 	}
 
 	void Scene::uninitialize()
@@ -74,6 +82,6 @@ namespace Destiny
 
 	void Scene::update(float deltaTime)
 	{
-		
+
 	}
 }

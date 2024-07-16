@@ -20,7 +20,7 @@ struct VertexOut
 VertexOut VS(VertexIn vIn)
 {
 	VertexOut vOut;
-	vOut.positionH = mul(mul(float4(vIn.positionL, 1.0f), u_worldMatrix), g_proj);
+	vOut.positionH = mul(mul(mul(float4(vIn.positionL, 1.0f), u_worldMatrix), g_view), g_proj);
 	vOut.normal = vIn.normal;
 	vOut.texcoord = vIn.texcoord;
 	return vOut;

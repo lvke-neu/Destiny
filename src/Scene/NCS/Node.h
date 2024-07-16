@@ -7,6 +7,7 @@
 
 namespace Destiny
 {
+	class Scene;
 	class Component;
 	class Node : public Object, public std::enable_shared_from_this<Node>
 	{
@@ -27,6 +28,8 @@ namespace Destiny
 		GET_SET(std::string, name);
 		GET(Transform, transform);
 		void set_transform(const Transform& transform);
+	private:
+		void onEnterScene();
 	private:
 		std::string m_name;
 		std::shared_ptr<Node> m_parent;

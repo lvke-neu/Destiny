@@ -15,7 +15,7 @@ namespace Destiny
 		void uninitialize();
 		void update(float deltaTime);
 	private:
-		void bfs(std::shared_ptr<Node> node);
+		void bfsRender(std::shared_ptr<Node> node);
 	private:
 		std::shared_ptr<Scene> m_scene;
 	};

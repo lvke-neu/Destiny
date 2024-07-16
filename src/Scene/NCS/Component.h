@@ -18,5 +18,6 @@ namespace Destiny
 	public:
 		virtual void onAddToNode(std::shared_ptr<Node> node);
 		virtual void onNodeTransformChanged(const Transform& transform);
+		virtual void onEnterScene(std::shared_ptr<Scene> scene);
 	};
 }

@@ -1,5 +1,5 @@
 #pragma once
-#include "NCS/Component.h"
+#include "Component.h"
 #include "Graphics/Visual.h"
 
 namespace Destiny
@@ -18,6 +18,7 @@ namespace Destiny
 	public:
 		virtual void onAddToNode(std::shared_ptr<Node> node) override;
 		virtual void onNodeTransformChanged(const Transform& transform) override;
+		virtual void onEnterScene(std::shared_ptr<Scene> scene);
 
 		void onCameraViewChanged(const DirectX::XMMATRIX& cameraView);
 		void onCameraProjChanged(const DirectX::XMMATRIX& cameraProj);

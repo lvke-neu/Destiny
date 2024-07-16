@@ -1,5 +1,4 @@
 #include "Scene.h"
-#include "Node.h"
 #include "Engine/Engine.h"
 #include "Engine/Blob.h"
 #include "Engine/BlobLoader.h"
@@ -19,13 +18,13 @@
 #include "Graphics/Visual.h"
 #include "Graphics/Texture.h"
 #include "Graphics/SamplerState.h"
-#include "../VisualComponent.h"
+#include "VisualComponent.h"
+#include "CameraComponent.h"
 #include <d3d11.h>
 
 namespace Destiny
 {
-	Scene::Scene() : 
-		m_rootNode(std::make_shared<Node>("RootNode"))
+	Scene::Scene() : Node("Root")
 	{
 		
 	}
@@ -37,10 +36,15 @@ namespace Destiny
 
 	void Scene::initialize()
 	{
+		//camera
+		m_cameraNode = std::make_shared<Node>("Camera");
+		m_camera = std::make_shared<CameraComponent>();
+		m_cameraNode->addComponent(m_camera);
+		m_cameraNode->addToParent(shared_from_this());
+
 		//Effect
 		auto renderer = Renderer::Create("builtin://renderer/basic.rdr");
 		renderer->load(0);
-		renderer->setConstant("g_proj", DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(45.0f), 284.0f / 55, 0.1f, 1000.f)));
 
 		std::shared_ptr<RenderStates> renderStates = std::make_shared<RenderStates>();
 		renderStates->load(0);
@@ -64,12 +68,13 @@ namespace Destiny
 
 		auto boxNode = std::make_shared<Node>();
 		boxNode->addComponent(visualComponent);
+		boxNode->addToParent(shared_from_this());
+		
 		Transform transform;
-		transform.set_translation({ 0.0f, 0.0f, 5.0f });
-		transform.set_rotation({ 90.0f, 0.0f, 0.0f });
-		transform.set_scale({ 2.0f, 1.0f, 1.0f });
+		transform.set_translation({ 0.0f, 0.0f, 2.0f });
+		transform.set_rotation({ 0.0f, 0.0f, 0.0f });
+		transform.set_scale({ 1.0f, 1.0f, 1.0f });
 		boxNode->set_transform(transform);
-		boxNode->addToParent(m_rootNode);
 	}
 
 	void Scene::uninitialize()

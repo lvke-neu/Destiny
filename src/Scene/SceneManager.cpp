@@ -1,7 +1,7 @@
 #include "SceneManager.h"
 #include "NCS/Scene.h"
 #include "NCS/Node.h"
-#include "VisualComponent.h"
+#include "NCS/VisualComponent.h"
 #include "Engine/Engine.h"
 #include "Graphics/GraphicsSystem.h"
 
@@ -32,10 +32,10 @@ namespace Destiny
 	void SceneManager::update(float deltaTime)
 	{
 		m_scene->update(deltaTime);
-		bfs(m_scene->getRootNode());
+		bfsRender(m_scene);
 	}
 
-	void SceneManager::bfs(std::shared_ptr<Node> node)
+	void SceneManager::bfsRender(std::shared_ptr<Node> node)
 	{
 		if (!node)
 		{
@@ -44,7 +44,7 @@ namespace Destiny
 
 		for (const auto& component : node->getComponents())
 		{
-			auto visualComponent = dynamic_cast<VisualComponent*>(component.get());
+			auto visualComponent = std::dynamic_pointer_cast<VisualComponent>(component);
 			if (visualComponent)
 			{
 				Engine::GetInstance()->getGraphicsSystem()->commitRenderParameters(visualComponent->getRenderParameters());
@@ -53,7 +53,7 @@ namespace Destiny
 
 		for (const auto& childNode : node->getChilds())
 		{
-			bfs(childNode);
+			bfsRender(childNode);
 		}
 	}
 }

@@ -1,4 +1,5 @@
 #include "Node.h"
+#include "Scene.h"
 #include "Component.h"
 
 namespace Destiny
@@ -33,6 +34,8 @@ namespace Destiny
 		removeFromParent();
 		parent->m_childs.emplace_back(shared_from_this());
 		m_parent = parent;
+
+		onEnterScene();
 	}
 
 	void Node::removeFromParent()
@@ -65,6 +68,8 @@ namespace Destiny
 		}
 		component->onAddToNode(shared_from_this());
 		m_components.emplace_back(component);
+
+		onEnterScene();
 	}
 
 	void Node::removeComponent(std::shared_ptr<Component> component)
@@ -97,6 +102,27 @@ namespace Destiny
 			{
 				component->onNodeTransformChanged(transform);
 			}
+		}
+	}
+
+	void Node::onEnterScene()
+	{
+		auto tmpParent = m_parent;
+		while (tmpParent)
+		{
+			auto scene = std::dynamic_pointer_cast<Scene>(tmpParent);
+			if (scene)
+			{
+				for (const auto& component : m_components)
+				{
+					if (component)
+					{
+						component->onEnterScene(scene);
+					}
+				}
+				break;
+			}
+			tmpParent = tmpParent->m_parent;
 		}
 	}
 

@@ -23,6 +23,11 @@ namespace Destiny
 		return DirectX::XMMatrixTranspose(getWorldMatrix());
 	}
 
+	DirectX::XMMATRIX Transform::getInvTransposeWorldMatrix() const
+	{
+		return  DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(nullptr, getWorldMatrix()));
+	}
+
 	RTTR_REGISTRATION
 	{
 		rttr::registration::class_<Transform>("Transform")

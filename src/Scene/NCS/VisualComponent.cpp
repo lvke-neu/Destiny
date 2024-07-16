@@ -1,5 +1,7 @@
 #include "VisualComponent.h"
-#include "NCS/Node.h"
+#include "Scene.h"
+#include "Node.h"
+#include "CameraComponent.h"
 #include "Graphics/Effect.h"
 #include "Graphics/EffectTechnique.h"
 #include "Graphics/EffectPass.h"
@@ -36,6 +38,18 @@ namespace Destiny
 				}
 			}
 		}
+	}
+
+	void VisualComponent::onEnterScene(std::shared_ptr<Scene> scene)
+	{
+		if (!scene || !scene->getSceneCameraNode() || !scene->getSceneCamera())
+		{
+			return;
+		}
+		
+		onCameraViewChanged(scene->getSceneCameraNode()->get_transform().getInvTransposeWorldMatrix());
+		auto camera = scene->getSceneCamera();
+		onCameraProjChanged(DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(camera->get_fovy(), camera->get_aspect(), camera->get_nearz(), camera->get_farz())));
 	}
 
 	void VisualComponent::onCameraViewChanged(const DirectX::XMMATRIX& cameraView)

@@ -16,9 +16,9 @@ namespace Destiny
 	public:
 		GET_CLASS_NAME(VisualComponent);
 	public:
-		virtual void onAddToNode(std::shared_ptr<Node> node) override;
-		virtual void onNodeTransformChanged(const Transform& transform) override;
-		virtual void onEnterScene(std::shared_ptr<Scene> scene);
+		virtual void onAddToNode() override;
+		virtual void onNodeTransformChanged() override;
+		virtual void onEnterScene();
 
 		void onCameraViewChanged(const DirectX::XMMATRIX& cameraView);
 		void onCameraProjChanged(const DirectX::XMMATRIX& cameraProj);

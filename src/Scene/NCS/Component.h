@@ -17,9 +17,9 @@ namespace Destiny
 	public:
 		GET_CLASS_NAME(Component);
 	public:
-		virtual void onAddToNode(std::shared_ptr<Node> node);
-		virtual void onNodeTransformChanged(const Transform& transform);
-		virtual void onEnterScene(std::shared_ptr<Scene> scene);
+		virtual void onAddToNode();
+		virtual void onNodeTransformChanged();
+		virtual void onEnterScene();
 	protected:
 		std::shared_ptr<Node> m_node;
 		std::shared_ptr<Scene> m_scene;

@@ -44,40 +44,82 @@ namespace Destiny
 		m_cameraNode->addComponent(std::make_shared<CameraController>());
 		m_cameraNode->addToParent(shared_from_this());
 
-		//Effect
-		auto renderer = Renderer::Create("builtin://renderer/basic.rdr");
-		renderer->load(0);
-
-		std::shared_ptr<RenderStates> renderStates = std::make_shared<RenderStates>();
-		renderStates->getRasterizerStateDesc()->FillMode = D3D11_FILL_WIREFRAME;
-		renderStates->load(0);
-
-		std::shared_ptr<EffectPass> effectPass = std::make_shared<EffectPass>();
-		effectPass->setRenderer(renderer);
-		effectPass->setRenderStates(renderStates);
-
-		std::shared_ptr<EffectTechnique> effectTechnique = std::make_shared<EffectTechnique>();
-		effectTechnique->addEffectPass(effectPass);
-
-		std::shared_ptr<Effect> effect = std::make_shared<Effect>();
-		effect->addEffectTechnique(effectTechnique);
-
-		auto boxMesh = Mesh::Create_Box_PositionNormalTexcoord();
-		boxMesh->load(0);
-		std::shared_ptr<VisualComponent> visualComponent = std::make_shared<VisualComponent>();
-		visualComponent->setEffect(effect);
-		visualComponent->setMesh(boxMesh);
 
 
-		auto boxNode = std::make_shared<Node>();
-		boxNode->addComponent(visualComponent);
-		boxNode->addToParent(shared_from_this());
-		
-		Transform transform;
-		transform.set_translation({ 0.0f, 0.0f, 5.0f });
-		transform.set_rotation({ 0.0f, 0.0f, 0.0f });
-		transform.set_scale({ 1.0f, 1.0f, 1.0f });
-		boxNode->set_transform(transform);
+		//box
+		{
+			auto renderer = std::make_shared<Renderer>("builtin://renderer/basic.rdr");
+			renderer->load(0);
+			renderer->setConstant("u_color", DirectX::XMFLOAT4{ 1.0f, 0.0f, 0.0f, 1.0f });
+
+			std::shared_ptr<RenderStates> renderStates = std::make_shared<RenderStates>();
+			renderStates->load(0);
+
+			std::shared_ptr<EffectPass> effectPass = std::make_shared<EffectPass>();
+			effectPass->setRenderer(renderer);
+			effectPass->setRenderStates(renderStates);
+
+			std::shared_ptr<EffectTechnique> effectTechnique = std::make_shared<EffectTechnique>();
+			effectTechnique->addEffectPass(effectPass);
+
+			std::shared_ptr<Effect> effect = std::make_shared<Effect>();
+			effect->addEffectTechnique(effectTechnique);
+
+			auto mesh = Mesh::Create_Box_PositionNormalTexcoord();
+			mesh->load(0);
+
+			std::shared_ptr<VisualComponent> visualComponent = std::make_shared<VisualComponent>();
+			visualComponent->setEffect(effect);
+			visualComponent->setMesh(mesh);
+
+			auto node = std::make_shared<Node>();
+			node->addComponent(visualComponent);
+			node->addToParent(shared_from_this());
+
+			Transform transform;
+			transform.set_translation({ 0.0f, 0.0f, 0.0f });
+			//transform.set_rotation({ 45.0f, 0.0f, 0.0f });
+			transform.set_scale({ 1.0f, 1.0f, 1.0f });
+			node->set_transform(transform);
+		}
+
+
+		//plane
+		{
+			auto renderer = std::make_shared<Renderer>("builtin://renderer/basic.rdr");
+			renderer->load(0);
+			renderer->setConstant("u_color", DirectX::XMFLOAT4{ 1.0f, 1.0f, 1.0f, 1.0f });
+
+			std::shared_ptr<RenderStates> renderStates = std::make_shared<RenderStates>();
+			renderStates->load(0);
+
+			std::shared_ptr<EffectPass> effectPass = std::make_shared<EffectPass>();
+			effectPass->setRenderer(renderer);
+			effectPass->setRenderStates(renderStates);
+
+			std::shared_ptr<EffectTechnique> effectTechnique = std::make_shared<EffectTechnique>();
+			effectTechnique->addEffectPass(effectPass);
+
+			std::shared_ptr<Effect> effect = std::make_shared<Effect>();
+			effect->addEffectTechnique(effectTechnique);
+
+			auto mesh = Mesh::Create_Plane_PositionNormalTexcoord();
+			mesh->load(0);
+
+			std::shared_ptr<VisualComponent> visualComponent = std::make_shared<VisualComponent>();
+			visualComponent->setEffect(effect);
+			visualComponent->setMesh(mesh);
+
+			auto node = std::make_shared<Node>();
+			node->addComponent(visualComponent);
+			node->addToParent(shared_from_this());
+
+			Transform transform;
+			transform.set_translation({ 0.0f, -2.0f, 0.0f });
+			transform.set_rotation({ 90.0f, 0.0f, 0.0f });
+			transform.set_scale({ 5.0f, 5.0f, 1.0f });
+			node->set_transform(transform);
+		}
 	}
 
 	void Scene::uninitialize()

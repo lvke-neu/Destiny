@@ -7,17 +7,17 @@ namespace Destiny
 
 	}
 
-	void Component::onAddToNode(std::shared_ptr<Node> node)
+	void Component::onAddToNode()
 	{
 
 	}
 
-	void Component::onNodeTransformChanged(const Transform& transform)
+	void Component::onNodeTransformChanged()
 	{
 
 	}
 
-	void Component::onEnterScene(std::shared_ptr<Scene> scene)
+	void Component::onEnterScene()
 	{
 
 	}

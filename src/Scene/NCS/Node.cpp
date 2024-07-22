@@ -67,7 +67,7 @@ namespace Destiny
 			return;
 		}
 		component->m_node = shared_from_this();
-		component->onAddToNode(shared_from_this());
+		component->onAddToNode();
 		
 		m_components.emplace_back(component);
 
@@ -138,7 +138,7 @@ namespace Destiny
 					if (component)
 					{
 						component->m_scene = scene;
-						component->onEnterScene(scene);
+						component->onEnterScene();
 					}
 				}
 				break;
@@ -153,7 +153,7 @@ namespace Destiny
 		{
 			if (component)
 			{
-				component->onNodeTransformChanged(m_transform);
+				component->onNodeTransformChanged();
 			}
 		}
 	}

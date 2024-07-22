@@ -16,8 +16,8 @@ namespace Destiny
 		GET(float, nearz);
 		GET(float, farz);
 	public:
-		virtual void onEnterScene(std::shared_ptr<Scene> scene);
-		virtual void onNodeTransformChanged(const Transform& transform);
+		virtual void onEnterScene();
+		virtual void onNodeTransformChanged();
 	private:
 		void onWindowResize(void* data);
 	private:

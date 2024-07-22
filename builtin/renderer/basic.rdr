@@ -1,5 +1,11 @@
 #include "common.shader"
 
+cbuffer cbPerObject : register(b0)
+{
+	matrix u_worldMatrix;
+	float4 u_color;
+}
+
 struct VertexIn
 {
 	float3 positionL : POSITION;
@@ -29,6 +35,6 @@ VertexOut VS(VertexIn vIn)
 
 float4 PS(VertexOut pIn) : SV_Target
 {
-	return float4(1.0f,0.0f,0.0f, 1.0f);
+	return u_color;
 }
 

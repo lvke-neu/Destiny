@@ -39,6 +39,7 @@ namespace Destiny
 		void fillRenderParameters(std::shared_ptr<RenderParameters> renderParameters, std::shared_ptr<Blob> inputSignatureBlob);
 	public:
 		static std::shared_ptr<Mesh> Create_Box_PositionNormalTexcoord();
+		static std::shared_ptr<Mesh> Create_Plane_PositionNormalTexcoord();
 	private:
 		DirectX::BoundingBox			m_aabb;
 		DrawCall						m_drawCall;

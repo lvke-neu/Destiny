@@ -15,18 +15,23 @@ namespace Destiny
 
 	}
 
-	void VisualComponent::onAddToNode(std::shared_ptr<Node> node)
+	void VisualComponent::onAddToNode()
 	{
-		if (!node || !m_visual->getEffect())
+		if (!m_node || !m_visual->getEffect())
 		{
 			return;
 		}
 
-		onNodeTransformChanged(node->get_transform());
+		onNodeTransformChanged();
 	}
 
-	void VisualComponent::onNodeTransformChanged(const Transform& transform)
+	void VisualComponent::onNodeTransformChanged()
 	{
+		if (!m_node)
+		{
+			return;
+		}
+
 		for (const auto& effectTechnique : m_visual->getEffect()->getEffectTechniques())
 		{
 			for (const auto& effectPass : effectTechnique->getEffectPasses())
@@ -34,21 +39,21 @@ namespace Destiny
 				auto renderer = effectPass->getRenderer();
 				if (renderer)
 				{
-					renderer->setConstant("u_worldMatrix", transform.getTransposeWorldMatrix());
+					renderer->setConstant("u_worldMatrix", m_node->get_transform().getTransposeWorldMatrix());
 				}
 			}
 		}
 	}
 
-	void VisualComponent::onEnterScene(std::shared_ptr<Scene> scene)
+	void VisualComponent::onEnterScene()
 	{
-		if (!scene || !scene->getSceneCameraNode() || !scene->getSceneCamera())
+		if (!m_scene || !m_scene->getSceneCameraNode() || !m_scene->getSceneCamera())
 		{
 			return;
 		}
 		
-		onCameraViewChanged(scene->getSceneCameraNode()->get_transform().getInvTransposeWorldMatrix());
-		auto camera = scene->getSceneCamera();
+		onCameraViewChanged(m_scene->getSceneCameraNode()->get_transform().getInvTransposeWorldMatrix());
+		auto camera = m_scene->getSceneCamera();
 		onCameraProjChanged(DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(camera->get_fovy(), camera->get_aspect(), camera->get_nearz(), camera->get_farz())));
 	}
 

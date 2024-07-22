@@ -80,6 +80,10 @@ namespace Destiny
 	void GraphicsSystem::onResize(void* data)
 	{
 		WindowResizeData wrd = *(WindowResizeData*)data;
+		if (!wrd.width || !wrd.height)
+		{
+			return;
+		}
 
 		m_viewport->TopLeftX = 0;
 		m_viewport->TopLeftY = 0;
@@ -99,6 +103,11 @@ namespace Destiny
 
 	void GraphicsSystem::onResize_(unsigned int width, unsigned int height)
 	{
+		if (!width || !height)
+		{
+			return;
+		}
+
 		SAFE_RELEASE(m_pRenderTargetView);
 		SAFE_RELEASE(m_pDepthStencilBuffer);
 		SAFE_RELEASE(m_pDepthStencilView);

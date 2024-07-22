@@ -19,15 +19,13 @@ namespace Destiny
 		Engine::GetInstance()->getEventSystem()->unRegisterEvent(EventType::WindowResize, std::bind(&CameraComponent::onWindowResize, this, std::placeholders::_1));
 	}
 
-	void CameraComponent::onEnterScene(std::shared_ptr<Scene> scene)
+	void CameraComponent::onEnterScene()
 	{
 		bfsNotifyViewChanged(m_scene);
 	}
 
-	void CameraComponent::onNodeTransformChanged(const Transform& transform)
+	void CameraComponent::onNodeTransformChanged()
 	{
-		auto matrix = transform.getWorldMatrix();
-
 		bfsNotifyViewChanged(m_scene);
 	}
 

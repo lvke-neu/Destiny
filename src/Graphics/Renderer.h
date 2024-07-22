@@ -30,7 +30,6 @@ namespace Destiny
 	public:
 		std::shared_ptr<Blob> getInputSignatureBlob();
 		void fillRenderParameters(std::shared_ptr<RenderParameters> renderParameters);
-		static std::shared_ptr<Renderer> Create(const char* path);
 	public:
 		template<typename T>
 		void setConstant(const char* name, T value);
@@ -54,7 +53,6 @@ namespace Destiny
 		std::unordered_map<std::string, std::string> m_variableLinkConstant;
 		std::unordered_map<std::string, std::pair<std::shared_ptr<TextureDesc>, std::shared_ptr<Texture>>> m_textures;
 		std::unordered_map<std::string, std::pair<std::shared_ptr<SamplerStateDesc>, std::shared_ptr<SamplerState>>> m_samplerStates;
-		static std::unordered_map<std::string, std::shared_ptr<Renderer>> m_cache;
 	};
 
 	inline std::shared_ptr<Blob> Renderer::getInputSignatureBlob()

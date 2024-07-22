@@ -178,9 +178,9 @@ void Application::run()
 			ImGui_ImplWin32_NewFrame();
 			ImGui::NewFrame();
 
-			//static bool show = true;
-			//ImGui::ShowDemoWindow(&show);
-			//ImGui::ShowMetricsWindow();
+			static bool show = true;
+			ImGui::ShowDemoWindow(&show);
+			ImGui::ShowMetricsWindow();
 
 			drawDock();
 

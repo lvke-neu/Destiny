@@ -20,6 +20,7 @@
 #include "Graphics/SamplerState.h"
 #include "VisualComponent.h"
 #include "CameraComponent.h"
+#include "CameraController.h"
 #include <d3d11.h>
 
 namespace Destiny
@@ -40,6 +41,7 @@ namespace Destiny
 		m_cameraNode = std::make_shared<Node>("Camera");
 		m_camera = std::make_shared<CameraComponent>();
 		m_cameraNode->addComponent(m_camera);
+		m_cameraNode->addComponent(std::make_shared<CameraController>());
 		m_cameraNode->addToParent(shared_from_this());
 
 		//Effect
@@ -47,6 +49,7 @@ namespace Destiny
 		renderer->load(0);
 
 		std::shared_ptr<RenderStates> renderStates = std::make_shared<RenderStates>();
+		renderStates->getRasterizerStateDesc()->FillMode = D3D11_FILL_WIREFRAME;
 		renderStates->load(0);
 
 		std::shared_ptr<EffectPass> effectPass = std::make_shared<EffectPass>();
@@ -71,7 +74,7 @@ namespace Destiny
 		boxNode->addToParent(shared_from_this());
 		
 		Transform transform;
-		transform.set_translation({ 0.0f, 0.0f, 2.0f });
+		transform.set_translation({ 0.0f, 0.0f, 5.0f });
 		transform.set_rotation({ 0.0f, 0.0f, 0.0f });
 		transform.set_scale({ 1.0f, 1.0f, 1.0f });
 		boxNode->set_transform(transform);

@@ -6,9 +6,9 @@
 namespace Destiny
 {
 	CameraComponent::CameraComponent() :
-		m_fovy(60.0f),
+		m_fovy(45.0f),
 		m_aspect(1.0f),
-		m_nearz(1.0f),
+		m_nearz(0.1f),
 		m_farz(1000.0f)
 	{
 		Engine::GetInstance()->getEventSystem()->registerEvent(EventType::WindowResize, std::bind(&CameraComponent::onWindowResize, this, std::placeholders::_1));
@@ -21,12 +21,14 @@ namespace Destiny
 
 	void CameraComponent::onEnterScene(std::shared_ptr<Scene> scene)
 	{
-		m_scene = scene;
+		bfsNotifyViewChanged(m_scene);
 	}
 
 	void CameraComponent::onNodeTransformChanged(const Transform& transform)
 	{
-		bfsNotifyViewChanged(m_scene, transform);
+		auto matrix = transform.getWorldMatrix();
+
+		bfsNotifyViewChanged(m_scene);
 	}
 
 	void CameraComponent::onWindowResize(void* data)
@@ -36,7 +38,7 @@ namespace Destiny
 		bfsNotifyProjChanged(m_scene);
 	}
 
-	void CameraComponent::bfsNotifyViewChanged(std::shared_ptr<Node> node, const Transform& transform)
+	void CameraComponent::bfsNotifyViewChanged(std::shared_ptr<Node> node)
 	{
 		if (!node)
 		{
@@ -48,13 +50,16 @@ namespace Destiny
 			auto visualComponent = std::dynamic_pointer_cast<VisualComponent>(component);
 			if (visualComponent)
 			{
-				visualComponent->onCameraViewChanged(transform.getInvTransposeWorldMatrix());
+				if (m_node)
+				{
+					visualComponent->onCameraViewChanged(m_node->get_transform().getInvTransposeWorldMatrix());
+				}	
 			}
 		}
 
 		for (const auto& childNode : node->getChilds())
 		{
-			bfsNotifyViewChanged(childNode, transform);
+			bfsNotifyViewChanged(childNode);
 		}
 	}
 

@@ -3,8 +3,6 @@
 
 namespace Destiny
 {
-	class Scene;
-	class Node;
 	class CameraComponent : public Component
 	{
 		RTTR_ENABLE(Component);
@@ -23,14 +21,12 @@ namespace Destiny
 	private:
 		void onWindowResize(void* data);
 	private:
-		void bfsNotifyViewChanged(std::shared_ptr<Node> node, const Transform& transform);
+		void bfsNotifyViewChanged(std::shared_ptr<Node> node);
 		void bfsNotifyProjChanged(std::shared_ptr<Node> node);
 	private:
 		float m_fovy;
 		float m_aspect;
 		float m_nearz;
 		float m_farz;
-
-		std::shared_ptr<Scene> m_scene;
 	};
 }

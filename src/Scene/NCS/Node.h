@@ -23,6 +23,10 @@ namespace Destiny
 		void removeComponent(std::shared_ptr<Component> component);
 		const std::vector<std::shared_ptr<Component>>& getComponents();
 		const std::vector<std::shared_ptr<Node>>& getChilds();
+		void moveZAxis(float distance);
+		void moveXAxis(float distance);
+		void rotateXAxis(float angle);
+		void rotateYAxis(float angle);
 	public:
 		GET_CLASS_NAME(Node);
 		GET_SET(std::string, name);
@@ -30,6 +34,7 @@ namespace Destiny
 		void set_transform(const Transform& transform);
 	private:
 		void onEnterScene();
+		void onNodeTransformChanged();
 	private:
 		std::string m_name;
 		std::shared_ptr<Node> m_parent;

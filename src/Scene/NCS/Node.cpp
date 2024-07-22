@@ -66,7 +66,9 @@ namespace Destiny
 		{
 			return;
 		}
+		component->m_node = shared_from_this();
 		component->onAddToNode(shared_from_this());
+		
 		m_components.emplace_back(component);
 
 		onEnterScene();
@@ -96,13 +98,31 @@ namespace Destiny
 		}
 
 		m_transform = transform;
-		for (const auto& component : m_components)
-		{
-			if (component)
-			{
-				component->onNodeTransformChanged(transform);
-			}
-		}
+		onNodeTransformChanged();
+	}
+
+	void Node::moveZAxis(float distance)
+	{
+		m_transform.moveZAxis(distance);
+		onNodeTransformChanged();
+	}
+
+	void Node::moveXAxis(float distance)
+	{
+		m_transform.moveXAxis(distance);
+		onNodeTransformChanged();
+	}
+
+	void Node::rotateXAxis(float angle)
+	{
+		m_transform.rotateXAxis(angle);
+		onNodeTransformChanged();
+	}
+
+	void Node::rotateYAxis(float angle)
+	{
+		m_transform.rotateYAxis(angle);
+		onNodeTransformChanged();
 	}
 
 	void Node::onEnterScene()
@@ -117,12 +137,24 @@ namespace Destiny
 				{
 					if (component)
 					{
+						component->m_scene = scene;
 						component->onEnterScene(scene);
 					}
 				}
 				break;
 			}
 			tmpParent = tmpParent->m_parent;
+		}
+	}
+
+	void Node::onNodeTransformChanged()
+	{
+		for (const auto& component : m_components)
+		{
+			if (component)
+			{
+				component->onNodeTransformChanged(m_transform);
+			}
 		}
 	}
 

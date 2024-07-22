@@ -20,6 +20,10 @@ namespace Destiny
 		GET_SET(DirectX::XMFLOAT3, scale);
 	public:
 		bool operator==(const Transform& other);
+		void moveZAxis(float distance);
+		void moveXAxis(float distance);
+		void rotateXAxis(float angle);
+		void rotateYAxis(float angle);
 	private:
 		DirectX::XMFLOAT3 m_translation;
 		DirectX::XMFLOAT3 m_rotation;

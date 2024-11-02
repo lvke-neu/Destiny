@@ -13,7 +13,6 @@
 #include "Graphics/Effect.h"
 #include "Graphics/EffectPass.h"
 #include "Graphics/EffectTechnique.h"
-#include "Graphics/RenderParameters.h"
 #include "Graphics/GraphicsSystem.h"
 #include "Graphics/Visual.h"
 #include "Graphics/Texture.h"

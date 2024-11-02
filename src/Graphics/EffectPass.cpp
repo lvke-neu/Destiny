@@ -53,16 +53,16 @@ namespace Destiny
 		m_renderStates = renderStates;
 	}
 
-	void EffectPass::fillRenderParameters(std::shared_ptr<RenderParameters> renderParameters)
+	void EffectPass::fillDrawParameters(std::shared_ptr<DrawParameters> drawParameters)
 	{
 		if (m_renderer)
 		{
-			m_renderer->fillRenderParameters(renderParameters);
+			m_renderer->fillDrawParameters(drawParameters);
 		}
 
 		if (m_renderStates)
 		{
-			m_renderStates->fillRenderParameters(renderParameters);
+			m_renderStates->fillDrawParameters(drawParameters);
 		}
 	}
 }

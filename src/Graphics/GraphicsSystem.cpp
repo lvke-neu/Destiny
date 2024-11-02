@@ -1,17 +1,7 @@
 #define NOMINMAX
 #include "GraphicsSystem.h"
-#include "RenderParameters.h"
-#include "ForwardOpaquePipeline.h"
-#include "ConstantBuffer.h"
-#include "Texture.h"
-#include "SamplerState.h"
 #include "Engine/Utility.h"
-#include "Engine/Blob.h"
-#include "Engine/BlobLoader.h"
-#include "Engine/BlobHolder.h"
-#include "Engine/BlobLoaderManager.h"
 #include <d3d11.h>
-#include <d3dcompiler.h>
 
 namespace Destiny
 {
@@ -23,8 +13,7 @@ namespace Destiny
 		m_pRenderTargetView(nullptr),
 		m_pDepthStencilBuffer(nullptr),
 		m_pDepthStencilView(nullptr),
-		m_4xMsaaQuality(0),
-		m_forwardOpaquePipeline(nullptr)
+		m_4xMsaaQuality(0)
 	{
 
 	}
@@ -57,17 +46,7 @@ namespace Destiny
 	{
 		render();
 		m_pDXGISwapChain->Present(0, 0);
-		m_renderParameters.clear();
-	}
-
-	void GraphicsSystem::commitRenderParameters(std::shared_ptr<RenderParameters> renderParameters)
-	{
-		m_renderParameters.emplace(renderParameters);
-	}
-
-	void GraphicsSystem::commitRenderParameters(const std::unordered_set<std::shared_ptr<RenderParameters>>& renderParameters)
-	{
-		m_renderParameters.insert(renderParameters.begin(), renderParameters.end());
+		m_pD3D11ImmediateDeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
 	}
 
 	void GraphicsSystem::onResize_(unsigned int width, unsigned int height)
@@ -102,65 +81,6 @@ namespace Destiny
 
 		m_pD3D11Device->CreateTexture2D(&depthStencilDesc, nullptr, &m_pDepthStencilBuffer);
 		m_pD3D11Device->CreateDepthStencilView(m_pDepthStencilBuffer, nullptr, &m_pDepthStencilView);
-	}
-
-	void GraphicsSystem::render()
-	{
-		m_forwardOpaquePipeline->execute(m_pD3D11ImmediateDeviceContext);
-
-		for (const auto& renderParameters : m_renderParameters)
-		{
-			if (!renderParameters)
-			{
-				continue;
-			}
-
-			m_pD3D11ImmediateDeviceContext->IASetVertexBuffers(0, 1, &renderParameters->vertexBuffer, &renderParameters->stride, &renderParameters->offset);
-			m_pD3D11ImmediateDeviceContext->IASetIndexBuffer(renderParameters->indexBuffer, (DXGI_FORMAT)renderParameters->format, 0);
-			m_pD3D11ImmediateDeviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)renderParameters->primitiveTopology);
-			m_pD3D11ImmediateDeviceContext->IASetInputLayout(renderParameters->inputLayout);
-
-			m_pD3D11ImmediateDeviceContext->VSSetShader(renderParameters->vertexShader, nullptr, 0);
-			m_pD3D11ImmediateDeviceContext->PSSetShader(renderParameters->pixelShader, nullptr, 0);
-
-			m_pD3D11ImmediateDeviceContext->RSSetState(renderParameters->rasterizerState);
-			m_pD3D11ImmediateDeviceContext->OMSetDepthStencilState(renderParameters->depthStencilState, 0);
-			m_pD3D11ImmediateDeviceContext->OMSetBlendState(renderParameters->blendState, nullptr, 0xFFFFFFFF);
-			
-			for (const auto& constantBuffer : renderParameters->constantBuffers)
-			{
-				if (constantBuffer.second)
-				{
-					constantBuffer.second->bind();
-				}
-			}
-
-			for(const auto& texture : renderParameters->textures)
-			{ 
-				if (texture.second.second)
-				{
-					texture.second.second->bind(texture.second.first);
-				}
-			}
-
-			for (const auto& samplerState : renderParameters->samplerStates)
-			{
-				if (samplerState.second.second)
-				{
-					samplerState.second.second->bind(samplerState.second.first);
-				}
-			}
-
-			switch (renderParameters->drawType)
-			{
-			case 1 :
-				m_pD3D11ImmediateDeviceContext->Draw(renderParameters->vertexCount, 0);
-			case 2:
-				m_pD3D11ImmediateDeviceContext->DrawIndexed(renderParameters->indexCount, 0, 0);
-			}
-		}
-
-		m_pD3D11ImmediateDeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
 	}
 
 	void GraphicsSystem::createDeviceAndContext()
@@ -225,10 +145,5 @@ namespace Destiny
 		SAFE_RELEASE(dxgiDevice);
 		SAFE_RELEASE(dxgiAdapter);
 		SAFE_RELEASE(dxgiFactory);
-	}
-
-	void GraphicsSystem::createPipeline()
-	{
-		m_forwardOpaquePipeline = std::make_shared<ForwardOpaquePipeline>();
 	}
 }

@@ -7,7 +7,7 @@ namespace Destiny
 {
 	class VertexBuffer;
 	class IndexBuffer;
-	class RenderParameters;
+	class DrawParameters;
 	class Blob;
 	class Mesh : public Asset
 	{
@@ -36,7 +36,7 @@ namespace Destiny
 	public:
 		virtual void doLoad() override;
 	public:
-		void fillRenderParameters(std::shared_ptr<RenderParameters> renderParameters, std::shared_ptr<Blob> inputSignatureBlob);
+		void fillDrawParameters(std::shared_ptr<DrawParameters> drawParameters, std::shared_ptr<Blob> inputSignatureBlob);
 	public:
 		static std::shared_ptr<Mesh> Create_Box_PositionNormalTexcoord();
 		static std::shared_ptr<Mesh> Create_Plane_PositionNormalTexcoord();

@@ -14,7 +14,7 @@ namespace Destiny
 {
 	class  Blob;
 	class  BlobHolder;
-	class  RenderParameters;
+	class  DrawParameters;
 	class  ConstantBuffer;
 	class  Texture;
 	struct TextureDesc;
@@ -29,7 +29,7 @@ namespace Destiny
 		virtual void doLoad() override;
 	public:
 		std::shared_ptr<Blob> getInputSignatureBlob();
-		void fillRenderParameters(std::shared_ptr<RenderParameters> renderParameters);
+		void fillDrawParameters(std::shared_ptr<DrawParameters> drawParameters);
 	public:
 		template<typename T>
 		void setConstant(const char* name, T value);

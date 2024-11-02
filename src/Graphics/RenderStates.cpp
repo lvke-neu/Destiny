@@ -1,7 +1,7 @@
 #include "RenderStates.h"
 #include "Engine/Engine.h"
 #include "GraphicsSystem.h"
-#include "RenderParameters.h"
+#include "DrawParameters.h"
 #include <d3d11.h>
 
 namespace Destiny
@@ -59,15 +59,15 @@ namespace Destiny
 		loadSucceeded__();
 	}
 
-	void RenderStates::fillRenderParameters(std::shared_ptr<RenderParameters> renderParameters)
+	void RenderStates::fillDrawParameters(std::shared_ptr<DrawParameters> drawParameters)
 	{
-		if (!renderParameters)
+		if (!drawParameters)
 		{
 			return;
 		}
 
-		renderParameters->rasterizerState = m_rasterizerState;
-		renderParameters->depthStencilState = m_depthStencilState;
-		renderParameters->blendState = m_blendState;
+		drawParameters->rasterizerState = m_rasterizerState;
+		drawParameters->depthStencilState = m_depthStencilState;
+		drawParameters->blendState = m_blendState;
 	}
 }

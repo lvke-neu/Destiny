@@ -11,6 +11,8 @@ namespace Destiny
 		ForwardOpaquePipeline();
 		virtual ~ForwardOpaquePipeline();
 	public:
+		void syncState();
+	public:
 		std::shared_ptr<RenderTargetView> getRenderTargetView();
 	private:
 		void onResize(void* data);

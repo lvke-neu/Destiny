@@ -10,7 +10,6 @@ namespace Destiny
 	ForwardOpaquePipeline::ForwardOpaquePipeline() :
 		m_bindRenderTargets(std::make_shared<BindRenderTargets>())
 	{
-		addRenderCommand(m_bindRenderTargets);
 		Engine::GetInstance()->getEventSystem()->registerEvent(EventType::WindowResize, std::bind(&ForwardOpaquePipeline::onResize, this, std::placeholders::_1));
 	}
 
@@ -22,6 +21,12 @@ namespace Destiny
 	std::shared_ptr<RenderTargetView> ForwardOpaquePipeline::getRenderTargetView()
 	{
 		return m_bindRenderTargets ? m_bindRenderTargets->getRenderTargetView() : nullptr;
+	}
+
+	void ForwardOpaquePipeline::syncState()
+	{
+		clearRenderCommand();
+		addRenderCommand(m_bindRenderTargets);
 	}
 
 	void ForwardOpaquePipeline::onResize(void* data)

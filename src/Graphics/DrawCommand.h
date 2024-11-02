@@ -1,26 +1,20 @@
 #pragma once
 #include "RenderCommand.h"
 #include <memory>
+#include <unordered_set>
 
 namespace Destiny
 {
-	class Mesh;
-	class Renderer;
-	class RenderStates;
+	class DrawParameters;
 	class DrawCommand : public RenderCommand
 	{
 	public:
-		DrawCommand();
 		virtual ~DrawCommand() = default;
 	public:
 		virtual void execute(ID3D11DeviceContext* deviceContext) override;
 	public:
-		void setMesh(std::shared_ptr<Mesh> mesh);
-		void setRenderer(std::shared_ptr<Renderer> renderer);
-		void setRenderStates(std::shared_ptr<RenderStates> renderStates);
+		void addDrawParameter(std::shared_ptr<DrawParameters> drawParameters);
 	private:
-		std::shared_ptr<Mesh> m_mesh;
-		std::shared_ptr<Renderer> m_renderer;
-		std::shared_ptr<RenderStates> m_renderStates;
+		std::unordered_set<std::shared_ptr<DrawParameters>> m_drawParameters;
 	};
 }

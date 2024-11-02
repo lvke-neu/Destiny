@@ -2,7 +2,7 @@
 #include "Engine/Utility.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
-#include "RenderParameters.h"
+#include "DrawParameters.h"
 #include "InputLayout.h"
 #include "Engine/Blob.h"
 
@@ -59,27 +59,27 @@ namespace Destiny
 		}
 	}
 
-	void Mesh::fillRenderParameters(std::shared_ptr<RenderParameters> renderParameters, std::shared_ptr<Blob> inputSignatureBlob)
+	void Mesh::fillDrawParameters(std::shared_ptr<DrawParameters> drawParameters, std::shared_ptr<Blob> inputSignatureBlob)
 	{
-		if (!renderParameters || !m_vertexBuffer || !m_vertexBuffer->m_inputLayout ||!m_indexBuffer)
+		if (!drawParameters || !m_vertexBuffer || !m_vertexBuffer->m_inputLayout ||!m_indexBuffer)
 		{
 			return;
 		}
 
-		renderParameters->vertexBuffer = m_vertexBuffer->m_vertexBuffer;
-		renderParameters->stride = m_vertexBuffer->m_stride;
-		renderParameters->offset = m_vertexBuffer->m_offset;
+		drawParameters->vertexBuffer = m_vertexBuffer->m_vertexBuffer;
+		drawParameters->stride = m_vertexBuffer->m_stride;
+		drawParameters->offset = m_vertexBuffer->m_offset;
 
-		renderParameters->indexBuffer = m_indexBuffer->m_indexBuffer;
-		renderParameters->format = (short)m_indexBuffer->m_indexType;
+		drawParameters->indexBuffer = m_indexBuffer->m_indexBuffer;
+		drawParameters->format = (short)m_indexBuffer->m_indexType;
 
-		renderParameters->primitiveTopology = (short)m_drawCall.primitiveTopology;
+		drawParameters->primitiveTopology = (short)m_drawCall.primitiveTopology;
 
-		renderParameters->inputLayout = m_vertexBuffer->m_inputLayout->getInputLayout(inputSignatureBlob);
+		drawParameters->inputLayout = m_vertexBuffer->m_inputLayout->getInputLayout(inputSignatureBlob);
 		
-		renderParameters->drawType = (short)m_drawCall.drawMethod;
-		renderParameters->indexCount = m_drawCall.indexCount;
-		renderParameters->vertexCount = m_drawCall.vertexCount;
+		drawParameters->drawType = (short)m_drawCall.drawMethod;
+		drawParameters->indexCount = m_drawCall.indexCount;
+		drawParameters->vertexCount = m_drawCall.vertexCount;
 	}
 
 	struct PositionNormalTexcoord

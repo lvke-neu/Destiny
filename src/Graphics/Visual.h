@@ -6,7 +6,7 @@ namespace Destiny
 {
 	class Effect;
 	class Mesh;
-	class RenderParameters;
+	class DrawCommand;
 	class Visual
 	{
 	public:
@@ -16,14 +16,10 @@ namespace Destiny
 		void setEffect(std::shared_ptr<Effect> effect);
 		std::shared_ptr<Mesh> getMesh();
 		void setMesh(std::shared_ptr<Mesh> mesh);
-	public:
-		const std::unordered_set<std::shared_ptr<RenderParameters>>& getRenderParameters();
-	private:
-		void createRenderParameters();
+		void fillDrawCommand(std::shared_ptr<DrawCommand> drawCommand);
 	private:
 		std::shared_ptr<Effect> m_effect;
 		std::shared_ptr<Mesh> m_mesh;
-		std::unordered_set<std::shared_ptr<RenderParameters>> m_renderParameters;
 	};
 
 	inline std::shared_ptr<Effect> Visual::getEffect()

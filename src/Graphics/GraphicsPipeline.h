@@ -12,8 +12,9 @@ namespace Destiny
 		GraphicsPipeline();
 		virtual ~GraphicsPipeline() = default;
 	public:
-		void execute(ID3D11DeviceContext* deviceContext);
 		void addRenderCommand(std::shared_ptr<RenderCommand> renderCommand);
+		void clearRenderCommand();
+		void execute(ID3D11DeviceContext* deviceContext);
 	private:
 		std::shared_ptr<RenderCommandList> m_renderCommandList;
 	};

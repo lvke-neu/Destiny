@@ -14,12 +14,16 @@ namespace Destiny
 		{
 			return;
 		}
-
 		m_renderCommandList->execute(deviceContext);
 	}
 
 	void GraphicsPipeline::addRenderCommand(std::shared_ptr<RenderCommand> renderCommand)
 	{
 		m_renderCommandList->addRenderCommand(renderCommand);
+	}
+
+	void GraphicsPipeline::clearRenderCommand()
+	{
+		m_renderCommandList->clear();
 	}
 }

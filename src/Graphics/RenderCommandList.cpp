@@ -20,4 +20,9 @@ namespace Destiny
 			}
 		}
 	}
+
+	void RenderCommandList::clear()
+	{
+		m_renderCommandList.clear();
+	}
 }

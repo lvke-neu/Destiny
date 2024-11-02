@@ -6,7 +6,6 @@ namespace Destiny
 {
 	class Effect;
 	class Mesh;
-	class RenderParameters;
 	class VisualComponent : public Component
 	{
 		RTTR_ENABLE(Component);
@@ -25,7 +24,7 @@ namespace Destiny
 	public:
 		void setEffect(std::shared_ptr<Effect> effect);
 		void setMesh(std::shared_ptr<Mesh> mesh);
-		const std::unordered_set<std::shared_ptr<RenderParameters>>& getRenderParameters();
+		std::shared_ptr<Visual> getVisual();
 	private:
 		std::shared_ptr<Visual> m_visual;
 	};
@@ -46,14 +45,8 @@ namespace Destiny
 		}
 	}
 
-	static std::unordered_set<std::shared_ptr<RenderParameters>> nullRenderParameters;
-	inline const std::unordered_set<std::shared_ptr<RenderParameters>>& VisualComponent::getRenderParameters()
+	inline std::shared_ptr<Visual> VisualComponent::getVisual()
 	{
-		if (m_visual)
-		{
-			return m_visual->getRenderParameters();
-		}
-
-		return nullRenderParameters;
+		return m_visual;
 	}
 }

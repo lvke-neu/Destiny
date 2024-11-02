@@ -4,7 +4,7 @@
 #include "RenderStates.h"
 
 #include "GraphicsSystem.h"
-#include "RenderParameters.h"
+#include "DrawParameters.h"
 #include "Engine/Engine.h"
 
 #include "Engine/BlobHolder.h"
@@ -302,17 +302,17 @@ namespace Destiny
 		}
 	}
 
-	void Renderer::fillRenderParameters(std::shared_ptr<RenderParameters> renderParameters)
+	void Renderer::fillDrawParameters(std::shared_ptr<DrawParameters> drawParameters)
 	{
-		if (!renderParameters)
+		if (!drawParameters)
 		{
 			return;
 		}
 
-		renderParameters->vertexShader = m_vertexShader;
-		renderParameters->pixelShader = m_pixelShader;
-		renderParameters->constantBuffers = m_constantBuffers;
-		renderParameters->textures = m_textures;
-		renderParameters->samplerStates = m_samplerStates;
+		drawParameters->vertexShader = m_vertexShader;
+		drawParameters->pixelShader = m_pixelShader;
+		drawParameters->constantBuffers = m_constantBuffers;
+		drawParameters->textures = m_textures;
+		drawParameters->samplerStates = m_samplerStates;
 	}
 }

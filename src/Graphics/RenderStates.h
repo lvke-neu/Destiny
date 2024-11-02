@@ -9,7 +9,7 @@ struct ID3D11DepthStencilState;
 struct ID3D11BlendState;
 namespace Destiny
 {
-	class RenderParameters;
+	class DrawParameters;
 	class RenderStates : public Asset
 	{
 		friend class Effect;
@@ -20,7 +20,7 @@ namespace Destiny
 	public:
 		virtual void doLoad() override;
 	public:
-		void fillRenderParameters(std::shared_ptr<RenderParameters> renderParameters);
+		void fillDrawParameters(std::shared_ptr<DrawParameters> drawParameters);
 		std::shared_ptr<D3D11_RASTERIZER_DESC> getRasterizerStateDesc();
 		std::shared_ptr<D3D11_DEPTH_STENCIL_DESC> getDepthStencilStateDesc();
 		std::shared_ptr<D3D11_BLEND_DESC> getBlendStateDesc();

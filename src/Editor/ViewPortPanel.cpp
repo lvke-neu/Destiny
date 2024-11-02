@@ -2,7 +2,7 @@
 #include "Imgui/imgui.h"
 #include "Engine/Engine.h"
 #include "Engine/EventSystem.h"
-#include "Graphics/GraphicsSystem.h"
+#include "Graphics/RenderSystem.h"
 #include "Graphics/ForwardOpaquePipeline.h"
 #include "Graphics/RenderTargetView.h"
 
@@ -15,7 +15,7 @@ void ViewPortPanel::update()
 
 	onViewPortResize();
 
-	auto pipeLine = (std::dynamic_pointer_cast<Destiny::ForwardOpaquePipeline>(Destiny::Engine::GetInstance()->getGraphicsSystem()->getForwardOpaquePipeline()));
+	auto pipeLine = std::dynamic_pointer_cast<Destiny::RenderSystem>(Destiny::Engine::GetInstance()->getGraphicsSystem())->getForwardOpaquePipeline();
 	auto rtv = pipeLine->getRenderTargetView();
 	if (rtv && rtv->isLoadingSucceed())
 	{

@@ -4,7 +4,7 @@
 #include "EventSystem.h"
 #include "ThreadPool.h"
 #include "Timer.h"
-#include "Graphics/GraphicsSystem.h"
+#include "Graphics/RenderSystem.h"
 #include "Scene/SceneManager.h"
 
 namespace Destiny
@@ -16,7 +16,7 @@ namespace Destiny
 		m_blobLoaderManager = std::make_shared<BlobLoaderManager>();
 		m_eventSystem = std::make_shared<EventSystem>();
 		m_dataLoadThreadPool = std::make_shared<ThreadPool>();
-		m_graphicsSystem = std::make_shared<GraphicsSystem>();
+		m_graphicsSystem = std::make_shared<RenderSystem>();
 		m_sceneManager = std::make_shared<SceneManager>();
 	}
 
@@ -42,6 +42,7 @@ namespace Destiny
 	{
 		m_timer->update();
 		m_eventSystem->dispatchEvent(EventType::Update, m_timer->deltaTime());
+		m_graphicsSystem->syncState();
 		m_sceneManager->update(*m_timer->deltaTime());
 		m_graphicsSystem->update();
 	}

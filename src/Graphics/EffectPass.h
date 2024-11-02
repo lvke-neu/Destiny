@@ -5,7 +5,7 @@ namespace Destiny
 {
 	class Renderer;
 	class RenderStates;
-	class RenderParameters;
+	class DrawParameters;
 	class EffectPass
 	{
 	public:
@@ -17,7 +17,7 @@ namespace Destiny
 		void setRenderer(std::shared_ptr<Renderer> renderer);
 		void setRenderStates(std::shared_ptr<RenderStates> renderStates);
 
-		void fillRenderParameters(std::shared_ptr<RenderParameters> renderParameters);
+		void fillDrawParameters(std::shared_ptr<DrawParameters> drawParameters);
 	private:
 		std::shared_ptr<Renderer>		m_renderer;
 		std::shared_ptr<RenderStates>	m_renderStates;

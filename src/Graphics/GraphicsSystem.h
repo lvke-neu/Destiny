@@ -10,29 +10,10 @@ struct ID3D11DepthStencilView;
 struct ID3D11Device;
 struct IDXGISwapChain;
 struct ID3D11Texture2D;
-struct D3D11_VIEWPORT;
 namespace Destiny
 {
-	class Blob;
-	class VertexBuffer;
-	class IndexBuffer;
-	class Mesh;
-	class VertexShader;
-	class PixelShader;
-	class GeometryShader;
-	class InputLayout;
-	class RasterizerState;
-	class DepthStencilState;
-	class BlendState;
-	class SamplerState;
-	class Visual3D;
-	class Texture;
-	class TextureLoader;
-	class Material;
-	class MaterialLoader;
-	class RenderTargetView;
-	class DepthStencilView;
 	class RenderParameters;
+	class GraphicsPipeline;
 	class GraphicsSystem
 	{
 	public:
@@ -44,6 +25,7 @@ namespace Destiny
 		void update();
 		void commitRenderParameters(std::shared_ptr<RenderParameters> renderParameters);
 		void commitRenderParameters(const std::unordered_set<std::shared_ptr<RenderParameters>>& renderParameters);
+		std::shared_ptr<GraphicsPipeline> getForwardOpaquePipeline();
 	public:
 		ID3D11Device*				getDevice();
 		ID3D11DeviceContext*		getImmediateContext();
@@ -52,16 +34,13 @@ namespace Destiny
 		ID3D11RenderTargetView**	getRenderTargetView();
 		//swapchain
 		ID3D11DepthStencilView*		getDepthStencilView();
-		std::shared_ptr<RenderTargetView> getRTTRenderTargetView();
 	public:
-		//for viewport resize
-		void onResize(void* data);
 		//for window resize
 		void onResize_(unsigned int width, unsigned int height);
 	private:
 		void createDeviceAndContext();
 		void createSwapChain(long long hwnd);
-	
+		void createPipeline();
 		void render();
 	private:
 		ID3D11Device*												m_pD3D11Device;
@@ -72,10 +51,8 @@ namespace Destiny
 		ID3D11Texture2D*											m_pDepthStencilBuffer;
 		ID3D11DepthStencilView*										m_pDepthStencilView;
 		unsigned int												m_4xMsaaQuality;
-		std::shared_ptr<D3D11_VIEWPORT>								m_viewport;
 		std::unordered_set<std::shared_ptr<RenderParameters>>		m_renderParameters;
-		std::shared_ptr<RenderTargetView>							m_pRTTRenderTargetView;
-		std::shared_ptr<DepthStencilView>							m_pRTTDepthStencilView;
+		std::shared_ptr<GraphicsPipeline>							m_forwardOpaquePipeline;
 	};
 
 	inline ID3D11Device* GraphicsSystem::getDevice()
@@ -103,8 +80,8 @@ namespace Destiny
 		return m_pDepthStencilView;
 	}
 
-	inline std::shared_ptr<RenderTargetView> GraphicsSystem::getRTTRenderTargetView()
+	inline std::shared_ptr<GraphicsPipeline> GraphicsSystem::getForwardOpaquePipeline()
 	{
-		return m_pRTTRenderTargetView;
+		return m_forwardOpaquePipeline;
 	}
 }

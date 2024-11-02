@@ -1,13 +1,10 @@
 #define NOMINMAX
 #include "GraphicsSystem.h"
 #include "RenderParameters.h"
+#include "ForwardOpaquePipeline.h"
 #include "ConstantBuffer.h"
 #include "Texture.h"
 #include "SamplerState.h"
-#include "RenderTargetView.h"
-#include "DepthStencilView.h"
-#include "Engine/Engine.h"
-#include "Engine/EventSystem.h"
 #include "Engine/Utility.h"
 #include "Engine/Blob.h"
 #include "Engine/BlobLoader.h"
@@ -27,9 +24,7 @@ namespace Destiny
 		m_pDepthStencilBuffer(nullptr),
 		m_pDepthStencilView(nullptr),
 		m_4xMsaaQuality(0),
-		m_viewport(std::make_shared<D3D11_VIEWPORT>()),
-		m_pRTTRenderTargetView(nullptr),
-		m_pRTTDepthStencilView(nullptr)
+		m_forwardOpaquePipeline(nullptr)
 	{
 
 	}
@@ -51,13 +46,11 @@ namespace Destiny
 		createDeviceAndContext();
 		createSwapChain(hwnd);
 		onResize_(0, 0);
-
-		Engine::GetInstance()->getEventSystem()->registerEvent(EventType::WindowResize, std::bind(&GraphicsSystem::onResize, this, std::placeholders::_1));
+		createPipeline();
 	}
 
 	void GraphicsSystem::uninitialize()
 	{
-		Engine::GetInstance()->getEventSystem()->unRegisterEvent(EventType::WindowResize, std::bind(&GraphicsSystem::onResize, this, std::placeholders::_1));
 	}
 
 	void GraphicsSystem::update()
@@ -75,30 +68,6 @@ namespace Destiny
 	void GraphicsSystem::commitRenderParameters(const std::unordered_set<std::shared_ptr<RenderParameters>>& renderParameters)
 	{
 		m_renderParameters.insert(renderParameters.begin(), renderParameters.end());
-	}
-
-	void GraphicsSystem::onResize(void* data)
-	{
-		WindowResizeData wrd = *(WindowResizeData*)data;
-		if (!wrd.width || !wrd.height)
-		{
-			return;
-		}
-
-		m_viewport->TopLeftX = 0;
-		m_viewport->TopLeftY = 0;
-		m_viewport->Width = static_cast<float>(wrd.width);
-		m_viewport->Height = static_cast<float>(wrd.height);
-		m_viewport->MinDepth = 0.0f;
-		m_viewport->MaxDepth = 1.0f;
-		m_pD3D11ImmediateDeviceContext->RSSetViewports(1, m_viewport.get());
-
-		m_pRTTRenderTargetView.reset();
-		m_pRTTDepthStencilView.reset();
-		m_pRTTRenderTargetView = std::make_shared<RenderTargetView>(wrd.width, wrd.height);
-		m_pRTTDepthStencilView = std::make_shared<DepthStencilView>(wrd.width, wrd.height);
-		m_pRTTRenderTargetView->load(0);
-		m_pRTTDepthStencilView->load(0);
 	}
 
 	void GraphicsSystem::onResize_(unsigned int width, unsigned int height)
@@ -133,21 +102,12 @@ namespace Destiny
 
 		m_pD3D11Device->CreateTexture2D(&depthStencilDesc, nullptr, &m_pDepthStencilBuffer);
 		m_pD3D11Device->CreateDepthStencilView(m_pDepthStencilBuffer, nullptr, &m_pDepthStencilView);
-
-		m_pD3D11ImmediateDeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
 	}
 
 	void GraphicsSystem::render()
 	{
-		if (!m_pRTTRenderTargetView || !m_pRTTDepthStencilView)
-		{
-			return;
-		}
+		m_forwardOpaquePipeline->execute(m_pD3D11ImmediateDeviceContext);
 
-		m_pD3D11ImmediateDeviceContext->OMSetRenderTargets(1, m_pRTTRenderTargetView->getRenderTargetView(), m_pRTTDepthStencilView->getDepthStencilView());
-		static float color[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-		m_pD3D11ImmediateDeviceContext->ClearRenderTargetView(*m_pRTTRenderTargetView->getRenderTargetView(), color);
-		m_pD3D11ImmediateDeviceContext->ClearDepthStencilView(m_pRTTDepthStencilView->getDepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 		for (const auto& renderParameters : m_renderParameters)
 		{
 			if (!renderParameters)
@@ -265,5 +225,10 @@ namespace Destiny
 		SAFE_RELEASE(dxgiDevice);
 		SAFE_RELEASE(dxgiAdapter);
 		SAFE_RELEASE(dxgiFactory);
+	}
+
+	void GraphicsSystem::createPipeline()
+	{
+		m_forwardOpaquePipeline = std::make_shared<ForwardOpaquePipeline>();
 	}
 }

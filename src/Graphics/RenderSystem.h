@@ -4,8 +4,11 @@
 
 namespace Destiny
 {
+	class RenderCommand;
+	class RenderCommandList;
 	class ForwardOpaquePipeline;
 	class ForwardTransparentPipeline;
+	class BindRenderTargetsOnResize;
 	class RenderSystem : public GraphicsSystem
 	{
 	public:
@@ -16,14 +19,14 @@ namespace Destiny
 		virtual void syncState() override;
 		virtual void commitVisual(std::shared_ptr<Visual> visual) override;
 	public:
-		std::shared_ptr<ForwardOpaquePipeline> getForwardOpaquePipeline();
+		void addBeforeForwardOpaqueCommand(std::shared_ptr<RenderCommand> renderCommand);
+	public:
+		std::shared_ptr<BindRenderTargetsOnResize> bindRenderTargetsOnResize;
 	private:
 		std::shared_ptr<ForwardOpaquePipeline> m_forwardOpaquePipeline;
 		std::shared_ptr<ForwardTransparentPipeline> m_forwardTransparentPipeline;
+		
+		std::shared_ptr<RenderCommandList> m_beforeForwardOpaqueCommandList;
 	};
 
-	inline std::shared_ptr<ForwardOpaquePipeline> RenderSystem::getForwardOpaquePipeline()
-	{
-		return m_forwardOpaquePipeline;
-	}
 }

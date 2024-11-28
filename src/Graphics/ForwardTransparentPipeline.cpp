@@ -15,6 +15,5 @@ namespace Destiny
 	void ForwardTransparentPipeline::syncState()
 	{
 		clearRenderCommand();
-		//addRenderCommand(m_bindRenderTargets);
 	}
 }

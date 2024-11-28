@@ -3,6 +3,8 @@
 #include "ForwardTransparentPipeline.h"
 #include "Visual.h"
 #include "RenderPass.h"
+#include "RenderCommandList.h"
+#include "BindRenderTargetsOnResize.h"
 
 namespace Destiny
 {
@@ -10,10 +12,16 @@ namespace Destiny
 	{
 		m_forwardOpaquePipeline = std::make_shared<ForwardOpaquePipeline>();
 		m_forwardTransparentPipeline = std::make_shared<ForwardTransparentPipeline>();
+
+		m_beforeForwardOpaqueCommandList = std::make_shared<RenderCommandList>();
+
+		bindRenderTargetsOnResize = std::make_shared<BindRenderTargetsOnResize>();
+		addBeforeForwardOpaqueCommand(bindRenderTargetsOnResize);
 	}
 
 	void RenderSystem::render()
 	{
+		m_beforeForwardOpaqueCommandList->execute(getImmediateContext());
 		m_forwardOpaquePipeline->execute(getImmediateContext());
 		m_forwardTransparentPipeline->execute(getImmediateContext());
 	}
@@ -47,5 +55,10 @@ namespace Destiny
 			return;
 		}
 		}
+	}
+
+	void RenderSystem::addBeforeForwardOpaqueCommand(std::shared_ptr<RenderCommand> renderCommand)
+	{
+		m_beforeForwardOpaqueCommandList->addRenderCommand(renderCommand);
 	}
 }

@@ -3,8 +3,6 @@
 
 namespace Destiny 
 {
-	class RenderTargetView;
-	class BindRenderTargets;
 	class ForwardTransparentPipeline : public GraphicsPipeline
 	{
 	public:

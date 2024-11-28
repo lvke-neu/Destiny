@@ -1,17 +1,18 @@
-#include "EffectPass.h"
+#include "RenderPass.h"
 #include "Renderer.h"
 #include "RenderStates.h"
 
 namespace Destiny
 {
-	EffectPass::EffectPass() : 
+	RenderPass::RenderPass() :
 		m_renderer(nullptr),
-		m_renderStates(nullptr)
+		m_renderStates(nullptr),
+		m_pipeline(None)
 	{
 
 	}
 
-	void EffectPass::setRenderer(std::shared_ptr<Renderer> renderer)
+	void RenderPass::setRenderer(std::shared_ptr<Renderer> renderer)
 	{
 		//if (!renderer)
 		//{
@@ -32,7 +33,7 @@ namespace Destiny
 		m_renderer = renderer;
 	}
 
-	void EffectPass::setRenderStates(std::shared_ptr<RenderStates> renderStates)
+	void RenderPass::setRenderStates(std::shared_ptr<RenderStates> renderStates)
 	{
 		if (!renderStates)
 		{
@@ -53,7 +54,7 @@ namespace Destiny
 		m_renderStates = renderStates;
 	}
 
-	void EffectPass::fillDrawParameters(std::shared_ptr<DrawParameters> drawParameters)
+	void RenderPass::fillDrawParameters(std::shared_ptr<DrawParameters> drawParameters)
 	{
 		if (m_renderer)
 		{

@@ -1,8 +1,6 @@
 #include "Visual.h"
-#include "Effect.h"
+#include "RenderPass.h"
 #include "Mesh.h"
-#include "EffectTechnique.h"
-#include "EffectPass.h"
 #include "Renderer.h"
 #include "DrawCommand.h"
 #include "DrawParameters.h"
@@ -10,21 +8,22 @@
 namespace Destiny
 {
 	Visual::Visual() :
-		m_effect(nullptr),
-		m_mesh(nullptr)
+		m_renderPass(nullptr),
+		m_mesh(nullptr),
+		m_drawParameters(std::make_shared<DrawParameters>())
 	{
 
 	}
 
-	void Visual::setEffect(std::shared_ptr<Effect> effect)
+	void Visual::setRenderPass(std::shared_ptr<RenderPass> renderPass)
 	{
-		if (!effect)
+		if (!renderPass)
 		{
 			return;
 		}
 
-		m_effect.reset();
-		m_effect = effect;
+		m_renderPass.reset();
+		m_renderPass = renderPass;
 	}
 
 	void Visual::setMesh(std::shared_ptr<Mesh> mesh)
@@ -38,58 +37,17 @@ namespace Destiny
 		m_mesh = mesh;
 	}
 
-	void Visual::fillDrawCommand(std::shared_ptr<DrawCommand> drawCommand)
+	void Visual::upDrawParameters()
 	{
-		if (!drawCommand)
+		if (m_renderPass)
 		{
-			return;
-		}
-
-		for (const auto& effectTechnique : m_effect->getEffectTechniques())
-		{
-			for (const auto& effectPass : effectTechnique->getEffectPasses())
+			m_renderPass->fillDrawParameters(m_drawParameters);
+			if (m_mesh && m_renderPass->getRenderer())
 			{
-				std::shared_ptr<DrawParameters> drawParameters = std::make_shared<DrawParameters>();
-				if (effectPass)
-				{
-					effectPass->fillDrawParameters(drawParameters);
-					if (m_mesh && effectPass->getRenderer())
-					{
-						m_mesh->fillDrawParameters(drawParameters, effectPass->getRenderer()->getInputSignatureBlob());
-					}
-				}
-				
-				drawCommand->addDrawParameter(drawParameters);
-			}	
+				m_mesh->fillDrawParameters(m_drawParameters, m_renderPass->getRenderer()->getInputSignatureBlob());
+			}
 		}
+
+		addDrawParameter(m_drawParameters);
 	}
-
-	//const std::unordered_set<std::shared_ptr<RenderParameters>>& Visual::getRenderParameters()
-	//{
-	//	if (m_renderParameters.empty())
-	//	{
-	//		createRenderParameters();
-	//	}
-	//	return m_renderParameters;
-	//}
-
-	//void Visual::createRenderParameters()
-	//{
-	//	for (const auto& effectTechnique : m_effect->getEffectTechniques())
-	//	{
-	//		for (const auto& effectPass : effectTechnique->getEffectPasses())
-	//		{
-	//			std::shared_ptr<RenderParameters> renderParameters = std::make_shared<RenderParameters>();
-	//			if (effectPass)
-	//			{
-	//				effectPass->fillRenderParameters(renderParameters);
-	//				if (m_mesh && effectPass->getRenderer())
-	//				{
-	//					m_mesh->fillRenderParameters(renderParameters, effectPass->getRenderer()->getInputSignatureBlob());
-	//				}
-	//			}
-	//			m_renderParameters.insert(renderParameters);
-	//		}	
-	//	}
-	//}
 }

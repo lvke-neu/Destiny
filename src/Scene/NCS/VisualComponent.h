@@ -4,8 +4,6 @@
 
 namespace Destiny
 {
-	class Effect;
-	class Mesh;
 	class VisualComponent : public Component
 	{
 		RTTR_ENABLE(Component);
@@ -22,18 +20,18 @@ namespace Destiny
 		void onCameraViewChanged(const DirectX::XMMATRIX& cameraView);
 		void onCameraProjChanged(const DirectX::XMMATRIX& cameraProj);
 	public:
-		void setEffect(std::shared_ptr<Effect> effect);
+		void setRenderPass(std::shared_ptr<RenderPass> renderPass);
 		void setMesh(std::shared_ptr<Mesh> mesh);
 		std::shared_ptr<Visual> getVisual();
 	private:
 		std::shared_ptr<Visual> m_visual;
 	};
 
-	inline void VisualComponent::setEffect(std::shared_ptr<Effect> effect)
+	inline void VisualComponent::setRenderPass(std::shared_ptr<RenderPass> renderPass)
 	{
 		if (m_visual)
 		{
-			m_visual->setEffect(effect);
+			m_visual->setRenderPass(renderPass);
 		}	
 	}
 

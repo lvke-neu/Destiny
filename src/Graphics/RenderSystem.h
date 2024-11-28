@@ -5,6 +5,7 @@
 namespace Destiny
 {
 	class ForwardOpaquePipeline;
+	class ForwardTransparentPipeline;
 	class RenderSystem : public GraphicsSystem
 	{
 	public:
@@ -13,10 +14,12 @@ namespace Destiny
 		virtual void createPipeline() override;
 		virtual void render() override;
 		virtual void syncState() override;
+		virtual void commitVisual(std::shared_ptr<Visual> visual) override;
 	public:
 		std::shared_ptr<ForwardOpaquePipeline> getForwardOpaquePipeline();
 	private:
 		std::shared_ptr<ForwardOpaquePipeline> m_forwardOpaquePipeline;
+		std::shared_ptr<ForwardTransparentPipeline> m_forwardTransparentPipeline;
 	};
 
 	inline std::shared_ptr<ForwardOpaquePipeline> RenderSystem::getForwardOpaquePipeline()

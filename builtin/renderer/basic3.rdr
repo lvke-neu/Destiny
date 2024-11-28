@@ -3,6 +3,7 @@
 cbuffer cbPerObject : register(b0)
 {
 	matrix u_worldMatrix;
+	float4 u_color;
 }
 
 struct VertexIn
@@ -31,10 +32,9 @@ VertexOut VS(VertexIn vIn)
 	return vOut;
 }
 
-Texture2D	t_baseColor : register(t0);
-SamplerState s_sampler : register(s0);
+
 float4 PS(VertexOut pIn) : SV_Target
 {
-	return t_baseColor.Sample(s_sampler, pIn.texcoord);
+	return u_color;
 }
 

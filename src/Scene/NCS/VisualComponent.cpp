@@ -2,9 +2,7 @@
 #include "Scene.h"
 #include "Node.h"
 #include "CameraComponent.h"
-#include "Graphics/Effect.h"
-#include "Graphics/EffectTechnique.h"
-#include "Graphics/EffectPass.h"
+#include "Graphics/RenderPass.h"
 #include "Graphics/Renderer.h"
 
 namespace Destiny
@@ -17,32 +15,18 @@ namespace Destiny
 
 	void VisualComponent::onAddToNode()
 	{
-		if (!m_node || !m_visual->getEffect())
-		{
-			return;
-		}
-
 		onNodeTransformChanged();
 	}
 
 	void VisualComponent::onNodeTransformChanged()
 	{
-		if (!m_node)
+		if (!m_node || !m_visual || !m_visual->getRenderPass() || !m_visual->getRenderPass()->getRenderer())
 		{
 			return;
 		}
 
-		for (const auto& effectTechnique : m_visual->getEffect()->getEffectTechniques())
-		{
-			for (const auto& effectPass : effectTechnique->getEffectPasses())
-			{
-				auto renderer = effectPass->getRenderer();
-				if (renderer)
-				{
-					renderer->setConstant("u_worldMatrix", m_node->get_transform().getTransposeWorldMatrix());
-				}
-			}
-		}
+		m_visual->getRenderPass()->getRenderer()->
+			setConstant("u_worldMatrix", m_node->get_transform().getTransposeWorldMatrix());
 	}
 
 	void VisualComponent::onEnterScene()
@@ -59,42 +43,22 @@ namespace Destiny
 
 	void VisualComponent::onCameraViewChanged(const DirectX::XMMATRIX& cameraView)
 	{
-		if (!m_visual->getEffect())
+		if (!m_visual || !m_visual->getRenderPass() || !m_visual->getRenderPass()->getRenderer())
 		{
 			return;
 		}
-
-		for (const auto& effectTechnique : m_visual->getEffect()->getEffectTechniques())
-		{
-			for (const auto& effectPass : effectTechnique->getEffectPasses())
-			{
-				auto renderer = effectPass->getRenderer();
-				if (renderer)
-				{
-					renderer->setConstant("g_view", cameraView);
-				}
-			}
-		}
+		
+		m_visual->getRenderPass()->getRenderer()->setConstant("g_view", cameraView);
 	}
 
 	void VisualComponent::onCameraProjChanged(const DirectX::XMMATRIX& cameraProj)
 	{
-		if (!m_visual->getEffect())
+		if (!m_visual || !m_visual->getRenderPass() || !m_visual->getRenderPass()->getRenderer())
 		{
 			return;
 		}
 
-		for (const auto& effectTechnique : m_visual->getEffect()->getEffectTechniques())
-		{
-			for (const auto& effectPass : effectTechnique->getEffectPasses())
-			{
-				auto renderer = effectPass->getRenderer();
-				if (renderer)
-				{
-					renderer->setConstant("g_proj", cameraProj);
-				}
-			}
-		}
+		m_visual->getRenderPass()->getRenderer()->setConstant("g_proj", cameraProj);
 	}
 
 	RTTR_REGISTRATION

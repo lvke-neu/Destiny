@@ -173,6 +173,7 @@ namespace Destiny
 	}
 	std::shared_ptr<Mesh> Mesh::Create_Plane_PositionNormalTexcoord()
 	{
+
 		auto iter = m_cache.find("Plane");
 		if (iter != m_cache.end())
 		{

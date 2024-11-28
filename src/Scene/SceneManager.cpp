@@ -4,8 +4,6 @@
 #include "NCS/VisualComponent.h"
 #include "Engine/Engine.h"
 #include "Graphics/RenderSystem.h"
-#include "Graphics/ForwardOpaquePipeline.h"
-#include "Graphics/DrawCommand.h"
 
 namespace Destiny
 {
@@ -46,14 +44,9 @@ namespace Destiny
 		for (const auto& component : node->getComponents())
 		{
 			auto visualComponent = std::dynamic_pointer_cast<VisualComponent>(component);
-			if (visualComponent && visualComponent->getVisual())
+			if (visualComponent)
 			{
-				auto forwardOpaquePipeline = std::dynamic_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->getForwardOpaquePipeline();
-				std::shared_ptr<DrawCommand> drawCommand = std::make_shared<DrawCommand>();
-				auto visual = visualComponent->getVisual();
-				visual->fillDrawCommand(drawCommand);
-				forwardOpaquePipeline->addRenderCommand(drawCommand);
-				//Engine::GetInstance()->getGraphicsSystem()->commitRenderParameters(visualComponent->getRenderParameters());
+				Engine::GetInstance()->getGraphicsSystem()->commitVisual(visualComponent->getVisual());
 			}	
 		}
 

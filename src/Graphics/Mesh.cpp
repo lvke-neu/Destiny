@@ -1,6 +1,7 @@
 #include "Mesh.h"
 #include "Engine/Utility.h"
 #include "VertexBuffer.h"
+#include "InstanceBuffer.h"
 #include "IndexBuffer.h"
 #include "DrawParameters.h"
 #include "InputLayout.h"
@@ -67,8 +68,8 @@ namespace Destiny
 		}
 
 		drawParameters->vertexBuffer = m_vertexBuffer->m_vertexBuffer;
-		drawParameters->stride = m_vertexBuffer->m_stride;
-		drawParameters->offset = m_vertexBuffer->m_offset;
+		drawParameters->vertexBuffer_stride = m_vertexBuffer->m_stride;
+		drawParameters->vertexBuffer_offset = m_vertexBuffer->m_offset;
 
 		drawParameters->indexBuffer = m_indexBuffer->m_indexBuffer;
 		drawParameters->format = (short)m_indexBuffer->m_indexType;
@@ -80,6 +81,20 @@ namespace Destiny
 		drawParameters->drawType = (short)m_drawCall.drawMethod;
 		drawParameters->indexCount = m_drawCall.indexCount;
 		drawParameters->vertexCount = m_drawCall.vertexCount;
+
+		if (m_instanceBuffer)
+		{
+			drawParameters->instanceBuffer = m_instanceBuffer->m_instanceBuffer;
+			drawParameters->instanceBuffer_stride = m_instanceBuffer->m_stride;
+			drawParameters->instanceBuffer_offset = m_instanceBuffer->m_offset;
+			drawParameters->instanceCount = m_instanceBuffer->m_instanceCount;
+		}
+	}
+
+	void Mesh::setInstanceBuffer(std::shared_ptr<InstanceBuffer> instanceBuffer)
+	{
+		m_instanceBuffer.reset();
+		m_instanceBuffer = instanceBuffer;
 	}
 
 	struct PositionNormalTexcoord

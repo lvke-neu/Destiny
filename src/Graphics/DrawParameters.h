@@ -21,8 +21,12 @@ namespace Destiny
 	{
 	public:
 		ID3D11Buffer* vertexBuffer						= nullptr;
-		unsigned int stride								= 0;
-		unsigned int offset								= 0;
+		unsigned int vertexBuffer_stride								= 0;
+		unsigned int vertexBuffer_offset								= 0;
+		ID3D11Buffer* instanceBuffer = nullptr;
+		unsigned int instanceBuffer_stride = 0;
+		unsigned int instanceBuffer_offset = 0;
+		unsigned int instanceCount = 0;
 		ID3D11Buffer* indexBuffer						= nullptr;
 		short format									= 0;
 		short primitiveTopology							= 0;

@@ -10,6 +10,7 @@ struct VertexIn
 	float3 positionL : POSITION;
 	float3 normal	 : NORMAL;
 	float2 texcoord  : TEXCOORD;
+	matrix worldMatrix	 : WORLDMATRIX;
 	float4 color	 : COLOR;
 };
 

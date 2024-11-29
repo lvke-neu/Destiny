@@ -18,6 +18,8 @@ namespace Destiny
 		std::shared_ptr<CameraComponent> getSceneCamera();
 		std::shared_ptr<Node> getSceneCameraNode();
 	private:
+		void testDrawIndexInstance();
+	private:
 		std::shared_ptr<CameraComponent> m_camera;
 		std::shared_ptr<Node> m_cameraNode;
 	};

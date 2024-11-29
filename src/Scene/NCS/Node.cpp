@@ -156,6 +156,14 @@ namespace Destiny
 				component->onNodeTransformChanged();
 			}
 		}
+
+		for (const auto& node : m_childs)
+		{
+			if (node)
+			{
+				node->onNodeTransformChanged();
+			}
+		}
 	}
 
 	RTTR_REGISTRATION

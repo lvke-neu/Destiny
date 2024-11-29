@@ -17,6 +17,7 @@ namespace Destiny
 		Node(const std::string& name);
 		virtual ~Node() = default;
 	public:
+		std::shared_ptr<Node> getParent();
 		void addToParent(std::shared_ptr<Node> parent);
 		void removeFromParent();
 		void addComponent(std::shared_ptr<Component> component);
@@ -42,6 +43,11 @@ namespace Destiny
 		std::vector<std::shared_ptr<Component>> m_components;
 		Transform m_transform;
 	};
+
+	inline std::shared_ptr<Node> Node::getParent()
+	{
+		return m_parent;
+	}
 
 	inline const std::vector<std::shared_ptr<Component>>& Node::getComponents()
 	{

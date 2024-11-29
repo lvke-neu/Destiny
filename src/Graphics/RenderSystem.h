@@ -20,6 +20,7 @@ namespace Destiny
 		virtual void commitVisual(std::shared_ptr<Visual> visual) override;
 	public:
 		void addBeforeForwardOpaqueCommand(std::shared_ptr<RenderCommand> renderCommand);
+		void addBeforeForwardTransparentCommandList(std::shared_ptr<RenderCommand> renderCommand);
 	public:
 		std::shared_ptr<BindRenderTargetsOnResize> bindRenderTargetsOnResize;
 	private:
@@ -27,6 +28,7 @@ namespace Destiny
 		std::shared_ptr<ForwardTransparentPipeline> m_forwardTransparentPipeline;
 		
 		std::shared_ptr<RenderCommandList> m_beforeForwardOpaqueCommandList;
+		std::shared_ptr<RenderCommandList> m_beforeForwardTransparentCommandList;
 	};
 
 }

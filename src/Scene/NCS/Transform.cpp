@@ -28,6 +28,22 @@ namespace Destiny
 		return  DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(nullptr, getWorldMatrix()));
 	}
 
+	DirectX::XMMATRIX Transform::getScaleMatrix() const
+	{
+		return DirectX::XMMatrixScalingFromVector(XMLoadFloat3(&m_scale));
+	}
+
+	DirectX::XMMATRIX Transform::getRotationMatrix() const
+	{
+		DirectX::XMFLOAT3 radiansRotation{ DirectX::XMConvertToRadians(m_rotation.x), DirectX::XMConvertToRadians(m_rotation.y), DirectX::XMConvertToRadians(m_rotation.z) };
+		return DirectX::XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&radiansRotation));
+	}
+
+	DirectX::XMMATRIX Transform::getTranslationMatrix() const
+	{
+		return DirectX::XMMatrixTranslationFromVector(XMLoadFloat3(&m_translation));
+	}
+
 	void Transform::moveZAxis(float distance)
 	{
 		DirectX::XMFLOAT3 radiansRotation{ DirectX::XMConvertToRadians(m_rotation.x), DirectX::XMConvertToRadians(m_rotation.y), DirectX::XMConvertToRadians(m_rotation.z) };

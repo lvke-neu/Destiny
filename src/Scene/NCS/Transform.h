@@ -13,6 +13,10 @@ namespace Destiny
 		DirectX::XMMATRIX getWorldMatrix() const;
 		DirectX::XMMATRIX getTransposeWorldMatrix() const;
 		DirectX::XMMATRIX getInvTransposeWorldMatrix() const;
+
+		DirectX::XMMATRIX getScaleMatrix() const;
+		DirectX::XMMATRIX getRotationMatrix() const;
+		DirectX::XMMATRIX getTranslationMatrix() const;
 	public:
 		GET_CLASS_NAME(Transform3D);
 		GET_SET(DirectX::XMFLOAT3, translation);

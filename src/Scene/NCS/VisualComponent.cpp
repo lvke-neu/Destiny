@@ -25,8 +25,20 @@ namespace Destiny
 			return;
 		}
 
+		auto tmpNode = m_node;
+		auto scaleMatrix = DirectX::XMMatrixIdentity();
+		auto rotationMatrix = DirectX::XMMatrixIdentity();
+		auto translationMatrix = DirectX::XMMatrixIdentity();
+		while (tmpNode)
+		{
+			scaleMatrix = tmpNode->get_transform().getScaleMatrix() * scaleMatrix;
+			rotationMatrix = tmpNode->get_transform().getRotationMatrix() * rotationMatrix;
+			translationMatrix = tmpNode->get_transform().getTranslationMatrix() * translationMatrix;
+			tmpNode = tmpNode->getParent();
+		}
+		auto worldMatrix = DirectX::XMMatrixTranspose(scaleMatrix * rotationMatrix * translationMatrix);
 		m_visual->getRenderPass()->getRenderer()->
-			setConstant("u_worldMatrix", m_node->get_transform().getTransposeWorldMatrix());
+			setConstant("u_worldMatrix", worldMatrix);
 	}
 
 	void VisualComponent::onEnterScene()

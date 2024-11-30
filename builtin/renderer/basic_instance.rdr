@@ -10,7 +10,7 @@ struct VertexIn
 	float3 positionL : POSITION;
 	float3 normal	 : NORMAL;
 	float2 texcoord  : TEXCOORD;
-	matrix worldMatrix	 : WORLDMATRIX;
+	matrix worldMatrix : WORLDMATRIX;
 	float4 color	 : COLOR;
 };
 
@@ -28,10 +28,11 @@ struct VertexOut
 VertexOut VS(VertexIn vIn)
 {
 	VertexOut vOut;
-	vOut.positionH = mul(mul(mul(float4(vIn.positionL, 1.0f), u_worldMatrix), g_view), g_proj);
+	vOut.positionH = mul(mul(mul(float4(vIn.positionL, 1.0f), vIn.worldMatrix), g_view), g_proj);
 	vOut.normal = vIn.normal;
 	vOut.texcoord = vIn.texcoord;
 	vOut.color = vIn.color;
+	//vOut.color = float4(vIn.worldMatrix[3][0],vIn.worldMatrix[3][0],vIn.worldMatrix[3][0],1.0);
 	return vOut;
 }
 

@@ -23,11 +23,6 @@ namespace Destiny
 	class Renderer : public Asset
 	{
 	public:
-		enum RendererCategory
-		{
-			ForwardOpaque
-		};
-	public:
 		Renderer(const char* path);
 		virtual ~Renderer();
 	public:

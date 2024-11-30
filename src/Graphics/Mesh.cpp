@@ -11,11 +11,12 @@ namespace Destiny
 {
 	std::unordered_map<std::string, std::shared_ptr<Mesh>> Mesh::m_cache;
 
-	Mesh::Mesh(const DirectX::BoundingBox& aabb, const DrawCall& drawCall, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) :
+	Mesh::Mesh(const DirectX::BoundingBox& aabb, const DrawCall& drawCall, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer, std::shared_ptr<InstanceBuffer> instanceBuffer) :
 		m_aabb(aabb),
 		m_drawCall(drawCall),
 		m_vertexBuffer(vertexBuffer),
-		m_indexBuffer(indexBuffer)
+		m_indexBuffer(indexBuffer),
+		m_instanceBuffer(instanceBuffer)
 	{
 
 	}
@@ -89,12 +90,6 @@ namespace Destiny
 			drawParameters->instanceBuffer_offset = m_instanceBuffer->m_offset;
 			drawParameters->instanceCount = m_instanceBuffer->m_instanceCount;
 		}
-	}
-
-	void Mesh::setInstanceBuffer(std::shared_ptr<InstanceBuffer> instanceBuffer)
-	{
-		m_instanceBuffer.reset();
-		m_instanceBuffer = instanceBuffer;
 	}
 
 	struct PositionNormalTexcoord

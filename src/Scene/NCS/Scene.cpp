@@ -35,6 +35,7 @@ namespace Destiny
 
 	}
 
+	static int drawcallcount = 6000;
 	void Scene::initialize()
 	{
 		//camera
@@ -45,7 +46,8 @@ namespace Destiny
 		m_cameraNode->addComponent(std::make_shared<CameraController>());
 		m_cameraNode->addToParent(shared_from_this());
 
-		testDrawIndexInstance();
+		testDrawIndex();
+		//testDrawIndexInstance();
 
 		//for (int i = 0; i < 1; i++)
 		//{
@@ -88,7 +90,7 @@ namespace Destiny
 			renderStates->load();
 
 			std::shared_ptr<RenderPass> renderPass = std::make_shared<RenderPass>();
-			renderPass->setPipeline(RenderPass::ForwardOpaque);
+			renderPass->setRendererCategory(RenderPass::ForwardOpaque);
 			renderPass->setRenderer(renderer);
 			renderPass->setRenderStates(renderStates);
 
@@ -110,6 +112,40 @@ namespace Destiny
 			node->set_transform(transform);
 		}
 
+	}
+
+	void Scene::testDrawIndex()
+	{
+		for (int i = 0; i < drawcallcount; i++)
+		{
+			auto renderer = std::make_shared<Renderer>("builtin://renderer/basic.rdr");
+			renderer->load(0);
+			renderer->setConstant("u_color", DirectX::XMFLOAT4{ (float)(i%2),1.0f,(float)(i % 2), 1.0f });
+
+			std::shared_ptr<RenderStates> renderStates = std::make_shared<RenderStates>();
+			renderStates->load();
+
+			std::shared_ptr<RenderPass> renderPass = std::make_shared<RenderPass>();
+			renderPass->setRendererCategory(RenderPass::ForwardOpaque);
+			renderPass->setRenderer(renderer);
+			renderPass->setRenderStates(renderStates);
+
+			auto mesh = Mesh::Create_Box_PositionNormalTexcoord();
+			mesh->load();
+
+			std::shared_ptr<VisualComponent> visualComponent = std::make_shared<VisualComponent>();
+			visualComponent->setRenderPass(renderPass);
+			visualComponent->setMesh(mesh);
+
+			auto node = std::make_shared<Node>();
+			node->set_name("BoxNode");
+			node->addComponent(visualComponent);
+			node->addToParent(shared_from_this());
+
+			Transform transform;
+			transform.set_translation({ (float)i, 0.0f, 0.0f });
+			node->set_transform(transform);
+		}
 	}
 
 	void Scene::testDrawIndexInstance()
@@ -179,7 +215,7 @@ namespace Destiny
 			{ "WORLDMATRIX", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 16, D3D11_INPUT_PER_INSTANCE_DATA, 1},
 			{ "WORLDMATRIX", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 32, D3D11_INPUT_PER_INSTANCE_DATA, 1},
 			{ "WORLDMATRIX", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 48, D3D11_INPUT_PER_INSTANCE_DATA, 1},
-			{ "COLOR",       0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 60, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+			{ "COLOR",       0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 64, D3D11_INPUT_PER_INSTANCE_DATA, 1}
 		};
 
 		std::shared_ptr<Blob> inputLayoutDesc = std::make_shared<Blob>(sizeof(D3D11_INPUT_ELEMENT_DESC) * inputElements.size());
@@ -206,20 +242,19 @@ namespace Destiny
 		drawCall.primitiveTopology = Mesh::PrimitiveTopology::TriangleList;
 		drawCall.indexCount = (unsigned int)indices.size();
 
-		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(aabb, drawCall, vertexBuffer, indexBuffer);
-
 		struct InstanceData
 		{
 			DirectX::XMMATRIX worldMatrix;
 			DirectX::XMFLOAT4 color;
 		};
 		std::vector<InstanceData> instanceDatas;
-		instanceDatas.resize(600);
+		instanceDatas.resize(drawcallcount);
 		Transform transform;
 		for (int i = 0; i < instanceDatas.size(); i++)
 		{
-			instanceDatas[i].color = { i / 600.0f,i / 600.0f,0.0f, 1.0f };
-			//transform.set_translation({ i / 600.0f, 0.0f, 0.0f });
+			auto r = i % 2;
+			instanceDatas[i].color = { (float)r,1.0f,(float)r, 1.0f };
+			transform.set_translation({ (float)i, 0.0f, 0.0f });
 			instanceDatas[i].worldMatrix = transform.getTransposeWorldMatrix();
 		}
 
@@ -228,10 +263,10 @@ namespace Destiny
 		data->copyfrom(instanceDatas.data(), (unsigned int)(instanceDatas.size() * sizeof(InstanceData)));
 
 		std::shared_ptr<InstanceBuffer> instanceBuffer = std::make_shared<InstanceBuffer>((unsigned int)(instanceDatas.size() * sizeof(InstanceData)), (unsigned int)sizeof(InstanceData), 0, (unsigned int)instanceDatas.size());
-		mesh->setInstanceBuffer(instanceBuffer);
 		instanceBuffer->updateInstanceData(data);
-		mesh->load(0);
 
+		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(aabb, drawCall, vertexBuffer, indexBuffer, instanceBuffer);
+		mesh->load(0);
 
 		auto renderer = std::make_shared<Renderer>("builtin://renderer/basic_instance.rdr");
 		renderer->load(0);
@@ -240,10 +275,9 @@ namespace Destiny
 		renderStates->load();
 
 		std::shared_ptr<RenderPass> renderPass = std::make_shared<RenderPass>();
-		renderPass->setPipeline(RenderPass::ForwardOpaque);
+		renderPass->setRendererCategory(RenderPass::ForwardOpaque);
 		renderPass->setRenderer(renderer);
 		renderPass->setRenderStates(renderStates);
-
 
 		std::shared_ptr<VisualComponent> visualComponent = std::make_shared<VisualComponent>();
 		visualComponent->setRenderPass(renderPass);

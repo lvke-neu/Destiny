@@ -33,13 +33,12 @@ namespace Destiny
 			unsigned int vertexCount	= 0;
 		};
 	public:
-		Mesh(const DirectX::BoundingBox& aabb, const DrawCall& drawCall, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer);
+		Mesh(const DirectX::BoundingBox& aabb, const DrawCall& drawCall, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer, std::shared_ptr<InstanceBuffer> instanceBuffer = nullptr);
 		virtual ~Mesh();
 	public:
 		virtual void doLoad() override;
 	public:
 		void fillDrawParameters(std::shared_ptr<DrawParameters> drawParameters, std::shared_ptr<Blob> inputSignatureBlob);
-		void setInstanceBuffer(std::shared_ptr<InstanceBuffer> instanceBuffer);
 	public:
 		static std::shared_ptr<Mesh> Create_Box_PositionNormalTexcoord();
 		static std::shared_ptr<Mesh> Create_Plane_PositionNormalTexcoord();

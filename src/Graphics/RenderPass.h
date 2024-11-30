@@ -9,7 +9,7 @@ namespace Destiny
 	class RenderPass
 	{
 	public:
-		enum Pipeline
+		enum RendererCategory
 		{
 			None,
 			ForwardOpaque,
@@ -24,14 +24,14 @@ namespace Destiny
 		std::shared_ptr<RenderStates> getRenderStates();
 		void setRenderStates(std::shared_ptr<RenderStates> renderStates);
 		
-		Pipeline getPipeline();
-		void setPipeline(Pipeline pipeline);
+		RendererCategory getRendererCategory();
+		void setRendererCategory(RendererCategory rendererCategory);
 
 		void fillDrawParameters(std::shared_ptr<DrawParameters> drawParameters);
 	private:
 		std::shared_ptr<Renderer>		m_renderer;
 		std::shared_ptr<RenderStates>	m_renderStates;
-		Pipeline m_pipeline;
+		RendererCategory m_rendererCategory;
 	};
 
 	inline std::shared_ptr<Renderer> RenderPass::getRenderer()
@@ -44,13 +44,13 @@ namespace Destiny
 		return m_renderStates;
 	}
 
-	inline RenderPass::Pipeline RenderPass::getPipeline()
+	inline RenderPass::RendererCategory RenderPass::getRendererCategory()
 	{
-		return m_pipeline;
+		return m_rendererCategory;
 	}
 
-	inline void RenderPass::setPipeline(Pipeline pipeline)
+	inline void RenderPass::setRendererCategory(RendererCategory rendererCategory)
 	{
-		m_pipeline = pipeline;
+		m_rendererCategory = rendererCategory;
 	}
 }

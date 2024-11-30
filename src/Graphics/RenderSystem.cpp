@@ -44,7 +44,7 @@ namespace Destiny
 
 		visual->upDrawParameters();
 		auto renderPass = visual->getRenderPass();
-		switch (renderPass->getPipeline())
+		switch (renderPass->getRendererCategory())
 		{
 		case RenderPass::ForwardOpaque :
 			{

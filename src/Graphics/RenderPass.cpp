@@ -7,7 +7,7 @@ namespace Destiny
 	RenderPass::RenderPass() :
 		m_renderer(nullptr),
 		m_renderStates(nullptr),
-		m_pipeline(None)
+		m_rendererCategory(None)
 	{
 
 	}

@@ -61,6 +61,14 @@ namespace Destiny
 		}
 	}
 
+	void Mesh::updateInstanceBufferData(std::shared_ptr<Blob> data)
+	{
+		if (m_instanceBuffer)
+		{
+			m_instanceBuffer->updateInstanceData(data);
+		}
+	}
+
 	void Mesh::fillDrawParameters(std::shared_ptr<DrawParameters> drawParameters, std::shared_ptr<Blob> inputSignatureBlob)
 	{
 		if (!drawParameters || !m_vertexBuffer || !m_vertexBuffer->m_inputLayout ||!m_indexBuffer)

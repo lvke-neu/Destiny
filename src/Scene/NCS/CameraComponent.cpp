@@ -29,6 +29,11 @@ namespace Destiny
 		bfsNotifyViewChanged(m_scene);
 	}
 
+	DirectX::XMMATRIX CameraComponent::getProjectionMatrix()
+	{
+		return DirectX::XMMatrixPerspectiveFovLH(m_fovy, m_aspect, m_nearz, m_farz);
+	}
+
 	void CameraComponent::onWindowResize(void* data)
 	{
 		WindowResizeData ws = *(WindowResizeData*)(data);

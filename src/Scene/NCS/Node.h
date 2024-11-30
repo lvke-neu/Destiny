@@ -36,7 +36,7 @@ namespace Destiny
 	private:
 		void onEnterScene();
 		void onNodeTransformChanged();
-	private:
+	protected:
 		std::string m_name;
 		std::shared_ptr<Node> m_parent;
 		std::vector<std::shared_ptr<Node>> m_childs;

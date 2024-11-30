@@ -28,6 +28,8 @@ namespace Destiny
 		void moveXAxis(float distance);
 		void rotateXAxis(float angle);
 		void rotateYAxis(float angle);
+	public:
+		std::string toString();
 	private:
 		DirectX::XMFLOAT3 m_translation;
 		DirectX::XMFLOAT3 m_rotation;

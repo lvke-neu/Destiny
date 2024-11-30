@@ -38,7 +38,9 @@ namespace Destiny
 	public:
 		virtual void doLoad() override;
 	public:
+		void updateInstanceBufferData(std::shared_ptr<Blob> data);
 		void fillDrawParameters(std::shared_ptr<DrawParameters> drawParameters, std::shared_ptr<Blob> inputSignatureBlob);
+		DirectX::BoundingBox getBoundingBox();
 	public:
 		static std::shared_ptr<Mesh> Create_Box_PositionNormalTexcoord();
 		static std::shared_ptr<Mesh> Create_Plane_PositionNormalTexcoord();
@@ -50,4 +52,9 @@ namespace Destiny
 		std::shared_ptr<IndexBuffer>	m_indexBuffer;
 		static std::unordered_map<std::string, std::shared_ptr<Mesh>> m_cache;
 	};
+
+	inline DirectX::BoundingBox Mesh::getBoundingBox()
+	{
+		return m_aabb;
+	}
 }

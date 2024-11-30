@@ -3,35 +3,15 @@
 
 namespace Destiny
 {
-	class CameraComponent;
-	class Node;
 	class Scene : public Node
 	{
 	public:
-		Scene();
-		~Scene();
+		Scene(const std::string& name);
+		virtual ~Scene() = default;
 	public:
-		void initialize();
-		void uninitialize();
-		void update(float deltaTime);
-	public:
-		std::shared_ptr<CameraComponent> getSceneCamera();
-		std::shared_ptr<Node> getSceneCameraNode();
-	private:
-		void testDrawIndex();
-		void testDrawIndexInstance();
-	private:
-		std::shared_ptr<CameraComponent> m_camera;
-		std::shared_ptr<Node> m_cameraNode;
+		virtual void initialize() = 0;
+		virtual void uninitialize() = 0;
+		virtual void update(float deltaTime) = 0;
+		virtual void onCull() = 0;
 	};
-
-	inline std::shared_ptr<CameraComponent> Scene::getSceneCamera()
-	{
-		return m_camera;
-	}
-
-	inline std::shared_ptr<Node> Scene::getSceneCameraNode()
-	{
-		return m_cameraNode;
-	}
 }

@@ -15,7 +15,7 @@ namespace Destiny
 	public:
 		std::shared_ptr<RenderPass> getRenderPass();
 		void setRenderPass(std::shared_ptr<RenderPass> renderPass);
-
+		std::shared_ptr<Mesh> getMesh();
 		void setMesh(std::shared_ptr<Mesh> mesh);
 	public:
 		void upDrawParameters();
@@ -30,5 +30,8 @@ namespace Destiny
 		return m_renderPass;
 	}
 
-		
+	inline std::shared_ptr<Mesh> Visual::getMesh()
+	{
+		return m_mesh;
+	}
 }

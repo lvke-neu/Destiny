@@ -1,9 +1,10 @@
 #include "VisualComponent.h"
-#include "Scene.h"
+#include "VisualScene.h"
 #include "Node.h"
 #include "CameraComponent.h"
 #include "Graphics/RenderPass.h"
 #include "Graphics/Renderer.h"
+
 
 namespace Destiny
 {
@@ -43,13 +44,26 @@ namespace Destiny
 
 	void VisualComponent::onEnterScene()
 	{
-		if (!m_scene || !m_scene->getSceneCameraNode() || !m_scene->getSceneCamera())
+		auto visualScene = std::dynamic_pointer_cast<VisualScene>(m_scene);
+
+		if (!visualScene)
 		{
 			return;
 		}
 		
-		onCameraViewChanged(m_scene->getSceneCameraNode()->get_transform().getInvTransposeWorldMatrix());
-		auto camera = m_scene->getSceneCamera();
+		auto cameraNode = visualScene->findCameraNode();
+		if (!cameraNode || cameraNode->getComponents().empty())
+		{
+			return;
+		}
+
+		auto camera = std::dynamic_pointer_cast<CameraComponent>(cameraNode->getComponents()[0]);
+		if (!camera)
+		{
+			return;
+		}
+
+		onCameraViewChanged(cameraNode->get_transform().getInvTransposeWorldMatrix());
 		onCameraProjChanged(DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(camera->get_fovy(), camera->get_aspect(), camera->get_nearz(), camera->get_farz())));
 	}
 

@@ -77,6 +77,11 @@ namespace Destiny
 		m_rotation.y -= angle;
 	}
 
+	std::string Transform::toString()
+	{
+		return "translation_x:" +std::to_string(m_translation.x) + "\ntranslation_y:" + std::to_string(m_translation.y) + "\ntranslation_z:" + std::to_string(m_translation.z);
+	}
+
 	RTTR_REGISTRATION
 	{
 		rttr::registration::class_<Transform>("Transform")

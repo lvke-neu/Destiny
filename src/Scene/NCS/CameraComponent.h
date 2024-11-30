@@ -18,6 +18,8 @@ namespace Destiny
 	public:
 		virtual void onEnterScene();
 		virtual void onNodeTransformChanged();
+	public:
+		DirectX::XMMATRIX getProjectionMatrix();
 	private:
 		void onWindowResize(void* data);
 	private:

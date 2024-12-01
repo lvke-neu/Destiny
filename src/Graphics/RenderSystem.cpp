@@ -31,6 +31,7 @@ namespace Destiny
 
 	void RenderSystem::syncState()
 	{
+		m_graphicsStat.DrawCallCount = 0;
 		m_forwardOpaquePipeline->syncState();
 		m_forwardTransparentPipeline->syncState();
 	}
@@ -49,12 +50,14 @@ namespace Destiny
 		case RenderPass::ForwardOpaque :
 			{
 			m_forwardOpaquePipeline->addRenderCommand(visual);
+			++m_graphicsStat.DrawCallCount;
 			return;
 			}
 
 		case RenderPass::ForwardTransparent :
 		{
 			m_forwardTransparentPipeline->addRenderCommand(visual);
+			++m_graphicsStat.DrawCallCount;
 			return;
 		}
 		}

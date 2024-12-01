@@ -1,6 +1,6 @@
 #pragma once
 
-class ComponentPanel
+class StatPanel
 {
 public:
 	void update();

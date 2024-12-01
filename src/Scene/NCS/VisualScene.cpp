@@ -12,8 +12,9 @@
 
 #include "Graphics/IndexBuffer.h"
 #include "Graphics/VertexBuffer.h"
-#include <d3d11.h>
 #include "Graphics/InstanceBuffer.h"
+#include <d3d11.h>
+#include <chrono>
 namespace Destiny
 {
 #define QUEUE_BFS(FUCNTION) \
@@ -327,30 +328,34 @@ namespace Destiny
 		DirectX::BoundingFrustum::CreateFromMatrix(cameraFrustum, camera->getProjectionMatrix());
 		cameraFrustum.Transform(cameraFrustum, findCameraNode()->get_transform().getWorldMatrix());
 		
+		//std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
 		std::queue<std::shared_ptr<Node>> nodes; 
-			nodes.push(shared_from_this()); 
-			while (!nodes.empty())
+		nodes.push(shared_from_this()); 
+		while (!nodes.empty())
+		{
+			auto topNode = nodes.front(); 
+			nodes.pop(); 
+			for (const auto& component : topNode->getComponents())
 			{
-				auto topNode = nodes.front(); 
-				nodes.pop(); 
-				for (const auto& component : topNode->getComponents())
+				auto visualComponent = std::dynamic_pointer_cast<VisualComponent>(component);
+				if (visualComponent && visualComponent->getVisual() && visualComponent->getVisual()->getMesh())
 				{
-					auto visualComponent = std::dynamic_pointer_cast<VisualComponent>(component);
-					if (visualComponent && visualComponent->getVisual() && visualComponent->getVisual()->getMesh())
+					auto visualAABB = visualComponent->getVisual()->getMesh()->getBoundingBox();
+					visualAABB.Transform(visualAABB, topNode->get_transform().getWorldMatrix());
+					if (cameraFrustum.Intersects(visualAABB))
 					{
-						auto visualAABB = visualComponent->getVisual()->getMesh()->getBoundingBox();
-						visualAABB.Transform(visualAABB, topNode->get_transform().getWorldMatrix());
-						//if (cameraFrustum.Intersects(visualAABB))
-						{
-							Engine::GetInstance()->getGraphicsSystem()->commitVisual(visualComponent->getVisual());
-						}	
-					}
-				}
-				for (const auto& node : topNode->getChilds())
-				{
-					nodes.push(node); 
+						Engine::GetInstance()->getGraphicsSystem()->commitVisual(visualComponent->getVisual());
+					}	
 				}
 			}
+			for (const auto& node : topNode->getChilds())
+			{
+				nodes.push(node); 
+			}
+		}
+		//std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
+		//std::chrono::duration<double, std::milli> time_span = t2 - t1;
+		//LOG_INFO(std::to_string( time_span.count()));
 	}
 
 	std::shared_ptr<Node> VisualScene::findCameraNode()

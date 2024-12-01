@@ -14,12 +14,18 @@ namespace Destiny
 	class GraphicsSystem
 	{
 	public:
+		struct GraphicsStat
+		{
+			unsigned long long DrawCallCount;
+		};
+	public:
 		GraphicsSystem();
 		virtual ~GraphicsSystem();
 	public:
 		void						initialize(long long hwnd);
 		void						uninitialize();
 		void						update();
+		GraphicsStat				getGraphicsStat();
 	public:
 		ID3D11Device*				getDevice();
 		ID3D11DeviceContext*		getImmediateContext();
@@ -38,7 +44,8 @@ namespace Destiny
 		void						createSwapChain(long long hwnd);
 		virtual void				createPipeline() = 0;
 		virtual void				render() = 0;
-
+	protected:
+		GraphicsStat				m_graphicsStat;
 	private:
 		ID3D11Device*				m_pD3D11Device;
 		ID3D11DeviceContext*		m_pD3D11ImmediateDeviceContext;
@@ -73,5 +80,10 @@ namespace Destiny
 	inline ID3D11DepthStencilView* GraphicsSystem::getDepthStencilView()
 	{
 		return m_pDepthStencilView;
+	}
+
+	inline GraphicsSystem::GraphicsStat GraphicsSystem::getGraphicsStat()
+	{
+		return m_graphicsStat;
 	}
 }

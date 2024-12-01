@@ -4,7 +4,7 @@
 
 class ViewPortPanel;
 class ScenePanel;
-class ComponentPanel;
+class StatPanel;
 class AssetPanel;
 class Application
 {
@@ -22,7 +22,7 @@ private:
 	HINSTANCE							m_hInstance;
 	std::shared_ptr<ViewPortPanel>		m_viewPortPanel;
 	std::shared_ptr<ScenePanel>			m_scenePanel;
-	std::shared_ptr<ComponentPanel>		m_componentPanel;
+	std::shared_ptr<StatPanel>			m_statPanel;
 	std::shared_ptr<AssetPanel>			m_assetPanel;
 };
 

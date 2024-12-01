@@ -1,7 +1,7 @@
 #include "Application.h"
 #include "ViewPortPanel.h"
 #include "ScenePanel.h"
-#include "ComponentPanel.h"
+#include "StatPanel.h"
 #include "AssetPanel.h"
 #include "Engine/Engine.h"
 #include "Engine/EventSystem.h"
@@ -109,7 +109,7 @@ Application::Application() :
 	m_hInstance(nullptr),
 	m_viewPortPanel(std::make_shared<ViewPortPanel>()),
 	m_scenePanel(std::make_shared<ScenePanel>()),
-	m_componentPanel(std::make_shared<ComponentPanel>()),
+	m_statPanel(std::make_shared<StatPanel>()),
 	m_assetPanel(std::make_shared<AssetPanel>())
 {
 	AllocConsole();
@@ -334,7 +334,7 @@ void Application::drawDock()
 
 	m_viewPortPanel->update();
 	m_scenePanel->update();
-	m_componentPanel->update();
+	m_statPanel->update();
 	m_assetPanel->update();
 
 	ImGui::End();

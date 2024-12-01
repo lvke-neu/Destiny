@@ -1,21 +1,13 @@
 #pragma once
-#include <memory>
+#include "RenderCommandList.h"
 
-struct ID3D11DeviceContext;
 namespace Destiny
 {
-	class RenderCommand;
-	class RenderCommandList;
-	class GraphicsPipeline
+	class GraphicsPipeline : public RenderCommandList
 	{
 	public:
-		GraphicsPipeline();
 		virtual ~GraphicsPipeline() = default;
 	public:
-		void addRenderCommand(std::shared_ptr<RenderCommand> renderCommand);
-		void clearRenderCommand();
-		void execute(ID3D11DeviceContext* deviceContext);
-	private:
-		std::shared_ptr<RenderCommandList> m_renderCommandList;
+		virtual void syncState() = 0;
 	};
 }

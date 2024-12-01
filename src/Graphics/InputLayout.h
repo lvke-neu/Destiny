@@ -11,7 +11,7 @@ namespace Destiny
 		InputLayout(std::shared_ptr<Blob> inputLayoutDesc);
 		~InputLayout();
 	public:
-		ID3D11InputLayout* getInputLayout(std::shared_ptr<Blob> inputSignatureBlob);
+		ID3D11InputLayout*					getInputLayout(std::shared_ptr<Blob> inputSignatureBlob);
 	public:
 		static std::shared_ptr<InputLayout> Create_Position();
 		static std::shared_ptr<InputLayout> Create_PositionTexcoord();

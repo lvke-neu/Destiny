@@ -9,6 +9,6 @@ namespace Destiny
 		ForwardTransparentPipeline();
 		virtual ~ForwardTransparentPipeline();
 	public:
-		void syncState();
+		virtual void syncState() override;
 	};
 }

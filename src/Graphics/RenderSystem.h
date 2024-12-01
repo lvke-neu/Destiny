@@ -6,8 +6,7 @@ namespace Destiny
 {
 	class RenderCommand;
 	class RenderCommandList;
-	class ForwardOpaquePipeline;
-	class ForwardTransparentPipeline;
+	class GraphicsPipeline;
 	class BindRenderTargetsOnResize;
 	class RenderSystem : public GraphicsSystem
 	{
@@ -24,11 +23,11 @@ namespace Destiny
 	public:
 		std::shared_ptr<BindRenderTargetsOnResize> bindRenderTargetsOnResize;
 	private:
-		std::shared_ptr<ForwardOpaquePipeline> m_forwardOpaquePipeline;
-		std::shared_ptr<ForwardTransparentPipeline> m_forwardTransparentPipeline;
+		std::shared_ptr<GraphicsPipeline>		m_forwardOpaquePipeline;
+		std::shared_ptr<GraphicsPipeline>		m_forwardTransparentPipeline;
 		
-		std::shared_ptr<RenderCommandList> m_beforeForwardOpaqueCommandList;
-		std::shared_ptr<RenderCommandList> m_beforeForwardTransparentCommandList;
+		std::shared_ptr<RenderCommandList>		m_beforeForwardOpaqueCommandList;
+		std::shared_ptr<RenderCommandList>		m_beforeForwardTransparentCommandList;
 	};
 
 }

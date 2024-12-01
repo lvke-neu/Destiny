@@ -21,7 +21,7 @@ namespace Destiny
 		}
 	}
 
-	void RenderCommandList::clear()
+	void RenderCommandList::clearRenderCommand()
 	{
 		m_renderCommandList.clear();
 	}

@@ -559,15 +559,15 @@ namespace Destiny
 		EventSystem();
 		~EventSystem();
 	public:
-		void initialize() {}
-		void uninitialize() {}
+		void    initialize() {}
+		void    uninitialize() {}
 	public:
-		void registerEvent(EventType type, Event event);
-		void unRegisterEvent(EventType type, Event event);
-		void dispatchEvent(EventType type, void* data);
+		void    registerEvent(EventType type, Event event);
+		void    unRegisterEvent(EventType type, Event event);
+		void    dispatchEvent(EventType type, void* data);
 
-        bool isKeyPressed(KeyCode keyCode);
-        bool isMousePressed(MouseCode mouseCode);
+        bool    isKeyPressed(KeyCode keyCode);
+        bool    isMousePressed(MouseCode mouseCode);
 	private:
 		std::unordered_map<EventType, std::vector<Event>>   m_events;
         std::unordered_map<KeyCode, bool>                   m_keyTriggers;

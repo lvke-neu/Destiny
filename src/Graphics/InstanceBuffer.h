@@ -14,11 +14,11 @@ namespace Destiny
 	public:
 		void updateInstanceData(std::shared_ptr<Blob> data);
 	private:
-		ID3D11Buffer* m_instanceBuffer;
-		unsigned int  m_byteWidth;
-		unsigned int  m_stride;
-		unsigned int  m_offset;
-		unsigned int  m_instanceCount;
+		ID3D11Buffer*	 m_instanceBuffer;
+		unsigned int	 m_byteWidth;
+		unsigned int	 m_stride;
+		unsigned int	 m_offset;
+		unsigned int	 m_instanceCount;
 	};
 
 }

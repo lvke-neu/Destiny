@@ -17,13 +17,13 @@ namespace Destiny
 		Node(const std::string& name);
 		virtual ~Node() = default;
 	public:
-		std::shared_ptr<Node> getParent();
-		void addToParent(std::shared_ptr<Node> parent);
-		void removeFromParent();
-		void addComponent(std::shared_ptr<Component> component);
-		void removeComponent(std::shared_ptr<Component> component);
-		const std::vector<std::shared_ptr<Component>>& getComponents();
-		const std::vector<std::shared_ptr<Node>>& getChilds();
+		std::shared_ptr<Node>								getParent();
+		void												addToParent(std::shared_ptr<Node> parent);
+		void												removeFromParent();
+		void												addComponent(std::shared_ptr<Component> component);
+		void												removeComponent(std::shared_ptr<Component> component);
+		const std::vector<std::shared_ptr<Component>>&		getComponents();
+		const std::vector<std::shared_ptr<Node>>&			getChilds();
 		void moveZAxis(float distance);
 		void moveXAxis(float distance);
 		void rotateXAxis(float angle);
@@ -37,10 +37,10 @@ namespace Destiny
 		void onEnterScene();
 		void onNodeTransformChanged();
 	protected:
-		std::string m_name;
-		std::shared_ptr<Node> m_parent;
-		std::vector<std::shared_ptr<Node>> m_childs;
-		std::vector<std::shared_ptr<Component>> m_components;
+		std::string									m_name;
+		std::shared_ptr<Node>						m_parent;
+		std::vector<std::shared_ptr<Node>>			m_childs;
+		std::vector<std::shared_ptr<Component>>		m_components;
 		Transform m_transform;
 	};
 

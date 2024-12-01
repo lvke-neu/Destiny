@@ -17,9 +17,9 @@ namespace Destiny
 		GraphicsSystem();
 		virtual ~GraphicsSystem();
 	public:
-		void initialize(long long hwnd);
-		void uninitialize();
-		void update();
+		void						initialize(long long hwnd);
+		void						uninitialize();
+		void						update();
 	public:
 		ID3D11Device*				getDevice();
 		ID3D11DeviceContext*		getImmediateContext();
@@ -30,24 +30,24 @@ namespace Destiny
 		ID3D11DepthStencilView*		getDepthStencilView();
 	public:
 		//for window resize
-		void onResize_(unsigned int width, unsigned int height);
-		virtual void syncState() = 0;
-		virtual void commitVisual(std::shared_ptr<Visual> visual) = 0;
+		void						onResize_(unsigned int width, unsigned int height);
+		virtual void				syncState() = 0;
+		virtual void				commitVisual(std::shared_ptr<Visual> visual) = 0;
 	private:
-		void createDeviceAndContext();
-		void createSwapChain(long long hwnd);
-		virtual void createPipeline() = 0;
-		virtual void render() = 0;
+		void						createDeviceAndContext();
+		void						createSwapChain(long long hwnd);
+		virtual void				createPipeline() = 0;
+		virtual void				render() = 0;
 
 	private:
-		ID3D11Device*												m_pD3D11Device;
-		ID3D11DeviceContext*										m_pD3D11ImmediateDeviceContext;
-		ID3D11DeviceContext*										m_pD3D11DeferredDeviceContext;
-		IDXGISwapChain*												m_pDXGISwapChain;
-		ID3D11RenderTargetView*										m_pRenderTargetView;
-		ID3D11Texture2D*											m_pDepthStencilBuffer;
-		ID3D11DepthStencilView*										m_pDepthStencilView;
-		unsigned int												m_4xMsaaQuality;
+		ID3D11Device*				m_pD3D11Device;
+		ID3D11DeviceContext*		m_pD3D11ImmediateDeviceContext;
+		ID3D11DeviceContext*		m_pD3D11DeferredDeviceContext;
+		IDXGISwapChain*				m_pDXGISwapChain;
+		ID3D11RenderTargetView*		m_pRenderTargetView;
+		ID3D11Texture2D*			m_pDepthStencilBuffer;
+		ID3D11DepthStencilView*		m_pDepthStencilView;
+		unsigned int				m_4xMsaaQuality;
 	};
 
 	inline ID3D11Device* GraphicsSystem::getDevice()

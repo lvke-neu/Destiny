@@ -1,5 +1,6 @@
 #pragma once
 #include <mutex>
+
 namespace Destiny
 {
 	class Asset;

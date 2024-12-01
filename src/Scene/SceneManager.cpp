@@ -19,12 +19,12 @@ namespace Destiny
 
 	void SceneManager::initialize()
 	{
-		m_scene->initialize();
-
 		auto cameraNode = std::make_shared<Node>("Camera");
 		cameraNode->addComponent(std::make_shared<CameraComponent>());
 		cameraNode->addComponent(std::make_shared<CameraController>());
 		cameraNode->addToParent(m_scene);
+
+		m_scene->initialize();
 	}
 
 	void SceneManager::uninitialize()

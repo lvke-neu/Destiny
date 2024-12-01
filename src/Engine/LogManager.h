@@ -9,11 +9,11 @@ namespace Destiny
 	public:
 		LogManager();
 	public:
-		void initialize();
-		void uninitialize();
-		std::shared_ptr<spdlog::logger> getCoreLogger();
+		void	initialize();
+		void	uninitialize();
+		std::shared_ptr<spdlog::logger>		getCoreLogger();
 	private:
-		std::shared_ptr<spdlog::logger> m_coreLogger;
+		std::shared_ptr<spdlog::logger>		m_coreLogger;
 	};
 
 	inline std::shared_ptr<spdlog::logger> LogManager::getCoreLogger()

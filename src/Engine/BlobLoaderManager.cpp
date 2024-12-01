@@ -7,7 +7,7 @@ namespace Destiny
 {
 	BlobLoaderManager::BlobLoaderManager()
 	{
-		registerBlobLoader(std::shared_ptr<BlobLoader>((BlobLoader*)new BuiltinResourceBlobLoader));
+		registerBlobLoader(std::make_shared<BuiltinResourceBlobLoader>());
 	}
 
 	void BlobLoaderManager::registerBlobLoader(std::shared_ptr<BlobLoader> blobLoader)

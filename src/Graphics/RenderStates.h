@@ -21,9 +21,9 @@ namespace Destiny
 		virtual void doLoad() override;
 	public:
 		void fillDrawParameters(std::shared_ptr<DrawParameters> drawParameters);
-		std::shared_ptr<D3D11_RASTERIZER_DESC> getRasterizerStateDesc();
-		std::shared_ptr<D3D11_DEPTH_STENCIL_DESC> getDepthStencilStateDesc();
-		std::shared_ptr<D3D11_BLEND_DESC> getBlendStateDesc();
+		std::shared_ptr<D3D11_RASTERIZER_DESC>		getRasterizerStateDesc();
+		std::shared_ptr<D3D11_DEPTH_STENCIL_DESC>	getDepthStencilStateDesc();
+		std::shared_ptr<D3D11_BLEND_DESC>			getBlendStateDesc();
 	private:
 		std::shared_ptr<D3D11_RASTERIZER_DESC>		m_rasterizerStateDesc;
 		std::shared_ptr<D3D11_DEPTH_STENCIL_DESC>	m_depthStencilStateDesc;

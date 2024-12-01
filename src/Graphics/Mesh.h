@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/Asset.h"
+#include <string>
 #include <unordered_map>
 #include <DirectXCollision.h>
 

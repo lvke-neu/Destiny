@@ -340,7 +340,7 @@ namespace Destiny
 					{
 						auto visualAABB = visualComponent->getVisual()->getMesh()->getBoundingBox();
 						visualAABB.Transform(visualAABB, topNode->get_transform().getWorldMatrix());
-						if (cameraFrustum.Intersects(visualAABB))
+						//if (cameraFrustum.Intersects(visualAABB))
 						{
 							Engine::GetInstance()->getGraphicsSystem()->commitVisual(visualComponent->getVisual());
 						}	

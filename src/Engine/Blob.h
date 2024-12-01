@@ -8,11 +8,11 @@ namespace Destiny
 		Blob(size_t length);
 		~Blob();
 	public:
-		void*  getData();
-		size_t getLength();
+		void*	getData();
+		size_t	getLength();
 	public:
-		void copyfrom(void* data, size_t length);
-		void memset0();
+		void	copyfrom(void* data, size_t length);
+		void	memset0();
 	private:
 		void*	m_data{ nullptr };
 		size_t	m_length{ 0 };

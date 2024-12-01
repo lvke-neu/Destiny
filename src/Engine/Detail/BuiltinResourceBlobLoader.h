@@ -3,7 +3,7 @@
 
 namespace Destiny
 {
-	class BuiltinResourceBlobLoader : BlobLoader
+	class BuiltinResourceBlobLoader : public BlobLoader
 	{
 	public:
 		BuiltinResourceBlobLoader();

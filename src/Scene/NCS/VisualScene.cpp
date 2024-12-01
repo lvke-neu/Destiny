@@ -13,6 +13,7 @@
 #include "Graphics/IndexBuffer.h"
 #include "Graphics/VertexBuffer.h"
 #include "Graphics/InstanceBuffer.h"
+#include "Engine/ThreadPool.h"
 #include <d3d11.h>
 #include <chrono>
 namespace Destiny
@@ -166,8 +167,10 @@ namespace Destiny
 		data.reset(new Blob(indices.size() * sizeof(unsigned short)));
 		data->copyfrom(indices.data(), indices.size() * sizeof(unsigned short));
 		std::shared_ptr<IndexBuffer> indexBuffer = std::make_shared<IndexBuffer>(IndexBuffer::IndexType::Index16, data);
+		
+		DirectX::BoundingBox aabb;
+		DirectX::BoundingBox::CreateFromPoints(aabb, { -1.0f,-1.0f,-1.0f }, { 1.0f,1.0f,1.0f });
 
-		DirectX::BoundingBox aabb({ -1.0f, -1.0f, -1.0f }, { 1.0f, 1.0f, 1.0f });
 		Mesh::DrawCall drawCall;
 		drawCall.drawMethod = Mesh::DrawMethod::DrawIndexedInstanced;
 		drawCall.primitiveTopology = Mesh::PrimitiveTopology::TriangleList;
@@ -221,7 +224,7 @@ namespace Destiny
 	}
 	void VisualScene::initialize()
 	{
-		//testDrawIndexInstance(shared_from_this());
+		testDrawIndexInstance(shared_from_this());
 		//testDrawIndex(shared_from_this());
 
 		//plane
@@ -340,6 +343,12 @@ namespace Destiny
 				auto visualComponent = std::dynamic_pointer_cast<VisualComponent>(component);
 				if (visualComponent && visualComponent->getVisual() && visualComponent->getVisual()->getMesh())
 				{
+					if (visualComponent->getVisual()->getMesh()->getDrawCall().drawMethod == Mesh::DrawMethod::DrawIndexedInstanced)
+					{
+						Engine::GetInstance()->getGraphicsSystem()->commitVisual(visualComponent->getVisual());
+						continue;
+					}
+
 					auto visualAABB = visualComponent->getVisual()->getMesh()->getBoundingBox();
 					visualAABB.Transform(visualAABB, topNode->get_transform().getWorldMatrix());
 					if (cameraFrustum.Intersects(visualAABB))

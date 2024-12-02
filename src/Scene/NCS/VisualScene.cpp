@@ -7,6 +7,7 @@
 #include "Graphics/RenderPass.h"
 #include "Graphics/InputLayout.h"
 #include "Graphics/Mesh.h"
+#include "Graphics/MeshProvider.h"
 #include "Graphics/GraphicsSystem.h"
 #include <queue>
 
@@ -62,7 +63,7 @@ namespace Destiny
 			renderPass->setRenderer(renderer);
 			renderPass->setRenderStates(renderStates);
 
-			auto mesh = Mesh::Create_Box_PositionNormalTexcoord();
+			auto mesh = MeshProvider::Create_Box_PositionNormalTexcoord();
 			mesh->load();
 
 			std::shared_ptr<VisualComponent> visualComponent = std::make_shared<VisualComponent>();
@@ -241,7 +242,7 @@ namespace Destiny
 			renderPass->setRenderer(renderer);
 			renderPass->setRenderStates(renderStates);
 
-			auto mesh = Mesh::Create_Plane_PositionNormalTexcoord();
+			auto mesh = MeshProvider::Create_Plane_PositionNormalTexcoord();
 			mesh->load();
 
 			std::shared_ptr<VisualComponent> visualComponent = std::make_shared<VisualComponent>();

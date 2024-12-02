@@ -1,13 +1,10 @@
 #include "SceneManager.h"
-#include "NCS/Node.h"
-#include "NCS/VisualScene.h"
-#include "NCS/CameraComponent.h"
-#include "NCS/CameraController.h"
+#include "Geo/GeoScene.h"
 
 namespace Destiny
 {
 	SceneManager::SceneManager() : 
-		m_scene(std::make_shared<VisualScene>("VisualScene"))
+		m_scene(std::make_shared<GeoScene>("GeoScene"))
 	{
 		
 	}
@@ -19,11 +16,6 @@ namespace Destiny
 
 	void SceneManager::initialize()
 	{
-		auto cameraNode = std::make_shared<Node>("Camera");
-		cameraNode->addComponent(std::make_shared<CameraComponent>());
-		cameraNode->addComponent(std::make_shared<CameraController>());
-		cameraNode->addToParent(m_scene);
-
 		m_scene->initialize();
 	}
 

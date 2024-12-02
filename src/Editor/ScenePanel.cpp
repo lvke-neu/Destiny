@@ -3,7 +3,6 @@
 #include "Engine/Engine.h"
 #include "Scene/SceneManager.h"
 #include "Scene/NCS/Scene.h"
-#include "Scene/NCS/VisualScene.h"
 #include <queue>
 
 static void BFS(std::shared_ptr<Destiny::Node> node)
@@ -35,14 +34,10 @@ void ScenePanel::update()
 
 	BFS(Destiny::Engine::GetInstance()->getSceneManager()->getScene());
 
-	auto scene = std::dynamic_pointer_cast<Destiny::VisualScene>(Destiny::Engine::GetInstance()->getSceneManager()->getScene());
-	if (scene)
+	auto scene = Destiny::Engine::GetInstance()->getSceneManager()->getScene();
+	if (scene && scene->getCameraNode())
 	{
-		auto node = scene->findCameraNode();
-		if (node)
-		{
-			ImGui::Text(node->get_transform().toString().c_str());
-		}
+		ImGui::Text(scene->getCameraNode()->get_transform().toString().c_str());
 	}
 
 	ImGui::End();

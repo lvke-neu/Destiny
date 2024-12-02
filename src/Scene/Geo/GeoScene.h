@@ -1,22 +1,18 @@
 #pragma once
-#include "Scene.h"
+#include "../NCS/Scene.h"
 
 namespace Destiny
 {
-	class VisualScene : public Scene
+	class GeoScene : public Scene
 	{
 	public:
-		VisualScene(const std::string& name);
-		virtual ~VisualScene();
+		GeoScene(const std::string& name);
+		virtual ~GeoScene();
 	public:
 		virtual void initialize() override;
 		virtual void uninitialize() override;
 		virtual void update(float deltaTime) override;
 		virtual void onCull() override;
-	public:
-		std::shared_ptr<Node> findCameraNode();
-	private:
-		std::shared_ptr<Node> m_cameraNode;
 	};
 
 }

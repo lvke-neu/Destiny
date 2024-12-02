@@ -1,5 +1,5 @@
 #include "VisualComponent.h"
-#include "VisualScene.h"
+#include "Scene.h"
 #include "Node.h"
 #include "CameraComponent.h"
 #include "Graphics/RenderPass.h"
@@ -44,27 +44,13 @@ namespace Destiny
 
 	void VisualComponent::onEnterScene()
 	{
-		auto visualScene = std::dynamic_pointer_cast<VisualScene>(m_scene);
-
-		if (!visualScene)
+		if (!m_scene || !m_scene->getCamera() || !m_scene->getCameraNode())
 		{
 			return;
 		}
 		
-		auto cameraNode = visualScene->findCameraNode();
-		if (!cameraNode || cameraNode->getComponents().empty())
-		{
-			return;
-		}
-
-		auto camera = std::dynamic_pointer_cast<CameraComponent>(cameraNode->getComponents()[0]);
-		if (!camera)
-		{
-			return;
-		}
-
-		onCameraViewChanged(cameraNode->get_transform().getInvTransposeWorldMatrix());
-		onCameraProjChanged(DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(camera->get_fovy(), camera->get_aspect(), camera->get_nearz(), camera->get_farz())));
+		onCameraViewChanged(m_scene->getCameraNode()->get_transform().getInvTransposeWorldMatrix());
+		onCameraProjChanged(DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(m_scene->getCamera()->get_fovy(), m_scene->getCamera()->get_aspect(), m_scene->getCamera()->get_nearz(), m_scene->getCamera()->get_farz())));
 	}
 
 	void VisualComponent::onCameraViewChanged(const DirectX::XMMATRIX& cameraView)

@@ -18,6 +18,8 @@ file(GLOB SRC_GRAPHICS src/Graphics/*)
 file(GLOB SRC_SCENE src/Scene/*)
 file(GLOB SRC_SCENE_NCS src/Scene/NCS/*)
 file(GLOB SRC_SCENE_GEO src/Scene/Geo/*)
+file(GLOB SRC_SCENE_GEO_RUNTIMEEFFECT src/Scene/Geo/RuntimeEffect/*)
+file(GLOB SRC_SCENE_GEO_CULL src/Scene/Geo/Cull/*)
 file(GLOB BUILTIN_RENDERER builtin/renderer/*)
 file(GLOB BUILTIN_TEXTURE builtin/texture/*)
 
@@ -31,6 +33,8 @@ source_group("Graphics" FILES ${SRC_GRAPHICS})
 source_group("Scene" FILES ${SRC_SCENE})
 source_group("Scene\\NCS" FILES ${SRC_SCENE_NCS})
 source_group("Scene\\Geo" FILES ${SRC_SCENE_GEO})
+source_group("Scene\\Geo\\RuntimeEffect" FILES ${SRC_SCENE_GEO_RUNTIMEEFFECT})
+source_group("Scene\\Geo\\Cull" FILES ${SRC_SCENE_GEO_CULL})
 source_group("builtin\\renderer" FILES ${BUILTIN_RENDERER})
 source_group("builtin\\texture" FILES ${BUILTIN_TEXTURE})
 
@@ -41,7 +45,12 @@ include_directories("3rdparty/rttr/include")
 link_directories("3rdparty/rttr/lib/")
 link_libraries(rttr_core.lib)
 
-add_executable(Destiny WIN32 ${SRC_MAIN} ${SRC_ENGINE} ${SRC_ENGINE_DETAIL} ${SRC_EDITOR} ${SRC_EDITOR_IMGUI} ${SRC_GRAPHICS} ${SRC_SCENE} ${SRC_SCENE_NCS} ${SRC_SCENE_GEO} ${BUILTIN} ${BUILTIN_RENDERER} ${BUILTIN_TEXTURE})
+add_executable(Destiny WIN32 ${SRC_MAIN} 
+${SRC_ENGINE} ${SRC_ENGINE_DETAIL} 
+${SRC_EDITOR} ${SRC_EDITOR_IMGUI} 
+${SRC_GRAPHICS} 
+${SRC_SCENE} ${SRC_SCENE_NCS} ${SRC_SCENE_GEO} ${SRC_SCENE_GEO_RUNTIMEEFFECT} ${SRC_SCENE_GEO_CULL}
+${BUILTIN} ${BUILTIN_RENDERER} ${BUILTIN_TEXTURE})
 target_link_libraries(Destiny d3d11.lib dxgi.lib dxguid.lib D3DCompiler.lib d2d1.lib dwrite.lib winmm.lib)
 
 file(COPY builtin DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Debug)

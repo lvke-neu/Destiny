@@ -19,6 +19,7 @@ static void BFS(std::shared_ptr<Destiny::Node> node)
 			BFS(child);
 		}
 
+		ImGui::Text(node->get_transform().toString().c_str());
 		ImGui::TreePop();
 	}
 }

@@ -1,8 +1,9 @@
 #pragma once
-#include "../NCS/Scene.h"
+#include "Scene/NCS/Scene.h"
 
 namespace Destiny
 {
+	class GeoSceneCuller;
 	class GeoScene : public Scene
 	{
 	public:
@@ -13,6 +14,8 @@ namespace Destiny
 		virtual void uninitialize() override;
 		virtual void update(float deltaTime) override;
 		virtual void onCull() override;
+	private:
+		std::shared_ptr<GeoSceneCuller> m_geoSceneCuller;
 	};
 
 }

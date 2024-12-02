@@ -79,7 +79,9 @@ namespace Destiny
 
 	std::string Transform::toString()
 	{
-		return "translation_x:" +std::to_string(m_translation.x) + "\ntranslation_y:" + std::to_string(m_translation.y) + "\ntranslation_z:" + std::to_string(m_translation.z);
+		return "scale_x:" +std::to_string(m_scale.x) + "\nscale_y:" + std::to_string(m_scale.y) + "\nscale_z:" + std::to_string(m_scale.z) + 
+			"\nrotation_x:" + std::to_string(m_rotation.x) + "\nrotation_y:" + std::to_string(m_rotation.y) + "\nrotation_z:" + std::to_string(m_rotation.z) +
+			"\ntranslation_x:" + std::to_string(m_translation.x) + "\ntranslation_y:" + std::to_string(m_translation.y) + "\ntranslation_z:" + std::to_string(m_translation.z);
 	}
 
 	RTTR_REGISTRATION

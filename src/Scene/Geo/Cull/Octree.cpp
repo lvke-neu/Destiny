@@ -43,9 +43,12 @@ namespace Destiny
 			}
 		}
 
-		for (const auto& childOctreeNode : octreeNode->childs)
+		if (octreeNode->box.Intersects(worldAABB))
 		{
-			addVisual(childOctreeNode, visual, worldAABB);
+			for (const auto& childOctreeNode : octreeNode->childs)
+			{
+				addVisual(childOctreeNode, visual, worldAABB);
+			}
 		}
 	}
 
@@ -62,6 +65,12 @@ namespace Destiny
 			{
 				Engine::GetInstance()->getGraphicsSystem()->commitVisual(visual);
 			}
+			return;
+		}
+
+		for (const auto& childOctreeNode : octreeNode->childs)
+		{
+			onCull(childOctreeNode, frustum);
 		}
 	}
 
@@ -92,28 +101,28 @@ namespace Destiny
 		auto childOctreeNode6 = std::make_shared<OctreeNode>();
 		auto childOctreeNode7 = std::make_shared<OctreeNode>();
 
-		childOctreeNode0->box = { { center.x - extent.x, center.y + extent.y, center.z + extent.z }, { extent.x / 2.0f, extent.y / 2.0f, extent.z / 2.0f } };
+		childOctreeNode0->box = { { center.x - extent.x / 2.0f, center.y + extent.y / 2.0f, center.z + extent.z / 2.0f }, { extent.x / 2.0f, extent.y / 2.0f, extent.z / 2.0f } };
 		childOctreeNode0->level = octreeNode->level + 1;
 
-		childOctreeNode1->box = { { center.x + extent.x, center.y + extent.y, center.z + extent.z }, { extent.x / 2.0f, extent.y / 2.0f, extent.z / 2.0f } };
+		childOctreeNode1->box = { { center.x + extent.x / 2.0f, center.y + extent.y / 2.0f, center.z + extent.z / 2.0f }, { extent.x / 2.0f, extent.y / 2.0f, extent.z / 2.0f } };
 		childOctreeNode1->level = octreeNode->level + 1;
 
-		childOctreeNode2->box = { { center.x - extent.x, center.y + extent.y, center.z - extent.z }, { extent.x / 2.0f, extent.y / 2.0f, extent.z / 2.0f } };
+		childOctreeNode2->box = { { center.x - extent.x / 2.0f, center.y + extent.y / 2.0f, center.z - extent.z / 2.0f }, { extent.x / 2.0f, extent.y / 2.0f, extent.z / 2.0f } };
 		childOctreeNode2->level = octreeNode->level + 1;
 
-		childOctreeNode3->box = { { center.x + extent.x, center.y + extent.y, center.z - extent.z }, { extent.x / 2.0f, extent.y / 2.0f, extent.z / 2.0f } };
+		childOctreeNode3->box = { { center.x + extent.x / 2.0f, center.y + extent.y / 2.0f, center.z - extent.z / 2.0f }, { extent.x / 2.0f, extent.y / 2.0f, extent.z / 2.0f } };
 		childOctreeNode3->level = octreeNode->level + 1;
 
-		childOctreeNode4->box = { { center.x - extent.x, center.y - extent.y, center.z + extent.z }, { extent.x / 2.0f, extent.y / 2.0f, extent.z / 2.0f } };
+		childOctreeNode4->box = { { center.x - extent.x / 2.0f, center.y - extent.y / 2.0f, center.z + extent.z / 2.0f }, { extent.x / 2.0f, extent.y / 2.0f, extent.z / 2.0f } };
 		childOctreeNode4->level = octreeNode->level + 1;
 
-		childOctreeNode5->box = { { center.x + extent.x, center.y - extent.y, center.z + extent.z }, { extent.x / 2.0f, extent.y / 2.0f, extent.z / 2.0f } };
+		childOctreeNode5->box = { { center.x + extent.x / 2.0f, center.y - extent.y / 2.0f, center.z + extent.z / 2.0f }, { extent.x / 2.0f, extent.y / 2.0f, extent.z / 2.0f } };
 		childOctreeNode5->level = octreeNode->level + 1;
 
-		childOctreeNode6->box = { { center.x - extent.x, center.y - extent.y, center.z - extent.z }, { extent.x / 2.0f, extent.y / 2.0f, extent.z / 2.0f } };
+		childOctreeNode6->box = { { center.x - extent.x / 2.0f, center.y - extent.y / 2.0f, center.z - extent.z / 2.0f }, { extent.x / 2.0f, extent.y / 2.0f, extent.z / 2.0f } };
 		childOctreeNode6->level = octreeNode->level + 1;
 
-		childOctreeNode7->box = { { center.x + extent.x, center.y - extent.y, center.z - extent.z }, { extent.x / 2.0f, extent.y / 2.0f, extent.z / 2.0f } };
+		childOctreeNode7->box = { { center.x + extent.x / 2.0f, center.y - extent.y / 2.0f, center.z - extent.z / 2.0f }, { extent.x / 2.0f, extent.y / 2.0f, extent.z / 2.0f } };
 		childOctreeNode7->level = octreeNode->level + 1;
 
 		octreeNode->childs[0] = childOctreeNode0;

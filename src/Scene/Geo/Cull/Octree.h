@@ -15,7 +15,7 @@ namespace Destiny
 		void onCull(const DirectX::BoundingFrustum& frustum);
 	private:
 		void addVisual(std::shared_ptr<OctreeNode> octreeNode, std::shared_ptr<Visual> visual, const DirectX::BoundingBox& worldAABB);
-		void onCull(std::shared_ptr<OctreeNode> octreeNode, const DirectX::BoundingFrustum& frustum);
+		void onCull(std::shared_ptr<OctreeNode> OctreeNode, const DirectX::BoundingFrustum& frustum);
 	private:
 		void constructOctree(float sceneRadius);
 		void constructOctreeNodeChilds(std::shared_ptr<OctreeNode> octreeNode);

@@ -3,12 +3,14 @@
 
 namespace Destiny
 {
-	void RenderCommandList::addRenderCommand(std::shared_ptr<RenderCommand> renderCommand)
+	bool RenderCommandList::addRenderCommand(std::shared_ptr<RenderCommand> renderCommand)
 	{
 		if (renderCommand)
 		{
-			m_renderCommandList.push_back(renderCommand);
+			return m_renderCommandList.insert(renderCommand).second;
 		}
+
+		return false;
 	}
 	void RenderCommandList::execute(ID3D11DeviceContext* deviceContext)
 	{

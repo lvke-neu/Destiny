@@ -1,5 +1,5 @@
 #pragma once
-#include <vector>
+#include <unordered_set>
 #include <memory>
 
 struct ID3D11DeviceContext;
@@ -11,10 +11,10 @@ namespace Destiny
 	public:
 		virtual ~RenderCommandList() = default;
 	public:
-		void addRenderCommand(std::shared_ptr<RenderCommand> renderCommand);
+		bool addRenderCommand(std::shared_ptr<RenderCommand> renderCommand);
 		void execute(ID3D11DeviceContext* deviceContext);
 		void clearRenderCommand();
 	private:
-		std::vector<std::shared_ptr<RenderCommand>> m_renderCommandList;
+		std::unordered_set<std::shared_ptr<RenderCommand>> m_renderCommandList;
 	};
 }

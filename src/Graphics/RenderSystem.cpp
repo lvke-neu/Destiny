@@ -49,15 +49,19 @@ namespace Destiny
 		{
 		case RenderPass::ForwardOpaque :
 			{
-			m_forwardOpaquePipeline->addRenderCommand(visual);
-			++m_graphicsStat.DrawCallCount;
+			if (m_forwardOpaquePipeline->addRenderCommand(visual))
+			{
+				++m_graphicsStat.DrawCallCount;
+			}
 			return;
 			}
 
 		case RenderPass::ForwardTransparent :
 		{
-			m_forwardTransparentPipeline->addRenderCommand(visual);
-			++m_graphicsStat.DrawCallCount;
+			if (m_forwardTransparentPipeline->addRenderCommand(visual))
+			{
+				++m_graphicsStat.DrawCallCount;
+			}
 			return;
 		}
 		}

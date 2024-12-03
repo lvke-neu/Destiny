@@ -138,8 +138,8 @@ void Application::initialize(HINSTANCE hInstance)
 	}
 
 	// Compute window rectangle dimensions based on requested client area dimensions.
-	const unsigned int width = 1000;
-	const unsigned int height = 500;
+	const unsigned int width = 500;
+	const unsigned int height = 200;
 
 	RECT R = { 0, 0, width, height };
 	AdjustWindowRect(&R, WS_OVERLAPPEDWINDOW, false);

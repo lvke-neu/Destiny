@@ -41,7 +41,7 @@ namespace Destiny
 		std::shared_ptr<Node>						m_parent;
 		std::vector<std::shared_ptr<Node>>			m_childs;
 		std::vector<std::shared_ptr<Component>>		m_components;
-		Transform m_transform;
+		Transform									m_transform;
 	};
 
 	inline std::shared_ptr<Node> Node::getParent()

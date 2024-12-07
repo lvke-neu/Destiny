@@ -43,7 +43,7 @@ namespace Destiny
 			return;
 		}
 
-		visual->upDrawParameters();
+		visual->updateDrawParameters();
 		auto renderPass = visual->getRenderPass();
 		switch (renderPass->getRendererCategory())
 		{

@@ -18,7 +18,7 @@ namespace Destiny
 		std::shared_ptr<Mesh>				getMesh();
 		void								setMesh(std::shared_ptr<Mesh> mesh);
 	public:
-		void upDrawParameters();
+		void updateDrawParameters();
 	private:
 		std::shared_ptr<RenderPass>			m_renderPass;
 		std::shared_ptr<Mesh>				m_mesh;

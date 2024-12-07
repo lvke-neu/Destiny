@@ -48,6 +48,9 @@ namespace Destiny
 			node->set_transform(transform);
 		}
 
+		auto cameraTransfrom = m_cameraNode->get_transform();
+		cameraTransfrom.set_translation({ 0.0f, 0.0f, -5.0f });
+		m_cameraNode->set_transform(cameraTransfrom);
 	}
 
 	void GeoScene::uninitialize()

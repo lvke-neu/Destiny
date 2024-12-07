@@ -10,7 +10,7 @@ namespace Destiny
 		CameraComponent();
 		~CameraComponent();
 	public:
-		GET_CLASS_NAME(Component);
+		GET_CLASS_NAME(CameraComponent);
 		GET(float, fovy);
 		GET(float, aspect);
 		GET(float, nearz);

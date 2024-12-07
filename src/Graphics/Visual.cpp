@@ -37,7 +37,7 @@ namespace Destiny
 		m_mesh = mesh;
 	}
 
-	void Visual::upDrawParameters()
+	void Visual::updateDrawParameters()
 	{
 		if (m_renderPass)
 		{

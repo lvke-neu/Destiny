@@ -10,7 +10,7 @@ namespace Destiny
 {
 	BoxComponent::BoxComponent()
 	{
-		auto renderer = std::make_shared<Renderer>("builtin://renderer/basic.rdr");
+		auto renderer = std::make_shared<Renderer>("builtin://renderer/basic.hlsl");
 		renderer->load(0);
 		renderer->setConstant("u_color", DirectX::XMFLOAT4{ 1.0f, 1.0f, 0.0f, 1.0f });
 

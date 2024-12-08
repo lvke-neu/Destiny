@@ -1,4 +1,4 @@
-#include "common.shader"
+#include "common.hlsl"
 
 cbuffer cbPerObject : register(b0)
 {

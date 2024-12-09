@@ -22,7 +22,7 @@ namespace Destiny
 		renderer->setShaderResource("t_texture", texture);
 
 		auto samplerState = std::make_shared<SamplerState>();
-		samplerState->load(0);
+		samplerState->load();
 		renderer->setSamplerSate("s_sampler", samplerState);
 
 		std::shared_ptr<RenderStates> renderStates = std::make_shared<RenderStates>();
@@ -40,7 +40,7 @@ namespace Destiny
 		renderStates->load();
 
 		std::shared_ptr<RenderPass> renderPass = std::make_shared<RenderPass>();
-		renderPass->setRendererCategory(RenderPass::ForwardOpaque);
+		renderPass->setRendererCategory(RenderPass::ForwardTransparent);
 		renderPass->setRenderer(renderer);
 		renderPass->setRenderStates(renderStates);
 

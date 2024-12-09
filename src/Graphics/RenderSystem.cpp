@@ -18,7 +18,7 @@ namespace Destiny
 
 		bindRenderTargetsOnResize = std::make_shared<BindRenderTargetsOnResize>();
 		addBeforeForwardOpaqueCommand(bindRenderTargetsOnResize);
-		addBeforeForwardTransparentCommandList(std::make_shared<BindRenderTargetsOnResize>());
+		//addBeforeForwardTransparentCommandList(std::make_shared<BindRenderTargetsOnResize>());
 	}
 
 	void RenderSystem::render()

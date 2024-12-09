@@ -24,6 +24,17 @@ namespace Destiny
 		Scene::initialize();
 		m_geoSceneCuller = std::make_shared<GeoSceneCuller>(std::dynamic_pointer_cast<GeoScene>(shared_from_this()));
 
+
+		//billboard
+		{
+			auto billboardComponent = std::make_shared<BillboardComponent>();
+
+			auto node = std::make_shared<Node>();
+			node->set_name("BillboardNode");
+			node->addComponent(billboardComponent);
+			node->addToParent(shared_from_this());
+		}
+
 		//box
 		{
 			auto boxComponent = std::make_shared<BoxComponent>();
@@ -64,15 +75,8 @@ namespace Destiny
 			node->addComponent(testGeometryShaderComponent);
 			node->addToParent(shared_from_this());
 		}
-		//billboard
-		{
-			auto billboardComponent = std::make_shared<BillboardComponent>();
 
-			auto node = std::make_shared<Node>();
-			node->set_name("BillboardNode");
-			node->addComponent(billboardComponent);
-			node->addToParent(shared_from_this());
-		}
+
 		auto cameraTransfrom = m_cameraNode->get_transform();
 		cameraTransfrom.set_translation({ 0.0f, 0.0f, -5.0f });
 		m_cameraNode->set_transform(cameraTransfrom);

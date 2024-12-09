@@ -30,7 +30,7 @@ namespace Destiny
 			return;
 		}
 
-		if (!m_vertexBuffer || !m_indexBuffer)
+		if (!m_vertexBuffer)
 		{
 			loadFailed__();
 			LOG_ERROR("CreateMesh failed");
@@ -42,12 +42,12 @@ namespace Destiny
 			m_vertexBuffer->load(0);
 		}
 
-		if (m_indexBuffer->isLoadingPending())
+		if (m_indexBuffer && m_indexBuffer->isLoadingPending())
 		{
 			m_indexBuffer->load(0);
 		}
 
-		if (!m_vertexBuffer->isLoadingSucceed() || !m_indexBuffer->isLoadingSucceed())
+		if (!m_vertexBuffer->isLoadingSucceed())
 		{
 			loadFailed__();
 			LOG_ERROR("CreateMesh failed");
@@ -68,7 +68,7 @@ namespace Destiny
 
 	void Mesh::fillDrawParameters(std::shared_ptr<DrawParameters> drawParameters, std::shared_ptr<Blob> inputSignatureBlob)
 	{
-		if (!drawParameters || !m_vertexBuffer || !m_vertexBuffer->m_inputLayout ||!m_indexBuffer)
+		if (!drawParameters || !m_vertexBuffer || !m_vertexBuffer->m_inputLayout)
 		{
 			return;
 		}
@@ -77,8 +77,12 @@ namespace Destiny
 		drawParameters->vertexBuffer_stride = m_vertexBuffer->m_stride;
 		drawParameters->vertexBuffer_offset = m_vertexBuffer->m_offset;
 
-		drawParameters->indexBuffer = m_indexBuffer->m_indexBuffer;
-		drawParameters->format = (short)m_indexBuffer->m_indexType;
+		if (m_indexBuffer)
+		{
+			drawParameters->indexBuffer = m_indexBuffer->m_indexBuffer;
+			drawParameters->format = (short)m_indexBuffer->m_indexType;
+		}
+
 
 		drawParameters->primitiveTopology = (short)m_drawCall.primitiveTopology;
 

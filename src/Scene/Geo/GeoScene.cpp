@@ -3,6 +3,7 @@
 #include "RuntimeEffect/BoxComponent.h"
 #include "RuntimeEffect/PlaneComponent.h"
 #include "RuntimeEffect/TestGeometryShaderComponent.h"
+#include "RuntimeEffect/BillboardComponent.h"
 
 namespace Destiny
 {
@@ -26,17 +27,21 @@ namespace Destiny
 		//box
 		{
 			auto boxComponent = std::make_shared<BoxComponent>();
-
+			//boxComponent->set_enable(false);
 			auto node = std::make_shared<Node>();
 			node->set_name("BoxNode");
 			node->addComponent(boxComponent);
 			node->addToParent(shared_from_this());
+
+			Transform transform;
+			transform.set_translation({ -5.0f, 0.0f, 0.0f });
+			node->set_transform(transform);
 		}
 
 		//plane
 		{
 			auto planeComponent = std::make_shared<PlaneComponent>();
-			
+			//planeComponent->set_enable(false);
 			auto node = std::make_shared<Node>();
 			node->set_name("PlaneNode");
 			node->addComponent(planeComponent);
@@ -52,14 +57,22 @@ namespace Destiny
 		//test geometryshader
 		{
 			auto testGeometryShaderComponent = std::make_shared<TestGeometryShaderComponent>();
+			testGeometryShaderComponent->set_enable(false);
 
 			auto node = std::make_shared<Node>();
 			node->set_name("TestGeometryShaderNode");
 			node->addComponent(testGeometryShaderComponent);
 			node->addToParent(shared_from_this());
-
 		}
+		//billboard
+		{
+			auto billboardComponent = std::make_shared<BillboardComponent>();
 
+			auto node = std::make_shared<Node>();
+			node->set_name("BillboardNode");
+			node->addComponent(billboardComponent);
+			node->addToParent(shared_from_this());
+		}
 		auto cameraTransfrom = m_cameraNode->get_transform();
 		cameraTransfrom.set_translation({ 0.0f, 0.0f, -5.0f });
 		m_cameraNode->set_transform(cameraTransfrom);

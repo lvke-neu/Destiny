@@ -73,7 +73,9 @@ namespace Destiny
 
 		m_visual->getRenderPass()->getRenderer()->setConstant("g_proj", cameraProj);
 		m_visual->getRenderPass()->getRenderer()->setConstant("g_viewportWidth", viewportWidth);
+		m_visual->getRenderPass()->getRenderer()->setConstant("g_rcpViewportWidth", 1.0f / viewportWidth);
 		m_visual->getRenderPass()->getRenderer()->setConstant("g_viewportHeight", viewportHeight);
+		m_visual->getRenderPass()->getRenderer()->setConstant("g_rcpViewportHeight", 1.0f / viewportHeight);
 	}
 
 	RTTR_REGISTRATION

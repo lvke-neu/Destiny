@@ -22,6 +22,7 @@ namespace Destiny
 		enum class PrimitiveTopology
 		{
 			Undefined		= 0,
+			PointList		= 1,
 			TriangleList	= 4
 		};
 		struct DrawCall

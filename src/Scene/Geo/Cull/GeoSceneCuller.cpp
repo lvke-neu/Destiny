@@ -35,7 +35,11 @@ namespace Destiny
 			for (const auto& component : topNode->getComponents())
 			{
 				auto visualComponent = std::dynamic_pointer_cast<VisualComponent>(component);
-				if (visualComponent && visualComponent->getVisual() && visualComponent->getVisual()->getMesh())
+				if (!visualComponent || !visualComponent->get_enable())
+				{
+					continue;
+				}
+				if (visualComponent->getVisual() && visualComponent->getVisual()->getMesh())
 				{
 					if (visualComponent->getVisual()->getMesh()->getDrawCall().drawMethod == Mesh::DrawMethod::DrawIndexedInstanced)
 					{

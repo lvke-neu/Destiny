@@ -24,6 +24,11 @@ namespace Destiny
 
 	};
 
+	struct Position
+	{
+		DirectX::XMFLOAT3 position;
+	};
+
 	std::shared_ptr<Mesh> MeshProvider::Create_Box_PositionNormalTexcoord()
 	{
 		auto iter = m_cache.find("Box_PositionNormalTexcoord");
@@ -204,6 +209,39 @@ namespace Destiny
 		drawCall.indexCount = (unsigned int)indices.size();
 
 		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(aabb, drawCall, vertexBuffer, indexBuffer);
+
+		m_cache["Triangle_PositionColor"] = mesh;
+
+		return mesh;
+	}
+
+	std::shared_ptr<Mesh> MeshProvider::Create_Position()
+	{
+		auto iter = m_cache.find("Position");
+		if (iter != m_cache.end())
+		{
+			return m_cache["Position"];
+		}
+
+		std::shared_ptr<Blob> data = nullptr;
+		std::vector<Position> vertices;
+		vertices.resize(1);
+
+		vertices[0].position = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
+
+		data.reset(new Blob(vertices.size() * sizeof(PositionColor)));
+		data->copyfrom(vertices.data(), vertices.size() * sizeof(PositionColor));
+		std::shared_ptr<VertexBuffer> vertexBuffer = std::make_shared<VertexBuffer>(InputLayout::Create_Position(), (unsigned int)sizeof(PositionColor), 0, data);
+
+	
+		DirectX::BoundingBox aabb{ { 0.0f, 0.0f, 0.0f },{ FLT_MAX, FLT_MAX, FLT_MAX } };
+		Mesh::DrawCall drawCall;
+		drawCall.drawMethod = Mesh::DrawMethod::Draw;
+		drawCall.primitiveTopology = Mesh::PrimitiveTopology::PointList;
+		drawCall.indexCount = 0;
+		drawCall.vertexCount = 1;
+
+		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(aabb, drawCall, vertexBuffer, nullptr);
 
 		m_cache["Triangle_PositionColor"] = mesh;
 

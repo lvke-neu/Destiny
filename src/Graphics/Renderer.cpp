@@ -18,10 +18,12 @@ namespace Destiny
 	Renderer::Renderer(const char* path) :
 		m_vertexShader(nullptr),
 		m_pixelShader(nullptr),
+		m_geometryShader(nullptr),
 		m_inputSignatureBlob(nullptr),
 		m_blobHolder(nullptr),
 		m_vsCompiledBlob(nullptr),
-		m_psCompiledBlob(nullptr)
+		m_psCompiledBlob(nullptr),
+		m_gsCompiledBlob(nullptr)
 	{
 		auto blobLoader = Engine::GetInstance()->getBlobLoaderManager()->getBlobLoader(path);
 		if (blobLoader)
@@ -37,6 +39,7 @@ namespace Destiny
 		SAFE_RELEASE(m_pixelShader);
 		SAFE_RELEASE(m_vsCompiledBlob);
 		SAFE_RELEASE(m_psCompiledBlob);
+		SAFE_RELEASE(m_gsCompiledBlob);
 	}
 
 	void Renderer::doLoad()
@@ -54,13 +57,17 @@ namespace Destiny
 			return;
 		}
 
-		(createVertexShader() && createPixelShader()) ? loadSucceeded__() : loadFailed__();
+		(createVertexShader() && createPixelShader() && createGeometryShader()) ? loadSucceeded__() : loadFailed__();
+		
+
 		m_blobHolder.reset();
 
 		collectReflectionInfo(m_vsCompiledBlob, 0);
 		collectReflectionInfo(m_psCompiledBlob, 1);
+		collectReflectionInfo(m_gsCompiledBlob, 2);
 		SAFE_RELEASE(m_vsCompiledBlob);
 		SAFE_RELEASE(m_psCompiledBlob);
+		SAFE_RELEASE(m_gsCompiledBlob);
 	}
 
 	void Renderer::setShaderResource(const char* name, std::shared_ptr<Texture> texture)
@@ -98,11 +105,11 @@ namespace Destiny
 		{
 			if (errorBlob != nullptr)
 			{
-				LOG_ERROR("CompileShader Failed:{0}", reinterpret_cast<const char*>(errorBlob->GetBufferPointer()));
+				LOG_ERROR("CompileVertexShader Failed:{0}", reinterpret_cast<const char*>(errorBlob->GetBufferPointer()));
 			}
 			else
 			{
-				LOG_ERROR("CompileShader {0} Failed:{1}", m_blobHolder->getFullPath(), "path error");
+				LOG_ERROR("CompileVertexShader {0} Failed:{1}", m_blobHolder->getFullPath(), "path error");
 			}
 			SAFE_RELEASE(errorBlob);
 			return false;
@@ -139,11 +146,11 @@ namespace Destiny
 		{
 			if (errorBlob != nullptr)
 			{
-				LOG_ERROR("CreateShader Failed:{0}", reinterpret_cast<const char*>(errorBlob->GetBufferPointer()));
+				LOG_ERROR("CreatePixelShader Failed:{0}", reinterpret_cast<const char*>(errorBlob->GetBufferPointer()));
 			}
 			else
 			{
-				LOG_ERROR("CreateShader {0} Failed:{1}", m_blobHolder->getFullPath(), "path error");
+				LOG_ERROR("CreatePixelShader {0} Failed:{1}", m_blobHolder->getFullPath(), "path error");
 			}
 			SAFE_RELEASE(errorBlob);
 			return false;
@@ -153,6 +160,44 @@ namespace Destiny
 		if (FAILED(hr))
 		{
 			LOG_ERROR("CreatePixelShader {0} failed", m_blobHolder->getFullPath());
+			return false;
+		}
+
+		return true;
+	}
+
+	bool Renderer::createGeometryShader()
+	{
+		ID3DBlob* errorBlob = nullptr;
+
+		auto blob = m_blobHolder->getBlob();
+
+		std::string content((char*)blob->getData(), blob->getLength());
+		if (content.find("GS") == content.npos)
+		{
+			return true;
+		}
+
+		HRESULT hr = D3DCompile(blob->getData(), blob->getLength(), m_blobHolder->getFullPath().c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "GS", "gs_5_0",
+			D3DCOMPILE_ENABLE_STRICTNESS, 0, &m_gsCompiledBlob, &errorBlob);
+		if (FAILED(hr))
+		{
+			if (errorBlob != nullptr)
+			{
+				LOG_ERROR("CreateGeometryShader Failed:{0}", reinterpret_cast<const char*>(errorBlob->GetBufferPointer()));
+			}
+			else
+			{
+				LOG_ERROR("CreateGeometryShader {0} Failed:{1}", m_blobHolder->getFullPath(), "path error");
+			}
+			SAFE_RELEASE(errorBlob);
+			return false;
+		}
+
+		hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateGeometryShader(m_gsCompiledBlob->GetBufferPointer(), m_gsCompiledBlob->GetBufferSize(), 0, &m_geometryShader);
+		if (FAILED(hr))
+		{
+			LOG_ERROR("CreateGeometryShader {0} failed", m_blobHolder->getFullPath());
 			return false;
 		}
 
@@ -311,6 +356,7 @@ namespace Destiny
 
 		drawParameters->vertexShader = m_vertexShader;
 		drawParameters->pixelShader = m_pixelShader;
+		drawParameters->geometryShader = m_geometryShader;
 		drawParameters->constantBuffers = m_constantBuffers;
 		drawParameters->textures = m_textures;
 		drawParameters->samplerStates = m_samplerStates;

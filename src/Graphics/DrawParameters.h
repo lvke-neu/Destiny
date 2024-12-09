@@ -7,6 +7,7 @@ struct ID3D11Buffer;
 struct ID3D11InputLayout;
 struct ID3D11VertexShader;
 struct ID3D11PixelShader;
+struct ID3D11GeometryShader;
 struct ID3D11RasterizerState;
 struct ID3D11DepthStencilState;
 struct ID3D11BlendState;
@@ -34,6 +35,7 @@ namespace Destiny
 
 		ID3D11VertexShader* vertexShader				= nullptr;
 		ID3D11PixelShader* pixelShader					= nullptr;
+		ID3D11GeometryShader* geometryShader			= nullptr;
 
 		ID3D11RasterizerState* rasterizerState			= nullptr;
 		ID3D11DepthStencilState* depthStencilState		= nullptr;

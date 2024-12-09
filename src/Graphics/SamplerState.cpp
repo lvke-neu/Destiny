@@ -57,6 +57,9 @@ namespace Destiny
 				case SamplerStateBindFlag::BindPS:
 					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetSamplers(desc->startSlot, 1, &m_samplerState);
 					break;
+				case SamplerStateBindFlag::BindGS:
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->GSSetSamplers(desc->startSlot, 1, &m_samplerState);
+					break;
 				}
 			}
 		}

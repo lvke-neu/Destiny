@@ -10,7 +10,8 @@ namespace Destiny
 	enum class TextureBindFlag
 	{
 		BindVS,
-		BindPS
+		BindPS,
+		BindGS
 	};
 
 	struct TextureDesc
@@ -21,7 +22,8 @@ namespace Destiny
 			textureBindFlag =
 			{
 				{TextureBindFlag::BindVS, false },
-				{TextureBindFlag::BindPS, false }
+				{TextureBindFlag::BindPS, false },
+				{TextureBindFlag::BindGS, false }
 			};
 		}
 		std::unordered_map<TextureBindFlag, bool> textureBindFlag;

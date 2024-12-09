@@ -8,6 +8,7 @@
 
 struct ID3D11VertexShader;
 struct ID3D11PixelShader;
+struct ID3D11GeometryShader;
 struct ID3D10Blob;
 struct ID3D11ShaderReflection;
 namespace Destiny
@@ -38,6 +39,7 @@ namespace Destiny
 	private:
 		bool createVertexShader();
 		bool createPixelShader();
+		bool createGeometryShader();
 		void collectReflectionInfo(ID3D10Blob* compiledBlob, short flag);
 		void collectReflectionConstantInfo(ID3D11ShaderReflection* shaderReflection, short flag);
 		void collectReflectionTextureInfo(ID3D11ShaderReflection* shaderReflection, short flag);
@@ -45,10 +47,12 @@ namespace Destiny
 	private:
 		ID3D11VertexShader*				m_vertexShader;
 		ID3D11PixelShader*				m_pixelShader;
+		ID3D11GeometryShader*			m_geometryShader;
 		std::shared_ptr<Blob>			m_inputSignatureBlob;
 		std::shared_ptr<BlobHolder>		m_blobHolder;
 		ID3D10Blob*						m_vsCompiledBlob;
 		ID3D10Blob*						m_psCompiledBlob;
+		ID3D10Blob*						m_gsCompiledBlob;
 		std::unordered_map<std::string, std::shared_ptr<ConstantBuffer>> m_constantBuffers;
 		std::unordered_map<std::string, std::string> m_variableLinkConstant;
 		std::unordered_map<std::string, std::pair<std::shared_ptr<TextureDesc>, std::shared_ptr<Texture>>> m_textures;

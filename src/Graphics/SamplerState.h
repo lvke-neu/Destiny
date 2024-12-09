@@ -9,7 +9,8 @@ namespace Destiny
 	enum class SamplerStateBindFlag
 	{
 		BindVS,
-		BindPS
+		BindPS,
+		BindGS
 	};
 
 	struct SamplerStateDesc
@@ -20,7 +21,8 @@ namespace Destiny
 			samplerStateBindFlag =
 			{
 				{SamplerStateBindFlag::BindVS, false },
-				{SamplerStateBindFlag::BindPS, false }
+				{SamplerStateBindFlag::BindPS, false },
+				{SamplerStateBindFlag::BindGS, false }
 			};
 		}
 		std::unordered_map<SamplerStateBindFlag, bool> samplerStateBindFlag;

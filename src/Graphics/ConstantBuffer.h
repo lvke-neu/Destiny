@@ -10,7 +10,8 @@ namespace Destiny
 	enum class ConstantBufferBindFlag
 	{
 		BindVS,
-		BindPS
+		BindPS,
+		BindGS
 	};
 
 	struct ConstantBufferVariable

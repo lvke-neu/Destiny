@@ -13,6 +13,7 @@ namespace Destiny
 	{
 		m_constantBufferBindFlag[ConstantBufferBindFlag::BindVS] = false;
 		m_constantBufferBindFlag[ConstantBufferBindFlag::BindPS] = false;
+		m_constantBufferBindFlag[ConstantBufferBindFlag::BindGS] = false;
 
 		D3D11_BUFFER_DESC cbd;
 		ZeroMemory(&cbd, sizeof(cbd));
@@ -76,6 +77,9 @@ namespace Destiny
 					break;
 				case ConstantBufferBindFlag::BindPS:
 					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetConstantBuffers(m_startSlot, 1, &m_constantBuffer);
+					break;
+				case ConstantBufferBindFlag::BindGS:
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->GSSetConstantBuffers(m_startSlot, 1, &m_constantBuffer);
 					break;
 				}
 			}

@@ -64,6 +64,9 @@ namespace Destiny
 				case TextureBindFlag::BindPS:
 					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetShaderResources(desc->startSlot, 1, &m_shaderResourceView);
 					break;
+				case TextureBindFlag::BindGS:
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->GSSetShaderResources(desc->startSlot, 1, &m_shaderResourceView);
+					break;
 				}
 			}
 		}

@@ -1,4 +1,4 @@
-#include "BillboardComponent.h"
+#include "TestGeometryShaderComponent.h"
 #include "Graphics/Renderer.h"
 #include "Graphics/RenderStates.h"
 #include "Graphics/RenderPass.h"
@@ -8,9 +8,9 @@
 
 namespace Destiny
 {
-	BillboardComponent::BillboardComponent()
+	TestGeometryShaderComponent::TestGeometryShaderComponent()
 	{
-		auto renderer = std::make_shared<Renderer>("builtin://renderer/billboard.hlsl");
+		auto renderer = std::make_shared<Renderer>("builtin://renderer/test_geometryshader.hlsl");
 		renderer->load(0);
 		
 
@@ -31,7 +31,7 @@ namespace Destiny
 
 	RTTR_REGISTRATION
 	{
-		rttr::registration::class_<BillboardComponent>("BillboardComponent")
+		rttr::registration::class_<TestGeometryShaderComponent>("TestGeometryShaderComponent")
 			.constructor<>();
 	}
 }

@@ -15,6 +15,8 @@ namespace Destiny
 		GET(float, aspect);
 		GET(float, nearz);
 		GET(float, farz);
+		GET(float, viewportWidth);
+		GET(float, viewportHeight);
 	public:
 		virtual void onEnterScene();
 		virtual void onNodeTransformChanged();
@@ -30,5 +32,7 @@ namespace Destiny
 		float m_aspect;
 		float m_nearz;
 		float m_farz;
+		float m_viewportWidth;
+		float m_viewportHeight;
 	};
 }

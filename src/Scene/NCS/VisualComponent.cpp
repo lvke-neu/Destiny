@@ -50,7 +50,8 @@ namespace Destiny
 		}
 		
 		onCameraViewChanged(m_scene->getCameraNode()->get_transform().getInvTransposeWorldMatrix());
-		onCameraProjChanged(DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(m_scene->getCamera()->get_fovy(), m_scene->getCamera()->get_aspect(), m_scene->getCamera()->get_nearz(), m_scene->getCamera()->get_farz())));
+		onCameraProjChanged(DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(m_scene->getCamera()->get_fovy(), m_scene->getCamera()->get_aspect(), m_scene->getCamera()->get_nearz(), m_scene->getCamera()->get_farz())),
+			m_scene->getCamera()->get_viewportWidth(), m_scene->getCamera()->get_viewportHeight());
 	}
 
 	void VisualComponent::onCameraViewChanged(const DirectX::XMMATRIX& cameraView)
@@ -63,7 +64,7 @@ namespace Destiny
 		m_visual->getRenderPass()->getRenderer()->setConstant("g_view", cameraView);
 	}
 
-	void VisualComponent::onCameraProjChanged(const DirectX::XMMATRIX& cameraProj)
+	void VisualComponent::onCameraProjChanged(const DirectX::XMMATRIX& cameraProj, float viewportWidth, float viewportHeight)
 	{
 		if (!m_visual || !m_visual->getRenderPass() || !m_visual->getRenderPass()->getRenderer())
 		{
@@ -71,6 +72,8 @@ namespace Destiny
 		}
 
 		m_visual->getRenderPass()->getRenderer()->setConstant("g_proj", cameraProj);
+		m_visual->getRenderPass()->getRenderer()->setConstant("g_viewportWidth", viewportWidth);
+		m_visual->getRenderPass()->getRenderer()->setConstant("g_viewportHeight", viewportHeight);
 	}
 
 	RTTR_REGISTRATION

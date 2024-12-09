@@ -197,8 +197,7 @@ namespace Destiny
 		data->copyfrom(indices.data(), indices.size() * sizeof(unsigned short));
 		std::shared_ptr<IndexBuffer> indexBuffer = std::make_shared<IndexBuffer>(IndexBuffer::IndexType::Index16, data);
 
-		DirectX::BoundingBox aabb;
-		DirectX::BoundingBox::CreateFromPoints(aabb, { -1.0f, -1.0f, 0.0f }, { 1.0f, 1.0f, 0.0f });
+		DirectX::BoundingBox aabb { { 0.0f, 0.0f, 0.0f },{ FLT_MAX, FLT_MAX, FLT_MAX } };
 		Mesh::DrawCall drawCall;
 		drawCall.drawMethod = Mesh::DrawMethod::DrawIndexed;
 		drawCall.primitiveTopology = Mesh::PrimitiveTopology::TriangleList;

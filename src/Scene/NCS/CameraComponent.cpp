@@ -9,7 +9,9 @@ namespace Destiny
 		m_fovy(45.0f),
 		m_aspect(1.0f),
 		m_nearz(0.1f),
-		m_farz(1000.0f)
+		m_farz(1000.0f),
+		m_viewportWidth(1.0f),
+		m_viewportHeight(1.0f)
 	{
 		Engine::GetInstance()->getEventSystem()->registerEvent(EventType::WindowResize, std::bind(&CameraComponent::onWindowResize, this, std::placeholders::_1));
 	}
@@ -37,7 +39,9 @@ namespace Destiny
 	void CameraComponent::onWindowResize(void* data)
 	{
 		WindowResizeData ws = *(WindowResizeData*)(data);
-		m_aspect = static_cast<float>(ws.width) / ws.height;
+		m_viewportWidth = (float)ws.width;
+		m_viewportHeight = (float)ws.height;
+		m_aspect = m_viewportWidth / m_viewportHeight;
 		bfsNotifyProjChanged(m_scene);
 	}
 
@@ -78,7 +82,7 @@ namespace Destiny
 			auto visualComponent = std::dynamic_pointer_cast<VisualComponent>(component);
 			if (visualComponent)
 			{
-				visualComponent->onCameraProjChanged(DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(m_fovy, m_aspect, m_nearz, m_farz)));
+				visualComponent->onCameraProjChanged(DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(m_fovy, m_aspect, m_nearz, m_farz)), m_viewportWidth, m_viewportHeight);
 			}
 		}
 

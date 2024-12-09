@@ -18,7 +18,7 @@ namespace Destiny
 		virtual void onEnterScene();
 
 		void onCameraViewChanged(const DirectX::XMMATRIX& cameraView);
-		void onCameraProjChanged(const DirectX::XMMATRIX& cameraProj);
+		void onCameraProjChanged(const DirectX::XMMATRIX& cameraProj, float viewportWidth, float viewportHeight);
 	public:
 		void setRenderPass(std::shared_ptr<RenderPass> renderPass);
 		void setMesh(std::shared_ptr<Mesh> mesh);

@@ -2,7 +2,7 @@
 #include "Cull/GeoSceneCuller.h"
 #include "RuntimeEffect/BoxComponent.h"
 #include "RuntimeEffect/PlaneComponent.h"
-#include "RuntimeEffect/BillboardComponent.h"
+#include "RuntimeEffect/TestGeometryShaderComponent.h"
 
 namespace Destiny
 {
@@ -49,13 +49,13 @@ namespace Destiny
 			node->set_transform(transform);
 		}
 
-		//billboard
+		//test geometryshader
 		{
-			auto billboardComponent = std::make_shared<BillboardComponent>();
+			auto testGeometryShaderComponent = std::make_shared<TestGeometryShaderComponent>();
 
 			auto node = std::make_shared<Node>();
-			node->set_name("BillboardNode");
-			node->addComponent(billboardComponent);
+			node->set_name("TestGeometryShaderNode");
+			node->addComponent(testGeometryShaderComponent);
 			node->addToParent(shared_from_this());
 
 		}

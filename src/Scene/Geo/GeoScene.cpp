@@ -2,6 +2,7 @@
 #include "Cull/GeoSceneCuller.h"
 #include "RuntimeEffect/BoxComponent.h"
 #include "RuntimeEffect/PlaneComponent.h"
+#include "RuntimeEffect/BillboardComponent.h"
 
 namespace Destiny
 {
@@ -46,6 +47,17 @@ namespace Destiny
 			transform.set_rotation({ 90.0f, 0.0f, 0.0f });
 			transform.set_translation({ 0.0f, -3.0f, 0.0f });
 			node->set_transform(transform);
+		}
+
+		//billboard
+		{
+			auto billboardComponent = std::make_shared<BillboardComponent>();
+
+			auto node = std::make_shared<Node>();
+			node->set_name("BillboardNode");
+			node->addComponent(billboardComponent);
+			node->addToParent(shared_from_this());
+
 		}
 
 		auto cameraTransfrom = m_cameraNode->get_transform();

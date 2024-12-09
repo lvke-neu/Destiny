@@ -17,12 +17,19 @@ namespace Destiny
 		DirectX::XMFLOAT2 texcoord;
 	};
 
+	struct PositionColor
+	{
+		DirectX::XMFLOAT3 position;
+		DirectX::XMFLOAT4 color;
+
+	};
+
 	std::shared_ptr<Mesh> MeshProvider::Create_Box_PositionNormalTexcoord()
 	{
-		auto iter = m_cache.find("Box");
+		auto iter = m_cache.find("Box_PositionNormalTexcoord");
 		if (iter != m_cache.end())
 		{
-			return m_cache["Box"];
+			return m_cache["Box_PositionNormalTexcoord"];
 		}
 
 		std::shared_ptr<Blob> data = nullptr;
@@ -97,17 +104,17 @@ namespace Destiny
 
 		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(aabb, drawCall, vertexBuffer, indexBuffer);
 
-		m_cache["Box"] = mesh;
+		m_cache["Box_PositionNormalTexcoord"] = mesh;
 
 		return mesh;
 	}
+
 	std::shared_ptr<Mesh> MeshProvider::Create_Plane_PositionNormalTexcoord()
 	{
-
-		auto iter = m_cache.find("Plane");
+		auto iter = m_cache.find("Plane_PositionNormalTexcoord");
 		if (iter != m_cache.end())
 		{
-			return m_cache["Plane"];
+			return m_cache["Plane_PositionNormalTexcoord"];
 		}
 
 		std::shared_ptr<Blob> data = nullptr;
@@ -151,7 +158,55 @@ namespace Destiny
 
 		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(aabb, drawCall, vertexBuffer, indexBuffer);
 
-		m_cache["Plane"] = mesh;
+		m_cache["Plane_PositionNormalTexcoord"] = mesh;
+
+		return mesh;
+	}
+
+	std::shared_ptr<Mesh> MeshProvider::Create_Triangle_PositionColor()
+	{
+		auto iter = m_cache.find("Triangle_PositionColor");
+		if (iter != m_cache.end())
+		{
+			return m_cache["Triangle_PositionColor"];
+		}
+
+		std::shared_ptr<Blob> data = nullptr;
+		std::vector<PositionColor> vertices;
+		vertices.resize(3);
+
+		vertices[0].position = DirectX::XMFLOAT3(-0.5f, -0.5f, 0.0f);
+		vertices[0].color = DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+
+		vertices[1].position = DirectX::XMFLOAT3(0.0f, 0.5f, 0.0f);
+		vertices[1].color = DirectX::XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
+
+		vertices[2].position = DirectX::XMFLOAT3(0.5f, -0.5f, 0.0f);
+		vertices[2].color = DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
+
+
+		data.reset(new Blob(vertices.size() * sizeof(PositionColor)));
+		data->copyfrom(vertices.data(), vertices.size() * sizeof(PositionColor));
+		std::shared_ptr<VertexBuffer> vertexBuffer = std::make_shared<VertexBuffer>(InputLayout::Create_PositionColor(), (unsigned int)sizeof(PositionColor), 0, data);
+
+		std::vector<unsigned short> indices =
+		{
+			0, 1, 2
+		};
+		data.reset(new Blob(indices.size() * sizeof(unsigned short)));
+		data->copyfrom(indices.data(), indices.size() * sizeof(unsigned short));
+		std::shared_ptr<IndexBuffer> indexBuffer = std::make_shared<IndexBuffer>(IndexBuffer::IndexType::Index16, data);
+
+		DirectX::BoundingBox aabb;
+		DirectX::BoundingBox::CreateFromPoints(aabb, { -1.0f, -1.0f, 0.0f }, { 1.0f, 1.0f, 0.0f });
+		Mesh::DrawCall drawCall;
+		drawCall.drawMethod = Mesh::DrawMethod::DrawIndexed;
+		drawCall.primitiveTopology = Mesh::PrimitiveTopology::TriangleList;
+		drawCall.indexCount = (unsigned int)indices.size();
+
+		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(aabb, drawCall, vertexBuffer, indexBuffer);
+
+		m_cache["Triangle_PositionColor"] = mesh;
 
 		return mesh;
 	}

@@ -3,7 +3,7 @@
 #include "RuntimeEffect/BoxComponent.h"
 #include "RuntimeEffect/PlaneComponent.h"
 #include "RuntimeEffect/TestGeometryShaderComponent.h"
-#include "RuntimeEffect/BillboardComponent.h"
+#include "RuntimeEffect/PixelBillboardComponent.h"
 
 namespace Destiny
 {
@@ -27,11 +27,11 @@ namespace Destiny
 
 		//billboard
 		{
-			auto billboardComponent = std::make_shared<BillboardComponent>();
+			auto pixelBillboardComponent = std::make_shared<PixelBillboardComponent>();
 
 			auto node = std::make_shared<Node>();
-			node->set_name("BillboardNode");
-			node->addComponent(billboardComponent);
+			node->set_name("PixelBillboardNode");
+			node->addComponent(pixelBillboardComponent);
 			node->addToParent(shared_from_this());
 		}
 

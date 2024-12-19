@@ -1,4 +1,4 @@
-#include "BillboardComponent.h"
+#include "PixelBillboardComponent.h"
 #include "Graphics/Renderer.h"
 #include "Graphics/RenderStates.h"
 #include "Graphics/RenderPass.h"
@@ -11,9 +11,9 @@
 
 namespace Destiny
 {
-	BillboardComponent::BillboardComponent()
+	PixelBillboardComponent::PixelBillboardComponent()
 	{
-		auto renderer = std::make_shared<Renderer>("builtin://renderer/billboard.hlsl");
+		auto renderer = std::make_shared<Renderer>("builtin://renderer/pixel_billboard.hlsl");
 		renderer->load(0);
 		renderer->setConstant("c_size", DirectX::XMFLOAT2{ 150.0f, 150.0f });
 
@@ -53,7 +53,7 @@ namespace Destiny
 
 	RTTR_REGISTRATION
 	{
-		rttr::registration::class_<BillboardComponent>("BillboardComponent")
+		rttr::registration::class_<PixelBillboardComponent>("PixelBillboardComponent")
 			.constructor<>();
 	}
 }

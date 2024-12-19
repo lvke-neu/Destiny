@@ -16,6 +16,10 @@ namespace Destiny
 
 	void VisualComponent::onAddToNode()
 	{
+		if (m_visual)
+		{
+			m_visual->bindComponent(shared_from_this());
+		}
 		onNodeTransformChanged();
 	}
 

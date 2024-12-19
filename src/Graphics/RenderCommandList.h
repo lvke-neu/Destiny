@@ -12,9 +12,9 @@ namespace Destiny
 		virtual ~RenderCommandList() = default;
 	public:
 		bool addRenderCommand(std::shared_ptr<RenderCommand> renderCommand);
-		void execute(ID3D11DeviceContext* deviceContext);
+		virtual void execute(ID3D11DeviceContext* deviceContext);
 		void clearRenderCommand();
-	private:
+	protected:
 		std::unordered_set<std::shared_ptr<RenderCommand>> m_renderCommandList;
 	};
 }

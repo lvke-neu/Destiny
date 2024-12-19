@@ -11,13 +11,13 @@
 
 namespace Destiny
 {
-	PixelBillboardComponent::PixelBillboardComponent()
+	PixelBillboardComponent::PixelBillboardComponent(const char* texturePath)
 	{
 		auto renderer = std::make_shared<Renderer>("builtin://renderer/pixel_billboard.hlsl");
 		renderer->load(0);
 		renderer->setConstant("c_size", DirectX::XMFLOAT2{ 150.0f, 150.0f });
 
-		auto texture = Texture::Create("builtin://texture/tree0.dds");
+		auto texture = Texture::Create(texturePath);
 		texture->load();
 		renderer->setShaderResource("t_texture", texture);
 

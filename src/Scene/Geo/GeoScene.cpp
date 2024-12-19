@@ -28,7 +28,7 @@ namespace Destiny
 
 		//pixelbillboard
 		{
-			auto pixelBillboardComponent = std::make_shared<PixelBillboardComponent>();
+			auto pixelBillboardComponent = std::make_shared<PixelBillboardComponent>("builtin://texture/tree0.dds");
 
 			auto node = std::make_shared<Node>();
 			node->set_name("PixelBillboardNode");
@@ -38,11 +38,11 @@ namespace Destiny
 
 		//sizebillboard
 		{
-			auto sizeBillboardComponent = std::make_shared<SizeBillboardComponent>();
+			auto pixelBillboardComponent = std::make_shared<PixelBillboardComponent>("builtin://texture/yuanhuan.png");
 
 			auto node = std::make_shared<Node>();
-			node->set_name("SizeBillboardNode");
-			node->addComponent(sizeBillboardComponent);
+			node->set_name("PixelBillboardNode2");
+			node->addComponent(pixelBillboardComponent);
 			node->addToParent(shared_from_this());
 
 			Transform transform;

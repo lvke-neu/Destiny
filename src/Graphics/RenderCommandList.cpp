@@ -12,6 +12,7 @@ namespace Destiny
 
 		return false;
 	}
+
 	void RenderCommandList::execute(ID3D11DeviceContext* deviceContext)
 	{
 		for (const auto& renderCommand : m_renderCommandList)

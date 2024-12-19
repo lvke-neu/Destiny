@@ -17,7 +17,7 @@ namespace Destiny
 		renderer->load(0);
 		renderer->setConstant("c_size", DirectX::XMFLOAT2{ 5.0f, 5.0f });
 
-		auto texture = Texture::Create("builtin://texture/tree0.dds");
+		auto texture = Texture::Create("builtin://texture/yuanhuan.png");
 		texture->load();
 		renderer->setShaderResource("t_texture", texture);
 

@@ -234,7 +234,7 @@ namespace Destiny
 		std::shared_ptr<VertexBuffer> vertexBuffer = std::make_shared<VertexBuffer>(InputLayout::Create_Position(), (unsigned int)sizeof(PositionColor), 0, data);
 
 	
-		DirectX::BoundingBox aabb{ { 0.0f, 0.0f, 0.0f },{ FLT_MAX, FLT_MAX, FLT_MAX } };
+		DirectX::BoundingBox aabb{ { 0.0f, 0.0f, 0.0f },{ 1.0f, 1.0f, 1.0f } };
 		Mesh::DrawCall drawCall;
 		drawCall.drawMethod = Mesh::DrawMethod::Draw;
 		drawCall.primitiveTopology = Mesh::PrimitiveTopology::PointList;

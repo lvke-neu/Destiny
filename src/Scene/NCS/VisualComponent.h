@@ -4,7 +4,7 @@
 
 namespace Destiny
 {
-	class VisualComponent : public Component
+	class VisualComponent : public Component, public std::enable_shared_from_this<VisualComponent>
 	{
 		RTTR_ENABLE(Component);
 	public:

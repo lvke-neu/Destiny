@@ -4,6 +4,7 @@
 #include "RuntimeEffect/PlaneComponent.h"
 #include "RuntimeEffect/TestGeometryShaderComponent.h"
 #include "RuntimeEffect/PixelBillboardComponent.h"
+#include "RuntimeEffect/SizeBillboardComponent.h"
 
 namespace Destiny
 {
@@ -25,7 +26,7 @@ namespace Destiny
 		m_geoSceneCuller = std::make_shared<GeoSceneCuller>(std::dynamic_pointer_cast<GeoScene>(shared_from_this()));
 
 
-		//billboard
+		//pixelbillboard
 		{
 			auto pixelBillboardComponent = std::make_shared<PixelBillboardComponent>();
 
@@ -33,6 +34,20 @@ namespace Destiny
 			node->set_name("PixelBillboardNode");
 			node->addComponent(pixelBillboardComponent);
 			node->addToParent(shared_from_this());
+		}
+
+		//sizebillboard
+		{
+			auto sizeBillboardComponent = std::make_shared<SizeBillboardComponent>();
+
+			auto node = std::make_shared<Node>();
+			node->set_name("SizeBillboardNode");
+			node->addComponent(sizeBillboardComponent);
+			node->addToParent(shared_from_this());
+
+			Transform transform;
+			transform.set_translation({ 5.0f, 0.0f, 0.0f });
+			node->set_transform(transform);
 		}
 
 		//box

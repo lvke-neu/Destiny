@@ -7,7 +7,7 @@ namespace Destiny
 	{
 		RTTR_ENABLE(VisualComponent);
 	public:
-		PixelBillboardComponent() =default;
+		PixelBillboardComponent() = default;
 		PixelBillboardComponent(const char* texturePath);
 		virtual ~PixelBillboardComponent() = default;
 	public:

@@ -25,18 +25,7 @@ namespace Destiny
 		samplerState->load();
 		renderer->setSamplerSate("s_sampler", samplerState);
 
-		std::shared_ptr<RenderStates> renderStates = std::make_shared<RenderStates>();
-		renderStates->getBlendStateDesc()->AlphaToCoverageEnable = true;
-		renderStates->getBlendStateDesc()->IndependentBlendEnable = false;
-		renderStates->getBlendStateDesc()->RenderTarget[0].BlendEnable = true;
-		renderStates->getBlendStateDesc()->RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-		renderStates->getBlendStateDesc()->RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
-		renderStates->getBlendStateDesc()->RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-		renderStates->getBlendStateDesc()->RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
-		renderStates->getBlendStateDesc()->RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
-		renderStates->getBlendStateDesc()->RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-		renderStates->getBlendStateDesc()->RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-		renderStates->getDepthStencilStateDesc()->DepthEnable = false;
+		auto renderStates = RenderStates::CreateBlendState();
 		renderStates->load();
 
 		std::shared_ptr<RenderPass> renderPass = std::make_shared<RenderPass>();

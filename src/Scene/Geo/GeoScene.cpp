@@ -36,7 +36,7 @@ namespace Destiny
 			node->addToParent(shared_from_this());
 		}
 
-		//sizebillboard
+		//pixelbillboard2
 		{
 			auto pixelBillboardComponent = std::make_shared<PixelBillboardComponent>("builtin://texture/yuanhuan.png");
 
@@ -49,7 +49,19 @@ namespace Destiny
 			transform.set_translation({ 5.0f, 0.0f, 0.0f });
 			node->set_transform(transform);
 		}
+		//sizebillboard
+		{
+			auto sizeBillboardComponent = std::make_shared<SizeBillboardComponent>();
 
+			auto node = std::make_shared<Node>();
+			node->set_name("SizeBillboardNode");
+			node->addComponent(sizeBillboardComponent);
+			node->addToParent(shared_from_this());
+
+			Transform transform;
+			transform.set_translation({ 0.0f, 0.0f, 5.0f });
+			node->set_transform(transform);
+		}
 		//box
 		{
 			auto boxComponent = std::make_shared<BoxComponent>();

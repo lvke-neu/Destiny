@@ -34,35 +34,31 @@ namespace Destiny
 		std::sort(renderCommands.begin(), renderCommands.end(),
 			[](std::shared_ptr<RenderCommand> a, std::shared_ptr<RenderCommand> b)->bool
 			{
-				//if (!a || !b)
-				//{
-				//	return false;
-				//}
-				if (a == b)
+				if (!a || !b || a == b)
 				{
 					return false;
 				}
 
 				auto visual_a = std::dynamic_pointer_cast<Visual>(a);
 				auto visual_b = std::dynamic_pointer_cast<Visual>(b);
-				//if (!visual_a || !visual_b || !visual_a->getComponent() || !visual_b->getComponent())
-				//{
-				//	return false;
-				//}
+				if (!visual_a || !visual_b || !visual_a->getComponent() || !visual_b->getComponent())
+				{
+					return false;
+				}
 
 				auto node_a = visual_a->getComponent()->get_node();
 				auto node_b = visual_b->getComponent()->get_node();
-				//if (!node_a || !node_b)
-				//{
-				//	return false;
-				//}
+				if (!node_a || !node_b)
+				{
+					return false;
+				}
 
 				auto mesh_a = visual_a->getMesh();
 				auto mesh_b = visual_b->getMesh();
-				//if (!mesh_a || !mesh_a)
-				//{
-				//	return false;
-				//}
+				if (!mesh_a || !mesh_b)
+				{
+					return false;
+				}
 
 				auto aabb_a = mesh_a->getBoundingBox();
 				auto aabb_b = mesh_b->getBoundingBox();
@@ -72,10 +68,10 @@ namespace Destiny
 				
 				auto scene_a = visual_a->getComponent()->get_scene();
 				auto scene_b = visual_a->getComponent()->get_scene();
-				//if (!scene_a || !scene_b || (scene_a != scene_b))
-				//{
-				//	return false;
-				//}
+				if (!scene_a || !scene_b || (scene_a != scene_b))
+				{
+					return false;
+				}
 
 				auto cameraPosition = scene_a->getCameraNode()->get_transform().get_translation();
 				auto distance_square_a =

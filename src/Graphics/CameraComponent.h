@@ -1,5 +1,6 @@
 #pragma once
-#include "Component.h"
+#include "Engine/Component.h"
+#include <DirectXMath.h>
 
 namespace Destiny
 {

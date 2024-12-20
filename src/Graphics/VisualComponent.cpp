@@ -1,10 +1,10 @@
 #include "VisualComponent.h"
-#include "Scene.h"
-#include "Node.h"
 #include "CameraComponent.h"
-#include "Graphics/RenderPass.h"
-#include "Graphics/Renderer.h"
-
+#include "VisualScene.h"
+#include "RenderPass.h"
+#include "Renderer.h"
+#include "Engine/Scene.h"
+#include "Engine/Node.h"
 
 namespace Destiny
 {
@@ -18,7 +18,7 @@ namespace Destiny
 	{
 		if (m_visual)
 		{
-			m_visual->bindComponent(shared_from_this());
+			m_visual->setComponent(shared_from_this());
 		}
 		onNodeTransformChanged();
 	}
@@ -48,14 +48,20 @@ namespace Destiny
 
 	void VisualComponent::onEnterScene()
 	{
-		if (!m_scene || !m_scene->getCamera() || !m_scene->getCameraNode())
+		auto visualScene = std::dynamic_pointer_cast<VisualScene>(m_scene);
+		if (!visualScene || !visualScene->getCamera() || !visualScene->getCameraNode())
 		{
 			return;
 		}
 		
-		onCameraViewChanged(m_scene->getCameraNode()->get_transform().getInvTransposeWorldMatrix());
-		onCameraProjChanged(DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(m_scene->getCamera()->get_fovy(), m_scene->getCamera()->get_aspect(), m_scene->getCamera()->get_nearz(), m_scene->getCamera()->get_farz())),
-			m_scene->getCamera()->get_viewportWidth(), m_scene->getCamera()->get_viewportHeight());
+		onCameraViewChanged(visualScene->getCameraNode()->get_transform().getInvTransposeWorldMatrix());
+		onCameraProjChanged(
+			DirectX::XMMatrixTranspose
+			(
+				DirectX::XMMatrixPerspectiveFovLH(visualScene->getCamera()->get_fovy(), visualScene->getCamera()->get_aspect(), visualScene->getCamera()->get_nearz(), visualScene->getCamera()->get_farz())
+			),
+			visualScene->getCamera()->get_viewportWidth(), visualScene->getCamera()->get_viewportHeight()
+		);
 	}
 
 	void VisualComponent::onCameraViewChanged(const DirectX::XMMATRIX& cameraView)

@@ -1,6 +1,7 @@
 #pragma once
-#include "Component.h"
-#include "Graphics/Visual.h"
+#include "Visual.h"
+#include "Engine/Component.h"
+#include <DirectXMath.h>
 
 namespace Destiny
 {

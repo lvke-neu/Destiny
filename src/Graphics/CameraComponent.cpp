@@ -1,7 +1,8 @@
 #include "CameraComponent.h"
-#include "Engine/EventSystem.h"
-#include "Scene.h"
+#include "Engine/Scene.h"
 #include "VisualComponent.h"
+#include "Engine/EventSystem.h"
+
 
 namespace Destiny
 {

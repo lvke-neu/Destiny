@@ -3,7 +3,7 @@
 
 namespace Destiny
 {
-	class Scene;
+	class VisualScene;
 	class SceneManager
 	{
 	public:
@@ -14,12 +14,12 @@ namespace Destiny
 		void uninitialize();
 		void update(float deltaTime);
 	public:
-		std::shared_ptr<Scene> getScene();
+		std::shared_ptr<VisualScene> getScene();
 	private:
-		std::shared_ptr<Scene> m_scene;
+		std::shared_ptr<VisualScene> m_scene;
 	};
 
-	inline std::shared_ptr<Scene> SceneManager::getScene()
+	inline std::shared_ptr<VisualScene> SceneManager::getScene()
 	{
 		return m_scene;
 	}

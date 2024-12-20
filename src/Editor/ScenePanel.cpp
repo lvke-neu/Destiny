@@ -2,7 +2,7 @@
 #include "Imgui/imgui.h"
 #include "Engine/Engine.h"
 #include "Scene/SceneManager.h"
-#include "Scene/NCS/Scene.h"
+#include "Graphics/VisualScene.h"
 #include <queue>
 
 static void BFS(std::shared_ptr<Destiny::Node> node)

@@ -1,8 +1,8 @@
 #include "ForwardTransparentPipeline.h"
 #include "Visual.h"
 #include "Mesh.h"
-#include "Scene/NCS/Component.h"
-#include "Scene/NCS/Scene.h"
+#include "Engine/Component.h"
+#include "VisualScene.h"
 #include <algorithm>
 
 namespace Destiny
@@ -66,8 +66,8 @@ namespace Destiny
 				aabb_a.Transform(aabb_a, node_a->get_transform().getWorldMatrix());
 				aabb_b.Transform(aabb_b, node_b->get_transform().getWorldMatrix());
 				
-				auto scene_a = visual_a->getComponent()->get_scene();
-				auto scene_b = visual_a->getComponent()->get_scene();
+				auto scene_a = std::dynamic_pointer_cast<VisualScene>(visual_a->getComponent()->get_scene());
+				auto scene_b = std::dynamic_pointer_cast<VisualScene>(visual_b->getComponent()->get_scene());
 				if (!scene_a || !scene_b || (scene_a != scene_b))
 				{
 					return false;

@@ -19,7 +19,7 @@ namespace Destiny
 		std::shared_ptr<Mesh>				getMesh();
 		void								setMesh(std::shared_ptr<Mesh> mesh);
 		std::shared_ptr<Component>			getComponent();
-		void bindComponent(std::shared_ptr<Component> component);
+		void								setComponent(std::shared_ptr<Component> component);
 	public:
 		void updateDrawParameters();
 	private:
@@ -44,7 +44,7 @@ namespace Destiny
 		return m_component;
 	}
 
-	inline void Visual::bindComponent(std::shared_ptr<Component> component)
+	inline void Visual::setComponent(std::shared_ptr<Component> component)
 	{
 		m_component = component;
 	}

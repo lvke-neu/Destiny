@@ -1,4 +1,5 @@
 #include "InstancedComponet.h"
+#include "Math/Transform.h"
 #include "Graphics/Renderer.h"
 #include "Graphics/RenderStates.h"
 #include "Graphics/RenderPass.h"

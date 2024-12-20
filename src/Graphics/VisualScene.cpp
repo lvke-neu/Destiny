@@ -1,33 +1,48 @@
-#include "GeoSceneCuller.h"
-#include "Scene/Geo/GeoScene.h"
-#include "Scene/NCS/CameraComponent.h"
-#include "Scene/NCS//VisualComponent.h"
-#include "Graphics/GraphicsSystem.h"
-#include "Graphics/Mesh.h"
-#include <DirectXCollision.h>
+#include "VisualScene.h"
+#include "CameraComponent.h"
+#include "CameraController.h"
+#include "VisualComponent.h"
+#include "Mesh.h"
+#include "GraphicsSystem.h"
 #include <queue>
+#include <DirectXCollision.h>
 
 namespace Destiny
 {
-	GeoSceneCuller::GeoSceneCuller(std::shared_ptr<GeoScene> geoScene) :
-		m_geoScene(geoScene)
+	VisualScene::VisualScene(const std::string& name) : Scene(name)
 	{
 
 	}
 
-	void GeoSceneCuller::onCull()
+	void VisualScene::initialize()
 	{
-		if (!m_geoScene || !m_geoScene->getCamera() || !m_geoScene->getCameraNode())
-		{
-			return;
-		}
+		m_camera = std::make_shared<CameraComponent>();
+		m_cameraController = std::make_shared<CameraController>();
+		m_cameraNode = std::make_shared<Node>("Camera");
 
+		m_cameraNode->addComponent(m_camera);
+		m_cameraNode->addComponent(m_cameraController);
+		m_cameraNode->addToParent(shared_from_this());
+	}
+
+	void VisualScene::uninitialize()
+	{
+
+	}
+
+	void VisualScene::update(float deltaTime)
+	{
+
+	}
+
+	void VisualScene::onCull()
+	{
 		DirectX::BoundingFrustum cameraFrustum;
-		DirectX::BoundingFrustum::CreateFromMatrix(cameraFrustum, m_geoScene->getCamera()->getProjectionMatrix());
-		cameraFrustum.Transform(cameraFrustum, m_geoScene->getCameraNode()->get_transform().getWorldMatrix());
+		DirectX::BoundingFrustum::CreateFromMatrix(cameraFrustum, m_camera->getProjectionMatrix());
+		cameraFrustum.Transform(cameraFrustum, m_cameraNode->get_transform().getWorldMatrix());
 
 		std::queue<std::shared_ptr<Node>> nodes;
-		nodes.push(m_geoScene);
+		nodes.push(shared_from_this());
 		while (!nodes.empty())
 		{
 			auto topNode = nodes.front();
@@ -60,6 +75,5 @@ namespace Destiny
 				nodes.push(node);
 			}
 		}
-
 	}
 }

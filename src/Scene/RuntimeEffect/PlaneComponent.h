@@ -1,5 +1,5 @@
 #pragma once
-#include "Scene/NCS/VisualComponent.h"
+#include "Graphics/VisualComponent.h"
 
 namespace Destiny
 {

@@ -1,13 +1,12 @@
 #pragma once
 #include "Engine/Object.h"
-#include "Transform.h"
+#include "Math/Transform.h"
 #include <string>
 #include <memory>
 #include <vector>
 
 namespace Destiny
 {
-	class Scene;
 	class Component;
 	class Node : public Object, public std::enable_shared_from_this<Node>
 	{

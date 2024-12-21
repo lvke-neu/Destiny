@@ -5,6 +5,7 @@
 #include "RuntimeEffect/TestGeometryShaderComponent.h"
 #include "RuntimeEffect/PixelBillboardComponent.h"
 #include "RuntimeEffect/SizeBillboardComponent.h"
+#include "RuntimeEffect/InstancedComponet.h"
 
 namespace Destiny
 {
@@ -26,6 +27,7 @@ namespace Destiny
 		//pixelbillboard
 		{
 			auto pixelBillboardComponent = std::make_shared<PixelBillboardComponent>("builtin://texture/tree0.dds");
+			pixelBillboardComponent->set_enable(true);
 
 			auto node = std::make_shared<Node>();
 			node->set_name("PixelBillboardNode");
@@ -36,6 +38,7 @@ namespace Destiny
 		//pixelbillboard2
 		{
 			auto pixelBillboardComponent = std::make_shared<PixelBillboardComponent>("builtin://texture/yuanhuan.png");
+			pixelBillboardComponent->set_enable(true);
 
 			auto node = std::make_shared<Node>();
 			node->set_name("PixelBillboardNode2");
@@ -46,9 +49,11 @@ namespace Destiny
 			transform.set_translation({ 5.0f, 0.0f, 0.0f });
 			node->set_transform(transform);
 		}
+
 		//sizebillboard
 		{
 			auto sizeBillboardComponent = std::make_shared<SizeBillboardComponent>();
+			sizeBillboardComponent->set_enable(true);
 
 			auto node = std::make_shared<Node>();
 			node->set_name("SizeBillboardNode");
@@ -59,10 +64,12 @@ namespace Destiny
 			transform.set_translation({ 0.0f, 0.0f, 5.0f });
 			node->set_transform(transform);
 		}
+
 		//box
 		{
 			auto boxComponent = std::make_shared<BoxComponent>();
-			//boxComponent->set_enable(false);
+			boxComponent->set_enable(true);
+			
 			auto node = std::make_shared<Node>();
 			node->set_name("BoxNode");
 			node->addComponent(boxComponent);
@@ -76,7 +83,8 @@ namespace Destiny
 		//plane
 		{
 			auto planeComponent = std::make_shared<PlaneComponent>();
-			//planeComponent->set_enable(false);
+			planeComponent->set_enable(true);
+			
 			auto node = std::make_shared<Node>();
 			node->set_name("PlaneNode");
 			node->addComponent(planeComponent);
@@ -89,17 +97,16 @@ namespace Destiny
 			node->set_transform(transform);
 		}
 
-		//test geometryshader
+		//instance
 		{
-			auto testGeometryShaderComponent = std::make_shared<TestGeometryShaderComponent>();
-			testGeometryShaderComponent->set_enable(false);
+			auto instancedComponet = std::make_shared<InstancedComponet>();
+			instancedComponet->set_enable(true);
 
 			auto node = std::make_shared<Node>();
-			node->set_name("TestGeometryShaderNode");
-			node->addComponent(testGeometryShaderComponent);
+			node->set_name("InstancedNode");
+			node->addComponent(instancedComponet);
 			node->addToParent(m_scene);
 		}
-
 
 		auto cameraTransfrom = m_scene->getCameraNode()->get_transform();
 		cameraTransfrom.set_translation({ 0.0f, 0.0f, -5.0f });

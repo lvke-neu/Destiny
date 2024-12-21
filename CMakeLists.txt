@@ -17,6 +17,7 @@ file(GLOB SRC_EDITOR_IMGUI src/Editor/ImGui/*)
 file(GLOB SRC_GRAPHICS src/Graphics/*)
 file(GLOB SRC_Math src/Math/*)
 file(GLOB SRC_SCENE src/Scene/*)
+file(GLOB SRC_SCENE_MODEL src/Scene/Model/*)
 file(GLOB SRC_SCENE_RUNTIMEEFFECT src/Scene/RuntimeEffect/*)
 file(GLOB BUILTIN_RENDERER builtin/renderer/*)
 file(GLOB BUILTIN_TEXTURE builtin/texture/*)
@@ -31,21 +32,26 @@ source_group("Graphics" FILES ${SRC_GRAPHICS})
 source_group("Math" FILES ${SRC_Math})
 source_group("Scene" FILES ${SRC_SCENE})
 source_group("Scene\\RuntimeEffect" FILES ${SRC_SCENE_RUNTIMEEFFECT})
+source_group("Scene\\Model" FILES ${SRC_SCENE_MODEL})
 source_group("builtin\\renderer" FILES ${BUILTIN_RENDERER})
 source_group("builtin\\texture" FILES ${BUILTIN_TEXTURE})
 
-include_directories("3rdparty/spdlog/include")
 include_directories("src/")
+include_directories("3rdparty/spdlog/include")
 include_directories("3rdparty/rttr/include")
+include_directories("3rdparty/assimp/include")
 
 link_directories("3rdparty/rttr/lib/")
 link_libraries(rttr_core.lib)
+link_directories("3rdparty/assimp/lib/")
+link_libraries(assimp.lib)
 
 add_executable(Destiny WIN32 ${SRC_MAIN} 
 ${SRC_ENGINE} ${SRC_ENGINE_DETAIL} 
 ${SRC_EDITOR} ${SRC_EDITOR_IMGUI} 
 ${SRC_GRAPHICS} 
 ${SRC_Math} 
+${SRC_SCENE} ${SRC_SCENE_MODEL}
 ${SRC_SCENE} ${SRC_SCENE_RUNTIMEEFFECT}
 ${BUILTIN} ${BUILTIN_RENDERER} ${BUILTIN_TEXTURE})
 target_link_libraries(Destiny d3d11.lib dxgi.lib dxguid.lib D3DCompiler.lib d2d1.lib dwrite.lib winmm.lib)

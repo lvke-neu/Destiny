@@ -19,6 +19,7 @@ namespace Destiny
 		GET(std::shared_ptr<Node>, node);
 		GET(std::shared_ptr<Scene>, scene);
 	public:
+		virtual void onUpdate(float deltaTime) {};
 		virtual void onAddToNode() {};
 		virtual void onNodeTransformChanged() {};
 		virtual void onEnterScene() {};

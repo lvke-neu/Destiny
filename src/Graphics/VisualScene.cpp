@@ -32,7 +32,24 @@ namespace Destiny
 
 	void VisualScene::update(float deltaTime)
 	{
-
+		std::queue<std::shared_ptr<Node>> nodes;
+		nodes.push(shared_from_this());
+		while (!nodes.empty())
+		{
+			auto topNode = nodes.front();
+			nodes.pop();
+			for (const auto& component : topNode->getComponents())
+			{
+				if (component)
+				{
+					component->onUpdate(deltaTime);
+				}
+			}
+			for (const auto& node : topNode->getChilds())
+			{
+				nodes.push(node);
+			}
+		}
 	}
 
 	void VisualScene::onCull()

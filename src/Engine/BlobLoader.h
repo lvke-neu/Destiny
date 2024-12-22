@@ -15,6 +15,7 @@ namespace Destiny
 	public:
 		virtual std::shared_ptr<BlobHolder> createBlobHolder(const std::string& path);
 		virtual void doLoad(std::shared_ptr<BlobHolder> blobHolder) = 0;
+		virtual std::string normalizedPath(std::shared_ptr<BlobHolder> blobHolder) = 0;
 	protected:
 		std::string		m_storagePath;
 		std::mutex		m_mtx;

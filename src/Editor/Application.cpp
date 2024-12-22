@@ -4,8 +4,9 @@
 #include "StatPanel.h"
 #include "AssetPanel.h"
 #include "Engine/Engine.h"
+#include "Engine/BlobLoaderManager.h"
+#include "Engine/BlobLoader.h"
 #include "Engine/EventSystem.h"
-#include "Engine/Detail/BuiltinResourceBlobLoader.h"
 #include "Graphics/GraphicsSystem.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_win32.h"
@@ -211,8 +212,24 @@ void Application::initImGui()
 
 	ImGuiIO& io = ImGui::GetIO();
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-	io.Fonts->AddFontFromFileTTF(Destiny::BuiltinResourceBlobLoader::getFullPath("builtin://fonts/opensans/OpenSans-Bold.ttf").c_str(), 20);
-	io.FontDefault = io.Fonts->AddFontFromFileTTF(Destiny::BuiltinResourceBlobLoader::getFullPath("builtin://fonts/opensans/OpenSans-Regular.ttf").c_str(), 20);
+
+	
+	auto blobLoader = Destiny::Engine::GetInstance()->getBlobLoaderManager()->getBlobLoader("builtin://");
+	if (blobLoader)
+	{
+		auto blobHolder1 = blobLoader->createBlobHolder("builtin://fonts/opensans/OpenSans-Bold.ttf");
+		auto blobHolder2 = blobLoader->createBlobHolder("builtin://fonts/opensans/OpenSans-Regular.ttf");
+		
+		if (blobHolder1)
+		{
+			io.Fonts->AddFontFromFileTTF(blobLoader->normalizedPath(blobHolder1).c_str(), 20);
+		}
+
+		if (blobHolder2)
+		{
+			io.FontDefault = io.Fonts->AddFontFromFileTTF(blobLoader->normalizedPath(blobHolder2).c_str(), 20);
+		}
+	}
 
 	auto& colors = ImGui::GetStyle().Colors;
 	colors[ImGuiCol_WindowBg] = ImVec4{ 0.1f, 0.105f, 0.11f, 1.0f };

@@ -9,7 +9,6 @@
 
 namespace Destiny
 {
-
 	BuiltinResourceBlobLoader::BuiltinResourceBlobLoader() :
 		BlobLoader("builtin://")
 	{
@@ -20,21 +19,7 @@ namespace Destiny
 	{
 		m_mtx.lock();
 
-		char buffer[MAX_PATH];
-		GetModuleFileNameA(NULL, buffer, sizeof(buffer));
-
-		std::string exePath = buffer;
-		auto pos = exePath.find("Destiny.exe");
-		if (pos == exePath.npos)
-		{
-			blobHolder->loadFailed__();
-			LOG_ERROR("Thread {0}, BuiltinResourceBlobLoader failed : {1}", std::to_string((*(uint32_t*)&std::this_thread::get_id())), blobHolder->getPath());
-			m_mtx.unlock();
-			return;
-		}
-		
-		exePath = exePath.substr(0, pos);
-		std::string path = exePath + "builtin\\" + blobHolder->getPath();
+		auto path = normalizedPath(blobHolder);
 
 		std::ifstream ifs;
 		ifs.open(path, std::ios::in | std::ios::binary);
@@ -56,15 +41,17 @@ namespace Destiny
 
 		ifs.close();
 
-		blobHolder->setFullPath(path);
 		blobHolder->loadSucceeded__(blob);
 
 		m_mtx.unlock();
 	}
 
-	std::string BuiltinResourceBlobLoader::getFullPath(const std::string& path)
+	std::string BuiltinResourceBlobLoader::normalizedPath(std::shared_ptr<BlobHolder> blobHolder)
 	{
-		std::string resPath{ "" };
+		if (!blobHolder)
+		{
+			return "";
+		}
 
 		char buffer[MAX_PATH];
 		GetModuleFileNameA(NULL, buffer, sizeof(buffer));
@@ -74,14 +61,9 @@ namespace Destiny
 		if (pos != exePath.npos)
 		{
 			exePath = exePath.substr(0, pos);
-			auto pos2 = path.find("://");
-			if (pos2 != path.npos)
-			{
-				resPath = exePath + "builtin\\" + path.substr(pos2 + 3);
-			}
-
+			return exePath + "builtin\\" + blobHolder->getPath();
 		}
 
-		return resPath;
+		return "";
 	}
 }

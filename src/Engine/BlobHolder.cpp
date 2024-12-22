@@ -10,8 +10,7 @@ namespace Destiny
 		m_blob(nullptr),
 		m_blobLoader(blobLoader),
 		m_state(loading_state_pending),
-		m_path(path),
-		m_fullPath(path)
+		m_path(path)
 	{
 		auto pos = m_path.find("://");
 		if (pos != m_path.npos)

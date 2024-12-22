@@ -2,6 +2,7 @@
 #include "Engine/Engine.h"
 #include "Engine/Blob.h"
 #include "Engine/BlobHolder.h"
+#include "Engine/BlobLoader.h"
 #include "Engine/Utility.h"
 #include "Texture.h"
 #include "DDSTextureLoader.h"
@@ -25,21 +26,21 @@ namespace Destiny
 	{
 		m_mtx.lock();
 		
-		if (asset->isLoadingSucceed())
-		{
-			m_mtx.unlock();
-			return;
-		}
-
-		if (!asset || !dynamic_cast<Texture*>(asset.get()))
+		if (!asset || !std::dynamic_pointer_cast<Texture>(asset))
 		{
 			asset->loadFailed__();
 			m_mtx.unlock();
 			return;
 		}
 
-		auto creationParam = dynamic_cast<BlobHolder*>(asset->getCreationParam().get());
-		if (!creationParam)
+		if (asset->isLoadingSucceed())
+		{
+			m_mtx.unlock();
+			return;
+		}
+		
+		auto creationParam = std::dynamic_pointer_cast<BlobHolder>(asset->getCreationParam());
+		if (!creationParam || ! creationParam->getBlobLoader())
 		{
 			asset->loadFailed__();
 			m_mtx.unlock();
@@ -59,8 +60,8 @@ namespace Destiny
 		}
 
 		HRESULT hr = 0;
-
-		if (creationParam->getFullPath().find(".dds") != std::string::npos)
+		auto normalizedPath = creationParam->getBlobLoader()->normalizedPath(creationParam);
+		if (normalizedPath.find(".dds") != std::string::npos)
 		{
 			hr = DirectX::CreateDDSTextureFromMemory(Engine::GetInstance()->getGraphicsSystem()->getDevice(), (unsigned char*)creationParam->getBlob()->getData(), creationParam->getBlob()->getLength(), &((Texture*)asset.get())->m_resource, &((Texture*)asset.get())->m_shaderResourceView);
 		}
@@ -76,7 +77,7 @@ namespace Destiny
 		}
 		else
 		{
-			LOG_ERROR("Texture load failed : {0}", creationParam->getFullPath());
+			LOG_ERROR("Texture load failed : {0}", normalizedPath);
 			asset->loadFailed__();
 		}
 

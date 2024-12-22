@@ -49,7 +49,7 @@ namespace Destiny
 			return;
 		}
 
-		if (!m_blobHolder || !m_blobHolder->isLoadingSucceed() || !m_blobHolder->getBlob())
+		if (!m_blobHolder || !m_blobHolder->isLoadingSucceed() || !m_blobHolder->getBlob() || !m_blobHolder->getBlobLoader())
 		{
 			loadFailed__();
 			m_inputSignatureBlob.reset();
@@ -99,7 +99,8 @@ namespace Destiny
 		ID3DBlob* errorBlob = nullptr;
 
 		auto blob = m_blobHolder->getBlob();
-		HRESULT hr = D3DCompile(blob->getData(), blob->getLength(), m_blobHolder->getFullPath().c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "VS", "vs_5_0",
+		auto normalizedPath = m_blobHolder->getBlobLoader()->normalizedPath(m_blobHolder);
+		HRESULT hr = D3DCompile(blob->getData(), blob->getLength(), normalizedPath.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "VS", "vs_5_0",
 			D3DCOMPILE_ENABLE_STRICTNESS, 0, &m_vsCompiledBlob, &errorBlob);
 		if (FAILED(hr))
 		{
@@ -109,7 +110,7 @@ namespace Destiny
 			}
 			else
 			{
-				LOG_ERROR("CompileVertexShader {0} Failed:{1}", m_blobHolder->getFullPath(), "path error");
+				LOG_ERROR("CompileVertexShader {0} Failed:{1}", normalizedPath, "path error");
 			}
 			SAFE_RELEASE(errorBlob);
 			return false;
@@ -118,7 +119,7 @@ namespace Destiny
 		hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateVertexShader(m_vsCompiledBlob->GetBufferPointer(), m_vsCompiledBlob->GetBufferSize(), 0, &m_vertexShader);
 		if (FAILED(hr))
 		{
-			LOG_ERROR("CreateVertexShader {0} failed", m_blobHolder->getFullPath());
+			LOG_ERROR("CreateVertexShader {0} failed", normalizedPath);
 			return false;
 		}
 
@@ -140,7 +141,8 @@ namespace Destiny
 		ID3DBlob* errorBlob = nullptr;
 
 		auto blob = m_blobHolder->getBlob();
-		HRESULT hr = D3DCompile(blob->getData(), blob->getLength(), m_blobHolder->getFullPath().c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "PS", "ps_5_0",
+		auto normalizedPath = m_blobHolder->getBlobLoader()->normalizedPath(m_blobHolder);
+		HRESULT hr = D3DCompile(blob->getData(), blob->getLength(), normalizedPath.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "PS", "ps_5_0",
 			D3DCOMPILE_ENABLE_STRICTNESS, 0, &m_psCompiledBlob, &errorBlob);
 		if (FAILED(hr))
 		{
@@ -150,7 +152,7 @@ namespace Destiny
 			}
 			else
 			{
-				LOG_ERROR("CreatePixelShader {0} Failed:{1}", m_blobHolder->getFullPath(), "path error");
+				LOG_ERROR("CreatePixelShader {0} Failed:{1}", normalizedPath, "path error");
 			}
 			SAFE_RELEASE(errorBlob);
 			return false;
@@ -159,7 +161,7 @@ namespace Destiny
 		hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreatePixelShader(m_psCompiledBlob->GetBufferPointer(), m_psCompiledBlob->GetBufferSize(), 0, &m_pixelShader);
 		if (FAILED(hr))
 		{
-			LOG_ERROR("CreatePixelShader {0} failed", m_blobHolder->getFullPath());
+			LOG_ERROR("CreatePixelShader {0} failed", normalizedPath);
 			return false;
 		}
 
@@ -178,7 +180,8 @@ namespace Destiny
 			return true;
 		}
 
-		HRESULT hr = D3DCompile(blob->getData(), blob->getLength(), m_blobHolder->getFullPath().c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "GS", "gs_5_0",
+		auto normalizedPath = m_blobHolder->getBlobLoader()->normalizedPath(m_blobHolder);
+		HRESULT hr = D3DCompile(blob->getData(), blob->getLength(), normalizedPath.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "GS", "gs_5_0",
 			D3DCOMPILE_ENABLE_STRICTNESS, 0, &m_gsCompiledBlob, &errorBlob);
 		if (FAILED(hr))
 		{
@@ -188,7 +191,7 @@ namespace Destiny
 			}
 			else
 			{
-				LOG_ERROR("CreateGeometryShader {0} Failed:{1}", m_blobHolder->getFullPath(), "path error");
+				LOG_ERROR("CreateGeometryShader {0} Failed:{1}", normalizedPath, "path error");
 			}
 			SAFE_RELEASE(errorBlob);
 			return false;
@@ -197,7 +200,7 @@ namespace Destiny
 		hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateGeometryShader(m_gsCompiledBlob->GetBufferPointer(), m_gsCompiledBlob->GetBufferSize(), 0, &m_geometryShader);
 		if (FAILED(hr))
 		{
-			LOG_ERROR("CreateGeometryShader {0} failed", m_blobHolder->getFullPath());
+			LOG_ERROR("CreateGeometryShader {0} failed", normalizedPath);
 			return false;
 		}
 

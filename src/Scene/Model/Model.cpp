@@ -5,7 +5,8 @@
 namespace Destiny
 {
 	std::shared_ptr<ModelLoader> Model::s_modelLoader = std::make_shared<ModelLoader>();
-	Model::Model()
+	Model::Model() :
+		m_node(nullptr)
 	{
 
 	}

@@ -141,6 +141,13 @@ namespace Destiny
 						component->onEnterScene();
 					}
 				}
+				for (const auto& childNode : m_childs)
+				{
+					if (childNode)
+					{
+						childNode->onEnterScene();
+					}
+				}
 				break;
 			}
 			tmpParent = tmpParent->m_parent;

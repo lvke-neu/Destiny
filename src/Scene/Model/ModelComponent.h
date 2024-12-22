@@ -6,9 +6,12 @@ namespace Destiny
 	class Model;
 	class ModelComponent : public Component
 	{
+		RTTR_ENABLE(Component);
 	public:
 		ModelComponent();
 		virtual ~ModelComponent();
+	public:
+		GET_CLASS_NAME(ModelComponent);
 	public:
 		GET(std::string, path);
 		void set_path(const std::string& path);

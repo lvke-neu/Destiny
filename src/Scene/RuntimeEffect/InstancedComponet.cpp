@@ -5,10 +5,10 @@
 #include "Graphics/RenderPass.h"
 #include "Graphics/InputLayout.h"
 #include "Graphics/Mesh.h"
-#include "Graphics/MeshProvider.h"
 #include "Graphics/VertexBuffer.h"
 #include "Graphics/IndexBuffer.h"
 #include "Graphics/InstanceBuffer.h"
+#include "Graphics/VertexDefine.h"
 #include <d3d11.h>
 
 namespace Destiny
@@ -16,14 +16,6 @@ namespace Destiny
 	InstancedComponet::InstancedComponet()
 	{
 		size_t drawcallcount = 6000;
-
-		struct PositionNormalTexcoord
-		{
-			DirectX::XMFLOAT3 position;
-			DirectX::XMFLOAT3 normal;
-			DirectX::XMFLOAT2 texcoord;
-		};
-
 
 		std::shared_ptr<Blob> data = nullptr;
 		std::vector<PositionNormalTexcoord> vertices;
@@ -104,7 +96,7 @@ namespace Destiny
 		std::shared_ptr<IndexBuffer> indexBuffer = std::make_shared<IndexBuffer>(IndexBuffer::IndexType::Index16, data);
 
 		DirectX::BoundingBox aabb;
-		DirectX::BoundingBox::CreateFromPoints(aabb, { -1.0f,-1.0f,-1.0f }, { 1.0f,1.0f,1.0f });
+		DirectX::BoundingBox::CreateFromPoints(aabb, { FLT_MIN, FLT_MIN, FLT_MIN }, { FLT_MAX, FLT_MAX, FLT_MAX });
 
 		Mesh::DrawCall drawCall;
 		drawCall.drawMethod = Mesh::DrawMethod::DrawIndexedInstanced;

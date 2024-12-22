@@ -25,61 +25,61 @@ namespace Destiny
 	{
 		m_scene->initialize();
 
-		//pixelbillboard
-		{
-			auto pixelBillboardComponent = std::make_shared<PixelBillboardComponent>("builtin://texture/tree0.dds");
-			pixelBillboardComponent->set_enable(true);
+		////pixelbillboard
+		//{
+		//	auto pixelBillboardComponent = std::make_shared<PixelBillboardComponent>("builtin://texture/tree0.dds");
+		//	pixelBillboardComponent->set_enable(true);
 
-			auto node = std::make_shared<Node>();
-			node->set_name("PixelBillboardNode");
-			node->addComponent(pixelBillboardComponent);
-			node->addToParent(m_scene);
-		}
+		//	auto node = std::make_shared<Node>();
+		//	node->set_name("PixelBillboardNode");
+		//	node->addComponent(pixelBillboardComponent);
+		//	node->addToParent(m_scene);
+		//}
 
-		//pixelbillboard2
-		{
-			auto pixelBillboardComponent = std::make_shared<PixelBillboardComponent>("builtin://texture/yuanhuan.png");
-			pixelBillboardComponent->set_enable(true);
+		////pixelbillboard2
+		//{
+		//	auto pixelBillboardComponent = std::make_shared<PixelBillboardComponent>("builtin://texture/yuanhuan.png");
+		//	pixelBillboardComponent->set_enable(true);
 
-			auto node = std::make_shared<Node>();
-			node->set_name("PixelBillboardNode2");
-			node->addComponent(pixelBillboardComponent);
-			node->addToParent(m_scene);
+		//	auto node = std::make_shared<Node>();
+		//	node->set_name("PixelBillboardNode2");
+		//	node->addComponent(pixelBillboardComponent);
+		//	node->addToParent(m_scene);
 
-			Transform transform;
-			transform.set_translation({ 5.0f, 0.0f, 0.0f });
-			node->set_transform(transform);
-		}
+		//	Transform transform;
+		//	transform.set_translation({ 5.0f, 0.0f, 0.0f });
+		//	node->set_transform(transform);
+		//}
 
-		//sizebillboard
-		{
-			auto sizeBillboardComponent = std::make_shared<SizeBillboardComponent>();
-			sizeBillboardComponent->set_enable(true);
+		////sizebillboard
+		//{
+		//	auto sizeBillboardComponent = std::make_shared<SizeBillboardComponent>();
+		//	sizeBillboardComponent->set_enable(true);
 
-			auto node = std::make_shared<Node>();
-			node->set_name("SizeBillboardNode");
-			node->addComponent(sizeBillboardComponent);
-			node->addToParent(m_scene);
+		//	auto node = std::make_shared<Node>();
+		//	node->set_name("SizeBillboardNode");
+		//	node->addComponent(sizeBillboardComponent);
+		//	node->addToParent(m_scene);
 
-			Transform transform;
-			transform.set_translation({ 0.0f, 0.0f, 5.0f });
-			node->set_transform(transform);
-		}
+		//	Transform transform;
+		//	transform.set_translation({ 0.0f, 0.0f, 5.0f });
+		//	node->set_transform(transform);
+		//}
 
-		//box
-		{
-			auto boxComponent = std::make_shared<BoxComponent>();
-			boxComponent->set_enable(true);
-			
-			auto node = std::make_shared<Node>();
-			node->set_name("BoxNode");
-			node->addComponent(boxComponent);
-			node->addToParent(m_scene);
+		////box
+		//{
+		//	auto boxComponent = std::make_shared<BoxComponent>();
+		//	boxComponent->set_enable(true);
+		//	
+		//	auto node = std::make_shared<Node>();
+		//	node->set_name("BoxNode");
+		//	node->addComponent(boxComponent);
+		//	node->addToParent(m_scene);
 
-			Transform transform;
-			transform.set_translation({ -5.0f, 0.0f, 0.0f });
-			node->set_transform(transform);
-		}
+		//	Transform transform;
+		//	transform.set_translation({ -5.0f, 0.0f, 0.0f });
+		//	node->set_transform(transform);
+		//}
 
 		//plane
 		{
@@ -98,26 +98,30 @@ namespace Destiny
 			node->set_transform(transform);
 		}
 
-		//instance
-		{
-			auto instancedComponet = std::make_shared<InstancedComponet>();
-			instancedComponet->set_enable(true);
+		////instance
+		//{
+		//	auto instancedComponet = std::make_shared<InstancedComponet>();
+		//	instancedComponet->set_enable(true);
 
-			auto node = std::make_shared<Node>();
-			node->set_name("InstancedNode");
-			node->addComponent(instancedComponet);
-			node->addToParent(m_scene);
-		}
+		//	auto node = std::make_shared<Node>();
+		//	node->set_name("InstancedNode");
+		//	node->addComponent(instancedComponet);
+		//	node->addToParent(m_scene);
+		//}
 
 		//model
 		{
 			auto modelComponent = std::make_shared<ModelComponent>();
 			modelComponent->set_path("builtin://model/2nrtbod1out/2nrtbod1out.obj");
-			m_scene->addComponent(modelComponent);
 			
 			auto modelComponent2 = std::make_shared<ModelComponent>();
 			modelComponent2->set_path("builtin://model/nanosuit/nanosuit.obj");
-			m_scene->addComponent(modelComponent2);
+
+			auto node = std::make_shared<Node>();
+			node->set_name("ModelNode");
+			node->addComponent(modelComponent);
+			node->addComponent(modelComponent2);
+			node->addToParent(m_scene);
 		}
 
 		auto cameraTransfrom = m_scene->getCameraNode()->get_transform();

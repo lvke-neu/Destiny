@@ -60,7 +60,7 @@ namespace Destiny
 		(createVertexShader() && createPixelShader() && createGeometryShader()) ? loadSucceeded__() : loadFailed__();
 		
 
-		m_blobHolder.reset();
+		//m_blobHolder.reset();
 
 		collectReflectionInfo(m_vsCompiledBlob, 0);
 		collectReflectionInfo(m_psCompiledBlob, 1);
@@ -92,6 +92,15 @@ namespace Destiny
 
 		m_samplerStates[name].second.reset();
 		m_samplerStates[name].second = samplerState;
+	}
+
+	const std::string& Renderer::getPath() const
+	{
+		if (m_blobHolder)
+		{
+			return m_blobHolder->getPath();
+		}
+		return "";
 	}
 
 	bool Renderer::createVertexShader()

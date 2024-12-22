@@ -12,11 +12,7 @@ namespace Destiny
 		m_state(loading_state_pending),
 		m_path(path)
 	{
-		auto pos = m_path.find("://");
-		if (pos != m_path.npos)
-		{
-			m_path = m_path.substr(pos + 3);
-		}
+
 	}
 
 	void BlobHolder::load(int priority)

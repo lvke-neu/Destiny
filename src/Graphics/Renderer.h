@@ -36,6 +36,7 @@ namespace Destiny
 		void setConstant(const char* name, T value);
 		void setShaderResource(const char* name, std::shared_ptr<Texture> texture);
 		void setSamplerSate(const char* name, std::shared_ptr<SamplerState> samplerState);
+		const std::string& getPath() const;
 	private:
 		bool createVertexShader();
 		bool createPixelShader();

@@ -4,31 +4,11 @@
 #include "IndexBuffer.h"
 #include "Mesh.h"
 #include "InputLayout.h"
-#include <DirectXMath.h>
+#include "VertexDefine.h"
 
 namespace Destiny
 {
 	std::unordered_map<std::string, std::shared_ptr<Mesh>> MeshProvider::m_cache;
-
-	struct PositionNormalTexcoord
-	{
-		DirectX::XMFLOAT3 position;
-		DirectX::XMFLOAT3 normal;
-		DirectX::XMFLOAT2 texcoord;
-	};
-
-	struct PositionColor
-	{
-		DirectX::XMFLOAT3 position;
-		DirectX::XMFLOAT4 color;
-
-	};
-
-	struct Position
-	{
-		DirectX::XMFLOAT3 position;
-	};
-
 	std::shared_ptr<Mesh> MeshProvider::Create_Box_PositionNormalTexcoord()
 	{
 		auto iter = m_cache.find("Box_PositionNormalTexcoord");

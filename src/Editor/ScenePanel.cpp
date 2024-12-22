@@ -1,27 +1,40 @@
 #include "ScenePanel.h"
+#include "Application.h"
+#include "StatPanel.h"
 #include "Imgui/imgui.h"
 #include "Engine/Engine.h"
-#include "Scene/SceneManager.h"
+#include "Engine/Node.h"
 #include "Graphics/VisualScene.h"
+#include "Scene/SceneManager.h"
 #include <queue>
 
-static void BFS(std::shared_ptr<Destiny::Node> node)
+void ScenePanel::bfs(std::shared_ptr<Destiny::Node> node)
 {
 	if (!node)
 	{
 		return;
 	}
-
-	if (ImGui::TreeNodeEx(node->get_name().c_str()))
+	
+	if (ImGui::TreeNodeEx(node->get_name().c_str(), ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_Selected))
 	{
-		for (const auto& child : node->getChilds())
+		if (m_application && m_application->m_statPanel)
 		{
-			BFS(child);
+			m_application->m_statPanel->setChoosedNode(node);
 		}
 
-		ImGui::Text(node->get_transform().toString().c_str());
+		for (const auto& child : node->getChilds())
+		{
+			bfs(child);
+		}
+
 		ImGui::TreePop();
 	}
+}
+
+ScenePanel::ScenePanel(Application* application) :
+	m_application(application)
+{
+
 }
 
 void ScenePanel::update()
@@ -30,16 +43,7 @@ void ScenePanel::update()
 
 	ImGui::Begin("SceneNode");
 
-	//ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_FramePadding;
-	//bool b_IsOpen = ImGui::TreeNodeEx("aaa", treeNodeFlags);
-
-	BFS(Destiny::Engine::GetInstance()->getSceneManager()->getScene());
-
-	auto scene = Destiny::Engine::GetInstance()->getSceneManager()->getScene();
-	if (scene && scene->getCameraNode())
-	{
-		ImGui::Text(scene->getCameraNode()->get_transform().toString().c_str());
-	}
+	bfs(Destiny::Engine::GetInstance()->getSceneManager()->getScene());
 
 	ImGui::End();
 

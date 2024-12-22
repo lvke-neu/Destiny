@@ -7,9 +7,12 @@ namespace Destiny
 	class CameraController;
 	class VisualScene : public Scene
 	{
+		RTTR_ENABLE(Scene);
 	public:
 		VisualScene(const std::string& name);
 		virtual ~VisualScene() = default;
+	public:
+		GET_CLASS_NAME(VisualScene);
 	public:
 		virtual void initialize() override;
 		virtual void uninitialize() override;

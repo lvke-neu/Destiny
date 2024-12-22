@@ -39,6 +39,7 @@ namespace Destiny
 			{
 				modelNode->addToParent(m_node);
 			}
+
 			m_modelChanged = false;
 		}
 	}

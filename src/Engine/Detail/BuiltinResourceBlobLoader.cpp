@@ -61,7 +61,14 @@ namespace Destiny
 		if (pos != exePath.npos)
 		{
 			exePath = exePath.substr(0, pos);
-			return exePath + "builtin\\" + blobHolder->getPath();
+
+			auto path = blobHolder->getPath();
+			pos = path.find("://");
+			if (pos != path.npos)
+			{
+				path = path.substr(pos + 3);
+				return exePath + "builtin\\" + path;
+			}	
 		}
 
 		return "";

@@ -74,6 +74,8 @@ namespace Destiny
 				{
 					continue;
 				}
+
+				//Engine::GetInstance()->getGraphicsSystem()->commitVisual(visualComponent->getVisual());
 				if (visualComponent->getVisual() && visualComponent->getVisual()->getMesh())
 				{
 					if (visualComponent->getVisual()->getMesh()->getDrawCall().drawMethod == Mesh::DrawMethod::DrawIndexedInstanced)

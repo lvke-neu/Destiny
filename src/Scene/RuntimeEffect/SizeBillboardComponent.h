@@ -10,6 +10,6 @@ namespace Destiny
 		SizeBillboardComponent();
 		virtual ~SizeBillboardComponent() = default;
 	public:
-		GET_CLASS_NAME(PixelBillboardComponent);
+		GET_CLASS_NAME(SizeBillboardComponent);
 	};
 }

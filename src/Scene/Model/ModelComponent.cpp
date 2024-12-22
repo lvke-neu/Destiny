@@ -1,5 +1,6 @@
 #include "ModelComponent.h"
 #include "Model.h"
+#include "Engine/Node.h"
 
 namespace Destiny
 {
@@ -21,20 +22,24 @@ namespace Destiny
 		{
 			m_model.reset();
 			m_model = Model::Create(path.c_str());
-			m_model->load();
-			m_modelChanged = true;
+			if (m_model)
+			{
+				m_model->load();
+				m_modelChanged = true;
+			}
 		}
 	}
 
 	void ModelComponent::onUpdate(float deltaTime)
 	{
-		if (m_modelChanged && m_model->isLoadingSucceed())
+		if (m_modelChanged && m_model && m_model->isLoadingSucceed() && m_model->getNode())
 		{
-			if (m_node)
+			auto modelNode = m_model->getNode();
+			if (modelNode)
 			{
-				//TODO: add to node
-				m_modelChanged = false;
+				modelNode->addToParent(m_node);
 			}
+			m_modelChanged = false;
 		}
 	}
 }

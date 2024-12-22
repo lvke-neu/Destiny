@@ -24,18 +24,18 @@ namespace Destiny
 
 	void TextureLoader::loadAsset(std::shared_ptr<Asset> asset)
 	{
-		m_mtx.lock();
+		//m_mtx.lock();
 		
 		if (!asset || !std::dynamic_pointer_cast<Texture>(asset))
 		{
 			asset->loadFailed__();
-			m_mtx.unlock();
+			//m_mtx.unlock();
 			return;
 		}
 
 		if (asset->isLoadingSucceed())
 		{
-			m_mtx.unlock();
+			//m_mtx.unlock();
 			return;
 		}
 		
@@ -43,7 +43,7 @@ namespace Destiny
 		if (!creationParam || ! creationParam->getBlobLoader())
 		{
 			asset->loadFailed__();
-			m_mtx.unlock();
+			//m_mtx.unlock();
 			return;
 		}
 
@@ -55,7 +55,7 @@ namespace Destiny
 		if (creationParam->isLoadingFailed() || !creationParam->getBlob())
 		{
 			asset->loadFailed__();
-			m_mtx.unlock();
+			//m_mtx.unlock();
 			return;
 		}
 
@@ -81,6 +81,6 @@ namespace Destiny
 			asset->loadFailed__();
 		}
 
-		m_mtx.unlock();
+		//m_mtx.unlock();
 	}
 }

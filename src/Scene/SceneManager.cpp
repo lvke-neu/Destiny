@@ -113,11 +113,11 @@ namespace Destiny
 		{
 			auto modelComponent = std::make_shared<ModelComponent>();
 			modelComponent->set_path("builtin://model/2nrtbod1out/2nrtbod1out.obj");
-
-			auto node = std::make_shared<Node>();
-			node->set_name("ModelNode");
-			node->addComponent(modelComponent);
-			node->addToParent(m_scene);
+			m_scene->addComponent(modelComponent);
+			
+			auto modelComponent2 = std::make_shared<ModelComponent>();
+			modelComponent2->set_path("builtin://model/nanosuit/nanosuit.obj");
+			m_scene->addComponent(modelComponent2);
 		}
 
 		auto cameraTransfrom = m_scene->getCameraNode()->get_transform();

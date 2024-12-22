@@ -18,6 +18,12 @@ namespace Destiny
 			DirectX::XMMatrixTranslationFromVector(XMLoadFloat3(&m_translation));
 	}
 
+	void Transform::setWorldMatrix(const DirectX::XMMATRIX& XMMATRIX)
+	{
+		//TODO:WorldMatrix To Scale, Rotation, Translation
+
+	}
+
 	DirectX::XMMATRIX Transform::getTransposeWorldMatrix() const
 	{
 		return DirectX::XMMatrixTranspose(getWorldMatrix());

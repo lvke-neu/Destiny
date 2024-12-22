@@ -11,6 +11,7 @@ namespace Destiny
 		Transform();
 	public:
 		DirectX::XMMATRIX getWorldMatrix() const;
+		void setWorldMatrix(const DirectX::XMMATRIX& worldMatrix);
 		DirectX::XMMATRIX getTransposeWorldMatrix() const;
 		DirectX::XMMATRIX getInvTransposeWorldMatrix() const;
 

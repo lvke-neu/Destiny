@@ -38,16 +38,19 @@ namespace Destiny
 		{
 			auto topNode = nodes.front();
 			nodes.pop();
-			for (const auto& component : topNode->getComponents())
+			if (topNode)
 			{
-				if (component)
+				for (const auto& component : topNode->getComponents())
 				{
-					component->onUpdate(deltaTime);
+					if (component)
+					{
+						component->onUpdate(deltaTime);
+					}
 				}
-			}
-			for (const auto& node : topNode->getChilds())
-			{
-				nodes.push(node);
+				for (const auto& node : topNode->getChilds())
+				{
+					nodes.push(node);
+				}
 			}
 		}
 	}

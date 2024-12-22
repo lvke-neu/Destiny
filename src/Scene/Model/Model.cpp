@@ -1,6 +1,9 @@
 #include "Model.h"
 #include "ModelLoader.h"
 #include "Engine/BlobHolder.h"
+#include "Engine/Engine.h"
+#include "Engine/BlobLoader.h"
+#include "Engine/BlobLoaderManager.h"
 
 namespace Destiny
 {
@@ -18,12 +21,20 @@ namespace Destiny
 
 	std::shared_ptr<Model> Model::Create(const char* path)
 	{
-		std::shared_ptr<Model> model = std::make_shared<Model>();
-		std::shared_ptr<BlobHolder> blobHolder = std::make_shared<BlobHolder>();
-		
-		blobHolder->setPath(path);
-		model->initialize(s_modelLoader, blobHolder);
+		auto blobLoader = Destiny::Engine::GetInstance()->getBlobLoaderManager()->getBlobLoader(path);
+		if (blobLoader)
+		{
+			auto blobHolder = blobLoader->createBlobHolder(path);
 
-		return model;
+			if (blobHolder)
+			{
+				std::shared_ptr<Model> model = std::make_shared<Model>();
+				model->initialize(s_modelLoader, blobHolder);
+
+				return model;
+			}
+		}
+
+		return nullptr;
 	}
 }

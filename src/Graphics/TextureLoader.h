@@ -4,7 +4,7 @@
 
 namespace Destiny
 {
-	class TextureLoader : public AssetLoader, public std::enable_shared_from_this<TextureLoader>
+	class TextureLoader : public AssetLoader
 	{
 	public:
 		TextureLoader();

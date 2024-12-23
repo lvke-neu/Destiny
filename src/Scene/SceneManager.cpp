@@ -115,7 +115,7 @@ namespace Destiny
 			modelComponent1->set_path("builtin://model/2nrtbod1out/2nrtbod1out.obj");
 			auto node1 = std::make_shared<Node>();
 			Transform transform1;
-			transform1.set_scale({ 0.01f, 0.01f, 0.01f });
+			transform1.set_scale({ 0.02f, 0.02f, 0.02f });
 			transform1.set_rotation({ 90.0f, 0.0f, 0.0f });
 			transform1.set_translation({ 2.0f, 0.0f, 0.0f });
 			node1->set_name("ModelComponentNode1");
@@ -127,7 +127,7 @@ namespace Destiny
 			modelComponent2->set_path("builtin://model/nanosuit/nanosuit.obj");
 			auto node2 = std::make_shared<Node>();
 			Transform transform2;
-			transform2.set_scale({ 0.1f, 0.1f, 0.1f });
+			transform2.set_scale({ 0.2f, 0.2f, 0.2f });
 			transform2.set_rotation({ 0.0f, 0.0f, 0.0f });
 			transform2.set_translation({ -2.0f, 0.0f, 0.0f });
 			node2->set_name("ModelComponentNode2");

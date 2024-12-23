@@ -27,7 +27,7 @@ Kd 1 1 1
 Ks 0.752941 0.752941 0.752941
 illum 2
 Ns 8
-map_Kd ntxr001.png
+map_Kd builtin://model/2nrtbod1out/ntxr001.png
 map_bump 
 bump 
 map_opacity 
@@ -43,7 +43,7 @@ Kd 1 1 1
 Ks 0.752941 0.752941 0.752941
 illum 2
 Ns 8
-map_Kd ntxr004.png
+map_Kd builtin://model/2nrtbod1out/ntxr004.png
 map_bump 
 bump 
 map_opacity 

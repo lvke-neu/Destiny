@@ -1,5 +1,6 @@
 #include "ModelLoader.h"
 #include "Model.h"
+#include "Material.h"
 #include "Engine/BlobHolder.h"
 #include "Engine/BlobLoader.h"
 #include "Engine/Node.h"
@@ -12,6 +13,8 @@
 #include "Graphics/InputLayout.h"
 #include "Graphics/IndexBuffer.h"
 #include "Graphics/Mesh.h"
+#include "Graphics/SamplerState.h"
+#include "Graphics/Texture.h"
 #include <queue>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -113,6 +116,23 @@ namespace Destiny
 			visualComponent->setRenderPass(getRenderPass());
 			visualComponent->setMesh(getMesh(otherScene->mMeshes[otherNode->mMeshes[i]]));
 			myNode->addComponent(visualComponent);
+			
+			auto material = getMaterial(otherScene->mMaterials[otherScene->mMeshes[otherNode->mMeshes[i]]->mMaterialIndex]);
+			if (material)
+			{
+				auto s_sampler = std::make_shared<SamplerState>();
+				s_sampler->load(0);
+				visualComponent->getVisual()->getRenderPass()->getRenderer()->setConstant("c_has_c_ambient", material->c_has_c_ambient);
+				visualComponent->getVisual()->getRenderPass()->getRenderer()->setConstant("c_has_c_diffuse", material->c_has_c_diffuse);
+				visualComponent->getVisual()->getRenderPass()->getRenderer()->setConstant("c_has_t_ambient", material->c_has_t_ambient);
+				visualComponent->getVisual()->getRenderPass()->getRenderer()->setConstant("c_has_t_diffuse", material->c_has_t_diffuse);
+				visualComponent->getVisual()->getRenderPass()->getRenderer()->setConstant("c_ambient", material->c_ambient);
+				visualComponent->getVisual()->getRenderPass()->getRenderer()->setConstant("c_diffuse", material->c_diffuse);
+				visualComponent->getVisual()->getRenderPass()->getRenderer()->setSamplerSate("s_sampler", s_sampler);
+				visualComponent->getVisual()->getRenderPass()->getRenderer()->setShaderResource("t_ambient", material->t_ambient);
+				visualComponent->getVisual()->getRenderPass()->getRenderer()->setShaderResource("t_diffuse", material->t_diffuse);
+			}
+		
 
 			DirectX::BoundingBox::CreateMerged(mergedAABB, mergedAABB, visualComponent->getVisual()->getMesh()->getBoundingBox());
 		}
@@ -206,5 +226,48 @@ namespace Destiny
 		std::shared_ptr<Mesh> myMesh = std::make_shared<Mesh>(aabb, drawCall, vertexBuffer, indexBuffer);
 		myMesh->load();
 		return myMesh;
+	}
+
+	std::shared_ptr<Material> ModelLoader::getMaterial(aiMaterial* otherMaterial)
+	{
+		if (!otherMaterial)
+		{
+			return nullptr;
+		}
+
+		std::shared_ptr<Material>  material = std::make_shared<Material>();
+		
+		aiColor4D otherColor;
+		if (otherMaterial->Get(AI_MATKEY_COLOR_AMBIENT, otherColor) == aiReturn_SUCCESS)
+		{
+			material->c_has_c_ambient = true;
+			material->c_ambient = { otherColor.r, otherColor.g, otherColor.b, otherColor.a };
+		}
+		if (otherMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, otherColor) == aiReturn_SUCCESS)
+		{
+			material->c_has_c_diffuse = true;
+			material->c_diffuse = { otherColor.r, otherColor.g, otherColor.b, otherColor.a };
+		}
+	
+		aiString otherStr;
+		if (otherMaterial->GetTexture(aiTextureType_AMBIENT, 0, &otherStr) == aiReturn_SUCCESS)
+		{
+			material->c_has_t_ambient = true;
+			material->t_ambient = Texture::Create(otherStr.C_Str());
+			if (material->t_ambient)
+			{
+				material->t_ambient->load();
+			}
+		}
+		if (otherMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &otherStr) == aiReturn_SUCCESS)
+		{
+			material->c_has_t_diffuse = true;
+			material->t_diffuse = Texture::Create(otherStr.C_Str());
+			if (material->t_diffuse)
+			{
+				material->t_diffuse->load();
+			}
+		}
+		return material;
 	}
 }

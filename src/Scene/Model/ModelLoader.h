@@ -6,11 +6,13 @@
 struct aiScene;
 struct aiNode;
 struct aiMesh;
+struct aiMaterial;
 namespace Destiny
 {
 	class Node;
 	class RenderPass;
 	class Mesh;
+	class Material;
 	class ModelLoader : public AssetLoader
 	{
 	public:
@@ -22,5 +24,6 @@ namespace Destiny
 		std::shared_ptr<Node>			copyTree(const aiScene* otherScene, std::shared_ptr<Node> myNodeParent, aiNode* otherNode, DirectX::BoundingBox& mergedAABB);
 		std::shared_ptr<RenderPass>		getRenderPass();
 		std::shared_ptr<Mesh>			getMesh(aiMesh* otherMesh);
+		std::shared_ptr<Material>		getMaterial(aiMaterial* otherMaterial);
 	};
 }

@@ -53,7 +53,7 @@ namespace Destiny
 		{
 			return;
 		}
-		
+		onNodeTransformChanged();
 		onCameraViewChanged(visualScene->getCameraNode()->get_transform().getInvTransposeWorldMatrix());
 		onCameraProjChanged(
 			DirectX::XMMatrixTranspose

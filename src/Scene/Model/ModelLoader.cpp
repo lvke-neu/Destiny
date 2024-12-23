@@ -12,6 +12,7 @@
 #include "Graphics/InputLayout.h"
 #include "Graphics/IndexBuffer.h"
 #include "Graphics/Mesh.h"
+#include <queue>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -30,18 +31,18 @@ namespace Destiny
 
 	void ModelLoader::loadAsset(std::shared_ptr<Asset> asset)
 	{
-		//m_mtx.lock();
+		m_mtx.lock();
 
 		if (!asset || !std::dynamic_pointer_cast<Model>(asset))
 		{
 			asset->loadFailed__();
-			//m_mtx.unlock();
+			m_mtx.unlock();
 			return;
 		}
 
 		if (asset->isLoadingSucceed())
 		{
-			//m_mtx.unlock();
+			m_mtx.unlock();
 			return;
 		}
 
@@ -49,7 +50,7 @@ namespace Destiny
 		if (!creationParam || ! creationParam->getBlobLoader())
 		{
 			asset->loadFailed__();
-			//m_mtx.unlock();
+			m_mtx.unlock();
 			return;
 		}
 
@@ -62,17 +63,40 @@ namespace Destiny
 		{
 			asset->loadFailed__();
 			LOG_ERROR("ERROR::ASSIMP::{0}", importer.GetErrorString());
-			//m_mtx.unlock();
+			m_mtx.unlock();
 			return;
 		}
 
+		DirectX::BoundingBox mergedAABB{ { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } };
 		auto model = std::dynamic_pointer_cast<Model>(asset);
-		model->m_node = copyTree(aiScene, nullptr, aiScene->mRootNode);
+		model->m_node = copyTree(aiScene, nullptr, aiScene->mRootNode, mergedAABB);
+		std::queue<std::shared_ptr<Node>> nodes;
+		nodes.push(model->m_node);
+		while (!nodes.empty())
+		{
+			auto topNode = nodes.front();
+			nodes.pop();
+			if (topNode)
+			{
+				for (const auto& component : topNode->getComponents())
+				{
+					auto visualComponent = std::dynamic_pointer_cast<VisualComponent>(component);
+					if (visualComponent && visualComponent->getVisual() && visualComponent->getVisual()->getMesh())
+					{
+						visualComponent->getVisual()->getMesh()->setBoundingBox(mergedAABB);
+					}
+				}
+				for (const auto& node : topNode->getChilds())
+				{
+					nodes.push(node);
+				}
+			}
+		}
 		asset->loadSucceeded__();
-		//m_mtx.unlock();
+		m_mtx.unlock();
 	}
 
-	std::shared_ptr<Node> ModelLoader::copyTree(const aiScene* otherScene, std::shared_ptr<Node> myNodeParent, aiNode* otherNode)
+	std::shared_ptr<Node> ModelLoader::copyTree(const aiScene* otherScene, std::shared_ptr<Node> myNodeParent, aiNode* otherNode, DirectX::BoundingBox& mergedAABB)
 	{
 		if (!otherScene || !otherNode)
 		{
@@ -88,8 +112,9 @@ namespace Destiny
 			std::shared_ptr<VisualComponent> visualComponent = std::make_shared<VisualComponent>();
 			visualComponent->setRenderPass(getRenderPass());
 			visualComponent->setMesh(getMesh(otherScene->mMeshes[otherNode->mMeshes[i]]));
-
 			myNode->addComponent(visualComponent);
+
+			DirectX::BoundingBox::CreateMerged(mergedAABB, mergedAABB, visualComponent->getVisual()->getMesh()->getBoundingBox());
 		}
 
 		Transform transform;
@@ -100,7 +125,7 @@ namespace Destiny
 
 		for (unsigned int i = 0; i < otherNode->mNumChildren; i++)
 		{
-			copyTree(otherScene, myNode, otherNode->mChildren[i]);
+			copyTree(otherScene, myNode, otherNode->mChildren[i], mergedAABB);
 		}
 
 		return myNode;
@@ -112,7 +137,7 @@ namespace Destiny
 		renderer->load(0);
 
 		std::shared_ptr<RenderStates> renderStates = std::make_shared<RenderStates>();
-		renderStates->load(0);
+		renderStates->load();
 
 		std::shared_ptr<RenderPass> renderPass = std::make_shared<RenderPass>();
 		renderPass->setRendererCategory(RenderPass::ForwardOpaque);
@@ -179,7 +204,7 @@ namespace Destiny
 		drawCall.indexCount = (unsigned int)indices.size();
 
 		std::shared_ptr<Mesh> myMesh = std::make_shared<Mesh>(aabb, drawCall, vertexBuffer, indexBuffer);
-		myMesh->load(0);
+		myMesh->load();
 		return myMesh;
 	}
 }

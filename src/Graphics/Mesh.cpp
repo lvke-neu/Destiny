@@ -8,6 +8,15 @@
 
 namespace Destiny
 {
+	Mesh::Mesh(const DrawCall& drawCall, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer, std::shared_ptr<InstanceBuffer> instanceBuffer) :
+		m_drawCall(drawCall),
+		m_vertexBuffer(vertexBuffer),
+		m_indexBuffer(indexBuffer),
+		m_instanceBuffer(instanceBuffer)
+	{
+		m_aabb = { { 0.0f, 0.0f, 0.0f },{ -1.0f, -1.0f, -1.0 } };
+	}
+
 	Mesh::Mesh(const DirectX::BoundingBox& aabb, const DrawCall& drawCall, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer, std::shared_ptr<InstanceBuffer> instanceBuffer) :
 		m_aabb(aabb),
 		m_drawCall(drawCall),

@@ -33,6 +33,7 @@ namespace Destiny
 			unsigned int vertexCount	= 0;
 		};
 	public:
+		Mesh(const DrawCall& drawCall, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer, std::shared_ptr<InstanceBuffer> instanceBuffer = nullptr);
 		Mesh(const DirectX::BoundingBox& aabb, const DrawCall& drawCall, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer, std::shared_ptr<InstanceBuffer> instanceBuffer = nullptr);
 		virtual ~Mesh();
 	public:
@@ -41,6 +42,7 @@ namespace Destiny
 		void updateInstanceBufferData(std::shared_ptr<Blob> data);
 		void fillDrawParameters(std::shared_ptr<DrawParameters> drawParameters, std::shared_ptr<Blob> inputSignatureBlob);
 		DirectX::BoundingBox	getBoundingBox();
+		void					setBoundingBox(const DirectX::BoundingBox& aabb);
 		DrawCall				getDrawCall();
 	private:
 		DirectX::BoundingBox			m_aabb;
@@ -53,6 +55,11 @@ namespace Destiny
 	inline DirectX::BoundingBox Mesh::getBoundingBox()
 	{
 		return m_aabb;
+	}
+
+	inline void Mesh::setBoundingBox(const DirectX::BoundingBox& aabb)
+	{
+		m_aabb = aabb;
 	}
 
 	inline Mesh::DrawCall Mesh::getDrawCall()

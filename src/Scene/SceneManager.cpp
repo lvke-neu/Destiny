@@ -94,7 +94,7 @@ namespace Destiny
 			Transform transform;
 			transform.set_scale({ 10.0f, 10.0f, 1.0f });
 			transform.set_rotation({ 90.0f, 0.0f, 0.0f });
-			transform.set_translation({ 0.0f, -3.0f, 0.0f });
+			transform.set_translation({ 0.0f, 0.0f, 0.0f });
 			node->set_transform(transform);
 		}
 
@@ -111,21 +111,33 @@ namespace Destiny
 
 		//model
 		{
-			auto modelComponent = std::make_shared<ModelComponent>();
-			modelComponent->set_path("builtin://model/2nrtbod1out/2nrtbod1out.obj");
-			
+			auto modelComponent1 = std::make_shared<ModelComponent>();
+			modelComponent1->set_path("builtin://model/2nrtbod1out/2nrtbod1out.obj");
+			auto node1 = std::make_shared<Node>();
+			Transform transform1;
+			transform1.set_scale({ 0.01f, 0.01f, 0.01f });
+			transform1.set_rotation({ 90.0f, 0.0f, 0.0f });
+			transform1.set_translation({ 2.0f, 0.0f, 0.0f });
+			node1->set_name("ModelComponentNode1");
+			node1->addComponent(modelComponent1);
+			node1->addToParent(m_scene);
+			node1->set_transform(transform1);
+
 			auto modelComponent2 = std::make_shared<ModelComponent>();
 			modelComponent2->set_path("builtin://model/nanosuit/nanosuit.obj");
-
-			auto node = std::make_shared<Node>();
-			node->set_name("ModelNode");
-			node->addComponent(modelComponent);
-			node->addComponent(modelComponent2);
-			node->addToParent(m_scene);
+			auto node2 = std::make_shared<Node>();
+			Transform transform2;
+			transform2.set_scale({ 0.1f, 0.1f, 0.1f });
+			transform2.set_rotation({ 0.0f, 0.0f, 0.0f });
+			transform2.set_translation({ -2.0f, 0.0f, 0.0f });
+			node2->set_name("ModelComponentNode2");
+			node2->addComponent(modelComponent2);
+			node2->addToParent(m_scene);
+			node2->set_transform(transform2);
 		}
 
 		auto cameraTransfrom = m_scene->getCameraNode()->get_transform();
-		cameraTransfrom.set_translation({ 0.0f, 0.0f, -5.0f });
+		cameraTransfrom.set_translation({ 0.0f, 0.5f, -5.0f });
 		m_scene->getCameraNode()->set_transform(cameraTransfrom);
 	}
 

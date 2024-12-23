@@ -1,6 +1,7 @@
 #include "ModelComponent.h"
 #include "Model.h"
 #include "Engine/Node.h"
+#include "Engine/Utility.h"
 
 namespace Destiny
 {
@@ -20,11 +21,12 @@ namespace Destiny
 	{
 		if (m_path != path)
 		{
+			m_path = path;
 			m_model.reset();
 			m_model = Model::Create(path.c_str());
 			if (m_model)
 			{
-				m_model->load();
+				m_model->load(0);
 				m_modelChanged = true;
 			}
 		}
@@ -38,6 +40,7 @@ namespace Destiny
 			if (modelNode)
 			{
 				modelNode->addToParent(m_node);
+				LOG_INFO("Model:{0} load successfully", m_path);
 			}
 
 			m_modelChanged = false;

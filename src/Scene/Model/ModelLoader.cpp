@@ -178,20 +178,26 @@ namespace Destiny
 
 		std::vector<PositionNormalTexcoord> vertices;
 		vertices.resize(otherMesh->mNumVertices);
-		if (otherMesh->HasPositions() && otherMesh->HasNormals() && otherMesh->HasTextureCoords(0))
+		if (otherMesh->HasPositions())
 		{
 			for (unsigned int i = 0; i < otherMesh->mNumVertices; i++)
 			{
 				vertices[i].position.x = otherMesh->mVertices[i].x;
 				vertices[i].position.y = otherMesh->mVertices[i].y;
 				vertices[i].position.z = otherMesh->mVertices[i].z;
+				
+				if (otherMesh->HasNormals())
+				{
+					vertices[i].normal.x = otherMesh->mNormals[i].x;
+					vertices[i].normal.y = otherMesh->mNormals[i].y;
+					vertices[i].normal.z = otherMesh->mNormals[i].z;
+				}
 
-				vertices[i].normal.x = otherMesh->mNormals[i].x;
-				vertices[i].normal.y = otherMesh->mNormals[i].y;
-				vertices[i].normal.z = otherMesh->mNormals[i].z;
-
-				vertices[i].texcoord.x = otherMesh->mTextureCoords[0][i].x;
-				vertices[i].texcoord.y = otherMesh->mTextureCoords[0][i].y;
+				if (otherMesh->HasTextureCoords(0))
+				{
+					vertices[i].texcoord.x = otherMesh->mTextureCoords[0][i].x;
+					vertices[i].texcoord.y = otherMesh->mTextureCoords[0][i].y;
+				}
 			}
 		}
 		data.reset(new Blob(vertices.size() * sizeof(PositionNormalTexcoord)));

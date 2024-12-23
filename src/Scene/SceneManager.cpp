@@ -117,7 +117,7 @@ namespace Destiny
 			Transform transform1;
 			transform1.set_scale({ 0.02f, 0.02f, 0.02f });
 			transform1.set_rotation({ 90.0f, 0.0f, 0.0f });
-			transform1.set_translation({ 2.0f, 0.0f, 0.0f });
+			transform1.set_translation({ 3.0f, 0.0f, 0.0f });
 			node1->set_name("ModelComponentNode1");
 			node1->addComponent(modelComponent1);
 			node1->addToParent(m_scene);
@@ -129,7 +129,7 @@ namespace Destiny
 			Transform transform2;
 			transform2.set_scale({ 0.2f, 0.2f, 0.2f });
 			transform2.set_rotation({ 0.0f, 0.0f, 0.0f });
-			transform2.set_translation({ -2.0f, 0.0f, 0.0f });
+			transform2.set_translation({ -3.0f, 0.0f, 0.0f });
 			node2->set_name("ModelComponentNode2");
 			node2->addComponent(modelComponent2);
 			node2->addToParent(m_scene);
@@ -139,13 +139,25 @@ namespace Destiny
 			modelComponent3->set_path("builtin://model/fbx/robot-v2.fbx");
 			auto node3 = std::make_shared<Node>();
 			Transform transform3;
-			transform3.set_scale({ 0.0f, 0.0f, 0.0f });
-			transform3.set_rotation({ 0.0f, 0.0f, 0.0f });
+			transform3.set_scale({ 0.3f, 0.3f, 0.3f });
+			transform3.set_rotation({ 90.0f, 0.0f, 0.0f });
 			transform3.set_translation({ 0.0f, 0.0f, 0.0f });
 			node3->set_name("ModelComponentNode3");
 			node3->addComponent(modelComponent3);
 			node3->addToParent(m_scene);
 			node3->set_transform(transform3);
+
+			auto modelComponent4 = std::make_shared<ModelComponent>();
+			modelComponent4->set_path("builtin://model/walk/Standard Walk.dae");
+			auto node4 = std::make_shared<Node>();
+			Transform transform4;
+			transform4.set_scale({ 0.02f, 0.02f, 0.02f });
+			transform4.set_rotation({ 0.0f, 0.0f, 0.0f });
+			transform4.set_translation({ 5.0f, 0.0f, 0.0f });
+			node4->set_name("ModelComponentNode4");
+			node4->addComponent(modelComponent4);
+			node4->addToParent(m_scene);
+			node4->set_transform(transform4);
 		}
 
 		auto cameraTransfrom = m_scene->getCameraNode()->get_transform();

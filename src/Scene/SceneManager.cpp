@@ -134,6 +134,18 @@ namespace Destiny
 			node2->addComponent(modelComponent2);
 			node2->addToParent(m_scene);
 			node2->set_transform(transform2);
+
+			auto modelComponent3 = std::make_shared<ModelComponent>();
+			modelComponent3->set_path("builtin://model/fbx/robot-v2.fbx");
+			auto node3 = std::make_shared<Node>();
+			Transform transform3;
+			transform3.set_scale({ 0.0f, 0.0f, 0.0f });
+			transform3.set_rotation({ 0.0f, 0.0f, 0.0f });
+			transform3.set_translation({ 0.0f, 0.0f, 0.0f });
+			node3->set_name("ModelComponentNode3");
+			node3->addComponent(modelComponent3);
+			node3->addToParent(m_scene);
+			node3->set_transform(transform3);
 		}
 
 		auto cameraTransfrom = m_scene->getCameraNode()->get_transform();

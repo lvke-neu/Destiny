@@ -41,9 +41,9 @@ namespace Destiny
 		D3D11_SUBRESOURCE_DATA InitData;
 		ZeroMemory(&InitData, sizeof(InitData));
 		InitData.pSysMem = m_data->getData();
-
+		Engine::GetInstance()->getGraphicsSystem()->deviceLock();
 		HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateBuffer(&ibd, &InitData, &m_vertexBuffer);
-
+		Engine::GetInstance()->getGraphicsSystem()->deviceUnLock();
 		if (SUCCEEDED(hr))
 		{
 			loadSucceeded__();

@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <mutex>
 
 struct ID3D11Device;
 struct ID3D11DeviceContext;
@@ -27,7 +28,10 @@ namespace Destiny
 		void						update();
 		GraphicsStat				getGraphicsStat();
 	public:
+		void						deviceLock();
 		ID3D11Device*				getDevice();
+		//Make sure you lock it before unlocking it
+		void						deviceUnLock();
 		ID3D11DeviceContext*		getImmediateContext();
 		ID3D11DeviceContext*		getDeferredContext();
 		//swapchain
@@ -55,11 +59,22 @@ namespace Destiny
 		ID3D11Texture2D*			m_pDepthStencilBuffer;
 		ID3D11DepthStencilView*		m_pDepthStencilView;
 		unsigned int				m_4xMsaaQuality;
+		std::mutex					m_deviceMutex;
 	};
+
+	inline void GraphicsSystem::deviceLock()
+	{
+		m_deviceMutex.lock();
+	}
 
 	inline ID3D11Device* GraphicsSystem::getDevice()
 	{
 		return m_pD3D11Device;
+	}
+
+	inline void GraphicsSystem::deviceUnLock()
+	{
+		m_deviceMutex.unlock();
 	}
 
 	inline ID3D11DeviceContext* GraphicsSystem::getImmediateContext()

@@ -176,7 +176,6 @@ namespace Destiny
 
 		std::shared_ptr<Blob> data = nullptr;
 
-		std::vector<DirectX::XMFLOAT3> positions;
 		std::vector<PositionNormalTexcoord> vertices;
 		vertices.resize(otherMesh->mNumVertices);
 		if (otherMesh->HasPositions() && otherMesh->HasNormals() && otherMesh->HasTextureCoords(0))
@@ -186,7 +185,6 @@ namespace Destiny
 				vertices[i].position.x = otherMesh->mVertices[i].x;
 				vertices[i].position.y = otherMesh->mVertices[i].y;
 				vertices[i].position.z = otherMesh->mVertices[i].z;
-				positions.push_back(vertices[i].position);
 
 				vertices[i].normal.x = otherMesh->mNormals[i].x;
 				vertices[i].normal.y = otherMesh->mNormals[i].y;
@@ -215,15 +213,12 @@ namespace Destiny
 		data->copyfrom(indices.data(), indices.size() * sizeof(unsigned int));
 		std::shared_ptr<IndexBuffer> indexBuffer = std::make_shared<IndexBuffer>(IndexBuffer::IndexType::Index32, data);
 
-		DirectX::BoundingBox aabb;
-		DirectX::BoundingBox::CreateFromPoints(aabb, positions.size(), positions.data(), 0);
-
 		Mesh::DrawCall drawCall;
 		drawCall.drawMethod = Mesh::DrawMethod::DrawIndexed;
 		drawCall.primitiveTopology = Mesh::PrimitiveTopology::TriangleList;
 		drawCall.indexCount = (unsigned int)indices.size();
 
-		std::shared_ptr<Mesh> myMesh = std::make_shared<Mesh>(aabb, drawCall, vertexBuffer, indexBuffer);
+		std::shared_ptr<Mesh> myMesh = std::make_shared<Mesh>(drawCall, vertexBuffer, indexBuffer);
 		myMesh->load();
 		return myMesh;
 	}

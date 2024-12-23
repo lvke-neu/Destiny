@@ -20,12 +20,15 @@ namespace Destiny
 		cbd.ByteWidth = byteWidth;
 		cbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 		cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		Engine::GetInstance()->getGraphicsSystem()->deviceLock();
 		HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateBuffer(&cbd, nullptr, &m_instanceBuffer);
 		if (FAILED(hr))
 		{
+			Engine::GetInstance()->getGraphicsSystem()->deviceUnLock();
 			LOG_ERROR("Create InstanceBuffer Failed");
 			return;
 		}
+		Engine::GetInstance()->getGraphicsSystem()->deviceUnLock();
 	}
 
 	InstanceBuffer::~InstanceBuffer()

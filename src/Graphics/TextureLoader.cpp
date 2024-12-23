@@ -58,7 +58,7 @@ namespace Destiny
 			m_mtx.unlock();
 			return;
 		}
-
+		Engine::GetInstance()->getGraphicsSystem()->deviceLock();
 		HRESULT hr = 0;
 		auto normalizedPath = creationParam->getBlobLoader()->normalizedPath(creationParam);
 		if (normalizedPath.find(".dds") != std::string::npos)
@@ -69,7 +69,7 @@ namespace Destiny
 		{
 			hr = DirectX::CreateWICTextureFromMemory(Engine::GetInstance()->getGraphicsSystem()->getDevice(), (unsigned char*)creationParam->getBlob()->getData(), creationParam->getBlob()->getLength(), &((Texture*)asset.get())->m_resource, &((Texture*)asset.get())->m_shaderResourceView);
 		}
-
+		Engine::GetInstance()->getGraphicsSystem()->deviceUnLock();
 		if (SUCCEEDED(hr))
 		{
 			asset->getCreationParam().reset();

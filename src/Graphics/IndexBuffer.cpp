@@ -40,8 +40,9 @@ namespace Destiny
 		ZeroMemory(&InitData, sizeof(InitData));
 		InitData.pSysMem = m_data->getData();
 
+		Engine::GetInstance()->getGraphicsSystem()->deviceLock();
 		HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateBuffer(&ibd, &InitData, &m_indexBuffer);
-
+		Engine::GetInstance()->getGraphicsSystem()->deviceUnLock();
 		if (SUCCEEDED(hr))
 		{
 			loadSucceeded__();

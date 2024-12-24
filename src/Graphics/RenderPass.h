@@ -28,6 +28,7 @@ namespace Destiny
 		void setRendererCategory(RendererCategory rendererCategory);
 
 		void fillDrawParameters(std::shared_ptr<DrawParameters> drawParameters);
+		void load(int priority = 1);
 	private:
 		std::shared_ptr<Renderer>		m_renderer;
 		std::shared_ptr<RenderStates>	m_renderStates;

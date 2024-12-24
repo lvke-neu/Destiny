@@ -20,6 +20,7 @@ void StatPanel::update()
 
 	ImGui::Text("%.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 	ImGui::Text("DrawCallCount:%ld", Destiny::Engine::GetInstance()->getGraphicsSystem()->getGraphicsStat().DrawCallCount);
+	ImGui::Text("TriangleCount:%ld", Destiny::Engine::GetInstance()->getGraphicsSystem()->getGraphicsStat().TriangleCount);
 	
 	ImGui::Separator();
 	

@@ -66,4 +66,16 @@ namespace Destiny
 			m_renderStates->fillDrawParameters(drawParameters);
 		}
 	}
+
+	void RenderPass::load(int priority)
+	{
+		if (m_renderer)
+		{
+			m_renderer->load(priority);
+		}
+		if (m_renderStates)
+		{
+			m_renderStates->load(priority);
+		}
+	}
 }

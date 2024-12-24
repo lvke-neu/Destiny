@@ -2,6 +2,7 @@
 #include "ForwardOpaquePipeline.h"
 #include "ForwardTransparentPipeline.h"
 #include "Visual.h"
+#include "Mesh.h"
 #include "RenderPass.h"
 #include "RenderCommandList.h"
 #include "BindRenderTargetsOnResize.h"
@@ -32,6 +33,7 @@ namespace Destiny
 	void RenderSystem::syncState()
 	{
 		m_graphicsStat.DrawCallCount = 0;
+		m_graphicsStat.TriangleCount = 0;
 		m_forwardOpaquePipeline->syncState();
 		m_forwardTransparentPipeline->syncState();
 	}
@@ -41,6 +43,11 @@ namespace Destiny
 		if (!visual || !visual->getRenderPass())
 		{
 			return;
+		}
+
+		if (visual->getMesh() && visual->getMesh()->getDrawCall().primitiveTopology == Mesh::PrimitiveTopology::TriangleList)
+		{
+			m_graphicsStat.TriangleCount += visual->getMesh()->getDrawCall().indexCount / 3;
 		}
 
 		visual->updateDrawParameters();

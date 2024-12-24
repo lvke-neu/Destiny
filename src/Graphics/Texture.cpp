@@ -10,7 +10,6 @@
 namespace Destiny
 {
 	std::shared_ptr<TextureLoader> Texture::s_textureLoader = std::make_shared<TextureLoader>();
-	std::unordered_map<std::string, std::shared_ptr<Texture>> Texture::m_cache;
 	Texture::Texture() :
 		m_resource(nullptr),
 		m_shaderResourceView(nullptr)
@@ -26,12 +25,6 @@ namespace Destiny
 
 	std::shared_ptr<Texture> Texture::Create(const char* path)
 	{
-		auto iter = m_cache.find(path);
-		if (iter != m_cache.end())
-		{
-			return m_cache[path];
-		}
-
 		std::shared_ptr<Texture> texture = std::make_shared<Texture>();
 
 		auto blobLoader = Engine::GetInstance()->getBlobLoaderManager()->getBlobLoader(path);
@@ -39,8 +32,6 @@ namespace Destiny
 		{
 			texture->initialize(s_textureLoader, blobLoader->createBlobHolder(path));
 		}
-		
-		m_cache[path] = texture;
 
 		return texture;
 	}

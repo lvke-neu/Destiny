@@ -46,7 +46,6 @@ namespace Destiny
 	private:
 		ID3D11Resource* m_resource;
 		ID3D11ShaderResourceView* m_shaderResourceView;
-		static std::unordered_map<std::string, std::shared_ptr<Texture>> m_cache;
 	};
 
 	inline ID3D11ShaderResourceView* Texture::getShaderResourceView()

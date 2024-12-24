@@ -18,6 +18,7 @@ namespace Destiny
 		struct GraphicsStat
 		{
 			unsigned long long DrawCallCount;
+			unsigned long long TriangleCount;
 		};
 	public:
 		GraphicsSystem();

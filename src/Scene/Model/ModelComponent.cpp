@@ -56,14 +56,7 @@ namespace Destiny
 							auto visualComponent = std::dynamic_pointer_cast<VisualComponent>(component);
 							if (visualComponent && visualComponent->getVisual())
 							{
-								if (visualComponent->getVisual()->getRenderPass())
-								{
-									visualComponent->getVisual()->getRenderPass()->load(0);
-								}
-								if (visualComponent->getVisual()->getMesh())
-								{
-									visualComponent->getVisual()->getMesh()->load(0);
-								}
+								visualComponent->getVisual()->load(0);
 							}
 						}
 						for (const auto& node : topNode->getChilds())

@@ -22,6 +22,7 @@ namespace Destiny
 		void								setComponent(std::shared_ptr<Component> component);
 	public:
 		void updateDrawParameters();
+		void load(int priority = 1);
 	private:
 		std::shared_ptr<RenderPass>			m_renderPass;
 		std::shared_ptr<Mesh>				m_mesh;

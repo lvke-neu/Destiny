@@ -51,4 +51,16 @@ namespace Destiny
 
 		addDrawParameter(m_drawParameters);
 	}
+
+	void Visual::load(int priority)
+	{
+		if (m_renderPass)
+		{
+			m_renderPass->load(priority);
+		}
+		if (m_mesh)
+		{
+			m_mesh->load(priority);
+		}
+	}
 }

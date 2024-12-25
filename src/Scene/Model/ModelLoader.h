@@ -23,7 +23,7 @@ namespace Destiny
 	private:
 		std::shared_ptr<Node>			copyTree(const aiScene* otherScene, std::shared_ptr<Node> myNodeParent, aiNode* otherNode, DirectX::BoundingBox& mergedAABB);
 		std::shared_ptr<RenderPass>		getRenderPass();
-		std::shared_ptr<Mesh>			getMesh(aiMesh* otherMesh);
+		std::shared_ptr<Mesh>			getMesh(aiMesh* otherMesh, DirectX::BoundingBox& mergedAABB);
 		std::shared_ptr<Material>		getMaterial(aiMaterial* otherMaterial);
 	};
 }

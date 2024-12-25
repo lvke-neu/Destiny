@@ -116,7 +116,7 @@ namespace Destiny
 			//visualComponent->setRenderPass(getRenderPass());
 			//visualComponent->setMesh(getMesh(otherScene->mMeshes[otherNode->mMeshes[i]]));
 			auto rendererPass = getRenderPass();
-			auto mesh = getMesh(otherScene->mMeshes[otherNode->mMeshes[i]]);
+			auto mesh = getMesh(otherScene->mMeshes[otherNode->mMeshes[i]], mergedAABB);
 			visualComponent->setRenderPass(rendererPass);
 			visualComponent->setMesh(mesh);
 			myNode->addComponent(visualComponent);
@@ -136,9 +136,6 @@ namespace Destiny
 			//	visualComponent->getVisual()->getRenderPass()->getRenderer()->setShaderResource("t_ambient", material->t_ambient);
 			//	visualComponent->getVisual()->getRenderPass()->getRenderer()->setShaderResource("t_diffuse", material->t_diffuse);
 			//}
-		
-
-			DirectX::BoundingBox::CreateMerged(mergedAABB, mergedAABB, mesh->getBoundingBox());
 		}
 
 		Transform transform;
@@ -171,7 +168,7 @@ namespace Destiny
 		return renderPass;
 	}
 
-	std::shared_ptr<Mesh> ModelLoader::getMesh(aiMesh* otherMesh)
+	std::shared_ptr<Mesh> ModelLoader::getMesh(aiMesh* otherMesh, DirectX::BoundingBox& mergedAABB)
 	{
 		if (!otherMesh)
 		{
@@ -179,7 +176,7 @@ namespace Destiny
 		}
 
 		std::shared_ptr<Blob> data = nullptr;
-
+		std::vector<DirectX::XMFLOAT3> positions;
 		std::vector<PositionNormalTexcoord> vertices;
 		vertices.resize(otherMesh->mNumVertices);
 		if (otherMesh->HasPositions())
@@ -189,6 +186,7 @@ namespace Destiny
 				vertices[i].position.x = otherMesh->mVertices[i].x;
 				vertices[i].position.y = otherMesh->mVertices[i].y;
 				vertices[i].position.z = otherMesh->mVertices[i].z;
+				positions.push_back(vertices[i].position);
 				
 				if (otherMesh->HasNormals())
 				{
@@ -227,6 +225,10 @@ namespace Destiny
 		drawCall.drawMethod = Mesh::DrawMethod::DrawIndexed;
 		drawCall.primitiveTopology = Mesh::PrimitiveTopology::TriangleList;
 		drawCall.indexCount = (unsigned int)indices.size();
+
+		DirectX::BoundingBox aabb;
+		DirectX::BoundingBox::CreateFromPoints(aabb, positions.size(), positions.data(), 0);
+		DirectX::BoundingBox::CreateMerged(mergedAABB, mergedAABB, aabb);
 
 		std::shared_ptr<Mesh> myMesh = std::make_shared<Mesh>(drawCall, vertexBuffer, indexBuffer);
 		//myMesh->load();

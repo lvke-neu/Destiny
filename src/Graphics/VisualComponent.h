@@ -18,7 +18,7 @@ namespace Destiny
 		virtual void onNodeTransformChanged() override;
 		virtual void onEnterScene();
 
-		void onCameraViewChanged(const DirectX::XMMATRIX& cameraView);
+		void onCameraViewChanged(const DirectX::XMMATRIX& cameraView, const DirectX::XMFLOAT3& eyePosition);
 		void onCameraProjChanged(const DirectX::XMMATRIX& cameraProj, float viewportWidth, float viewportHeight);
 	public:
 		void setRenderPass(std::shared_ptr<RenderPass> renderPass);

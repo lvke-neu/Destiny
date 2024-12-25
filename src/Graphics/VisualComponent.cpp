@@ -41,8 +41,11 @@ namespace Destiny
 			translationMatrix = tmpNode->get_transform().getTranslationMatrix() * translationMatrix;
 			tmpNode = tmpNode->getParent();
 		}
-		auto worldMatrix = DirectX::XMMatrixTranspose(scaleMatrix * rotationMatrix * translationMatrix);
-		m_visual->setConstant("u_worldMatrix", worldMatrix);
+		auto world = scaleMatrix * rotationMatrix * translationMatrix;
+		m_visual->setConstant("u_worldMatrix", XMMatrixTranspose(world));
+		world.r[3] = DirectX::g_XMIdentityR3;
+		world = XMMatrixTranspose(XMMatrixInverse(nullptr, world));
+		m_visual->setConstant("u_worldInvTransposeMatrix", XMMatrixTranspose(world));
 	}
 
 	void VisualComponent::onEnterScene()
@@ -53,7 +56,7 @@ namespace Destiny
 			return;
 		}
 		onNodeTransformChanged();
-		onCameraViewChanged(visualScene->getCameraNode()->get_transform().getInvTransposeWorldMatrix());
+		onCameraViewChanged(visualScene->getCameraNode()->get_transform().getInvTransposeWorldMatrix(), visualScene->getCameraNode()->get_transform().get_translation());
 		onCameraProjChanged(
 			DirectX::XMMatrixTranspose
 			(
@@ -63,7 +66,7 @@ namespace Destiny
 		);
 	}
 
-	void VisualComponent::onCameraViewChanged(const DirectX::XMMATRIX& cameraView)
+	void VisualComponent::onCameraViewChanged(const DirectX::XMMATRIX& cameraView, const DirectX::XMFLOAT3& eyePosition)
 	{
 		if (!m_visual)
 		{
@@ -71,6 +74,7 @@ namespace Destiny
 		}
 		
 		m_visual->setConstant("g_view", cameraView);
+		m_visual->setConstant("g_eyePosition", eyePosition);
 	}
 
 	void VisualComponent::onCameraProjChanged(const DirectX::XMMATRIX& cameraProj, float viewportWidth, float viewportHeight)

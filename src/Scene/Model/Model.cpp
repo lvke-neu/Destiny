@@ -70,15 +70,23 @@ namespace Destiny
 						{
 							material->t_diffuse->load();
 						}
+						if (material->t_specular)
+						{
+							material->t_specular->load();
+						}
 						visual->setConstant("c_has_c_ambient", material->c_has_c_ambient);
 						visual->setConstant("c_has_c_diffuse", material->c_has_c_diffuse);
+						visual->setConstant("c_has_c_specular", material->c_has_c_specular);
 						visual->setConstant("c_has_t_ambient", material->c_has_t_ambient);
 						visual->setConstant("c_has_t_diffuse", material->c_has_t_diffuse);
+						visual->setConstant("c_has_t_specular", material->c_has_t_specular);
 						visual->setConstant("c_ambient", material->c_ambient);
 						visual->setConstant("c_diffuse", material->c_diffuse);
+						visual->setConstant("c_specular", material->c_specular);
 						
 						visual->setShaderResource("t_ambient", material->t_ambient);
 						visual->setShaderResource("t_diffuse", material->t_diffuse);
+						visual->setShaderResource("t_specular", material->t_specular);
 						visual->setSamplerSate("s_sampler", material->s_sampler);
 					}
 

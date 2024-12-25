@@ -1,6 +1,7 @@
 cbuffer cbView : register(b1)
 {
 	matrix g_view;  
+    float3 g_eyePosition;
 }
 
 cbuffer cbProj : register(b2)

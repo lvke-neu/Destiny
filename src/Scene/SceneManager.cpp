@@ -135,17 +135,17 @@ namespace Destiny
 			node2->addToParent(m_scene);
 			node2->set_transform(transform2);
 
-			auto modelComponent3 = std::make_shared<ModelComponent>();
-			modelComponent3->set_path("builtin://model/fbx/robot-v2.fbx");
-			auto node3 = std::make_shared<Node>();
-			Transform transform3;
-			transform3.set_scale({ 0.3f, 0.3f, 0.3f });
-			transform3.set_rotation({ 90.0f, 0.0f, 0.0f });
-			transform3.set_translation({ 0.0f, 0.0f, 0.0f });
-			node3->set_name("ModelComponentNode3");
-			node3->addComponent(modelComponent3);
-			node3->addToParent(m_scene);
-			node3->set_transform(transform3);
+			//auto modelComponent3 = std::make_shared<ModelComponent>();
+			//modelComponent3->set_path("builtin://model/fbx/robot-v2.fbx");
+			//auto node3 = std::make_shared<Node>();
+			//Transform transform3;
+			//transform3.set_scale({ 0.3f, 0.3f, 0.3f });
+			//transform3.set_rotation({ 90.0f, 0.0f, 0.0f });
+			//transform3.set_translation({ 0.0f, 0.0f, 0.0f });
+			//node3->set_name("ModelComponentNode3");
+			//node3->addComponent(modelComponent3);
+			//node3->addToParent(m_scene);
+			//node3->set_transform(transform3);
 
 			auto modelComponent4 = std::make_shared<ModelComponent>();
 			modelComponent4->set_path("builtin://model/walk/Standard Walk.dae");
@@ -163,7 +163,7 @@ namespace Destiny
 			modelComponent5->set_path("builtin://model/IronMan/IronMan.obj");
 			auto node5 = std::make_shared<Node>();
 			Transform transform5;
-			transform5.set_scale({ 0.01f, 0.01f, 0.01f });
+			transform5.set_scale({ 0.02f, 0.02f, 0.02f });
 			transform5.set_rotation({ 0.0f, 0.0f, 0.0f });
 			transform5.set_translation({ 0.0f, 0.0f, 0.0f });
 			node5->set_name("ModelComponentNode5");

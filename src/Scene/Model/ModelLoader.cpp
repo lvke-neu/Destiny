@@ -216,6 +216,11 @@ namespace Destiny
 			material->c_has_c_diffuse = true;
 			material->c_diffuse = { otherColor.r, otherColor.g, otherColor.b, otherColor.a };
 		}
+		if (otherMaterial->Get(AI_MATKEY_COLOR_SPECULAR, otherColor) == aiReturn_SUCCESS)
+		{
+			material->c_has_c_specular = true;
+			material->c_specular = { otherColor.r, otherColor.g, otherColor.b, otherColor.a };
+		}
 	
 		aiString otherStr;
 		if (otherMaterial->GetTexture(aiTextureType_AMBIENT, 0, &otherStr) == aiReturn_SUCCESS)
@@ -228,6 +233,11 @@ namespace Destiny
 		{
 			material->c_has_t_diffuse = true;
 			material->t_diffuse = Texture::Create(otherStr.C_Str());
+		}
+		if (otherMaterial->GetTexture(aiTextureType_SPECULAR, 0, &otherStr) == aiReturn_SUCCESS)
+		{
+			material->c_has_t_specular = true;
+			material->t_specular = Texture::Create(otherStr.C_Str());
 		}
 		return material;
 	}

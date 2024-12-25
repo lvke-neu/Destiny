@@ -60,7 +60,7 @@ namespace Destiny
 			{
 				if (m_node)
 				{
-					visualComponent->onCameraViewChanged(m_node->get_transform().getInvTransposeWorldMatrix());
+					visualComponent->onCameraViewChanged(m_node->get_transform().getInvTransposeWorldMatrix(), m_node->get_transform().get_translation());
 				}	
 			}
 		}

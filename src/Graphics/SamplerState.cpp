@@ -21,9 +21,9 @@ namespace Destiny
 	{
 		if (m_samplerDesc)
 		{
-			Engine::GetInstance()->getGraphicsSystem()->deviceLock();
+			
 			HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateSamplerState(m_samplerDesc.get(), &m_samplerState);
-			Engine::GetInstance()->getGraphicsSystem()->deviceUnLock();
+			
 			if (SUCCEEDED(hr))
 			{
 				loadSucceeded__();

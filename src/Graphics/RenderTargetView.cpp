@@ -31,12 +31,12 @@ namespace Destiny
 
 		HRESULT hr;
 
-		Engine::GetInstance()->getGraphicsSystem()->deviceLock();
+		
 
 		hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateTexture2D(&texDesc, nullptr, &m_texture);
 		if (!SUCCEEDED(hr))
 		{
-			Engine::GetInstance()->getGraphicsSystem()->deviceUnLock();
+			
 			LOG_ERROR("RenderTargetView:texture load failed:width{0},height{1}", m_width, m_height);
 			loadFailed__();
 			return;
@@ -47,7 +47,7 @@ namespace Destiny
 		hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateRenderTargetView(m_texture, &renderTargetViewDesc, &m_renderTargetView);
 		if (!SUCCEEDED(hr))
 		{
-			Engine::GetInstance()->getGraphicsSystem()->deviceUnLock();
+			
 			LOG_ERROR("RenderTargetView:renderTargetView load failed:width{0},height{1}", m_width, m_height);
 			loadFailed__();
 			SAFE_RELEASE(m_texture);
@@ -58,14 +58,14 @@ namespace Destiny
 		hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateShaderResourceView(m_texture, &shaderResourceViewDesc, &m_shaderResourceView);
 		if (!SUCCEEDED(hr))
 		{
-			Engine::GetInstance()->getGraphicsSystem()->deviceUnLock();
+			
 			LOG_ERROR("RenderTargetView:shaderResourceView load failed:width{0},height{1}", m_width, m_height);
 			loadFailed__();
 			SAFE_RELEASE(m_texture);
 			SAFE_RELEASE(m_renderTargetView);
 			return;
 		}
-		Engine::GetInstance()->getGraphicsSystem()->deviceUnLock();
+		
 		loadSucceeded__();
 	}
 }

@@ -158,6 +158,18 @@ namespace Destiny
 			node4->addComponent(modelComponent4);
 			node4->addToParent(m_scene);
 			node4->set_transform(transform4);
+
+			auto modelComponent5 = std::make_shared<ModelComponent>();
+			modelComponent5->set_path("builtin://model/IronMan/IronMan.obj");
+			auto node5 = std::make_shared<Node>();
+			Transform transform5;
+			transform5.set_scale({ 0.01f, 0.01f, 0.01f });
+			transform5.set_rotation({ 0.0f, 0.0f, 0.0f });
+			transform5.set_translation({ 0.0f, 0.0f, 0.0f });
+			node5->set_name("ModelComponentNode5");
+			node5->addComponent(modelComponent5);
+			node5->addToParent(m_scene);
+			node5->set_transform(transform5);
 		}
 
 		auto cameraTransfrom = m_scene->getCameraNode()->get_transform();

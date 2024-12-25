@@ -32,14 +32,14 @@ namespace Destiny
 		}
 
 		m_inputLayout = nullptr;
-		Engine::GetInstance()->getGraphicsSystem()->deviceLock();
+		
 		HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateInputLayout
 		(
 			(D3D11_INPUT_ELEMENT_DESC*)m_inputLayoutDesc->getData(),(UINT) m_inputLayoutDesc->getLength() / sizeof(D3D11_INPUT_ELEMENT_DESC),
 			inputSignatureBlob->getData(), inputSignatureBlob->getLength(),
 			&m_inputLayout
 		);
-		Engine::GetInstance()->getGraphicsSystem()->deviceUnLock();
+		
 		if (FAILED(hr))
 		{
 			LOG_ERROR("Create InputLayout failed");

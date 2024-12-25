@@ -26,6 +26,11 @@ namespace Destiny
 
 	void RenderStates::doLoad()
 	{
+		if (isLoadingSucceed())
+		{
+			return;
+		}
+
 		if (!m_rasterizerStateDesc || !m_depthStencilStateDesc || !m_blendStateDesc)
 		{
 			loadFailed__();
@@ -33,11 +38,10 @@ namespace Destiny
 			return;
 		}
 
-		Engine::GetInstance()->getGraphicsSystem()->deviceLock();
 		HRESULT hrRS = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateRasterizerState(m_rasterizerStateDesc.get(), &m_rasterizerState);
 		HRESULT hrDSS = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateDepthStencilState(m_depthStencilStateDesc.get(), &m_depthStencilState);
 		HRESULT hrBS = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateBlendState(m_blendStateDesc.get(), &m_blendState);
-		Engine::GetInstance()->getGraphicsSystem()->deviceUnLock();
+		
 		if (FAILED(hrRS))
 		{
 			loadFailed__();

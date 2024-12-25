@@ -32,11 +32,11 @@ namespace Destiny
 
 		HRESULT hr;
 
-		Engine::GetInstance()->getGraphicsSystem()->deviceLock();
+		
 		hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateTexture2D(&texDesc, nullptr, &m_texture);
 		if (!SUCCEEDED(hr))
 		{
-			Engine::GetInstance()->getGraphicsSystem()->deviceUnLock();
+			
 			LOG_ERROR("DepthStencilView:texture load failed:width{0},height{1}", m_width, m_height);
 			loadFailed__();
 			return;
@@ -46,7 +46,7 @@ namespace Destiny
 		hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateDepthStencilView(m_texture, &dsvDesc, &m_depthStencilView);
 		if (!SUCCEEDED(hr))
 		{
-			Engine::GetInstance()->getGraphicsSystem()->deviceUnLock();
+			
 			LOG_ERROR("DepthStencilView:depthStencilView load failed:width{0},height{1}", m_width, m_height);
 			loadFailed__();
 			SAFE_RELEASE(m_texture);
@@ -57,7 +57,7 @@ namespace Destiny
 		hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateShaderResourceView(m_texture, &srvDesc, &m_shaderResourceView);
 		if (!SUCCEEDED(hr))
 		{
-			Engine::GetInstance()->getGraphicsSystem()->deviceUnLock();
+			
 			LOG_ERROR("DepthStencilView:shaderResourceView load failed:width{0},height{1}", m_width, m_height);
 			loadFailed__();
 			SAFE_RELEASE(m_texture);
@@ -65,7 +65,7 @@ namespace Destiny
 			return;
 		}
 
-		Engine::GetInstance()->getGraphicsSystem()->deviceUnLock();
+		
 		loadSucceeded__();
 	}
 }

@@ -29,10 +29,7 @@ namespace Destiny
 		void						update();
 		GraphicsStat				getGraphicsStat();
 	public:
-		void						deviceLock();
 		ID3D11Device*				getDevice();
-		//Make sure you lock it before unlocking it
-		void						deviceUnLock();
 		ID3D11DeviceContext*		getImmediateContext();
 		ID3D11DeviceContext*		getDeferredContext();
 		//swapchain
@@ -63,19 +60,9 @@ namespace Destiny
 		std::mutex					m_deviceMutex;
 	};
 
-	inline void GraphicsSystem::deviceLock()
-	{
-		m_deviceMutex.lock();
-	}
-
 	inline ID3D11Device* GraphicsSystem::getDevice()
 	{
 		return m_pD3D11Device;
-	}
-
-	inline void GraphicsSystem::deviceUnLock()
-	{
-		m_deviceMutex.unlock();
 	}
 
 	inline ID3D11DeviceContext* GraphicsSystem::getImmediateContext()

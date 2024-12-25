@@ -21,15 +21,15 @@ namespace Destiny
 		cbd.ByteWidth = m_byteWidth;
 		cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 		cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		Engine::GetInstance()->getGraphicsSystem()->deviceLock();
+		
 		HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateBuffer(&cbd, nullptr, &m_constantBuffer);
 		if (FAILED(hr))
 		{
-			Engine::GetInstance()->getGraphicsSystem()->deviceUnLock();
+			
 			LOG_ERROR("Create ConstantBuffer Failed");
 			return;
 		}
-		Engine::GetInstance()->getGraphicsSystem()->deviceUnLock();
+		
 		m_backData = std::make_shared<Blob>(m_byteWidth);
 	}
 

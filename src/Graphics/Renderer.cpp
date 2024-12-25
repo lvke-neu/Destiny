@@ -124,15 +124,15 @@ namespace Destiny
 			SAFE_RELEASE(errorBlob);
 			return false;
 		}
-		Engine::GetInstance()->getGraphicsSystem()->deviceLock();
+		
 		hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateVertexShader(m_vsCompiledBlob->GetBufferPointer(), m_vsCompiledBlob->GetBufferSize(), 0, &m_vertexShader);
 		if (FAILED(hr))
 		{
-			Engine::GetInstance()->getGraphicsSystem()->deviceUnLock();
+			
 			LOG_ERROR("CreateVertexShader {0} failed", normalizedPath);
 			return false;
 		}
-		Engine::GetInstance()->getGraphicsSystem()->deviceUnLock();
+		
 
 		ID3D10Blob* inputSignatureBlob = nullptr;
 
@@ -168,15 +168,15 @@ namespace Destiny
 			SAFE_RELEASE(errorBlob);
 			return false;
 		}
-		Engine::GetInstance()->getGraphicsSystem()->deviceLock();
+		
 		hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreatePixelShader(m_psCompiledBlob->GetBufferPointer(), m_psCompiledBlob->GetBufferSize(), 0, &m_pixelShader);
 		if (FAILED(hr))
 		{
-			Engine::GetInstance()->getGraphicsSystem()->deviceUnLock();
+			
 			LOG_ERROR("CreatePixelShader {0} failed", normalizedPath);
 			return false;
 		}
-		Engine::GetInstance()->getGraphicsSystem()->deviceUnLock();
+		
 		return true;
 	}
 
@@ -208,15 +208,15 @@ namespace Destiny
 			SAFE_RELEASE(errorBlob);
 			return false;
 		}
-		Engine::GetInstance()->getGraphicsSystem()->deviceLock();
+		
 		hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateGeometryShader(m_gsCompiledBlob->GetBufferPointer(), m_gsCompiledBlob->GetBufferSize(), 0, &m_geometryShader);
 		if (FAILED(hr))
 		{
-			Engine::GetInstance()->getGraphicsSystem()->deviceUnLock();
+			
 			LOG_ERROR("CreateGeometryShader {0} failed", normalizedPath);
 			return false;
 		}
-		Engine::GetInstance()->getGraphicsSystem()->deviceUnLock();
+		
 		return true;
 	}
 

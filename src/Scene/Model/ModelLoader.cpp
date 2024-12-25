@@ -70,38 +70,16 @@ namespace Destiny
 			return;
 		}
 
-		DirectX::BoundingBox mergedAABB{ { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } };
 		auto model = std::dynamic_pointer_cast<Model>(asset);
-		model->m_node = copyTree(aiScene, nullptr, aiScene->mRootNode, mergedAABB);
-		std::queue<std::shared_ptr<Node>> nodes;
-		nodes.push(model->m_node);
-		while (!nodes.empty())
-		{
-			auto topNode = nodes.front();
-			nodes.pop();
-			if (topNode)
-			{
-				for (const auto& component : topNode->getComponents())
-				{
-					auto visualComponent = std::dynamic_pointer_cast<VisualComponent>(component);
-					if (visualComponent && visualComponent->getVisual() && visualComponent->getVisual()->getMesh())
-					{
-						visualComponent->getVisual()->getMesh()->setBoundingBox(mergedAABB);
-					}
-				}
-				for (const auto& node : topNode->getChilds())
-				{
-					nodes.push(node);
-				}
-			}
-		}
+		model->m_node = copyTree(aiScene, nullptr, aiScene->mRootNode, model);
+
 		asset->loadSucceeded__();
 		m_mtx.unlock();
 	}
 
-	std::shared_ptr<Node> ModelLoader::copyTree(const aiScene* otherScene, std::shared_ptr<Node> myNodeParent, aiNode* otherNode, DirectX::BoundingBox& mergedAABB)
+	std::shared_ptr<Node> ModelLoader::copyTree(const aiScene* otherScene, std::shared_ptr<Node> myNodeParent, aiNode* otherNode, std::shared_ptr<Model> model)
 	{
-		if (!otherScene || !otherNode)
+		if (!otherScene || !otherNode || !model)
 		{
 			return nullptr;
 		}
@@ -113,29 +91,12 @@ namespace Destiny
 		for (unsigned int i = 0; i < otherNode->mNumMeshes; i++)
 		{
 			std::shared_ptr<VisualComponent> visualComponent = std::make_shared<VisualComponent>();
-			//visualComponent->setRenderPass(getRenderPass());
-			//visualComponent->setMesh(getMesh(otherScene->mMeshes[otherNode->mMeshes[i]]));
-			auto rendererPass = getRenderPass();
-			auto mesh = getMesh(otherScene->mMeshes[otherNode->mMeshes[i]], mergedAABB);
-			visualComponent->setRenderPass(rendererPass);
-			visualComponent->setMesh(mesh);
+
+			visualComponent->setRenderPass(getRenderPass());
+			visualComponent->setMesh(getMesh(otherScene->mMeshes[otherNode->mMeshes[i]], model));
 			myNode->addComponent(visualComponent);
 			
-			auto material = getMaterial(otherScene->mMaterials[otherScene->mMeshes[otherNode->mMeshes[i]]->mMaterialIndex]);
-			//if (material)
-			//{
-			//	auto s_sampler = std::make_shared<SamplerState>();
-			//	//s_sampler->load(0);
-			//	visualComponent->getVisual()->getRenderPass()->getRenderer()->setConstant("c_has_c_ambient", material->c_has_c_ambient);
-			//	visualComponent->getVisual()->getRenderPass()->getRenderer()->setConstant("c_has_c_diffuse", material->c_has_c_diffuse);
-			//	visualComponent->getVisual()->getRenderPass()->getRenderer()->setConstant("c_has_t_ambient", material->c_has_t_ambient);
-			//	visualComponent->getVisual()->getRenderPass()->getRenderer()->setConstant("c_has_t_diffuse", material->c_has_t_diffuse);
-			//	visualComponent->getVisual()->getRenderPass()->getRenderer()->setConstant("c_ambient", material->c_ambient);
-			//	visualComponent->getVisual()->getRenderPass()->getRenderer()->setConstant("c_diffuse", material->c_diffuse);
-			//	visualComponent->getVisual()->getRenderPass()->getRenderer()->setSamplerSate("s_sampler", s_sampler);
-			//	visualComponent->getVisual()->getRenderPass()->getRenderer()->setShaderResource("t_ambient", material->t_ambient);
-			//	visualComponent->getVisual()->getRenderPass()->getRenderer()->setShaderResource("t_diffuse", material->t_diffuse);
-			//}
+			model->m_visuals.insert({ visualComponent, getMaterial(otherScene->mMaterials[otherScene->mMeshes[otherNode->mMeshes[i]]->mMaterialIndex]) });
 		}
 
 		Transform transform;
@@ -146,7 +107,7 @@ namespace Destiny
 
 		for (unsigned int i = 0; i < otherNode->mNumChildren; i++)
 		{
-			copyTree(otherScene, myNode, otherNode->mChildren[i], mergedAABB);
+			copyTree(otherScene, myNode, otherNode->mChildren[i], model);
 		}
 
 		return myNode;
@@ -168,9 +129,9 @@ namespace Destiny
 		return renderPass;
 	}
 
-	std::shared_ptr<Mesh> ModelLoader::getMesh(aiMesh* otherMesh, DirectX::BoundingBox& mergedAABB)
+	std::shared_ptr<Mesh> ModelLoader::getMesh(aiMesh* otherMesh, std::shared_ptr<Model> model)
 	{
-		if (!otherMesh)
+		if (!otherMesh || !model)
 		{
 			return nullptr;
 		}
@@ -228,10 +189,9 @@ namespace Destiny
 
 		DirectX::BoundingBox aabb;
 		DirectX::BoundingBox::CreateFromPoints(aabb, positions.size(), positions.data(), 0);
-		DirectX::BoundingBox::CreateMerged(mergedAABB, mergedAABB, aabb);
+		DirectX::BoundingBox::CreateMerged(model->m_mergedAABB, model->m_mergedAABB, aabb);
 
 		std::shared_ptr<Mesh> myMesh = std::make_shared<Mesh>(drawCall, vertexBuffer, indexBuffer);
-		//myMesh->load();
 		return myMesh;
 	}
 
@@ -243,7 +203,8 @@ namespace Destiny
 		}
 
 		std::shared_ptr<Material>  material = std::make_shared<Material>();
-		
+		material->s_sampler = std::make_shared<SamplerState>();
+
 		aiColor4D otherColor;
 		if (otherMaterial->Get(AI_MATKEY_COLOR_AMBIENT, otherColor) == aiReturn_SUCCESS)
 		{
@@ -261,19 +222,12 @@ namespace Destiny
 		{
 			material->c_has_t_ambient = true;
 			material->t_ambient = Texture::Create(otherStr.C_Str());
-			if (material->t_ambient)
-			{
-				//material->t_ambient->load();
-			}
+
 		}
 		if (otherMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &otherStr) == aiReturn_SUCCESS)
 		{
 			material->c_has_t_diffuse = true;
 			material->t_diffuse = Texture::Create(otherStr.C_Str());
-			if (material->t_diffuse)
-			{
-				//material->t_diffuse->load();
-			}
 		}
 		return material;
 	}

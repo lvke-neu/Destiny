@@ -1,13 +1,10 @@
 #pragma once
 #include "DrawCommand.h"
-#include <memory>
-#include <unordered_set>
+#include "RenderPass.h"
 
 namespace Destiny
 {
 	class Component;
-	class DrawParameters;
-	class RenderPass;
 	class Mesh;
 	class Visual : public DrawCommand
 	{
@@ -23,6 +20,10 @@ namespace Destiny
 	public:
 		void updateDrawParameters();
 		void load(int priority = 1);
+		template<typename T>
+		void setConstant(const char* name, T value);
+		void setShaderResource(const char* name, std::shared_ptr<Texture> texture);
+		void setSamplerSate(const char* name, std::shared_ptr<SamplerState> samplerState);
 	private:
 		std::shared_ptr<RenderPass>			m_renderPass;
 		std::shared_ptr<Mesh>				m_mesh;
@@ -48,5 +49,30 @@ namespace Destiny
 	inline void Visual::setComponent(std::shared_ptr<Component> component)
 	{
 		m_component = component;
+	}
+
+	template<typename T>
+	inline void Visual::setConstant(const char* name, T value)
+	{
+		if (m_renderPass)
+		{
+			m_renderPass->setConstant(name, value);
+		}
+	}
+
+	inline void Visual::setShaderResource(const char* name, std::shared_ptr<Texture> texture)
+	{
+		if (m_renderPass)
+		{
+			m_renderPass->setShaderResource(name, texture);
+		}
+	}
+
+	inline void Visual::setSamplerSate(const char* name, std::shared_ptr<SamplerState> samplerState)
+	{
+		if (m_renderPass)
+		{
+			m_renderPass->setSamplerSate(name, samplerState);
+		}
 	}
 }

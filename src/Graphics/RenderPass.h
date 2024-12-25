@@ -1,11 +1,12 @@
 #pragma once
-#include <memory>
+#include "Renderer.h"
 
 namespace Destiny
 {
-	class Renderer;
 	class RenderStates;
 	class DrawParameters;
+	class Texture;
+	class SamplerState;
 	class RenderPass
 	{
 	public:
@@ -29,6 +30,10 @@ namespace Destiny
 
 		void fillDrawParameters(std::shared_ptr<DrawParameters> drawParameters);
 		void load(int priority = 1);
+		template<typename T>
+		void setConstant(const char* name, T value);
+		void setShaderResource(const char* name, std::shared_ptr<Texture> texture);
+		void setSamplerSate(const char* name, std::shared_ptr<SamplerState> samplerState);
 	private:
 		std::shared_ptr<Renderer>		m_renderer;
 		std::shared_ptr<RenderStates>	m_renderStates;
@@ -53,5 +58,30 @@ namespace Destiny
 	inline void RenderPass::setRendererCategory(RendererCategory rendererCategory)
 	{
 		m_rendererCategory = rendererCategory;
+	}
+
+	template<typename T>
+	inline void RenderPass::setConstant(const char* name, T value)
+	{
+		if (m_renderer)
+		{
+			m_renderer->setConstant(name, value);
+		}
+	}
+
+	inline void RenderPass::setShaderResource(const char* name, std::shared_ptr<Texture> texture)
+	{
+		if (m_renderer)
+		{
+			m_renderer->setShaderResource(name, texture);
+		}
+	}
+
+	inline void RenderPass::setSamplerSate(const char* name, std::shared_ptr<SamplerState> samplerState)
+	{
+		if (m_renderer)
+		{
+			m_renderer->setSamplerSate(name, samplerState);
+		}
 	}
 }

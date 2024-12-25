@@ -1,8 +1,5 @@
 #include "ModelComponent.h"
 #include "Model.h"
-#include "Graphics/VisualComponent.h"
-#include "Graphics/RenderPass.h"
-#include "Graphics/Mesh.h"
 #include "Engine/Node.h"
 #include "Engine/Utility.h"
 #include <queue>
@@ -40,38 +37,12 @@ namespace Destiny
 	{
 		if (m_modelChanged && m_model && m_model->isLoadingSucceed() && m_model->getNode())
 		{
-			auto modelNode = m_model->getNode();
-			if (modelNode)
-			{
-				std::queue<std::shared_ptr<Node>> nodes;
-				nodes.push(modelNode);
-				while (!nodes.empty())
-				{
-					auto topNode = nodes.front();
-					nodes.pop();
-					if (topNode)
-					{
-						for (const auto& component : topNode->getComponents())
-						{
-							auto visualComponent = std::dynamic_pointer_cast<VisualComponent>(component);
-							if (visualComponent && visualComponent->getVisual())
-							{
-								visualComponent->getVisual()->load(0);
-							}
-						}
-						for (const auto& node : topNode->getChilds())
-						{
-							nodes.push(node);
-						}
-					}
-				}
-
-
-				modelNode->addToParent(m_node);
-				LOG_INFO("Model:{0} load successfully", m_path);
-			}
-
+			m_model->loadVisuals();
+			m_model->getNode()->addToParent(m_node);
+			m_model.reset();
 			m_modelChanged = false;
+			LOG_INFO("Model:{0} load successfully", m_path);
+			
 		}
 	}
 }

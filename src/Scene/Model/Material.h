@@ -5,6 +5,7 @@
 namespace Destiny
 {
 	class Texture;
+	class SamplerState;
 	class Material
 	{
 	public:
@@ -15,10 +16,12 @@ namespace Destiny
 		unsigned int c_has_t_ambient;
 		unsigned int c_has_t_diffuse;
 
-		DirectX::XMFLOAT4			c_ambient;
-		DirectX::XMFLOAT4			c_diffuse;
+		DirectX::XMFLOAT4				c_ambient;
+		DirectX::XMFLOAT4				c_diffuse;
 
-		std::shared_ptr<Texture>	t_ambient;
-		std::shared_ptr<Texture>	t_diffuse;
+		std::shared_ptr<Texture>		t_ambient;
+		std::shared_ptr<Texture>		t_diffuse;
+
+		std::shared_ptr<SamplerState>	s_sampler;
 	};
 }

@@ -25,7 +25,7 @@ namespace Destiny
 
 	void VisualComponent::onNodeTransformChanged()
 	{
-		if (!m_node || !m_visual || !m_visual->getRenderPass() || !m_visual->getRenderPass()->getRenderer())
+		if (!m_node || !m_visual)
 		{
 			return;
 		}
@@ -42,8 +42,7 @@ namespace Destiny
 			tmpNode = tmpNode->getParent();
 		}
 		auto worldMatrix = DirectX::XMMatrixTranspose(scaleMatrix * rotationMatrix * translationMatrix);
-		m_visual->getRenderPass()->getRenderer()->
-			setConstant("u_worldMatrix", worldMatrix);
+		m_visual->setConstant("u_worldMatrix", worldMatrix);
 	}
 
 	void VisualComponent::onEnterScene()
@@ -66,26 +65,26 @@ namespace Destiny
 
 	void VisualComponent::onCameraViewChanged(const DirectX::XMMATRIX& cameraView)
 	{
-		if (!m_visual || !m_visual->getRenderPass() || !m_visual->getRenderPass()->getRenderer())
+		if (!m_visual)
 		{
 			return;
 		}
 		
-		m_visual->getRenderPass()->getRenderer()->setConstant("g_view", cameraView);
+		m_visual->setConstant("g_view", cameraView);
 	}
 
 	void VisualComponent::onCameraProjChanged(const DirectX::XMMATRIX& cameraProj, float viewportWidth, float viewportHeight)
 	{
-		if (!m_visual || !m_visual->getRenderPass() || !m_visual->getRenderPass()->getRenderer())
+		if (!m_visual)
 		{
 			return;
 		}
 
-		m_visual->getRenderPass()->getRenderer()->setConstant("g_proj", cameraProj);
-		m_visual->getRenderPass()->getRenderer()->setConstant("g_viewportWidth", viewportWidth);
-		m_visual->getRenderPass()->getRenderer()->setConstant("g_rcpViewportWidth", 1.0f / viewportWidth);
-		m_visual->getRenderPass()->getRenderer()->setConstant("g_viewportHeight", viewportHeight);
-		m_visual->getRenderPass()->getRenderer()->setConstant("g_rcpViewportHeight", 1.0f / viewportHeight);
+		m_visual->setConstant("g_proj", cameraProj);
+		m_visual->setConstant("g_viewportWidth", viewportWidth);
+		m_visual->setConstant("g_rcpViewportWidth", 1.0f / viewportWidth);
+		m_visual->setConstant("g_viewportHeight", viewportHeight);
+		m_visual->setConstant("g_rcpViewportHeight", 1.0f / viewportHeight);
 	}
 
 	RTTR_REGISTRATION

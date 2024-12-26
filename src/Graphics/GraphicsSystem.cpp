@@ -63,7 +63,10 @@ namespace Destiny
 		ID3D11Texture2D* backBuffer{ nullptr };
 		m_pDXGISwapChain->ResizeBuffers(1, width, height, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
 		m_pDXGISwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer));
-		m_pD3D11Device->CreateRenderTargetView(backBuffer, nullptr, &m_pRenderTargetView);
+		if (backBuffer)
+		{
+			m_pD3D11Device->CreateRenderTargetView(backBuffer, nullptr, &m_pRenderTargetView);
+		}
 		SAFE_RELEASE(backBuffer);
 
 		D3D11_TEXTURE2D_DESC depthStencilDesc;
@@ -80,7 +83,10 @@ namespace Destiny
 		depthStencilDesc.MiscFlags = 0;
 
 		m_pD3D11Device->CreateTexture2D(&depthStencilDesc, nullptr, &m_pDepthStencilBuffer);
-		m_pD3D11Device->CreateDepthStencilView(m_pDepthStencilBuffer, nullptr, &m_pDepthStencilView);
+		if (m_pDepthStencilBuffer)
+		{
+			m_pD3D11Device->CreateDepthStencilView(m_pDepthStencilBuffer, nullptr, &m_pDepthStencilView);
+		}
 	}
 
 	void GraphicsSystem::createDeviceAndContext()

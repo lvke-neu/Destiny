@@ -19,21 +19,21 @@ namespace Destiny
 	public:
 		RenderPass();
 	public:
-		std::shared_ptr<Renderer> getRenderer();
-		void setRenderer(std::shared_ptr<Renderer> renderer);
+		std::shared_ptr<Renderer>		getRenderer();
+		void							setRenderer(std::shared_ptr<Renderer> renderer);
 
-		std::shared_ptr<RenderStates> getRenderStates();
-		void setRenderStates(std::shared_ptr<RenderStates> renderStates);
+		std::shared_ptr<RenderStates>	getRenderStates();
+		void							setRenderStates(std::shared_ptr<RenderStates> renderStates);
 		
-		RendererCategory getRendererCategory();
-		void setRendererCategory(RendererCategory rendererCategory);
+		RendererCategory				getRendererCategory();
+		void							setRendererCategory(RendererCategory rendererCategory);
 
-		void fillDrawParameters(std::shared_ptr<DrawParameters> drawParameters);
-		void load(int priority = 1);
+		void							fillDrawParameters(std::shared_ptr<DrawParameters> drawParameters);
+		void							load(int priority = 1);
 		template<typename T>
-		void setConstant(const char* name, T value);
-		void setShaderResource(const char* name, std::shared_ptr<Texture> texture);
-		void setSamplerSate(const char* name, std::shared_ptr<SamplerState> samplerState);
+		void							setConstant(const char* name, T value);
+		void							setShaderResource(const char* name, std::shared_ptr<Texture> texture);
+		void							setSamplerSate(const char* name, std::shared_ptr<SamplerState> samplerState);
 	private:
 		std::shared_ptr<Renderer>		m_renderer;
 		std::shared_ptr<RenderStates>	m_renderStates;

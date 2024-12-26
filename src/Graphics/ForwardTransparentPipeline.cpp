@@ -17,11 +17,6 @@ namespace Destiny
 		
 	}
 
-	void ForwardTransparentPipeline::syncState()
-	{
-		clearGraphicsCommand();
-	}
-
 	void ForwardTransparentPipeline::execute(ID3D11DeviceContext* deviceContext)
 	{
 		sort();

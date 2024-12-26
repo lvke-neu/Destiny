@@ -18,12 +18,12 @@ namespace Destiny
 		std::shared_ptr<Component>			getComponent();
 		void								setComponent(std::shared_ptr<Component> component);
 	public:
-		void updateDrawParameters();
-		void load(int priority = 1);
+		void								updateDrawParameters();
+		void								load(int priority = 1);
 		template<typename T>
-		void setConstant(const char* name, T value);
-		void setShaderResource(const char* name, std::shared_ptr<Texture> texture);
-		void setSamplerSate(const char* name, std::shared_ptr<SamplerState> samplerState);
+		void								setConstant(const char* name, T value);
+		void								setShaderResource(const char* name, std::shared_ptr<Texture> texture);
+		void								setSamplerSate(const char* name, std::shared_ptr<SamplerState> samplerState);
 	private:
 		std::shared_ptr<RenderPass>			m_renderPass;
 		std::shared_ptr<Mesh>				m_mesh;

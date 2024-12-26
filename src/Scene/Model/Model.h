@@ -16,8 +16,8 @@ namespace Destiny
 		Model();
 		virtual ~Model();
 	public:
-		std::shared_ptr<Node> getNode();
-		void loadVisuals();
+		std::shared_ptr<Node>	getNode();
+		void					loadVisuals();
 	public:
 		static std::shared_ptr<ModelLoader> s_modelLoader;
 		static std::shared_ptr<Model> Create(const char* path);

@@ -11,10 +11,4 @@ namespace Destiny
 	{
 		
 	}
-
-	void ForwardOpaquePipeline::syncState()
-	{
-		clearGraphicsCommand();
-	}
-
 }

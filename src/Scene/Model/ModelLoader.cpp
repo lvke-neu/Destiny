@@ -34,18 +34,14 @@ namespace Destiny
 
 	void ModelLoader::loadAsset(std::shared_ptr<Asset> asset)
 	{
-		m_mtx.lock();
-
 		if (!asset || !std::dynamic_pointer_cast<Model>(asset))
 		{
 			asset->loadFailed__();
-			m_mtx.unlock();
 			return;
 		}
 
 		if (asset->isLoadingSucceed())
 		{
-			m_mtx.unlock();
 			return;
 		}
 
@@ -53,7 +49,6 @@ namespace Destiny
 		if (!creationParam || ! creationParam->getBlobLoader())
 		{
 			asset->loadFailed__();
-			m_mtx.unlock();
 			return;
 		}
 
@@ -66,7 +61,6 @@ namespace Destiny
 		{
 			asset->loadFailed__();
 			LOG_ERROR("ERROR::ASSIMP::{0}", importer.GetErrorString());
-			m_mtx.unlock();
 			return;
 		}
 
@@ -74,7 +68,6 @@ namespace Destiny
 		model->m_node = copyTree(aiScene, nullptr, aiScene->mRootNode, model);
 
 		asset->loadSucceeded__();
-		m_mtx.unlock();
 	}
 
 	std::shared_ptr<Node> ModelLoader::copyTree(const aiScene* otherScene, std::shared_ptr<Node> myNodeParent, aiNode* otherNode, std::shared_ptr<Model> model)

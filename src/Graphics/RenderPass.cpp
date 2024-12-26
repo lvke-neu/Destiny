@@ -1,5 +1,4 @@
 #include "RenderPass.h"
-#include "Renderer.h"
 #include "RenderStates.h"
 
 namespace Destiny

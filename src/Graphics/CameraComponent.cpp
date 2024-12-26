@@ -1,6 +1,6 @@
 #include "CameraComponent.h"
-#include "Graphics/VisualScene.h"
 #include "VisualComponent.h"
+#include "Graphics/VisualScene.h"
 #include "Engine/EventSystem.h"
 
 
@@ -24,12 +24,12 @@ namespace Destiny
 
 	void CameraComponent::onEnterScene()
 	{
-		bfsNotifyViewChanged(m_scene);
+		traversalViewChanged(m_scene);
 	}
 
 	void CameraComponent::onNodeTransformChanged()
 	{
-		bfsNotifyViewChanged(m_scene);
+		traversalViewChanged(m_scene);
 	}
 
 	DirectX::XMMATRIX CameraComponent::getProjectionMatrix()
@@ -43,10 +43,10 @@ namespace Destiny
 		m_viewportWidth = (float)ws.width;
 		m_viewportHeight = (float)ws.height;
 		m_aspect = m_viewportWidth / m_viewportHeight;
-		bfsNotifyProjChanged(m_scene);
+		traversalProjChanged(m_scene);
 	}
 
-	void CameraComponent::bfsNotifyViewChanged(std::shared_ptr<Node> node)
+	void CameraComponent::traversalViewChanged(std::shared_ptr<Node> node)
 	{
 		if (!node)
 		{
@@ -67,11 +67,11 @@ namespace Destiny
 
 		for (const auto& childNode : node->getChilds())
 		{
-			bfsNotifyViewChanged(childNode);
+			traversalViewChanged(childNode);
 		}
 	}
 
-	void CameraComponent::bfsNotifyProjChanged(std::shared_ptr<Node> node)
+	void CameraComponent::traversalProjChanged(std::shared_ptr<Node> node)
 	{
 		if (!node)
 		{
@@ -89,7 +89,7 @@ namespace Destiny
 
 		for (const auto& childNode : node->getChilds())
 		{
-			bfsNotifyProjChanged(childNode);
+			traversalProjChanged(childNode);
 		}
 	}
 

@@ -1,11 +1,7 @@
 #include "BuiltinResourceBlobLoader.h"
 #include "../BlobHolder.h"
 #include "../Blob.h"
-#include "../Utility.h"
-#include <thread>
 #include <fstream>
-#include <Windows.h>
-
 
 namespace Destiny
 {
@@ -17,8 +13,6 @@ namespace Destiny
 
 	void BuiltinResourceBlobLoader::doLoad(std::shared_ptr<BlobHolder> blobHolder)
 	{
-		m_mtx.lock();
-
 		auto path = normalizedPath(blobHolder);
 
 		std::ifstream ifs;
@@ -27,7 +21,6 @@ namespace Destiny
 		{
 			blobHolder->loadFailed__();
 			LOG_ERROR("Thread {0}, BuiltinResourceBlobLoader failed : {1}", std::to_string((*(uint32_t*)&std::this_thread::get_id())), blobHolder->getPath());
-			m_mtx.unlock();
 			return;
 		}
 
@@ -42,8 +35,6 @@ namespace Destiny
 		ifs.close();
 
 		blobHolder->loadSucceeded__(blob);
-
-		m_mtx.unlock();
 	}
 
 	std::string BuiltinResourceBlobLoader::normalizedPath(std::shared_ptr<BlobHolder> blobHolder)

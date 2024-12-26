@@ -4,7 +4,7 @@
 #include "Engine/EventSystem.h"
 #include "Graphics/RenderSystem.h"
 #include "Graphics/RenderTargetView.h"
-#include "Graphics/BindRenderTargetsOnResize.h"
+#include "Graphics/BindRenderTargets.h"
 
 void ViewPortPanel::update()
 {
@@ -14,7 +14,7 @@ void ViewPortPanel::update()
 
 	onViewPortResize();
 
-	auto rtv = std::dynamic_pointer_cast<Destiny::RenderSystem>(Destiny::Engine::GetInstance()->getGraphicsSystem())->bindRenderTargetsOnResize->getRenderTargetView();
+	auto rtv = std::dynamic_pointer_cast<Destiny::RenderSystem>(Destiny::Engine::GetInstance()->getGraphicsSystem())->m_bindRenderTargets->getRenderTargetView();
 	if (rtv && rtv->isLoadingSucceed())
 	{
 		ImGui::Image(*(rtv->getShaderResourceView()), { (float)rtv->getWidth(), (float)rtv->getHeight() });

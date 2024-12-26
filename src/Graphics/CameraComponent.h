@@ -9,7 +9,7 @@ namespace Destiny
 		RTTR_ENABLE(Component);
 	public:
 		CameraComponent();
-		~CameraComponent();
+		virtual ~CameraComponent();
 	public:
 		GET_CLASS_NAME(CameraComponent);
 		GET(float, fovy);
@@ -19,21 +19,21 @@ namespace Destiny
 		GET(float, viewportWidth);
 		GET(float, viewportHeight);
 	public:
-		virtual void onEnterScene();
-		virtual void onNodeTransformChanged();
+		virtual void			onEnterScene() override;
+		virtual void			onNodeTransformChanged() override;
 	public:
-		DirectX::XMMATRIX getProjectionMatrix();
+		DirectX::XMMATRIX		getProjectionMatrix();
 	private:
-		void onWindowResize(void* data);
+		void					onWindowResize(void* data);
 	private:
-		void bfsNotifyViewChanged(std::shared_ptr<Node> node);
-		void bfsNotifyProjChanged(std::shared_ptr<Node> node);
+		void					traversalViewChanged(std::shared_ptr<Node> node);
+		void					traversalProjChanged(std::shared_ptr<Node> node);
 	private:
-		float m_fovy;
-		float m_aspect;
-		float m_nearz;
-		float m_farz;
-		float m_viewportWidth;
-		float m_viewportHeight;
+		float					m_fovy;
+		float					m_aspect;
+		float					m_nearz;
+		float					m_farz;
+		float					m_viewportWidth;
+		float					m_viewportHeight;
 	};
 }

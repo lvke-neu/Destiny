@@ -12,18 +12,18 @@ namespace Destiny
 		RenderTargetView(unsigned int width, unsigned int height);
 		virtual ~RenderTargetView();
 	public:
-		virtual void				doLoad() override;
-		ID3D11Texture2D*			getTexture2D();
-		ID3D11RenderTargetView**	getRenderTargetView();
-		ID3D11ShaderResourceView**	getShaderResourceView();
-		unsigned int				getWidth();
-		unsigned int				getHeight();
+		virtual void					doLoad() override;
+		ID3D11Texture2D*				getTexture2D();
+		ID3D11RenderTargetView**		getRenderTargetView();
+		ID3D11ShaderResourceView**		getShaderResourceView();
+		unsigned int					getWidth();
+		unsigned int					getHeight();
 	private:
-		ID3D11Texture2D*			m_texture;
-		ID3D11RenderTargetView*		m_renderTargetView;
-		ID3D11ShaderResourceView*	m_shaderResourceView;
-		unsigned int				m_width;
-		unsigned int				m_height;
+		ID3D11Texture2D*				m_texture;
+		ID3D11RenderTargetView*			m_renderTargetView;
+		ID3D11ShaderResourceView*		m_shaderResourceView;
+		unsigned int					m_width;
+		unsigned int					m_height;
 	};
 
 	inline ID3D11Texture2D* RenderTargetView::getTexture2D()

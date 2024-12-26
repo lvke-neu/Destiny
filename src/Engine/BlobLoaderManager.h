@@ -1,7 +1,6 @@
 #pragma once
 #include <vector>
 #include <memory>
-#include <string>
 
 namespace Destiny
 {
@@ -11,9 +10,9 @@ namespace Destiny
 	public:
 		BlobLoaderManager();
 	public:
-		void registerBlobLoader(std::shared_ptr<BlobLoader> blobLoader);
-		std::shared_ptr<BlobLoader> getBlobLoader(const std::string& path);
+		void										registerBlobLoader(std::shared_ptr<BlobLoader> blobLoader);
+		std::shared_ptr<BlobLoader>					getBlobLoader(const char* path);
 	private:
-		std::vector<std::shared_ptr<BlobLoader>> m_blobLoaders;
+		std::vector<std::shared_ptr<BlobLoader>>	m_blobLoaders;
 	};
 }

@@ -8,6 +8,6 @@ namespace Destiny
 	public:
 		virtual ~GraphicsPipeline() = default;
 	public:
-		virtual void syncState() = 0;
+		virtual void syncState();
 	};
 }

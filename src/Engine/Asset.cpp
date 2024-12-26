@@ -2,7 +2,6 @@
 #include "Engine.h"
 #include "ThreadPool.h"
 #include "AssetLoader.h"
-#include "BlobHolder.h"
 
 namespace Destiny
 {
@@ -43,16 +42,6 @@ namespace Destiny
 				doLoad();
 			}
 		}
-	}
-
-	void Asset::loadSucceeded__()
-	{
-		m_state = loading_state_succeeded;
-	}
-
-	void Asset::loadFailed__()
-	{
-		m_state = loading_state_failed;
 	}
 
 	void Asset::doLoad()

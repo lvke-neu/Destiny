@@ -13,10 +13,8 @@ struct ID3D10Blob;
 struct ID3D11ShaderReflection;
 namespace Destiny
 {
-	class  Blob;
 	class  BlobHolder;
 	class  DrawParameters;
-	class  ConstantBuffer;
 	class  Texture;
 	struct TextureDesc;
 	class  SamplerState;
@@ -29,22 +27,22 @@ namespace Destiny
 	public:
 		virtual void doLoad() override;
 	public:
-		std::shared_ptr<Blob> getInputSignatureBlob();
-		void fillDrawParameters(std::shared_ptr<DrawParameters> drawParameters);
+		std::shared_ptr<Blob>			getInputSignatureBlob();
+		void							fillDrawParameters(std::shared_ptr<DrawParameters> drawParameters);
 	public:
 		template<typename T>
-		void setConstant(const char* name, T value);
-		void setShaderResource(const char* name, std::shared_ptr<Texture> texture);
-		void setSamplerSate(const char* name, std::shared_ptr<SamplerState> samplerState);
-		std::string getPath() ;
+		void							setConstant(const char* name, T value);
+		void							setShaderResource(const char* name, std::shared_ptr<Texture> texture);
+		void							setSamplerSate(const char* name, std::shared_ptr<SamplerState> samplerState);
+		std::string						getPath() ;
 	private:
-		bool createVertexShader();
-		bool createPixelShader();
-		bool createGeometryShader();
-		void collectReflectionInfo(ID3D10Blob* compiledBlob, short flag);
-		void collectReflectionConstantInfo(ID3D11ShaderReflection* shaderReflection, short flag);
-		void collectReflectionTextureInfo(ID3D11ShaderReflection* shaderReflection, short flag);
-		void collectReflectionSamplerStateInfo(ID3D11ShaderReflection* shaderReflection, short flag);
+		bool							createVertexShader();
+		bool							createPixelShader();
+		bool							createGeometryShader();
+		void							collectReflectionInfo(ID3D10Blob* compiledBlob, short flag);
+		void							collectReflectionConstantInfo(ID3D11ShaderReflection* shaderReflection, short flag);
+		void							collectReflectionTextureInfo(ID3D11ShaderReflection* shaderReflection, short flag);
+		void							collectReflectionSamplerStateInfo(ID3D11ShaderReflection* shaderReflection, short flag);
 	private:
 		ID3D11VertexShader*				m_vertexShader;
 		ID3D11PixelShader*				m_pixelShader;

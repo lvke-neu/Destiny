@@ -1,7 +1,7 @@
 #include "RenderTargetView.h"
+#include "GraphicsSystem.h"
 #include "Engine/Utility.h"
 #include "Engine/Engine.h"
-#include "GraphicsSystem.h"
 #include <d3d11.h>
 
 namespace Destiny 

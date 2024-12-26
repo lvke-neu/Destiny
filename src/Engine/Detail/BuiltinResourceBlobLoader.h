@@ -8,7 +8,7 @@ namespace Destiny
 	public:
 		BuiltinResourceBlobLoader();
 	public:
-		virtual void doLoad(std::shared_ptr<BlobHolder> blobHolder) override;
-		virtual std::string normalizedPath(std::shared_ptr<BlobHolder> blobHolder) override;
+		virtual void			doLoad(std::shared_ptr<BlobHolder> blobHolder) override;
+		virtual std::string		normalizedPath(std::shared_ptr<BlobHolder> blobHolder) override;
 	};
 }

@@ -58,6 +58,7 @@ namespace Destiny
 	{
 		return m_keyTriggers[keyCode];
 	}
+
 	bool EventSystem::isMousePressed(MouseCode mouseCode)
 	{
 		return m_MouseTriggers[mouseCode];

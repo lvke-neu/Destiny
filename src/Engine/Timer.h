@@ -19,10 +19,10 @@ namespace Destiny
 			return &m_deltaTime;
 		}
 
-		void reset();
-		void start();
-		void stop();
-		void update();
+		void	reset();
+		void	start();
+		void	stop();
+		void	update();
 
 	private:
 		double	m_secondsPerCount;

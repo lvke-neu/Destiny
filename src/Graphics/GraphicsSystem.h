@@ -1,6 +1,5 @@
 #pragma once
 #include <memory>
-#include <mutex>
 
 struct ID3D11Device;
 struct ID3D11DeviceContext;
@@ -57,7 +56,6 @@ namespace Destiny
 		ID3D11Texture2D*			m_pDepthStencilBuffer;
 		ID3D11DepthStencilView*		m_pDepthStencilView;
 		unsigned int				m_4xMsaaQuality;
-		std::mutex					m_deviceMutex;
 	};
 
 	inline ID3D11Device* GraphicsSystem::getDevice()

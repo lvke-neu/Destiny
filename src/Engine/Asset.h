@@ -18,17 +18,17 @@ namespace Destiny
 		Asset();
 		virtual ~Asset() = default;
 	public:
-		void initialize(std::shared_ptr<AssetLoader> assetLoader, std::shared_ptr<Object> creationParam);
-		std::shared_ptr<Object> getCreationParam();
-		void load(int priority = 1);
-		void loadSucceeded__();
-		void loadFailed__();
-		void loadPending_();
-		bool isLoadingSucceed();
-		bool isLoadingFailed();
-		bool isLoadingPending();
+		void						initialize(std::shared_ptr<AssetLoader> assetLoader, std::shared_ptr<Object> creationParam);
+		std::shared_ptr<Object>		getCreationParam();
+		void						load(int priority = 1);
+		void						loadSucceeded__();
+		void						loadFailed__();
+		void						loadPending_();
+		bool						isLoadingSucceed();
+		bool						isLoadingFailed();
+		bool						isLoadingPending();
 	private:
-		virtual void doLoad();
+		virtual void				doLoad();
 	protected:
 		std::shared_ptr<AssetLoader>	m_assetLoader;
 		std::shared_ptr<Object>			m_creationParam;
@@ -58,5 +58,15 @@ namespace Destiny
 	inline void Asset::loadPending_()
 	{
 		m_state = loading_state_pending;;
+	}
+
+	inline void Asset::loadSucceeded__()
+	{
+		m_state = loading_state_succeeded;
+	}
+
+	inline void Asset::loadFailed__()
+	{
+		m_state = loading_state_failed;
 	}
 }

@@ -11,12 +11,12 @@ namespace Destiny
 	public:
 		Material();
 	public:
-		unsigned int c_has_c_ambient;
-		unsigned int c_has_c_diffuse;
-		unsigned int c_has_c_specular;
-		unsigned int c_has_t_ambient;
-		unsigned int c_has_t_diffuse;
-		unsigned int c_has_t_specular;
+		unsigned int					c_has_c_ambient;
+		unsigned int					c_has_c_diffuse;
+		unsigned int					c_has_c_specular;
+		unsigned int					c_has_t_ambient;
+		unsigned int					c_has_t_diffuse;
+		unsigned int					c_has_t_specular;
 
 		DirectX::XMFLOAT4				c_ambient;
 		DirectX::XMFLOAT4				c_diffuse;

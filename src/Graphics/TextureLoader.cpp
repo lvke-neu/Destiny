@@ -1,14 +1,13 @@
 #include "TextureLoader.h"
+#include "Texture.h"
+#include "DDSTextureLoader.h"
+#include "WICTextureLoader.h"
+#include "GraphicsSystem.h"
 #include "Engine/Engine.h"
 #include "Engine/Blob.h"
 #include "Engine/BlobHolder.h"
 #include "Engine/BlobLoader.h"
 #include "Engine/Utility.h"
-#include "Texture.h"
-#include "DDSTextureLoader.h"
-#include "WICTextureLoader.h"
-#include "GraphicsSystem.h"
-
 
 namespace Destiny
 {
@@ -24,18 +23,14 @@ namespace Destiny
 
 	void TextureLoader::loadAsset(std::shared_ptr<Asset> asset)
 	{
-		m_mtx.lock();
-		
 		if (!asset || !std::dynamic_pointer_cast<Texture>(asset))
 		{
 			asset->loadFailed__();
-			m_mtx.unlock();
 			return;
 		}
 
 		if (asset->isLoadingSucceed())
 		{
-			m_mtx.unlock();
 			return;
 		}
 
@@ -43,7 +38,6 @@ namespace Destiny
 		if (!creationParam || ! creationParam->getBlobLoader())
 		{
 			asset->loadFailed__();
-			m_mtx.unlock();
 			return;
 		}
 
@@ -55,7 +49,6 @@ namespace Destiny
 		if (creationParam->isLoadingFailed() || !creationParam->getBlob())
 		{
 			asset->loadFailed__();
-			m_mtx.unlock();
 			return;
 		}
 		
@@ -80,7 +73,5 @@ namespace Destiny
 			LOG_ERROR("Texture load failed : {0}", normalizedPath);
 			asset->loadFailed__();
 		}
-
-		m_mtx.unlock();
 	}
 }

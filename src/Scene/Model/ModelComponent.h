@@ -18,8 +18,8 @@ namespace Destiny
 	private:
 		virtual void onUpdate(float deltaTime) override;
 	private:
-		std::string m_path;
-		std::shared_ptr<Model> m_model;
-		bool m_modelChanged;
+		std::string				m_path;
+		std::shared_ptr<Model>	m_model;
+		bool					m_modelChanged;
 	};
 }

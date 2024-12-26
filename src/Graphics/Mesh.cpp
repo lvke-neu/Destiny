@@ -1,10 +1,10 @@
 #include "Mesh.h"
-#include "Engine/Utility.h"
 #include "VertexBuffer.h"
 #include "InstanceBuffer.h"
 #include "IndexBuffer.h"
 #include "DrawParameters.h"
 #include "InputLayout.h"
+#include "Engine/Utility.h"
 
 namespace Destiny
 {

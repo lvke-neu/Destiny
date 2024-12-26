@@ -39,11 +39,11 @@ namespace Destiny
 	public:
 		virtual void doLoad() override;
 	public:
-		void updateInstanceBufferData(std::shared_ptr<Blob> data);
-		void fillDrawParameters(std::shared_ptr<DrawParameters> drawParameters, std::shared_ptr<Blob> inputSignatureBlob);
-		DirectX::BoundingBox	getBoundingBox();
-		void					setBoundingBox(const DirectX::BoundingBox& aabb);
-		DrawCall				getDrawCall();
+		void							updateInstanceBufferData(std::shared_ptr<Blob> data);
+		void							fillDrawParameters(std::shared_ptr<DrawParameters> drawParameters, std::shared_ptr<Blob> inputSignatureBlob);
+		DirectX::BoundingBox			getBoundingBox();
+		void							setBoundingBox(const DirectX::BoundingBox& aabb);
+		DrawCall						getDrawCall();
 	private:
 		DirectX::BoundingBox			m_aabb;
 		DrawCall						m_drawCall;

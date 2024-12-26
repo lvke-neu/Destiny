@@ -1,7 +1,7 @@
 #include "RenderStates.h"
-#include "Engine/Engine.h"
 #include "GraphicsSystem.h"
 #include "DrawParameters.h"
+#include "Engine/Engine.h"
 #include <d3d11.h>
 
 namespace Destiny
@@ -76,7 +76,7 @@ namespace Destiny
 		drawParameters->blendState = m_blendState;
 	}
 
-	std::shared_ptr<RenderStates> Destiny::RenderStates::CreateBlendState()
+	std::shared_ptr<RenderStates> RenderStates::CreateBlendState()
 	{
 		std::shared_ptr<RenderStates> renderStates = std::make_shared<RenderStates>();
 

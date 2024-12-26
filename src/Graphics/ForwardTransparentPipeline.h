@@ -9,7 +9,6 @@ namespace Destiny
 		ForwardTransparentPipeline();
 		virtual ~ForwardTransparentPipeline();
 	public:
-		virtual void syncState() override;
 		virtual void execute(ID3D11DeviceContext* deviceContext) override;
 	private:
 		void sort();

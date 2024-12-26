@@ -10,8 +10,8 @@ namespace Destiny
 		m_width(width),
 		m_height(height),
 		m_texture(nullptr),
-		m_depthStencilView(nullptr)
-		//m_shaderResourceView(nullptr)
+		m_depthStencilView(nullptr),
+		m_shaderResourceView(nullptr)
 	{
 
 	}
@@ -20,7 +20,7 @@ namespace Destiny
 	{
 		SAFE_RELEASE(m_texture);
 		SAFE_RELEASE(m_depthStencilView);
-		//SAFE_RELEASE(m_shaderResourceView);
+		SAFE_RELEASE(m_shaderResourceView);
 	}
 
 	void DepthStencilView::doLoad()
@@ -29,11 +29,7 @@ namespace Destiny
 			m_width, m_height, 1, 1,
 			D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE);
 
-
-		HRESULT hr;
-
-		
-		hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateTexture2D(&texDesc, nullptr, &m_texture);
+		HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateTexture2D(&texDesc, nullptr, &m_texture);
 		if (!SUCCEEDED(hr))
 		{
 			
@@ -65,7 +61,6 @@ namespace Destiny
 			return;
 		}
 
-		
 		loadSucceeded__();
 	}
 }

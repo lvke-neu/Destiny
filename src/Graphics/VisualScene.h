@@ -14,10 +14,10 @@ namespace Destiny
 	public:
 		GET_CLASS_NAME(VisualScene);
 	public:
-		virtual void initialize() override;
-		virtual void uninitialize() override;
-		virtual void update(float deltaTime) override;
-		virtual void onCull() override;
+		virtual void						initialize() override;
+		virtual void						uninitialize() override;
+		virtual void						update(float deltaTime) override;
+		virtual void						onCull() override;
 	public:
 		std::shared_ptr<CameraComponent>	getCamera();
 		std::shared_ptr<CameraController>	getCameraController();

@@ -2,11 +2,10 @@
 #include "Visual.h"
 #include "Mesh.h"
 #include "RenderPass.h"
-#include "BindRenderTargetsOnResize.h"
+#include "BindRenderTargets.h"
 #include "ForwardOpaquePipeline.h"
 #include "ForwardTransparentPipeline.h"
 #include "GraphicsPipeline/GraphicsCommandList.h"
-
 
 namespace Destiny
 {
@@ -18,8 +17,8 @@ namespace Destiny
 		m_beforeForwardOpaqueCommandList = std::make_shared<GraphicsCommandList>();
 		m_beforeForwardTransparentCommandList = std::make_shared<GraphicsCommandList>();
 
-		bindRenderTargetsOnResize = std::make_shared<BindRenderTargetsOnResize>();
-		addBeforeForwardOpaqueCommand(bindRenderTargetsOnResize);
+		m_bindRenderTargets = std::make_shared<BindRenderTargetsOnResize>();
+		addBeforeForwardOpaqueCommand(m_bindRenderTargets);
 		//addBeforeForwardTransparentCommandList(std::make_shared<BindRenderTargetsOnResize>());
 	}
 

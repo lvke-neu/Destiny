@@ -1,9 +1,6 @@
 #pragma once
 #include "Engine/Object.h"
 #include "Math/Transform.h"
-#include <string>
-#include <memory>
-#include <vector>
 
 namespace Destiny
 {
@@ -23,24 +20,25 @@ namespace Destiny
 		void												removeComponent(std::shared_ptr<Component> component);
 		const std::vector<std::shared_ptr<Component>>&		getComponents();
 		const std::vector<std::shared_ptr<Node>>&			getChilds();
-		void moveZAxis(float distance);
-		void moveXAxis(float distance);
-		void rotateXAxis(float angle);
-		void rotateYAxis(float angle);
+	public:
+		void												moveZAxis(float distance);
+		void												moveXAxis(float distance);
+		void												rotateXAxis(float angle);
+		void												rotateYAxis(float angle);
 	public:
 		GET_CLASS_NAME(Node);
 		GET_SET(std::string, name);
 		GET(Transform, transform);
-		void set_transform(const Transform& transform);
+		void												set_transform(const Transform& transform);
 	private:
-		void onEnterScene();
-		void onNodeTransformChanged();
+		void												onEnterScene();
+		void												onNodeTransformChanged();
 	protected:
-		std::string									m_name;
-		std::shared_ptr<Node>						m_parent;
-		std::vector<std::shared_ptr<Node>>			m_childs;
-		std::vector<std::shared_ptr<Component>>		m_components;
-		Transform									m_transform;
+		std::string											m_name;
+		std::shared_ptr<Node>								m_parent;
+		std::vector<std::shared_ptr<Node>>					m_childs;
+		std::vector<std::shared_ptr<Component>>				m_components;
+		Transform											m_transform;
 	};
 
 	inline std::shared_ptr<Node> Node::getParent()

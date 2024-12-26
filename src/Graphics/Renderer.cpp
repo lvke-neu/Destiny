@@ -1,12 +1,9 @@
 #include "Renderer.h"
 #include "Texture.h"
 #include "SamplerState.h"
-#include "RenderStates.h"
-
 #include "GraphicsSystem.h"
 #include "DrawParameters.h"
 #include "Engine/Engine.h"
-
 #include "Engine/BlobHolder.h"
 #include "Engine/BlobLoader.h"
 #include "Engine/BlobLoaderManager.h"
@@ -94,7 +91,7 @@ namespace Destiny
 		m_samplerStates[name].second = samplerState;
 	}
 
-	 std::string Renderer::getPath() 
+	std::string Renderer::getPath() 
 	{
 		if (m_blobHolder)
 		{

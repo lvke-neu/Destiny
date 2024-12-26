@@ -14,16 +14,16 @@ namespace Destiny
 	public:
 		GET_CLASS_NAME(VisualComponent);
 	public:
-		virtual void onAddToNode() override;
-		virtual void onNodeTransformChanged() override;
-		virtual void onEnterScene();
+		virtual void				onAddToNode() override;
+		virtual void				onNodeTransformChanged() override;
+		virtual void				onEnterScene();
 
-		void onCameraViewChanged(const DirectX::XMMATRIX& cameraView, const DirectX::XMFLOAT3& eyePosition);
-		void onCameraProjChanged(const DirectX::XMMATRIX& cameraProj, float viewportWidth, float viewportHeight);
+		void						onCameraViewChanged(const DirectX::XMMATRIX& cameraView, const DirectX::XMFLOAT3& eyePosition);
+		void						onCameraProjChanged(const DirectX::XMMATRIX& cameraProj, float viewportWidth, float viewportHeight);
 	public:
-		void setRenderPass(std::shared_ptr<RenderPass> renderPass);
-		void setMesh(std::shared_ptr<Mesh> mesh);
-		std::shared_ptr<Visual> getVisual();
+		void						setRenderPass(std::shared_ptr<RenderPass> renderPass);
+		void						setMesh(std::shared_ptr<Mesh> mesh);
+		std::shared_ptr<Visual>		getVisual();
 	private:
 		std::shared_ptr<Visual> m_visual;
 	};

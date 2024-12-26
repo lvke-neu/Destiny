@@ -26,4 +26,13 @@ namespace Destiny
 		std::shared_ptr<D3D11_VIEWPORT>			m_viewPort;
 
 	};
+
+	class BindRenderTargetsOnResize : public BindRenderTargets
+	{
+	public:
+		BindRenderTargetsOnResize();
+		virtual ~BindRenderTargetsOnResize();
+	private:
+		void onResize(void* data);
+	};
 }

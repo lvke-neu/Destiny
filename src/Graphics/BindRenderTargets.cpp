@@ -1,6 +1,8 @@
 #include "BindRenderTargets.h"
 #include "RenderTargetView.h"
 #include "DepthStencilView.h"
+#include "Engine/Engine.h"
+#include "Engine/EventSystem.h"
 #include <d3d11.h>
 
 namespace Destiny
@@ -10,6 +12,7 @@ namespace Destiny
 		m_depthStencilView(nullptr),
 		m_viewPort(std::make_shared<D3D11_VIEWPORT>())
 	{
+
 	}
 
 	void BindRenderTargets::setRenderTargetView(std::shared_ptr<RenderTargetView> renderTargetView)
@@ -36,8 +39,8 @@ namespace Destiny
 	{
 		m_viewPort->TopLeftX = topLeftX;
 		m_viewPort->TopLeftY = topLeftY;
-		m_viewPort->Width = width;
-		m_viewPort->Height = height;
+		m_viewPort->Width	 = width;
+		m_viewPort->Height   = height;
 		m_viewPort->MinDepth = minDepth;
 		m_viewPort->MaxDepth = naxDepth;
 	}
@@ -61,5 +64,30 @@ namespace Destiny
 			deviceContext->ClearRenderTargetView(*m_renderTargetView->getRenderTargetView(), color);
 			deviceContext->ClearDepthStencilView(m_depthStencilView->getDepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 		}
+	}
+
+	BindRenderTargetsOnResize::BindRenderTargetsOnResize()
+	{
+		Engine::GetInstance()->getEventSystem()->registerEvent(EventType::WindowResize, std::bind(&BindRenderTargetsOnResize::onResize, this, std::placeholders::_1));
+	}
+
+	BindRenderTargetsOnResize::~BindRenderTargetsOnResize()
+	{
+		Engine::GetInstance()->getEventSystem()->unRegisterEvent(EventType::WindowResize, std::bind(&BindRenderTargetsOnResize::onResize, this, std::placeholders::_1));
+	}
+
+	void BindRenderTargetsOnResize::onResize(void* data)
+	{
+		WindowResizeData wrd = *(WindowResizeData*)data;
+		if (!wrd.width || !wrd.height)
+		{
+			return;
+		}
+
+		setRenderTargetView(std::make_shared<Destiny::RenderTargetView>(wrd.width, wrd.height));
+		getRenderTargetView()->load(0);
+		setDepthStencilView(std::make_shared<Destiny::DepthStencilView>(wrd.width, wrd.height));
+		getDepthStencilView()->load(0);
+		setViewport(0.0f, 0.0f, (float)wrd.width, (float)wrd.height, 0.0f, 1.0f);
 	}
 }

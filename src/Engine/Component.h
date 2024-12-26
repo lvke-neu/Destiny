@@ -1,6 +1,5 @@
 #pragma once
 #include "Engine/Object.h"
-#include <memory>
 
 namespace Destiny
 {
@@ -19,10 +18,10 @@ namespace Destiny
 		GET(std::shared_ptr<Node>, node);
 		GET(std::shared_ptr<Scene>, scene);
 	public:
-		virtual void onUpdate(float deltaTime) {};
-		virtual void onAddToNode() {};
-		virtual void onNodeTransformChanged() {};
-		virtual void onEnterScene() {};
+		virtual void			onUpdate(float deltaTime) {};
+		virtual void			onAddToNode() {};
+		virtual void			onNodeTransformChanged() {};
+		virtual void			onEnterScene() {};
 	protected:
 		std::shared_ptr<Node>	m_node;
 		std::shared_ptr<Scene>	m_scene;

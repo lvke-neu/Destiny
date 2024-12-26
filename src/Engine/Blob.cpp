@@ -3,7 +3,7 @@
 
 namespace Destiny
 {
-	Blob::Blob(size_t length)
+	Blob::Blob(unsigned long long length)
 	{
 		m_data = new char[length];
 		m_length = length;
@@ -14,7 +14,7 @@ namespace Destiny
 		delete[] m_data;
 	}
 
-	void Blob::copyfrom(void* data, size_t length)
+	void Blob::copyfrom(void* data, unsigned long long length)
 	{
 		if (length <= m_length)
 		{

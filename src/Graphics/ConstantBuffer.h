@@ -27,10 +27,10 @@ namespace Destiny
 		ConstantBuffer(unsigned int startSlot, unsigned int byteWidth);
 		~ConstantBuffer();
 	public:
-		void addVariable(const std::string& name, ConstantBufferVariable variable);
-		void setVariable(const std::string& name, std::shared_ptr<Blob> data);
-		void setConstantBufferBindFlag(ConstantBufferBindFlag bindFlag, bool value);
-		void bind();
+		void														addVariable(const std::string& name, ConstantBufferVariable variable);
+		void														setVariable(const std::string& name, std::shared_ptr<Blob> data);
+		void														setConstantBufferBindFlag(ConstantBufferBindFlag bindFlag, bool value);
+		void														bind();
 	private:
 		unsigned int												m_startSlot;
 		unsigned int												m_byteWidth;

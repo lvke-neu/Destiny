@@ -1,7 +1,5 @@
 #pragma once
 #include "Object.h"
-#include <string>
-#include <memory>
 
 namespace Destiny
 {

@@ -10,31 +10,31 @@ namespace Destiny
 	public:
 		Transform();
 	public:
-		DirectX::XMMATRIX getWorldMatrix() const;
-		void setWorldMatrix(const DirectX::XMMATRIX& worldMatrix);
-		DirectX::XMMATRIX getTransposeWorldMatrix() const;
-		DirectX::XMMATRIX getInvTransposeWorldMatrix() const;
+		DirectX::XMMATRIX		getWorldMatrix() const;
+		void					setWorldMatrix(const DirectX::XMMATRIX& worldMatrix);
+		DirectX::XMMATRIX		getTransposeWorldMatrix() const;
+		DirectX::XMMATRIX		getInvTransposeWorldMatrix() const;
 
-		DirectX::XMMATRIX getScaleMatrix() const;
-		DirectX::XMMATRIX getRotationMatrix() const;
-		DirectX::XMMATRIX getTranslationMatrix() const;
+		DirectX::XMMATRIX		getScaleMatrix() const;
+		DirectX::XMMATRIX		getRotationMatrix() const;
+		DirectX::XMMATRIX		getTranslationMatrix() const;
 	public:
 		GET_CLASS_NAME(Transform3D);
 		GET_SET(DirectX::XMFLOAT3, translation);
 		GET_SET(DirectX::XMFLOAT3, rotation);
 		GET_SET(DirectX::XMFLOAT3, scale);
 	public:
-		bool operator==(const Transform& other);
-		void moveZAxis(float distance);
-		void moveXAxis(float distance);
-		void rotateXAxis(float angle);
-		void rotateYAxis(float angle);
+		bool					operator==(const Transform& other);
+		void					moveZAxis(float distance);
+		void					moveXAxis(float distance);
+		void					rotateXAxis(float angle);
+		void					rotateYAxis(float angle);
 	public:
-		std::string toString();
+		std::string				toString();
 	private:
-		DirectX::XMFLOAT3 m_translation;
-		DirectX::XMFLOAT3 m_rotation;
-		DirectX::XMFLOAT3 m_scale;
+		DirectX::XMFLOAT3		m_translation;
+		DirectX::XMFLOAT3		m_rotation;
+		DirectX::XMFLOAT3		m_scale;
 	};
 
 	inline bool Transform::operator==(const Transform& other)

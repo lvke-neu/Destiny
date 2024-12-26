@@ -1,13 +1,18 @@
 #pragma once
-#include <memory>
+#include "Meta.h"
 
 namespace Destiny
 {
 	class Node;
 }
 class Application;
-class ScenePanel
+class ScenePanel : public Meta
 {
+public:
+	enum Signal
+	{
+		ChoosedNode
+	};
 public:
 	ScenePanel(Application* application);
 public:

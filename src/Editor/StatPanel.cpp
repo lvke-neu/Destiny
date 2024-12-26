@@ -58,3 +58,9 @@ void StatPanel::setChoosedNode(std::shared_ptr<Destiny::Node> choosedNode)
 {
 	m_choosedNode = choosedNode;
 }
+
+void StatPanel::onChoosedNode()
+{
+	int i = 0;
+	i++;
+}

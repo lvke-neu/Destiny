@@ -20,6 +20,7 @@ void ScenePanel::traversal(std::shared_ptr<Destiny::Node> node)
 		if (m_application && m_application->m_statPanel)
 		{
 			m_application->m_statPanel->setChoosedNode(node);
+			send(ChoosedNode);
 		}
 
 		for (const auto& child : node->getChilds())

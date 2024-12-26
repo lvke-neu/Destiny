@@ -106,8 +106,16 @@ namespace Destiny
 
 		auto blob = m_blobHolder->getBlob();
 		auto normalizedPath = m_blobHolder->getBlobLoader()->normalizedPath(m_blobHolder);
+
+		unsigned int flag = D3DCOMPILE_ENABLE_STRICTNESS;
+
+#ifdef _DEBUG
+		flag |= D3DCOMPILE_DEBUG;
+		flag |= D3DCOMPILE_SKIP_OPTIMIZATION;
+#endif // 
+
 		HRESULT hr = D3DCompile(blob->getData(), blob->getLength(), normalizedPath.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "VS", "vs_5_0",
-			D3DCOMPILE_ENABLE_STRICTNESS, 0, &m_vsCompiledBlob, &errorBlob);
+			flag, 0, &m_vsCompiledBlob, &errorBlob);
 		if (FAILED(hr))
 		{
 			if (errorBlob != nullptr)
@@ -150,8 +158,16 @@ namespace Destiny
 
 		auto blob = m_blobHolder->getBlob();
 		auto normalizedPath = m_blobHolder->getBlobLoader()->normalizedPath(m_blobHolder);
+
+		unsigned int flag = D3DCOMPILE_ENABLE_STRICTNESS;
+
+#ifdef _DEBUG
+		flag |= D3DCOMPILE_DEBUG;
+		flag |= D3DCOMPILE_SKIP_OPTIMIZATION;
+#endif // 
+
 		HRESULT hr = D3DCompile(blob->getData(), blob->getLength(), normalizedPath.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "PS", "ps_5_0",
-			D3DCOMPILE_ENABLE_STRICTNESS, 0, &m_psCompiledBlob, &errorBlob);
+			flag, 0, &m_psCompiledBlob, &errorBlob);
 		if (FAILED(hr))
 		{
 			if (errorBlob != nullptr)
@@ -190,8 +206,16 @@ namespace Destiny
 		}
 
 		auto normalizedPath = m_blobHolder->getBlobLoader()->normalizedPath(m_blobHolder);
+
+		unsigned int flag = D3DCOMPILE_ENABLE_STRICTNESS;
+
+#ifdef _DEBUG
+		flag |= D3DCOMPILE_DEBUG;
+		flag |= D3DCOMPILE_SKIP_OPTIMIZATION;
+#endif // 
+
 		HRESULT hr = D3DCompile(blob->getData(), blob->getLength(), normalizedPath.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "GS", "gs_5_0",
-			D3DCOMPILE_ENABLE_STRICTNESS, 0, &m_gsCompiledBlob, &errorBlob);
+			flag, 0, &m_gsCompiledBlob, &errorBlob);
 		if (FAILED(hr))
 		{
 			if (errorBlob != nullptr)

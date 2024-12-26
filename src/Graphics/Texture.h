@@ -40,6 +40,7 @@ namespace Destiny
 	public:
 		static std::shared_ptr<TextureLoader> s_textureLoader;
 		static std::shared_ptr<Texture> Create(const char* path);
+		static std::unordered_map<std::string, std::shared_ptr<Texture>> s_cache;
 	public:
 		void bind(std::shared_ptr<TextureDesc> desc);
 		ID3D11ShaderResourceView* getShaderResourceView();

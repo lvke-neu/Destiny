@@ -114,8 +114,7 @@ Application::Application() :
 	m_assetPanel(std::make_shared<AssetPanel>())
 {
 	AllocConsole();
-
-	Meta::connect(m_scenePanel, ScenePanel::ChoosedNode, std::bind(&StatPanel::onChoosedNode, m_statPanel.get()));
+	MetaConnect(m_scenePanel, ScenePanel::ChoosedNode, m_statPanel, &StatPanel::onChoosedNode);
 }
 
 void Application::initialize(HINSTANCE hInstance)

@@ -54,13 +54,7 @@ void StatPanel::update()
 	ImGui::PopStyleVar();
 }
 
-void StatPanel::setChoosedNode(std::shared_ptr<Destiny::Node> choosedNode)
+void StatPanel::onChoosedNode(void* parameter)
 {
-	m_choosedNode = choosedNode;
-}
-
-void StatPanel::onChoosedNode()
-{
-	int i = 0;
-	i++;
+	m_choosedNode = *(std::shared_ptr<Destiny::Node>*) parameter;
 }

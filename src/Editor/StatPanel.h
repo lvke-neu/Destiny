@@ -11,9 +11,8 @@ public:
 	StatPanel();
 public:
 	void update();
-	void setChoosedNode(std::shared_ptr<Destiny::Node> choosedNode);
 public:
-	void onChoosedNode();
+	void onChoosedNode(void* parameter);
 private:
 	std::shared_ptr<Destiny::Node> m_choosedNode;
 };

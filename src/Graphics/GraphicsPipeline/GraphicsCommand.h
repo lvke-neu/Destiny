@@ -3,10 +3,10 @@
 struct ID3D11DeviceContext;
 namespace Destiny
 {
-	class RenderCommand
+	class GraphicsCommand
 	{
 	public:
-		virtual ~RenderCommand() = default;
+		virtual ~GraphicsCommand() = default;
 	public:
 		virtual void execute(ID3D11DeviceContext* deviceContext) = 0;
 	};

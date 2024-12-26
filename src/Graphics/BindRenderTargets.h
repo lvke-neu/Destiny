@@ -1,5 +1,5 @@
 #pragma once
-#include "RenderCommand.h"
+#include "GraphicsPipeline/GraphicsCommand.h"
 #include <memory>
 
 struct D3D11_VIEWPORT;
@@ -7,7 +7,7 @@ namespace Destiny
 {
 	class RenderTargetView;
 	class DepthStencilView;
-	class BindRenderTargets : public RenderCommand
+	class BindRenderTargets : public GraphicsCommand
 	{
 	public:
 		BindRenderTargets();

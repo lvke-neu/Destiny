@@ -1,11 +1,12 @@
 #include "RenderSystem.h"
-#include "ForwardOpaquePipeline.h"
-#include "ForwardTransparentPipeline.h"
 #include "Visual.h"
 #include "Mesh.h"
 #include "RenderPass.h"
-#include "RenderCommandList.h"
 #include "BindRenderTargetsOnResize.h"
+#include "ForwardOpaquePipeline.h"
+#include "ForwardTransparentPipeline.h"
+#include "GraphicsPipeline/GraphicsCommandList.h"
+
 
 namespace Destiny
 {
@@ -14,8 +15,8 @@ namespace Destiny
 		m_forwardOpaquePipeline = std::make_shared<ForwardOpaquePipeline>();
 		m_forwardTransparentPipeline = std::make_shared<ForwardTransparentPipeline>();
 
-		m_beforeForwardOpaqueCommandList = std::make_shared<RenderCommandList>();
-		m_beforeForwardTransparentCommandList = std::make_shared<RenderCommandList>();
+		m_beforeForwardOpaqueCommandList = std::make_shared<GraphicsCommandList>();
+		m_beforeForwardTransparentCommandList = std::make_shared<GraphicsCommandList>();
 
 		bindRenderTargetsOnResize = std::make_shared<BindRenderTargetsOnResize>();
 		addBeforeForwardOpaqueCommand(bindRenderTargetsOnResize);
@@ -56,7 +57,7 @@ namespace Destiny
 		{
 		case RenderPass::ForwardOpaque :
 			{
-			if (m_forwardOpaquePipeline->addRenderCommand(visual))
+			if (m_forwardOpaquePipeline->addGraphicsCommand(visual))
 			{
 				++m_graphicsStat.DrawCallCount;
 			}
@@ -65,7 +66,7 @@ namespace Destiny
 
 		case RenderPass::ForwardTransparent :
 		{
-			if (m_forwardTransparentPipeline->addRenderCommand(visual))
+			if (m_forwardTransparentPipeline->addGraphicsCommand(visual))
 			{
 				++m_graphicsStat.DrawCallCount;
 			}
@@ -74,13 +75,13 @@ namespace Destiny
 		}
 	}
 
-	void RenderSystem::addBeforeForwardOpaqueCommand(std::shared_ptr<RenderCommand> renderCommand)
+	void RenderSystem::addBeforeForwardOpaqueCommand(std::shared_ptr<GraphicsCommand> graphicsCommand)
 	{
-		m_beforeForwardOpaqueCommandList->addRenderCommand(renderCommand);
+		m_beforeForwardOpaqueCommandList->addGraphicsCommand(graphicsCommand);
 	}
 
-	void RenderSystem::addBeforeForwardTransparentCommandList(std::shared_ptr<RenderCommand> renderCommand)
+	void RenderSystem::addBeforeForwardTransparentCommandList(std::shared_ptr<GraphicsCommand> graphicsCommand)
 	{
-		m_beforeForwardTransparentCommandList->addRenderCommand(renderCommand);
+		m_beforeForwardTransparentCommandList->addGraphicsCommand(graphicsCommand);
 	}
 }

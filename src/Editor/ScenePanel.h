@@ -13,7 +13,7 @@ public:
 public:
 	void update();
 private:
-	void bfs(std::shared_ptr<Destiny::Node> node);
+	void traversal(std::shared_ptr<Destiny::Node> node);
 private:
 	Application*	m_application;
 };

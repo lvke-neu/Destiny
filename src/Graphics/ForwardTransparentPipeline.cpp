@@ -19,20 +19,20 @@ namespace Destiny
 
 	void ForwardTransparentPipeline::syncState()
 	{
-		clearRenderCommand();
+		clearGraphicsCommand();
 	}
 
 	void ForwardTransparentPipeline::execute(ID3D11DeviceContext* deviceContext)
 	{
 		sort();
-		RenderCommandList::execute(deviceContext);
+		GraphicsCommandList::execute(deviceContext);
 	}
 
 	void ForwardTransparentPipeline::sort()
 	{
-		std::vector<std::shared_ptr<RenderCommand>> renderCommands(m_renderCommandList.begin(), m_renderCommandList.end());
+		std::vector<std::shared_ptr<GraphicsCommand>> renderCommands(m_graphicsCommandList.begin(), m_graphicsCommandList.end());
 		std::sort(renderCommands.begin(), renderCommands.end(),
-			[](std::shared_ptr<RenderCommand> a, std::shared_ptr<RenderCommand> b)->bool
+			[](std::shared_ptr<GraphicsCommand> a, std::shared_ptr<GraphicsCommand> b)->bool
 			{
 				if (!a || !b || a == b)
 				{
@@ -84,6 +84,6 @@ namespace Destiny
 					std::pow(cameraPosition.z - aabb_b.Center.z, 2);
 				return distance_square_a > distance_square_b;
 			});
-		m_renderCommandList = { renderCommands.begin(), renderCommands.end() };
+		m_graphicsCommandList = { renderCommands.begin(), renderCommands.end() };
 	}
 }

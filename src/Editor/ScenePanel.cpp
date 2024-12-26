@@ -8,7 +8,7 @@
 #include "Scene/SceneManager.h"
 #include <queue>
 
-void ScenePanel::bfs(std::shared_ptr<Destiny::Node> node)
+void ScenePanel::traversal(std::shared_ptr<Destiny::Node> node)
 {
 	if (!node)
 	{
@@ -24,7 +24,7 @@ void ScenePanel::bfs(std::shared_ptr<Destiny::Node> node)
 
 		for (const auto& child : node->getChilds())
 		{
-			bfs(child);
+			traversal(child);
 		}
 
 		ImGui::TreePop();
@@ -43,7 +43,7 @@ void ScenePanel::update()
 
 	ImGui::Begin("SceneNode");
 
-	bfs(Destiny::Engine::GetInstance()->getSceneManager()->getScene());
+	traversal(Destiny::Engine::GetInstance()->getSceneManager()->getScene());
 
 	ImGui::End();
 

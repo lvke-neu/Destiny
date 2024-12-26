@@ -1,9 +1,9 @@
 #pragma once
-#include "RenderCommandList.h"
+#include "GraphicsCommandList.h"
 
 namespace Destiny
 {
-	class GraphicsPipeline : public RenderCommandList
+	class GraphicsPipeline : public GraphicsCommandList
 	{
 	public:
 		virtual ~GraphicsPipeline() = default;

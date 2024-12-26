@@ -1,12 +1,12 @@
 #pragma once
-#include "RenderCommand.h"
+#include "GraphicsPipeline/GraphicsCommand.h"
 #include <memory>
 #include <unordered_set>
 
 namespace Destiny
 {
 	class DrawParameters;
-	class DrawCommand : public RenderCommand
+	class DrawCommand : public GraphicsCommand
 	{
 	public:
 		virtual ~DrawCommand() = default;

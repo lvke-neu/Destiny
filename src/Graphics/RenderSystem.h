@@ -4,8 +4,8 @@
 
 namespace Destiny
 {
-	class RenderCommand;
-	class RenderCommandList;
+	class GraphicsCommand;
+	class GraphicsCommandList;
 	class GraphicsPipeline;
 	class BindRenderTargetsOnResize;
 	class RenderSystem : public GraphicsSystem
@@ -18,16 +18,16 @@ namespace Destiny
 		virtual void syncState() override;
 		virtual void commitVisual(std::shared_ptr<Visual> visual) override;
 	public:
-		void addBeforeForwardOpaqueCommand(std::shared_ptr<RenderCommand> renderCommand);
-		void addBeforeForwardTransparentCommandList(std::shared_ptr<RenderCommand> renderCommand);
+		void addBeforeForwardOpaqueCommand(std::shared_ptr<GraphicsCommand> graphicsCommand);
+		void addBeforeForwardTransparentCommandList(std::shared_ptr<GraphicsCommand> graphicsCommand);
 	public:
-		std::shared_ptr<BindRenderTargetsOnResize> bindRenderTargetsOnResize;
+		std::shared_ptr<BindRenderTargetsOnResize>		bindRenderTargetsOnResize;
 	private:
-		std::shared_ptr<GraphicsPipeline>		m_forwardOpaquePipeline;
-		std::shared_ptr<GraphicsPipeline>		m_forwardTransparentPipeline;
+		std::shared_ptr<GraphicsPipeline>				m_forwardOpaquePipeline;
+		std::shared_ptr<GraphicsPipeline>				m_forwardTransparentPipeline;
 		
-		std::shared_ptr<RenderCommandList>		m_beforeForwardOpaqueCommandList;
-		std::shared_ptr<RenderCommandList>		m_beforeForwardTransparentCommandList;
+		std::shared_ptr<GraphicsCommandList>			m_beforeForwardOpaqueCommandList;
+		std::shared_ptr<GraphicsCommandList>			m_beforeForwardTransparentCommandList;
 	};
 
 }

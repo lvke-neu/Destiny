@@ -1,5 +1,5 @@
 #pragma once
-#include "GraphicsPipeline.h"
+#include "GraphicsPipeline/GraphicsPipeline.h"
 
 namespace Destiny 
 {

@@ -15,6 +15,7 @@ file(GLOB SRC_ENGINE_DETAIL src/Engine/Detail/*)
 file(GLOB SRC_EDITOR src/Editor/*)
 file(GLOB SRC_EDITOR_IMGUI src/Editor/ImGui/*)
 file(GLOB SRC_GRAPHICS src/Graphics/*)
+file(GLOB SRC_GRAPHICS_GRAPHICPIPELINE src/Graphics/GraphicsPipeline/*)
 file(GLOB SRC_Math src/Math/*)
 file(GLOB SRC_SCENE src/Scene/*)
 file(GLOB SRC_SCENE_MODEL src/Scene/Model/*)
@@ -29,6 +30,7 @@ source_group("Engine\\Detail" FILES ${SRC_ENGINE_DETAIL})
 source_group("Editor" FILES ${SRC_EDITOR})
 source_group("Editor\\ImGui" FILES ${SRC_EDITOR_IMGUI})
 source_group("Graphics" FILES ${SRC_GRAPHICS})
+source_group("Graphics\\GraphicsPipeline" FILES ${SRC_GRAPHICS_GRAPHICPIPELINE})
 source_group("Math" FILES ${SRC_Math})
 source_group("Scene" FILES ${SRC_SCENE})
 source_group("Scene\\RuntimeEffect" FILES ${SRC_SCENE_RUNTIMEEFFECT})
@@ -50,6 +52,7 @@ add_executable(Destiny WIN32 ${SRC_MAIN}
 ${SRC_ENGINE} ${SRC_ENGINE_DETAIL} 
 ${SRC_EDITOR} ${SRC_EDITOR_IMGUI} 
 ${SRC_GRAPHICS} 
+${SRC_GRAPHICS_GRAPHICPIPELINE} 
 ${SRC_Math} 
 ${SRC_SCENE} ${SRC_SCENE_MODEL}
 ${SRC_SCENE} ${SRC_SCENE_RUNTIMEEFFECT}

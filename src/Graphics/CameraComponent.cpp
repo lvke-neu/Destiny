@@ -1,5 +1,5 @@
 #include "CameraComponent.h"
-#include "Engine/Scene.h"
+#include "Graphics/VisualScene.h"
 #include "VisualComponent.h"
 #include "Engine/EventSystem.h"
 

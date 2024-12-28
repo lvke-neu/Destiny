@@ -25,14 +25,20 @@ namespace Destiny
 	{
 		m_scene->initialize();
 
+		//camera
+		auto cameraTransfrom = m_scene->getCameraNode()->get_transform();
+		cameraTransfrom.set_translation({ -1.17f, 1.4f, -2.6f });
+		cameraTransfrom.set_rotation({ -1.12f, 36.6f, 0.0f });
+		m_scene->getCameraNode()->set_transform(cameraTransfrom);
+
 		//light gzimo
 		{
 			auto lightGzimoComponent = std::make_shared<PixelBillboardComponent>("builtin://texture/directional_light_icon.png");
 			lightGzimoComponent->set_enable(true);
 			lightGzimoComponent->set_size({ 50.0f, 50.0f });
 			Transform transform;
-			transform.set_translation({ 0.0f, 3.0f, -3.0f });
-			transform.set_rotation({ 0.0f, -1.0f, 1.0f });
+			transform.set_translation({ 0.0f, 2.0f, -2.0f });
+			transform.set_rotation({ 0.0f, -90.0f, 90.0f });
 			m_scene->getDirectionLightNode()->addComponent(lightGzimoComponent);
 			m_scene->getDirectionLightNode()->set_transform(transform);
 		}
@@ -117,9 +123,9 @@ namespace Destiny
 			modelComponent1->set_path("builtin://model/nanosuit/nanosuit.obj");
 			auto node1 = std::make_shared<Node>();
 			Transform transform1;
-			transform1.set_scale({ 0.2f, 0.2f, 0.2f });
+			transform1.set_scale({ 0.11f, 0.11f, 0.11f });
 			transform1.set_rotation({ 0.0f, 0.0f, 0.0f });
-			transform1.set_translation({ -3.0f, 0.0f, 0.0f });
+			transform1.set_translation({ 2.0f, 0.0f, 0.0f });
 			node1->set_name("nanosuit");
 			node1->addComponent(modelComponent1);
 			node1->addToParent(m_scene);
@@ -128,14 +134,10 @@ namespace Destiny
 			auto modelComponent2 = std::make_shared<ModelComponent>();
 			modelComponent2->set_path("builtin://model/walk/Standard Walk.dae");
 			auto node2 = std::make_shared<Node>();
-			Transform transform2;
-			transform2.set_scale({ 0.02f, 0.02f, 0.02f });
-			transform2.set_rotation({ 0.0f, 0.0f, 0.0f });
-			transform2.set_translation({ 5.0f, 0.0f, 0.0f });
 			node2->set_name("Walk");
 			node2->addComponent(modelComponent2);
 			node2->addToParent(m_scene);
-			node2->set_transform(transform2);
+
 
 			//auto modelComponent3 = std::make_shared<ModelComponent>();
 			//modelComponent3->set_path("builtin://model/IronMan/IronMan.obj");
@@ -149,11 +151,6 @@ namespace Destiny
 			//node3->addToParent(m_scene);
 			//node3->set_transform(transform3);
 		}
-
-		auto cameraTransfrom = m_scene->getCameraNode()->get_transform();
-		cameraTransfrom.set_translation({ -3.0f, 4.0f, -7.0f });
-		cameraTransfrom.set_rotation({ 18.0f, 19.0f, 0.0f });
-		m_scene->getCameraNode()->set_transform(cameraTransfrom);
 	}
 
 	void SceneManager::uninitialize()

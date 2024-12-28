@@ -80,22 +80,22 @@ namespace Destiny
 					continue;
 				}
 
-				//Engine::GetInstance()->getGraphicsSystem()->commitVisual(visualComponent->getVisual());
-				if (visualComponent->getVisual() && visualComponent->getVisual()->getMesh())
-				{
-					if (visualComponent->getVisual()->getMesh()->getDrawCall().drawMethod == Mesh::DrawMethod::DrawIndexedInstanced)
-					{
-						Engine::GetInstance()->getGraphicsSystem()->commitVisual(visualComponent->getVisual());
-						continue;
-					}
+				Engine::GetInstance()->getGraphicsSystem()->commitVisual(visualComponent->getVisual());
+				//if (visualComponent->getVisual() && visualComponent->getVisual()->getMesh())
+				//{
+				//	if (visualComponent->getVisual()->getMesh()->getDrawCall().drawMethod == Mesh::DrawMethod::DrawIndexedInstanced)
+				//	{
+				//		Engine::GetInstance()->getGraphicsSystem()->commitVisual(visualComponent->getVisual());
+				//		continue;
+				//	}
 
-					auto visualAABB = visualComponent->getVisual()->getMesh()->getBoundingBox();
-					visualAABB.Transform(visualAABB, topNode->get_transform().getWorldMatrix());
-					if (cameraFrustum.Intersects(visualAABB))
-					{
-						Engine::GetInstance()->getGraphicsSystem()->commitVisual(visualComponent->getVisual());
-					}
-				}
+				//	auto visualAABB = visualComponent->getVisual()->getMesh()->getBoundingBox();
+				//	visualAABB.Transform(visualAABB, topNode->get_transform().getWorldMatrix());
+				//	if (cameraFrustum.Intersects(visualAABB))
+				//	{
+				//		Engine::GetInstance()->getGraphicsSystem()->commitVisual(visualComponent->getVisual());
+				//	}
+				//}
 			}
 			for (const auto& node : topNode->getChilds())
 			{

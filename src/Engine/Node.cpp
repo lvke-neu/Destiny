@@ -125,6 +125,19 @@ namespace Destiny
 		onNodeTransformChanged();
 	}
 
+	DirectX::XMMATRIX Node::getRootToThisWorldMatrix()
+	{
+		auto worldMatrix = get_transform().getWorldMatrix();
+		auto tmpNode = m_parent;
+		while (tmpNode)
+		{
+			worldMatrix *= tmpNode->get_transform().getWorldMatrix();
+			tmpNode = tmpNode->getParent();
+		}
+
+		return worldMatrix;
+	}
+
 	void Node::onEnterScene()
 	{
 		auto tmpParent = m_parent;

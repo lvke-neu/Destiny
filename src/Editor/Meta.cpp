@@ -12,8 +12,8 @@ void Meta::connect_(std::shared_ptr<Meta> sender, int signal, Slot slot)
 
 void Meta::connect_(int signal, Slot slot)
 {
-	auto& slots = m_slots[signal];
-	slots.push_back(slot);
+	auto& _slots = m_slots[signal];
+	_slots.push_back(slot);
 }
 
 void Meta::send(int signal, void* parameter)

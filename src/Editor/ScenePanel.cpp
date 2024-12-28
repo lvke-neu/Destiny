@@ -1,6 +1,4 @@
 #include "ScenePanel.h"
-#include "Application.h"
-#include "StatPanel.h"
 #include "Imgui/imgui.h"
 #include "Engine/Engine.h"
 #include "Engine/Node.h"
@@ -17,10 +15,7 @@ void ScenePanel::traversal(std::shared_ptr<Destiny::Node> node)
 	
 	if (ImGui::TreeNodeEx(node->get_name().c_str(), ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_Selected))
 	{
-		if (m_application && m_application->m_statPanel)
-		{
-			send(ChoosedNode, &node);
-		}
+		send(ChoosedNode, &node);
 
 		for (const auto& child : node->getChilds())
 		{
@@ -29,12 +24,6 @@ void ScenePanel::traversal(std::shared_ptr<Destiny::Node> node)
 
 		ImGui::TreePop();
 	}
-}
-
-ScenePanel::ScenePanel(Application* application) :
-	m_application(application)
-{
-
 }
 
 void ScenePanel::update()

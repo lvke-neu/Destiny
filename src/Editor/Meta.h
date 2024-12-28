@@ -20,3 +20,5 @@ private:
 
 #define MetaConnect(sender, signal, receiver, slot)\
 Meta::connect_(sender, signal, std::bind(slot, receiver.get(), std::placeholders::_1));
+
+#define slots

@@ -1,27 +1,31 @@
 #include "Transform.h"
+#include "Math.h"
 
 namespace Destiny
 {
 	Transform::Transform() :
 		m_translation(0.0f, 0.0f, 0.0f),
 		m_rotation(0.0f, 0.0f, 0.0f),
-		m_scale(1.0f, 1.0f, 1.0f)
+		m_scale(1.0f, 1.0f, 1.0f),
+		m_worldMatrix(DirectX::XMMatrixIdentity())
 	{
 
 	}
 
 	DirectX::XMMATRIX Transform::getWorldMatrix() const
 	{
-		DirectX::XMFLOAT3 radiansRotation { DirectX::XMConvertToRadians(m_rotation.x), DirectX::XMConvertToRadians(m_rotation.y), DirectX::XMConvertToRadians(m_rotation.z) };
-		return DirectX::XMMatrixScalingFromVector(XMLoadFloat3(&m_scale)) *
-			DirectX::XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&radiansRotation)) *
-			DirectX::XMMatrixTranslationFromVector(XMLoadFloat3(&m_translation));
+		return m_worldMatrix;
 	}
 
-	void Transform::setWorldMatrix(const DirectX::XMMATRIX& XMMATRIX)
+	void Transform::setWorldMatrix(const DirectX::XMMATRIX& worldMatrix)
 	{
-		//TODO:WorldMatrix To Scale, Rotation, Translation
+		m_worldMatrix = worldMatrix;
 
+		float arr[4][4];
+		memcpy_s(arr, sizeof(arr), &worldMatrix, sizeof(arr));
+		m_rotation.x = RAD2DEG * atan2f(-arr[0][2], sqrtf(arr[1][2] * arr[1][2] + arr[2][2] * arr[2][2])); 
+		m_rotation.y = RAD2DEG * atan2f(arr[1][2], arr[2][2]);
+		m_rotation.z = RAD2DEG * atan2f(arr[0][1], arr[0][0]);
 	}
 
 	DirectX::XMMATRIX Transform::getTransposeWorldMatrix() const
@@ -29,25 +33,53 @@ namespace Destiny
 		return DirectX::XMMatrixTranspose(getWorldMatrix());
 	}
 
+	DirectX::XMMATRIX Transform::getInverseWorldMatrix() const
+	{
+		return DirectX::XMMatrixInverse(nullptr, getWorldMatrix());
+	}
+
 	DirectX::XMMATRIX Transform::getInvTransposeWorldMatrix() const
 	{
 		return  DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(nullptr, getWorldMatrix()));
 	}
 
-	DirectX::XMMATRIX Transform::getScaleMatrix() const
+	void Transform::set_translation(DirectX::XMFLOAT3 translation)
 	{
-		return DirectX::XMMatrixScalingFromVector(XMLoadFloat3(&m_scale));
+		m_translation = translation;
+		updateWorldMatrix();
 	}
 
-	DirectX::XMMATRIX Transform::getRotationMatrix() const
+	void Transform::set_rotation(DirectX::XMFLOAT3 rotation)
 	{
-		DirectX::XMFLOAT3 radiansRotation{ DirectX::XMConvertToRadians(m_rotation.x), DirectX::XMConvertToRadians(m_rotation.y), DirectX::XMConvertToRadians(m_rotation.z) };
-		return DirectX::XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&radiansRotation));
+		m_rotation = rotation;
+		updateWorldMatrix();
 	}
 
-	DirectX::XMMATRIX Transform::getTranslationMatrix() const
+	void Transform::set_scale(DirectX::XMFLOAT3 scale)
 	{
-		return DirectX::XMMatrixTranslationFromVector(XMLoadFloat3(&m_translation));
+		m_scale = scale;
+		updateWorldMatrix();
+	}
+
+	bool Transform::operator==(const Transform& other)
+	{
+		return
+			DirectX::XMVector4Equal(m_worldMatrix.r[0], other.m_worldMatrix.r[0]) &&
+			DirectX::XMVector4Equal(m_worldMatrix.r[1], other.m_worldMatrix.r[1]) &&
+			DirectX::XMVector4Equal(m_worldMatrix.r[2], other.m_worldMatrix.r[2]) &&
+			DirectX::XMVector4Equal(m_worldMatrix.r[3], other.m_worldMatrix.r[3]) &&
+
+			m_translation.x == other.m_translation.x &&
+			m_translation.y == other.m_translation.y &&
+			m_translation.z == other.m_translation.z &&
+
+			m_rotation.x == other.m_rotation.x &&
+			m_rotation.y == other.m_rotation.y &&
+			m_rotation.z == other.m_rotation.z &&
+
+			m_scale.x == other.m_scale.x &&
+			m_scale.y == other.m_scale.y &&
+			m_scale.z == other.m_scale.z;
 	}
 
 	void Transform::moveZAxis(float distance)
@@ -60,6 +92,8 @@ namespace Destiny
 		pos = DirectX::XMVectorAdd(pos, DirectX::XMVectorScale(dir, distance));
 
 		XMStoreFloat3(&m_translation, pos);
+
+		updateWorldMatrix();
 	}
 
 	void Transform::moveXAxis(float distance)
@@ -72,22 +106,49 @@ namespace Destiny
 		pos = DirectX::XMVectorAdd(pos, DirectX::XMVectorScale(dir, distance));
 
 		XMStoreFloat3(&m_translation, pos);
+
+		updateWorldMatrix();
 	}
 
 	void Transform::rotateXAxis(float angle)
 	{
 		m_rotation.x -= angle;
+		updateWorldMatrix();
 	}
+
 	void Transform::rotateYAxis(float angle)
 	{
 		m_rotation.y -= angle;
+		updateWorldMatrix();
+	}
+
+	void Transform::updateWorldMatrix()
+	{
+		DirectX::XMFLOAT3 radiansRotation{ DirectX::XMConvertToRadians(m_rotation.x), DirectX::XMConvertToRadians(m_rotation.y), DirectX::XMConvertToRadians(m_rotation.z) };
+		m_worldMatrix =
+			DirectX::XMMatrixScalingFromVector(XMLoadFloat3(&m_scale)) *
+			DirectX::XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&radiansRotation)) *
+			DirectX::XMMatrixTranslationFromVector(XMLoadFloat3(&m_translation));
 	}
 
 	std::string Transform::toString()
 	{
+		DirectX::XMFLOAT4 r0;
+		DirectX::XMFLOAT4 r1;
+		DirectX::XMFLOAT4 r2;
+		DirectX::XMFLOAT4 r3;
+		DirectX::XMStoreFloat4(&r0, m_worldMatrix.r[0]);
+		DirectX::XMStoreFloat4(&r1, m_worldMatrix.r[1]);
+		DirectX::XMStoreFloat4(&r2, m_worldMatrix.r[2]);
+		DirectX::XMStoreFloat4(&r3, m_worldMatrix.r[3]);
 		return "scale_x:" +std::to_string(m_scale.x) + "\nscale_y:" + std::to_string(m_scale.y) + "\nscale_z:" + std::to_string(m_scale.z) + 
 			"\nrotation_x:" + std::to_string(m_rotation.x) + "\nrotation_y:" + std::to_string(m_rotation.y) + "\nrotation_z:" + std::to_string(m_rotation.z) +
-			"\ntranslation_x:" + std::to_string(m_translation.x) + "\ntranslation_y:" + std::to_string(m_translation.y) + "\ntranslation_z:" + std::to_string(m_translation.z);
+			"\ntranslation_x:" + std::to_string(m_translation.x) + "\ntranslation_y:" + std::to_string(m_translation.y) + "\ntranslation_z:" + std::to_string(m_translation.z) + 
+			"WorldMatrix:\n"+
+			std::to_string(r0.x) + "," + std::to_string(r0.y) + ","+ std::to_string(r0.z) + ","+ std::to_string(r0.w) + "\n" +
+			std::to_string(r1.x) + "," + std::to_string(r1.y) + ","+ std::to_string(r1.z) + ","+ std::to_string(r1.w) + "\n" +
+			std::to_string(r2.x) + "," + std::to_string(r2.y) + ","+ std::to_string(r2.z) + ","+ std::to_string(r2.w) + "\n" +
+			std::to_string(r3.x) + "," + std::to_string(r3.y) + ","+ std::to_string(r3.z) + ","+ std::to_string(r3.w) + "\n";
 	}
 
 	RTTR_REGISTRATION

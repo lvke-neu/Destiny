@@ -109,12 +109,13 @@ Application::Application() :
 	m_hwnd(nullptr),
 	m_hInstance(nullptr),
 	m_viewPortPanel(std::make_shared<ViewPortPanel>()),
-	m_scenePanel(std::make_shared<ScenePanel>(this)),
+	m_scenePanel(std::make_shared<ScenePanel>()),
 	m_statPanel(std::make_shared<StatPanel>()),
 	m_assetPanel(std::make_shared<AssetPanel>())
 {
 	AllocConsole();
 	MetaConnect(m_scenePanel, ScenePanel::ChoosedNode, m_statPanel, &StatPanel::onChoosedNode);
+	MetaConnect(m_scenePanel, ScenePanel::ChoosedNode, m_viewPortPanel, &ViewPortPanel::onChoosedNode);
 }
 
 void Application::initialize(HINSTANCE hInstance)

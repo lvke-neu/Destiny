@@ -41,8 +41,7 @@ namespace Destiny
 			m_model->getNode()->addToParent(m_node);
 			m_model.reset();
 			m_modelChanged = false;
-			LOG_INFO("Model:{0} load successfully", m_path);
-			
+			LOG_INFO("Model:{0} load successfully", m_path);	
 		}
 	}
 }

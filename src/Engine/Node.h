@@ -25,6 +25,7 @@ namespace Destiny
 		void												moveXAxis(float distance);
 		void												rotateXAxis(float angle);
 		void												rotateYAxis(float angle);
+		DirectX::XMMATRIX									getRootToThisWorldMatrix();
 	public:
 		GET_CLASS_NAME(Node);
 		GET_SET(std::string, name);

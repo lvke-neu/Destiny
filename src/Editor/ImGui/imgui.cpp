@@ -10108,6 +10108,12 @@ void ImGui::SetNextFrameWantCaptureMouse(bool want_capture_mouse)
     g.WantCaptureMouseNextFrame = want_capture_mouse ? 1 : 0;
 }
 
+void ImGui::CaptureMouseFromApp(bool capture)
+{
+   ImGuiContext& g = *GImGui;
+   g.WantCaptureMouseNextFrame = capture ? 1 : 0;
+}
+
 #ifndef IMGUI_DISABLE_DEBUG_TOOLS
 static const char* GetInputSourceName(ImGuiInputSource source)
 {

@@ -5,13 +5,14 @@ namespace Destiny
 {
 	class Node;
 }
+
 class StatPanel : public Meta
 {
 public:
 	StatPanel();
 public:
 	void update();
-public:
+public slots:
 	void onChoosedNode(void* parameter);
 private:
 	std::shared_ptr<Destiny::Node> m_choosedNode;

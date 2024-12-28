@@ -13,16 +13,16 @@ namespace Destiny
 		DirectX::XMMATRIX		getWorldMatrix() const;
 		void					setWorldMatrix(const DirectX::XMMATRIX& worldMatrix);
 		DirectX::XMMATRIX		getTransposeWorldMatrix() const;
+		DirectX::XMMATRIX		getInverseWorldMatrix() const;
 		DirectX::XMMATRIX		getInvTransposeWorldMatrix() const;
-
-		DirectX::XMMATRIX		getScaleMatrix() const;
-		DirectX::XMMATRIX		getRotationMatrix() const;
-		DirectX::XMMATRIX		getTranslationMatrix() const;
 	public:
 		GET_CLASS_NAME(Transform3D);
-		GET_SET(DirectX::XMFLOAT3, translation);
-		GET_SET(DirectX::XMFLOAT3, rotation);
-		GET_SET(DirectX::XMFLOAT3, scale);
+		GET(DirectX::XMFLOAT3, translation);
+		void set_translation(DirectX::XMFLOAT3 translation);
+		GET(DirectX::XMFLOAT3, rotation);
+		void set_rotation(DirectX::XMFLOAT3 rotation);
+		GET(DirectX::XMFLOAT3, scale);
+		void set_scale(DirectX::XMFLOAT3 scale);
 	public:
 		bool					operator==(const Transform& other);
 		void					moveZAxis(float distance);
@@ -32,24 +32,11 @@ namespace Destiny
 	public:
 		std::string				toString();
 	private:
+		void updateWorldMatrix();
+	private:
 		DirectX::XMFLOAT3		m_translation;
 		DirectX::XMFLOAT3		m_rotation;
 		DirectX::XMFLOAT3		m_scale;
+		DirectX::XMMATRIX		m_worldMatrix;
 	};
-
-	inline bool Transform::operator==(const Transform& other)
-	{
-		return 
-			m_translation.x == other.m_translation.x &&
-		    m_translation.y == other.m_translation.y &&
-			m_translation.z == other.m_translation.z &&
-
-			m_rotation.x == other.m_rotation.x &&
-			m_rotation.y == other.m_rotation.y &&
-			m_rotation.z == other.m_rotation.z &&
-
-			m_scale.x == other.m_scale.x &&
-			m_scale.y == other.m_scale.y &&
-			m_scale.z == other.m_scale.z;
-	}
 }

@@ -40,6 +40,15 @@ namespace Destiny
 		setMesh(mesh);
 	}
 
+	void PixelBillboardComponent::set_size(const DirectX::XMFLOAT2& size)
+	{
+		auto visual = getVisual();
+		if (visual)
+		{
+			visual->setConstant("c_size", size);
+		}
+	}
+
 	RTTR_REGISTRATION
 	{
 		rttr::registration::class_<PixelBillboardComponent>("PixelBillboardComponent")

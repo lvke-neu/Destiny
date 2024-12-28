@@ -11,6 +11,8 @@ namespace Destiny
 		PixelBillboardComponent(const char* texturePath);
 		virtual ~PixelBillboardComponent() = default;
 	public:
+		void set_size(const DirectX::XMFLOAT2& size);
+	public:
 		GET_CLASS_NAME(PixelBillboardComponent);
 	};
 }

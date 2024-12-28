@@ -22,6 +22,7 @@ file(GLOB SRC_SCENE_MODEL src/Scene/Model/*)
 file(GLOB SRC_SCENE_RUNTIMEEFFECT src/Scene/RuntimeEffect/*)
 file(GLOB BUILTIN_RENDERER builtin/renderer/*)
 file(GLOB BUILTIN_TEXTURE builtin/texture/*)
+file(GLOB BUILTIN_MODEL builtin/model/*)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -37,6 +38,7 @@ source_group("Scene\\RuntimeEffect" FILES ${SRC_SCENE_RUNTIMEEFFECT})
 source_group("Scene\\Model" FILES ${SRC_SCENE_MODEL})
 source_group("builtin\\renderer" FILES ${BUILTIN_RENDERER})
 source_group("builtin\\texture" FILES ${BUILTIN_TEXTURE})
+source_group("builtin\\model" FILES ${BUILTIN_MODEL})
 
 include_directories("src/")
 include_directories("3rdparty/spdlog/include")

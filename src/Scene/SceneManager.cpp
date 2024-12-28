@@ -25,16 +25,19 @@ namespace Destiny
 	{
 		m_scene->initialize();
 
-		////pixelbillboard
-		//{
-		//	auto pixelBillboardComponent = std::make_shared<PixelBillboardComponent>("builtin://texture/tree0.dds");
-		//	pixelBillboardComponent->set_enable(true);
-
-		//	auto node = std::make_shared<Node>();
-		//	node->set_name("PixelBillboardNode");
-		//	node->addComponent(pixelBillboardComponent);
-		//	node->addToParent(m_scene);
-		//}
+		//pixelbillboard
+		{
+			auto lightGzimoComponent = std::make_shared<PixelBillboardComponent>("builtin://texture/directional_light_icon.png");
+			lightGzimoComponent->set_enable(true);
+			lightGzimoComponent->set_size({ 50.0f, 50.0f });
+			Transform transform;
+			transform.set_translation({ 0.0f, 3.0f, -3.0f });
+			auto node = std::make_shared<Node>();
+			node->set_name("DirectionLight");
+			node->addComponent(lightGzimoComponent);
+			node->set_transform(transform);
+			node->addToParent(m_scene);
+		}
 
 		////pixelbillboard2
 		//{
@@ -85,14 +88,15 @@ namespace Destiny
 		{
 			auto planeComponent = std::make_shared<PlaneComponent>();
 			planeComponent->set_enable(true);
-			
+			planeComponent->set_color({ 65.0f / 255, 90.0f / 255, 20.0f / 255, 1.0f });
+
 			auto node = std::make_shared<Node>();
 			node->set_name("PlaneNode");
 			node->addComponent(planeComponent);
 			node->addToParent(m_scene);
 
 			Transform transform;
-			transform.set_scale({ 10.0f, 10.0f, 1.0f });
+			transform.set_scale({ 100.0f, 100.0f, 1.0f });
 			transform.set_rotation({ 90.0f, 0.0f, 0.0f });
 			transform.set_translation({ 0.0f, 0.0f, 0.0f });
 			node->set_transform(transform);
@@ -112,68 +116,45 @@ namespace Destiny
 		//model
 		{
 			auto modelComponent1 = std::make_shared<ModelComponent>();
-			modelComponent1->set_path("builtin://model/2nrtbod1out/2nrtbod1out.obj");
+			modelComponent1->set_path("builtin://model/nanosuit/nanosuit.obj");
 			auto node1 = std::make_shared<Node>();
 			Transform transform1;
-			transform1.set_scale({ 0.02f, 0.02f, 0.02f });
-			transform1.set_rotation({ 90.0f, 0.0f, 0.0f });
-			transform1.set_translation({ 3.0f, 0.0f, 0.0f });
-			node1->set_name("ModelComponentNode1");
+			transform1.set_scale({ 0.2f, 0.2f, 0.2f });
+			transform1.set_rotation({ 0.0f, 0.0f, 0.0f });
+			transform1.set_translation({ -3.0f, 0.0f, 0.0f });
+			node1->set_name("nanosuit");
 			node1->addComponent(modelComponent1);
 			node1->addToParent(m_scene);
 			node1->set_transform(transform1);
 
 			auto modelComponent2 = std::make_shared<ModelComponent>();
-			modelComponent2->set_path("builtin://model/nanosuit/nanosuit.obj");
+			modelComponent2->set_path("builtin://model/walk/Standard Walk.dae");
 			auto node2 = std::make_shared<Node>();
 			Transform transform2;
-			transform2.set_scale({ 0.2f, 0.2f, 0.2f });
+			transform2.set_scale({ 0.02f, 0.02f, 0.02f });
 			transform2.set_rotation({ 0.0f, 0.0f, 0.0f });
-			transform2.set_translation({ -3.0f, 0.0f, 0.0f });
-			node2->set_name("ModelComponentNode2");
+			transform2.set_translation({ 5.0f, 0.0f, 0.0f });
+			node2->set_name("Walk");
 			node2->addComponent(modelComponent2);
 			node2->addToParent(m_scene);
 			node2->set_transform(transform2);
 
 			//auto modelComponent3 = std::make_shared<ModelComponent>();
-			//modelComponent3->set_path("builtin://model/fbx/robot-v2.fbx");
+			//modelComponent3->set_path("builtin://model/IronMan/IronMan.obj");
 			//auto node3 = std::make_shared<Node>();
 			//Transform transform3;
-			//transform3.set_scale({ 0.3f, 0.3f, 0.3f });
-			//transform3.set_rotation({ 90.0f, 0.0f, 0.0f });
+			//transform3.set_scale({ 0.02f, 0.02f, 0.02f });
+			//transform3.set_rotation({ 0.0f, 0.0f, 0.0f });
 			//transform3.set_translation({ 0.0f, 0.0f, 0.0f });
-			//node3->set_name("ModelComponentNode3");
+			//node3->set_name("IronMan");
 			//node3->addComponent(modelComponent3);
 			//node3->addToParent(m_scene);
 			//node3->set_transform(transform3);
-
-			auto modelComponent4 = std::make_shared<ModelComponent>();
-			modelComponent4->set_path("builtin://model/walk/Standard Walk.dae");
-			auto node4 = std::make_shared<Node>();
-			Transform transform4;
-			transform4.set_scale({ 0.02f, 0.02f, 0.02f });
-			transform4.set_rotation({ 0.0f, 0.0f, 0.0f });
-			transform4.set_translation({ 5.0f, 0.0f, 0.0f });
-			node4->set_name("ModelComponentNode4");
-			node4->addComponent(modelComponent4);
-			node4->addToParent(m_scene);
-			node4->set_transform(transform4);
-
-			auto modelComponent5 = std::make_shared<ModelComponent>();
-			modelComponent5->set_path("builtin://model/IronMan/IronMan.obj");
-			auto node5 = std::make_shared<Node>();
-			Transform transform5;
-			transform5.set_scale({ 0.02f, 0.02f, 0.02f });
-			transform5.set_rotation({ 0.0f, 0.0f, 0.0f });
-			transform5.set_translation({ 0.0f, 0.0f, 0.0f });
-			node5->set_name("ModelComponentNode5");
-			node5->addComponent(modelComponent5);
-			node5->addToParent(m_scene);
-			node5->set_transform(transform5);
 		}
 
 		auto cameraTransfrom = m_scene->getCameraNode()->get_transform();
-		cameraTransfrom.set_translation({ 0.0f, 0.5f, -5.0f });
+		cameraTransfrom.set_translation({ -3.0f, 4.0f, -7.0f });
+		cameraTransfrom.set_rotation({ 18.0f, 19.0f, 0.0f });
 		m_scene->getCameraNode()->set_transform(cameraTransfrom);
 	}
 

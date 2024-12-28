@@ -107,7 +107,7 @@ float4 PS(VertexOut pIn) : SV_Target
     }
     
     float3 lightDir = float3(0.0f, -1.0f, 1.0f);
-    float diffuseFactor = dot(normalize(-lightDir), normalize(pIn.normalW));
+    float diffuseFactor = max(dot(normalize(-lightDir), normalize(pIn.normalW)), 0.0f);
     
     float3 v = reflect(lightDir, pIn.normalW);
     float specularFactor = pow(max(dot(normalize(v), normalize(g_eyePosition - pIn.positionW.xyz)), 0.0f), 32.0f);

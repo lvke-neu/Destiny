@@ -10,6 +10,8 @@ namespace Destiny
 		PlaneComponent();
 		virtual ~PlaneComponent() = default;
 	public:
+		void set_color(const DirectX::XMFLOAT4& color);
+	public:
 		GET_CLASS_NAME(PlaneComponent);
 	};
 }

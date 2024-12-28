@@ -64,6 +64,8 @@ namespace Destiny
 			),
 			visualScene->getCamera()->get_viewportWidth(), visualScene->getCamera()->get_viewportHeight()
 		);
+
+		onLightDirectionChanged(visualScene->getDirectionLightNode()->get_transform().get_rotation());
 	}
 
 	void VisualComponent::onCameraViewChanged(const DirectX::XMMATRIX& cameraView, const DirectX::XMFLOAT3& eyePosition)
@@ -89,6 +91,15 @@ namespace Destiny
 		m_visual->setConstant("g_rcpViewportWidth", 1.0f / viewportWidth);
 		m_visual->setConstant("g_viewportHeight", viewportHeight);
 		m_visual->setConstant("g_rcpViewportHeight", 1.0f / viewportHeight);
+	}
+
+	void VisualComponent::onLightDirectionChanged(const DirectX::XMFLOAT3& direction)
+	{
+		if (!m_visual)
+		{
+			return;
+		}
+		m_visual->setConstant("g_direction", direction);
 	}
 
 	RTTR_REGISTRATION

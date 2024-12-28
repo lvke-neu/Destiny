@@ -12,3 +12,8 @@ cbuffer cbProj : register(b2)
 	float g_viewportHeight;
 	float g_rcpViewportHeight;
 }
+
+cbuffer cbLight : register(b3)
+{
+    float3 g_direction;
+}

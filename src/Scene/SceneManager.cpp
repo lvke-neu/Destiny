@@ -25,18 +25,16 @@ namespace Destiny
 	{
 		m_scene->initialize();
 
-		//pixelbillboard
+		//light gzimo
 		{
 			auto lightGzimoComponent = std::make_shared<PixelBillboardComponent>("builtin://texture/directional_light_icon.png");
 			lightGzimoComponent->set_enable(true);
 			lightGzimoComponent->set_size({ 50.0f, 50.0f });
 			Transform transform;
 			transform.set_translation({ 0.0f, 3.0f, -3.0f });
-			auto node = std::make_shared<Node>();
-			node->set_name("DirectionLight");
-			node->addComponent(lightGzimoComponent);
-			node->set_transform(transform);
-			node->addToParent(m_scene);
+			transform.set_rotation({ 0.0f, -1.0f, 1.0f });
+			m_scene->getDirectionLightNode()->addComponent(lightGzimoComponent);
+			m_scene->getDirectionLightNode()->set_transform(transform);
 		}
 
 		////pixelbillboard2

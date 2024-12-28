@@ -106,7 +106,7 @@ float4 PS(VertexOut pIn) : SV_Target
         }
     }
     
-    float3 lightDir = float3(0.0f, -1.0f, 1.0f);
+    float3 lightDir = g_direction;
     float diffuseFactor = max(dot(normalize(-lightDir), normalize(pIn.normalW)), 0.0f);
     
     float3 v = reflect(lightDir, pIn.normalW);

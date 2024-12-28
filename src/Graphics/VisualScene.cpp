@@ -2,6 +2,7 @@
 #include "CameraComponent.h"
 #include "CameraController.h"
 #include "VisualComponent.h"
+#include "DirectionLightComponent.h"
 #include "Mesh.h"
 #include "GraphicsSystem.h"
 #include <queue>
@@ -19,10 +20,14 @@ namespace Destiny
 		m_camera = std::make_shared<CameraComponent>();
 		m_cameraController = std::make_shared<CameraController>();
 		m_cameraNode = std::make_shared<Node>("Camera");
-
 		m_cameraNode->addComponent(m_camera);
 		m_cameraNode->addComponent(m_cameraController);
 		m_cameraNode->addToParent(shared_from_this());
+
+		m_directionLight = std::make_shared<DirectionLightComponent>();
+		m_directionLightNode = std::make_shared<Node>("DirectionLight");
+		m_directionLightNode->addComponent(m_directionLight);
+		m_directionLightNode->addToParent(shared_from_this());
 	}
 
 	void VisualScene::uninitialize()

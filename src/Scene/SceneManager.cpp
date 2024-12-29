@@ -82,6 +82,37 @@ namespace Destiny
 			node2->set_name("Walk");
 			node2->addComponent(modelComponent2);
 			node2->addToParent(m_scene);
+
+			auto modelComponent3 = std::make_shared<ModelComponent>();
+			modelComponent3->set_path("builtin://model/Jumping/Jumping.dae");
+			auto node3 = std::make_shared<Node>();
+			Transform transform3;
+			transform3.set_translation({ -2.0f, 0.0f, 0.0f });
+			node3->set_name("Jump");
+			node3->addComponent(modelComponent3);
+			node3->addToParent(m_scene);
+			node3->set_transform(transform3);
+
+			auto modelComponent4 = std::make_shared<ModelComponent>();
+			modelComponent4->set_path("builtin://model/Ymca Dance/Ymca Dance.dae");
+			auto node4 = std::make_shared<Node>();
+			Transform transform4;
+			transform4.set_translation({ 0.0f, 0.0f, 2.0f });
+			node4->set_name("Ymca Dance");
+			node4->addComponent(modelComponent4);
+			node4->addToParent(m_scene);
+			node4->set_transform(transform4);
+
+			auto modelComponent5 = std::make_shared<ModelComponent>();
+			modelComponent5->set_path("builtin://model/planet/planet.obj");
+			auto node5 = std::make_shared<Node>();
+			Transform transform5;
+			transform5.set_translation({ -1.0f, 1.0f, 2.0f });
+			transform5.set_scale({ 0.1f, 0.1f, 0.1f });
+			node5->set_name("planet");
+			node5->addComponent(modelComponent5);
+			node5->addToParent(m_scene);
+			node5->set_transform(transform5);
 		}
 	}
 

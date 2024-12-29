@@ -19,6 +19,7 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <d3d11.h>
 
 namespace Destiny
 {
@@ -197,6 +198,9 @@ namespace Destiny
 
 		std::shared_ptr<Material>  material = std::make_shared<Material>();
 		material->s_sampler = std::make_shared<SamplerState>();
+		material->s_sampler->getSamplerDesc()->AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		material->s_sampler->getSamplerDesc()->AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		material->s_sampler->getSamplerDesc()->AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 
 		aiColor4D otherColor;
 		if (otherMaterial->Get(AI_MATKEY_COLOR_AMBIENT, otherColor) == aiReturn_SUCCESS)

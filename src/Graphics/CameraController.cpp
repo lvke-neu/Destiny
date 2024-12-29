@@ -29,7 +29,7 @@ namespace Destiny
 
 	void CameraController::onUpdateTime(void* data)
 	{
-		if (!m_node)
+		if (!m_node || !m_enable)
 		{
 			return;
 		}
@@ -59,6 +59,10 @@ namespace Destiny
 
 	void CameraController::onMousePress(void* data)
 	{
+		if (!m_enable)
+		{
+			return;
+		}
 		Mouse mouse = *(Mouse*)data;
 
 		if (mouse.code == MouseCode::RightButton)
@@ -70,6 +74,11 @@ namespace Destiny
 
 	void CameraController::onMouseRelease(void* data)
 	{
+		if (!m_enable)
+		{
+			return;
+		}
+
 		Mouse mouse = *(Mouse*)data;
 
 		if (mouse.code == MouseCode::RightButton)
@@ -81,7 +90,7 @@ namespace Destiny
 
 	void CameraController::onMouseMove(void* data)
 	{
-		if (!m_node)
+		if (!m_node || !m_enable)
 		{
 			return;
 		}

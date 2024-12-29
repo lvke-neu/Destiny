@@ -38,7 +38,7 @@ namespace Destiny
 			lightGzimoComponent->set_size({ 50.0f, 50.0f });
 			Transform transform;
 			transform.set_translation({ 0.0f, 2.0f, -2.0f });
-			transform.set_rotation({ 0.0f, -90.0f, 90.0f });
+			transform.set_rotation({ 0.0f, -1.0f, 1.0f });
 			m_scene->getDirectionLightNode()->addComponent(lightGzimoComponent);
 			m_scene->getDirectionLightNode()->set_transform(transform);
 		}

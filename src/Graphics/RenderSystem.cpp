@@ -4,24 +4,21 @@
 #include "RenderPass.h"
 #include "ForwardOpaquePipeline.h"
 #include "ForwardTransparentPipeline.h"
-#include "GraphicsPipeline/GraphicsCommandList.h"
 
 namespace Destiny
 {
 	void RenderSystem::createPipeline()
 	{
+		m_beforePipelineCommandList = std::make_shared<GraphicsCommandList>();
+
 		m_forwardOpaquePipeline = std::make_shared<ForwardOpaquePipeline>();
 		m_forwardTransparentPipeline = std::make_shared<ForwardTransparentPipeline>();
-
-		m_beforeForwardOpaqueCommandList = std::make_shared<GraphicsCommandList>();
-		m_beforeForwardTransparentCommandList = std::make_shared<GraphicsCommandList>();
 	}
 
 	void RenderSystem::render()
 	{
-		m_beforeForwardOpaqueCommandList->execute(getImmediateContext());
+		m_beforePipelineCommandList->execute(getImmediateContext());
 		m_forwardOpaquePipeline->execute(getImmediateContext());
-		m_beforeForwardTransparentCommandList->execute(getImmediateContext());
 		m_forwardTransparentPipeline->execute(getImmediateContext());
 	}
 
@@ -29,11 +26,17 @@ namespace Destiny
 	{
 		m_graphicsStat.DrawCallCount = 0;
 		m_graphicsStat.TriangleCount = 0;
+		m_beforePipelineCommandList->clearGraphicsCommand();
 		m_forwardOpaquePipeline->syncState();
 		m_forwardTransparentPipeline->syncState();
 	}
 
-	void RenderSystem::commitVisual(std::shared_ptr<Visual> visual)
+	void RenderSystem::addBeforePipelineCommand(std::shared_ptr<GraphicsCommand> graphicsCommand)
+	{
+		m_beforePipelineCommandList->addGraphicsCommand(nullptr, graphicsCommand);
+	}
+
+	void RenderSystem::commitVisual(std::shared_ptr<Pre_Post_Process_Command> pre_post_process_command, std::shared_ptr<Visual> visual)
 	{
 		if (!visual || !visual->getRenderPass())
 		{
@@ -51,7 +54,7 @@ namespace Destiny
 		{
 		case RenderPass::ForwardOpaque :
 			{
-			if (m_forwardOpaquePipeline->addGraphicsCommand(visual))
+			if (m_forwardOpaquePipeline->addGraphicsCommand(pre_post_process_command, visual))
 			{
 				++m_graphicsStat.DrawCallCount;
 			}
@@ -60,22 +63,12 @@ namespace Destiny
 
 		case RenderPass::ForwardTransparent :
 		{
-			if (m_forwardTransparentPipeline->addGraphicsCommand(visual))
+			if (m_forwardTransparentPipeline->addGraphicsCommand(pre_post_process_command, visual))
 			{
 				++m_graphicsStat.DrawCallCount;
 			}
 			return;
 		}
 		}
-	}
-
-	void RenderSystem::addBeforeForwardOpaqueCommand(std::shared_ptr<GraphicsCommand> graphicsCommand)
-	{
-		m_beforeForwardOpaqueCommandList->addGraphicsCommand(graphicsCommand);
-	}
-
-	void RenderSystem::addBeforeForwardTransparentCommandList(std::shared_ptr<GraphicsCommand> graphicsCommand)
-	{
-		m_beforeForwardTransparentCommandList->addGraphicsCommand(graphicsCommand);
 	}
 }

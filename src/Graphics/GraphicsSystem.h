@@ -10,7 +10,6 @@ struct IDXGISwapChain;
 struct ID3D11Texture2D;
 namespace Destiny
 {
-	class Visual;
 	class GraphicsSystem
 	{
 	public:
@@ -39,7 +38,6 @@ namespace Destiny
 		//for window resize
 		void						onResize_(unsigned int width, unsigned int height);
 		virtual void				syncState() = 0;
-		virtual void				commitVisual(std::shared_ptr<Visual> visual) = 0;
 	private:
 		void						createDeviceAndContext();
 		void						createSwapChain(long long hwnd);

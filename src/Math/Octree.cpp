@@ -54,24 +54,24 @@ namespace Destiny
 
 	void Octree::onCull(std::shared_ptr<OctreeNode> octreeNode, const DirectX::BoundingFrustum& frustum)
 	{
-		if (!octreeNode)
-		{
-			return;
-		}
+		//if (!octreeNode)
+		//{
+		//	return;
+		//}
 
-		if (octreeNode->level == m_octreeDepth)
-		{
-			for (const auto& visual : octreeNode->visual)
-			{
-				Engine::GetInstance()->getGraphicsSystem()->commitVisual(visual);
-			}
-			return;
-		}
+		//if (octreeNode->level == m_octreeDepth)
+		//{
+		//	for (const auto& visual : octreeNode->visual)
+		//	{
+		//		Engine::GetInstance()->getGraphicsSystem()->commitVisual(visual);
+		//	}
+		//	return;
+		//}
 
-		for (const auto& childOctreeNode : octreeNode->childs)
-		{
-			onCull(childOctreeNode, frustum);
-		}
+		//for (const auto& childOctreeNode : octreeNode->childs)
+		//{
+		//	onCull(childOctreeNode, frustum);
+		//}
 	}
 
 	void Octree::constructOctree(float sceneRadius)

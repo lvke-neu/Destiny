@@ -18,6 +18,7 @@ namespace Destiny
 		void									setDepthStencilView(std::shared_ptr<DepthStencilView> depthStencilView);
 		std::shared_ptr<DepthStencilView>		getDepthStencilView();
 		void									setViewport(float topLeftX, float topLeftY, float width, float height, float minDepth, float naxDepth);
+		void									clearRenderTargets(ID3D11DeviceContext* deviceContext);
 	public:
 		virtual void execute(ID3D11DeviceContext* deviceContext) override;
 	private:
@@ -34,5 +35,15 @@ namespace Destiny
 		virtual ~BindRenderTargetsOnResize();
 	private:
 		void onResize(void* data);
+	};
+
+	class ClearRenderTargets : public GraphicsCommand
+	{
+	public:
+		ClearRenderTargets(std::shared_ptr<BindRenderTargets> bindRenderTargets);
+	public:
+		virtual void execute(ID3D11DeviceContext* deviceContext) override;
+	private:
+		std::shared_ptr<BindRenderTargets> m_bindRenderTargets;
 	};
 }

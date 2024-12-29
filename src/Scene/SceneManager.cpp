@@ -119,24 +119,24 @@ namespace Destiny
 
 		//model
 		{
-			auto modelComponent1 = std::make_shared<ModelComponent>();
-			modelComponent1->set_path("builtin://model/nanosuit/nanosuit.obj");
-			auto node1 = std::make_shared<Node>();
-			Transform transform1;
-			transform1.set_scale({ 0.11f, 0.11f, 0.11f });
-			transform1.set_rotation({ 0.0f, 0.0f, 0.0f });
-			transform1.set_translation({ 2.0f, 0.0f, 0.0f });
-			node1->set_name("nanosuit");
-			node1->addComponent(modelComponent1);
-			node1->addToParent(m_scene);
-			node1->set_transform(transform1);
+			//auto modelComponent1 = std::make_shared<ModelComponent>();
+			//modelComponent1->set_path("builtin://model/nanosuit/nanosuit.obj");
+			//auto node1 = std::make_shared<Node>();
+			//Transform transform1;
+			//transform1.set_scale({ 0.11f, 0.11f, 0.11f });
+			//transform1.set_rotation({ 0.0f, 0.0f, 0.0f });
+			//transform1.set_translation({ 2.0f, 0.0f, 0.0f });
+			//node1->set_name("nanosuit");
+			//node1->addComponent(modelComponent1);
+			//node1->addToParent(m_scene);
+			//node1->set_transform(transform1);
 
-			auto modelComponent2 = std::make_shared<ModelComponent>();
-			modelComponent2->set_path("builtin://model/walk/Standard Walk.dae");
-			auto node2 = std::make_shared<Node>();
-			node2->set_name("Walk");
-			node2->addComponent(modelComponent2);
-			node2->addToParent(m_scene);
+			//auto modelComponent2 = std::make_shared<ModelComponent>();
+			//modelComponent2->set_path("builtin://model/walk/Standard Walk.dae");
+			//auto node2 = std::make_shared<Node>();
+			//node2->set_name("Walk");
+			//node2->addComponent(modelComponent2);
+			//node2->addToParent(m_scene);
 
 
 			//auto modelComponent3 = std::make_shared<ModelComponent>();

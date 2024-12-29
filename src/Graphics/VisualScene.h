@@ -3,10 +3,12 @@
 
 namespace Destiny
 {
-	class CameraComponent;
-	class CameraController;
-	class DirectionLightComponent;
-	class BindRenderTargets;
+	class  CameraComponent;
+	class  CameraController;
+	class  DirectionLightComponent;
+	class  BindRenderTargets;
+	class  ClearRenderTargets;
+	struct Pre_Post_Process_Command;
 	class VisualScene : public Scene
 	{
 		RTTR_ENABLE(Scene);
@@ -28,7 +30,10 @@ namespace Destiny
 		std::shared_ptr<DirectionLightComponent>	getDirectionLight();
 		std::shared_ptr<Node>						getDirectionLightNode();
 	public:
-		std::shared_ptr<BindRenderTargets>				m_bindRenderTargets;
+		std::shared_ptr<BindRenderTargets>			m_bindRenderTargets;
+	private:
+		std::shared_ptr<Pre_Post_Process_Command>	m_pre_post_process_command;
+		std::shared_ptr<ClearRenderTargets>			m_clearRenderTargets;
 	protected:
 		std::shared_ptr<CameraComponent>			m_camera;
 		std::shared_ptr<CameraController>			m_cameraController;

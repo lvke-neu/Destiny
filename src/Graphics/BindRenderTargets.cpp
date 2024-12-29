@@ -45,6 +45,21 @@ namespace Destiny
 		m_viewPort->MaxDepth = naxDepth;
 	}
 
+	void BindRenderTargets::clearRenderTargets(ID3D11DeviceContext* deviceContext)
+	{
+		if (!deviceContext)
+		{
+			return;
+		}
+
+		if (m_renderTargetView && m_depthStencilView)
+		{
+			static float color[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+			deviceContext->ClearRenderTargetView(*m_renderTargetView->getRenderTargetView(), color);
+			deviceContext->ClearDepthStencilView(m_depthStencilView->getDepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+		}
+	}
+
 	void BindRenderTargets::execute(ID3D11DeviceContext* deviceContext)
 	{
 		if (!deviceContext)
@@ -60,9 +75,6 @@ namespace Destiny
 		if (m_renderTargetView && m_depthStencilView)
 		{
 			deviceContext->OMSetRenderTargets(1, m_renderTargetView->getRenderTargetView(), m_depthStencilView->getDepthStencilView());
-			static float color[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-			deviceContext->ClearRenderTargetView(*m_renderTargetView->getRenderTargetView(), color);
-			deviceContext->ClearDepthStencilView(m_depthStencilView->getDepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 		}
 	}
 
@@ -89,5 +101,19 @@ namespace Destiny
 		setDepthStencilView(std::make_shared<Destiny::DepthStencilView>(wrd.width, wrd.height));
 		getDepthStencilView()->load(0);
 		setViewport(0.0f, 0.0f, (float)wrd.width, (float)wrd.height, 0.0f, 1.0f);
+	}
+
+	ClearRenderTargets::ClearRenderTargets(std::shared_ptr<BindRenderTargets> bindRenderTargets) : 
+		m_bindRenderTargets(bindRenderTargets)
+	{
+
+	}
+
+	void ClearRenderTargets::execute(ID3D11DeviceContext* deviceContext)
+	{
+		if (m_bindRenderTargets)
+		{
+			m_bindRenderTargets->clearRenderTargets(deviceContext);
+		}
 	}
 }

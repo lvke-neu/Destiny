@@ -4,19 +4,26 @@
 #include "VisualComponent.h"
 #include "DirectionLightComponent.h"
 #include "Mesh.h"
-#include "GraphicsSystem.h"
+#include "RenderSystem.h"
+#include "BindRenderTargets.h"
+#include "Engine/Engine.h"
 #include <queue>
 #include <DirectXCollision.h>
 
 namespace Destiny
 {
-	VisualScene::VisualScene(const std::string& name) : Scene(name)
+	VisualScene::VisualScene(const std::string& name) : 
+		Scene(name),
+		m_bindRenderTargets(nullptr)
 	{
 
 	}
 
 	void VisualScene::initialize()
 	{
+		m_bindRenderTargets = std::make_shared<BindRenderTargetsOnResize>();
+		std::dynamic_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->addBeforeForwardOpaqueCommand(m_bindRenderTargets);
+
 		m_camera = std::make_shared<CameraComponent>();
 		m_cameraController = std::make_shared<CameraController>();
 		m_cameraNode = std::make_shared<Node>("Camera");

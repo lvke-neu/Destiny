@@ -32,7 +32,7 @@ namespace Destiny
 	public:
 		std::string				toString();
 	private:
-		void updateWorldMatrix();
+		void					updateWorldMatrix();
 	private:
 		DirectX::XMFLOAT3		m_translation;
 		DirectX::XMFLOAT3		m_rotation;

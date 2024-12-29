@@ -47,18 +47,6 @@ void ViewPortPanel::update()
 	processGzimo();
 
 	ImGui::End();
-
-
-
-
-	ImGui::Begin("Viewport2");
-	auto rtv2 = Destiny::Engine::GetInstance()->getSceneManager()->getScene2()->m_bindRenderTargets->getRenderTargetView();
-	if (rtv2 && rtv2->isLoadingSucceed())
-	{
-		ImGui::Image(*(rtv2->getShaderResourceView()), { (float)rtv2->getWidth(), (float)rtv2->getHeight() });
-	}
-	ImGui::End();
-
 	ImGui::PopStyleVar();
 }
 

@@ -7,7 +7,6 @@
 #include "Graphics/MeshProvider.h"
 #include "Graphics/Texture.h"
 #include "Graphics/SamplerState.h"
-#include "Graphics/Gui/FontManager.h"
 #include <d3d11.h>
 
 namespace Destiny
@@ -17,12 +16,10 @@ namespace Destiny
 		auto renderer = std::make_shared<Renderer>("builtin://renderer/size_billboard.hlsl");
 		renderer->load(0);
 		renderer->setConstant("c_size", DirectX::XMFLOAT2{ 1.0f, 1.0f });
-		renderer->setShaderResource("t_texture", FontManager::GetInstance()->getFontTexture('A', 100, 100));
-
-
-		//auto texture = Texture::Create("builtin://texture/wind.png");
-		//texture->load();
-		//renderer->setShaderResource("t_texture", texture);
+		
+		auto texture = Texture::Create("builtin://texture/wind.png");
+		texture->load();
+		renderer->setShaderResource("t_texture", texture);
 
 		auto samplerState = std::make_shared<SamplerState>();
 		samplerState->load();
@@ -36,7 +33,7 @@ namespace Destiny
 		renderPass->setRenderer(renderer);
 		renderPass->setRenderStates(renderStates);
 
-		auto mesh = MeshProvider::Create_Position();
+		auto mesh = MeshProvider::Create_Position3();
 		mesh->load();
 
 		setRenderPass(renderPass);

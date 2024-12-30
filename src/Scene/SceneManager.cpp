@@ -44,10 +44,7 @@ namespace Destiny
 			m_scene->getDirectionLightNode()->addComponent(lightGzimoComponent);
 			m_scene->getDirectionLightNode()->set_transform(transform);
 		}
-		{
-			auto sizeBillboardComponent = std::make_shared<SizeBillboardComponent>();
-			m_scene->addComponent(sizeBillboardComponent);
-		}
+
 		//plane
 		{
 			auto planeComponent = std::make_shared<PlaneComponent>();

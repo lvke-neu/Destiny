@@ -33,7 +33,7 @@ namespace Destiny
 		renderPass->setRenderer(renderer);
 		renderPass->setRenderStates(renderStates);
 
-		auto mesh = MeshProvider::Create_Position();
+		auto mesh = MeshProvider::Create_Position3();
 		mesh->load();
 
 		setRenderPass(renderPass);

@@ -17,8 +17,13 @@ namespace Destiny
 
 	};
 
-	struct Position
+	struct Position3
 	{
 		DirectX::XMFLOAT3 position;
+	};
+
+	struct Position2
+	{
+		DirectX::XMFLOAT2 position;
 	};
 }

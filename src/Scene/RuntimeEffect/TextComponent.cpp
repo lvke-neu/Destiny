@@ -14,37 +14,29 @@ namespace Destiny
 {
 	TextComponent::TextComponent()
 	{
-		
-		//auto texture = FontManager::GetInstance()->getFontTexture('A', 50, 50);
+		auto renderer = std::make_shared<Renderer>("builtin://renderer/text.hlsl");
+		renderer->load(0);
+		renderer->setConstant("c_size", DirectX::XMFLOAT2{ 150.0f, 150.0f });
 
-		//int i = 0;
-		//i++;
+		renderer->setShaderResource("t_texture", FontManager::GetInstance()->getFontTexture('A', 150, 150));
 
-		//auto renderer = std::make_shared<Renderer>("builtin://renderer/pixel_billboard.hlsl");
-		//renderer->load(0);
-		//renderer->setConstant("c_size", DirectX::XMFLOAT2{ 150.0f, 150.0f });
+		auto samplerState = std::make_shared<SamplerState>();
+		samplerState->load();
+		renderer->setSamplerSate("s_sampler", samplerState);
 
-		//auto texture = Texture::Create("");
-		//texture->load();
-		//renderer->setShaderResource("t_texture", texture);
+		auto renderStates = RenderStates::CreateBlendState();
+		renderStates->load();
 
-		//auto samplerState = std::make_shared<SamplerState>();
-		//samplerState->load();
-		//renderer->setSamplerSate("s_sampler", samplerState);
+		std::shared_ptr<RenderPass> renderPass = std::make_shared<RenderPass>();
+		renderPass->setRendererCategory(RenderPass::ForwardTransparent);
+		renderPass->setRenderer(renderer);
+		renderPass->setRenderStates(renderStates);
 
-		//auto renderStates = RenderStates::CreateBlendState();
-		//renderStates->load();
+		auto mesh = MeshProvider::Create_Position2(0.0f, 0.0f);
+		mesh->load();
 
-		//std::shared_ptr<RenderPass> renderPass = std::make_shared<RenderPass>();
-		//renderPass->setRendererCategory(RenderPass::ForwardTransparent);
-		//renderPass->setRenderer(renderer);
-		//renderPass->setRenderStates(renderStates);
-
-		//auto mesh = MeshProvider::Create_Position();
-		//mesh->load();
-
-		//setRenderPass(renderPass);
-		//setMesh(mesh);
+		setRenderPass(renderPass);
+		setMesh(mesh);
 	}
 
 	RTTR_REGISTRATION

@@ -11,5 +11,7 @@ namespace Destiny
 		virtual ~TextComponent() = default;
 	public:
 		GET_CLASS_NAME(TextComponent);
+	public:
+		void updateText(unsigned char text);
 	};
 }

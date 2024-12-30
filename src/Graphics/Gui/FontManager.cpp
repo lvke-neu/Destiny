@@ -45,6 +45,12 @@ namespace Destiny
 
 	std::shared_ptr<Texture> FontManager::getFontTexture(char text, unsigned int width, unsigned int height)
 	{
+		auto iter = m_cache.find(text);
+		if (iter != m_cache.end())
+		{
+			return iter->second;
+		}
+
 		FT_Set_Pixel_Sizes(m_face, width, height);
 
 		if (FT_Load_Char(m_face, text, FT_LOAD_RENDER))
@@ -73,6 +79,8 @@ namespace Destiny
 
 				texture = Texture::Create2D(DXGI_FORMAT_R8G8B8A8_UNORM, bitMap.width, bitMap.rows, data.data(), bitMap.width * sizeof(Pixel), bitMap.width * sizeof(Pixel) * bitMap.rows);
 				texture->load(0);
+
+				m_cache[text] = texture;
 			}
 		}
 

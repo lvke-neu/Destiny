@@ -16,9 +16,9 @@ namespace Destiny
 	{
 		auto renderer = std::make_shared<Renderer>("builtin://renderer/text.hlsl");
 		renderer->load(0);
-		renderer->setConstant("c_size", DirectX::XMFLOAT2{ 150.0f, 150.0f });
+		renderer->setConstant("c_size", DirectX::XMFLOAT2{ 15.0f, 15.0f });
 
-		renderer->setShaderResource("t_texture", FontManager::GetInstance()->getFontTexture('A', 150, 150));
+		//renderer->setShaderResource("t_texture", FontManager::GetInstance()->getFontTexture('A', 5000, 5000));
 
 		auto samplerState = std::make_shared<SamplerState>();
 		samplerState->load();
@@ -32,11 +32,19 @@ namespace Destiny
 		renderPass->setRenderer(renderer);
 		renderPass->setRenderStates(renderStates);
 
-		auto mesh = MeshProvider::Create_Position2(0.0f, 0.0f);
-		mesh->load();
+		auto mesh = MeshProvider::Create_Position2(-0.9f, 0.9f);
+		mesh->load(0);
 
 		setRenderPass(renderPass);
 		setMesh(mesh);
+	}
+
+	void TextComponent::updateText(unsigned char text)
+	{
+		if (getVisual())
+		{
+			getVisual()->setShaderResource("t_texture", FontManager::GetInstance()->getFontTexture(text, 500, 500));
+		}
 	}
 
 	RTTR_REGISTRATION

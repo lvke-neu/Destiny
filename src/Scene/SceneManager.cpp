@@ -23,6 +23,7 @@ namespace Destiny
 
 	}	
 
+	std::shared_ptr<TextComponent> textComponent = nullptr;
 	void SceneManager::initialize()
 	{
 		m_scene->initialize();
@@ -118,7 +119,7 @@ namespace Destiny
 
 		//text
 		{			
-			auto textComponent = std::make_shared<TextComponent>();
+			textComponent = std::make_shared<TextComponent>();
 			auto node = std::make_shared<Node>();
 			node->set_name("Text");
 			node->addComponent(textComponent);
@@ -135,5 +136,13 @@ namespace Destiny
 	{
 		m_scene->update(deltaTime);
 		m_scene->onCull();
+	}
+
+	void SceneManager::updateText(unsigned char text)
+	{
+		if (textComponent)
+		{
+			textComponent->updateText(text);
+		}
 	}
 }

@@ -211,7 +211,7 @@ namespace Destiny
 
 		data.reset(new Blob(vertices.size() * sizeof(Position3)));
 		data->copyfrom(vertices.data(), vertices.size() * sizeof(Position3));
-		std::shared_ptr<VertexBuffer> vertexBuffer = std::make_shared<VertexBuffer>(InputLayout::Create_Position(), (unsigned int)sizeof(Position3), 0, data);
+		std::shared_ptr<VertexBuffer> vertexBuffer = std::make_shared<VertexBuffer>(InputLayout::Create_Position3(), (unsigned int)sizeof(Position3), 0, data);
 
 	
 		DirectX::BoundingBox aabb{ { 0.0f, 0.0f, 0.0f },{ 1.0f, 1.0f, 1.0f } };
@@ -244,7 +244,7 @@ namespace Destiny
 
 		data.reset(new Blob(vertices.size() * sizeof(Position2)));
 		data->copyfrom(vertices.data(), vertices.size() * sizeof(Position2));
-		std::shared_ptr<VertexBuffer> vertexBuffer = std::make_shared<VertexBuffer>(InputLayout::Create_Position(), (unsigned int)sizeof(Position2), 0, data);
+		std::shared_ptr<VertexBuffer> vertexBuffer = std::make_shared<VertexBuffer>(InputLayout::Create_Position2(), (unsigned int)sizeof(Position2), 0, data);
 
 
 		DirectX::BoundingBox aabb{ { 0.0f, 0.0f, 0.0f },{ FLT_MAX, FLT_MAX, FLT_MAX } };

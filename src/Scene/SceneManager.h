@@ -13,6 +13,7 @@ namespace Destiny
 		void							initialize();
 		void							uninitialize();
 		void							update(float deltaTime);
+		void							updateText(unsigned char text);
 	public:
 		std::shared_ptr<VisualScene>	getScene();
 	private:

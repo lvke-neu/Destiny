@@ -4,6 +4,10 @@
 #include "Renderer.h"
 #include "DrawCommand.h"
 #include "DrawParameters.h"
+#include "VisualScene.h"
+#include "Engine/Component.h"
+#include "BindRenderTargets.h"
+#include "GraphicsPipeline/GraphicsCommandList.h"
 
 namespace Destiny
 {
@@ -46,6 +50,16 @@ namespace Destiny
 			if (m_mesh && m_renderPass->getRenderer())
 			{
 				m_mesh->fillDrawParameters(m_drawParameters, m_renderPass->getRenderer()->getInputSignatureBlob());
+			}
+		}
+
+		if (!m_drawParameters->beforeDrawCommandList)
+		{
+			m_drawParameters->beforeDrawCommandList = std::make_shared<GraphicsCommandList>();
+			auto scene = std::dynamic_pointer_cast<VisualScene>(m_component->get_scene());
+			if (scene)
+			{
+				m_drawParameters->beforeDrawCommandList->addGraphicsCommand(scene->m_bindRenderTargets);
 			}
 		}
 

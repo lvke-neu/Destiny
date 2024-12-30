@@ -33,10 +33,10 @@ namespace Destiny
 
 	void RenderSystem::addBeforePipelineCommand(std::shared_ptr<GraphicsCommand> graphicsCommand)
 	{
-		m_beforePipelineCommandList->addGraphicsCommand(nullptr, graphicsCommand);
+		m_beforePipelineCommandList->addGraphicsCommand(graphicsCommand);
 	}
 
-	void RenderSystem::commitVisual(std::shared_ptr<Pre_Post_Process_Command> pre_post_process_command, std::shared_ptr<Visual> visual)
+	void RenderSystem::commitVisual(std::shared_ptr<Visual> visual)
 	{
 		if (!visual || !visual->getRenderPass())
 		{
@@ -54,7 +54,7 @@ namespace Destiny
 		{
 		case RenderPass::ForwardOpaque :
 			{
-			if (m_forwardOpaquePipeline->addGraphicsCommand(pre_post_process_command, visual))
+			if (m_forwardOpaquePipeline->addGraphicsCommand(visual))
 			{
 				++m_graphicsStat.DrawCallCount;
 			}
@@ -63,7 +63,7 @@ namespace Destiny
 
 		case RenderPass::ForwardTransparent :
 		{
-			if (m_forwardTransparentPipeline->addGraphicsCommand(pre_post_process_command, visual))
+			if (m_forwardTransparentPipeline->addGraphicsCommand(visual))
 			{
 				++m_graphicsStat.DrawCallCount;
 			}

@@ -15,7 +15,7 @@ namespace Destiny
 	VisualScene::VisualScene(const std::string& name) : 
 		Scene(name),
 		m_bindRenderTargets(nullptr),
-		m_pre_post_process_command(nullptr)
+		m_clearRenderTargets(nullptr)
 	{
 
 	}
@@ -24,8 +24,6 @@ namespace Destiny
 	{
 		m_bindRenderTargets = std::make_shared<BindRenderTargetsOnResize>();
 		m_clearRenderTargets = std::make_shared<ClearRenderTargets>(m_bindRenderTargets);
-		m_pre_post_process_command = std::make_shared<Pre_Post_Process_Command>();
-		m_pre_post_process_command->Pre_Process_Command = m_bindRenderTargets;
 
 		m_camera = std::make_shared<CameraComponent>();
 		m_cameraController = std::make_shared<CameraController>();
@@ -91,7 +89,7 @@ namespace Destiny
 				{
 					continue;
 				}
-				std::dynamic_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->commitVisual(m_pre_post_process_command, visualComponent->getVisual());
+				std::dynamic_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->commitVisual(visualComponent->getVisual());
 				//if (visualComponent->getVisual() && visualComponent->getVisual()->getMesh())
 				//{
 				//	if (visualComponent->getVisual()->getMesh()->getDrawCall().drawMethod == Mesh::DrawMethod::DrawIndexedInstanced)

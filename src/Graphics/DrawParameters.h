@@ -17,35 +17,39 @@ namespace Destiny
 	class  Texture;
 	struct TextureDesc;
 	class  SamplerState;
+	class  GraphicsCommandList;
 	struct SamplerStateDesc;
 	class DrawParameters
 	{
 	public:
-		ID3D11Buffer* vertexBuffer						= nullptr;
-		unsigned int vertexBuffer_stride				= 0;
-		unsigned int vertexBuffer_offset				= 0;
+		std::shared_ptr<GraphicsCommandList> beforeDrawCommandList   = nullptr;
+		std::shared_ptr<GraphicsCommandList> afterDrawCommandList    = nullptr;
 
-		ID3D11Buffer* instanceBuffer					= nullptr;
-		unsigned int instanceBuffer_stride				= 0;
-		unsigned int instanceBuffer_offset				= 0;
-		unsigned int instanceCount						= 0;
-
-		ID3D11Buffer* indexBuffer						= nullptr;
-		short format									= 0;
-		short primitiveTopology							= 0;
-		ID3D11InputLayout* inputLayout					= nullptr;
-
-		ID3D11VertexShader* vertexShader				= nullptr;
-		ID3D11PixelShader* pixelShader					= nullptr;
-		ID3D11GeometryShader* geometryShader			= nullptr;
-
-		ID3D11RasterizerState* rasterizerState			= nullptr;
-		ID3D11DepthStencilState* depthStencilState		= nullptr;
-		ID3D11BlendState* blendState					= nullptr;
-
-		short drawType									= 0;
-		unsigned int indexCount							= 0;
-		unsigned int vertexCount						= 0;
+		ID3D11Buffer* vertexBuffer									 = nullptr;
+		unsigned int vertexBuffer_stride							 = 0;
+		unsigned int vertexBuffer_offset							 = 0;
+																	 
+		ID3D11Buffer* instanceBuffer								 = nullptr;
+		unsigned int instanceBuffer_stride							 = 0;
+		unsigned int instanceBuffer_offset							 = 0;
+		unsigned int instanceCount									 = 0;
+																	 
+		ID3D11Buffer* indexBuffer									 = nullptr;
+		short format												 = 0;
+		short primitiveTopology										 = 0;
+		ID3D11InputLayout* inputLayout								 = nullptr;
+																	 
+		ID3D11VertexShader* vertexShader							 = nullptr;
+		ID3D11PixelShader* pixelShader								 = nullptr;
+		ID3D11GeometryShader* geometryShader						 = nullptr;
+																	 
+		ID3D11RasterizerState* rasterizerState						 = nullptr;
+		ID3D11DepthStencilState* depthStencilState					 = nullptr;
+		ID3D11BlendState* blendState								 = nullptr;
+																	 
+		short drawType												 = 0;
+		unsigned int indexCount										 = 0;
+		unsigned int vertexCount									 = 0;
 		std::unordered_map<std::string, std::shared_ptr<ConstantBuffer>>												constantBuffers;
 		std::unordered_map<std::string, std::pair<std::shared_ptr<TextureDesc>, std::shared_ptr<Texture>>>				textures;
 		std::unordered_map<std::string, std::pair<std::shared_ptr<SamplerStateDesc>, std::shared_ptr<SamplerState>>>	samplerStates;

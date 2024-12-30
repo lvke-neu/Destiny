@@ -3,6 +3,7 @@
 #include "ConstantBuffer.h"
 #include "Texture.h"
 #include "SamplerState.h"
+#include "GraphicsPipeline/GraphicsCommandList.h"
 #include <d3d11.h>
 
 namespace Destiny
@@ -15,6 +16,12 @@ namespace Destiny
 			{
 				continue;
 			}
+
+			if (drawParameters->beforeDrawCommandList)
+			{
+				drawParameters->beforeDrawCommandList->execute(deviceContext);
+			}
+
 			switch (drawParameters->drawType)
 			{
 			case 1:
@@ -80,6 +87,11 @@ namespace Destiny
 			case 3:
 				deviceContext->DrawIndexedInstanced(drawParameters->indexCount, drawParameters->instanceCount, 0, 0, 0);
 				break;
+			}
+
+			if (drawParameters->afterDrawCommandList)
+			{
+				drawParameters->afterDrawCommandList->execute(deviceContext);
 			}
 		}
 		m_drawParameters.clear();

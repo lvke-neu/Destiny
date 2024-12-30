@@ -140,7 +140,7 @@ namespace Destiny
 
 	void Node::onEnterScene()
 	{
-		auto tmpParent = m_parent;
+		auto tmpParent = shared_from_this();
 		while (tmpParent)
 		{
 			auto scene = std::dynamic_pointer_cast<Scene>(tmpParent);

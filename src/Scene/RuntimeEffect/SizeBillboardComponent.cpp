@@ -16,7 +16,7 @@ namespace Destiny
 	{
 		auto renderer = std::make_shared<Renderer>("builtin://renderer/size_billboard.hlsl");
 		renderer->load(0);
-		renderer->setConstant("c_size", DirectX::XMFLOAT2{ 5.0f, 5.0f });
+		renderer->setConstant("c_size", DirectX::XMFLOAT2{ 1.0f, 1.0f });
 
 		
 		auto texture = FontManager::GetInstance()->getFontTexture('A', 100, 100);

@@ -3,6 +3,7 @@
 #include "Engine/BlobLoaderManager.h"
 #include "Engine/BlobLoader.h"
 #include "Graphics/Texture.h"
+#include "Math/Color.h"
 #include <ft2build.h>
 #include <freetype/freetype.h>
 #include <dxgiformat.h>
@@ -53,12 +54,26 @@ namespace Destiny
 		}
 		std::shared_ptr<Texture> texture = nullptr;
 
-		if (m_face->glyph && m_face->glyph->bitmap.pixel_mode == FT_RENDER_MODE_MONO)
+		if (m_face->glyph)
 		{
-			std::vector<unsigned char> data;
-			data.resize(width * height * 4, 255);
-			texture = Texture::Create2D(DXGI_FORMAT_R8G8B8A8_UNORM, width, height, data.data(), width * 4, width * 4 * height);
-			texture->load(0);
+			auto bitMap = m_face->glyph->bitmap;
+			if (bitMap.pixel_mode == FT_RENDER_MODE_MONO)
+			{
+				std::vector<Pixel> data;
+				data.resize(bitMap.width * bitMap.rows, { 0,0,0,0 });
+
+				for (unsigned int i = 0; i < bitMap.rows; i++)
+				{
+					for (unsigned int j = 0; j < bitMap.width; j++)
+					{
+						unsigned char pixel = *(bitMap.buffer + i * bitMap.width + j);
+						data[i * bitMap.width + j] = { pixel, pixel, pixel, pixel };
+					}
+				}
+
+				texture = Texture::Create2D(DXGI_FORMAT_R8G8B8A8_UNORM, bitMap.width, bitMap.rows, data.data(), bitMap.width * sizeof(Pixel), bitMap.width * sizeof(Pixel) * bitMap.rows);
+				texture->load(0);
+			}
 		}
 
 		return texture;

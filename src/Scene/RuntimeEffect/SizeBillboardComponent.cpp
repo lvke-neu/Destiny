@@ -17,14 +17,7 @@ namespace Destiny
 		auto renderer = std::make_shared<Renderer>("builtin://renderer/size_billboard.hlsl");
 		renderer->load(0);
 		renderer->setConstant("c_size", DirectX::XMFLOAT2{ 1.0f, 1.0f });
-
-		
-		auto texture = FontManager::GetInstance()->getFontTexture('A', 100, 100);
-		if (texture)
-		{
-			texture->load();
-			renderer->setShaderResource("t_texture", texture);
-		}
+		renderer->setShaderResource("t_texture", FontManager::GetInstance()->getFontTexture('A', 100, 100));
 
 
 		//auto texture = Texture::Create("builtin://texture/wind.png");

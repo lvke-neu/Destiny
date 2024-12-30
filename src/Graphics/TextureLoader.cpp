@@ -99,7 +99,7 @@ namespace Destiny
 		{
 		case TextureCreationParam::Create2D:
 		{
-			CD3D11_TEXTURE2D_DESC textureDesc((DXGI_FORMAT)creationParam->format, creationParam->width, creationParam->height);
+			CD3D11_TEXTURE2D_DESC textureDesc((DXGI_FORMAT)creationParam->format, creationParam->width, creationParam->height, 1, 1);
 	
 			D3D11_SUBRESOURCE_DATA data;
 			data.pSysMem = creationParam->data;

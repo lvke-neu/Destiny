@@ -55,8 +55,10 @@ namespace Destiny
 
 		if (m_face->glyph && m_face->glyph->bitmap.pixel_mode == FT_RENDER_MODE_MONO)
 		{
-			//texture = Texture::Create2D(DXGI_FORMAT_R8G8B8A8_UNORM, m_face->glyph->bitmap.width, m_face->glyph->bitmap.rows, m_face->glyph->bitmap.buffer, m_face->glyph->bitmap.width, 0);
-			//texture->load(0);
+			std::vector<unsigned char> data;
+			data.resize(width * height * 4, 255);
+			texture = Texture::Create2D(DXGI_FORMAT_R8G8B8A8_UNORM, width, height, data.data(), width * 4, width * 4 * height);
+			texture->load(0);
 		}
 
 		return texture;

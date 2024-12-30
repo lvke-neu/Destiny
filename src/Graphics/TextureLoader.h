@@ -11,5 +11,8 @@ namespace Destiny
 		virtual ~TextureLoader();
 	public:
 		virtual void loadAsset(std::shared_ptr<Asset> asset) override;
+	private:
+		void loadFromPath(std::shared_ptr<Asset> asset);
+		void loadFromMemory(std::shared_ptr<Asset> asset);
 	};
 }

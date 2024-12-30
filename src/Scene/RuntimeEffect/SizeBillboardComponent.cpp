@@ -7,6 +7,7 @@
 #include "Graphics/MeshProvider.h"
 #include "Graphics/Texture.h"
 #include "Graphics/SamplerState.h"
+#include "Graphics/Gui/FontManager.h"
 #include <d3d11.h>
 
 namespace Destiny
@@ -17,9 +18,18 @@ namespace Destiny
 		renderer->load(0);
 		renderer->setConstant("c_size", DirectX::XMFLOAT2{ 5.0f, 5.0f });
 
-		auto texture = Texture::Create("builtin://texture/wind.png");
-		texture->load();
-		renderer->setShaderResource("t_texture", texture);
+		
+		auto texture = FontManager::GetInstance()->getFontTexture('A', 100, 100);
+		if (texture)
+		{
+			texture->load();
+			renderer->setShaderResource("t_texture", texture);
+		}
+
+
+		//auto texture = Texture::Create("builtin://texture/wind.png");
+		//texture->load();
+		//renderer->setShaderResource("t_texture", texture);
 
 		auto samplerState = std::make_shared<SamplerState>();
 		samplerState->load();

@@ -12,8 +12,6 @@ struct VertexOut
 	float4 color	 : COLOR;
 };
 
-
-
 VertexOut VS(VertexIn vIn)
 {
 	VertexOut vOut;

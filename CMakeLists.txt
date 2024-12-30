@@ -30,9 +30,10 @@ file(GLOB SRC_EDITOR src/Editor/*)
 file(GLOB SRC_EDITOR_IMGUI src/Editor/ImGui/*)
 file(GLOB SRC_GRAPHICS src/Graphics/*)
 file(GLOB SRC_GRAPHICS_GRAPHICPIPELINE src/Graphics/GraphicsPipeline/*)
+file(GLOB SRC_GRAPHICS_MODEL src/Graphics/Model/*)
+file(GLOB SRC_GRAPHICS_GUI src/Graphics/Gui/*)
 file(GLOB SRC_Math src/Math/*)
 file(GLOB SRC_SCENE src/Scene/*)
-file(GLOB SRC_SCENE_MODEL src/Scene/Model/*)
 file(GLOB SRC_SCENE_RUNTIMEEFFECT src/Scene/RuntimeEffect/*)
 file(GLOB BUILTIN_RENDERER builtin/renderer/*)
 file(GLOB BUILTIN_TEXTURE builtin/texture/*)
@@ -46,10 +47,11 @@ source_group("Editor" FILES ${SRC_EDITOR})
 source_group("Editor\\ImGui" FILES ${SRC_EDITOR_IMGUI})
 source_group("Graphics" FILES ${SRC_GRAPHICS})
 source_group("Graphics\\GraphicsPipeline" FILES ${SRC_GRAPHICS_GRAPHICPIPELINE})
+source_group("Graphics\\Model" FILES ${SRC_GRAPHICS_MODEL})
+source_group("Graphics\\Gui" FILES ${SRC_GRAPHICS_GUI})
 source_group("Math" FILES ${SRC_Math})
 source_group("Scene" FILES ${SRC_SCENE})
 source_group("Scene\\RuntimeEffect" FILES ${SRC_SCENE_RUNTIMEEFFECT})
-source_group("Scene\\Model" FILES ${SRC_SCENE_MODEL})
 source_group("builtin\\renderer" FILES ${BUILTIN_RENDERER})
 source_group("builtin\\texture" FILES ${BUILTIN_TEXTURE})
 source_group("builtin\\model" FILES ${BUILTIN_MODEL})
@@ -58,20 +60,25 @@ include_directories("src/")
 include_directories("3rdparty/spdlog/include")
 include_directories("3rdparty/rttr/include")
 include_directories("3rdparty/assimp/include")
+include_directories("3rdparty/freetype/include")
 
 link_directories("3rdparty/rttr/lib/")
 link_libraries(rttr_core.lib)
 link_directories("3rdparty/assimp/lib/")
 link_libraries(assimp.lib)
+link_directories("3rdparty/freetype/lib/")
+link_libraries(freetype.lib)
 
 add_executable(Destiny WIN32 ${SRC_MAIN} 
 ${SRC_ENGINE} ${SRC_ENGINE_DETAIL} 
 ${SRC_EDITOR} ${SRC_EDITOR_IMGUI} 
 ${SRC_GRAPHICS} 
 ${SRC_GRAPHICS_GRAPHICPIPELINE} 
+${SRC_GRAPHICS_MODEL} 
+${SRC_GRAPHICS_GUI} 
 ${SRC_Math} 
-${SRC_SCENE} ${SRC_SCENE_MODEL}
-${SRC_SCENE} ${SRC_SCENE_RUNTIMEEFFECT}
+${SRC_SCENE} 
+${SRC_SCENE_RUNTIMEEFFECT}
 ${BUILTIN} ${BUILTIN_RENDERER} ${BUILTIN_TEXTURE})
 target_link_libraries(Destiny d3d11.lib dxgi.lib dxguid.lib D3DCompiler.lib d2d1.lib dwrite.lib winmm.lib)
 

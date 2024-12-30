@@ -1,13 +1,14 @@
 #include "SceneManager.h"
 #include "Graphics/VisualScene.h"
 #include "Graphics/CameraController.h"
+#include "Graphics/Model/ModelComponent.h"
 #include "RuntimeEffect/BoxComponent.h"
 #include "RuntimeEffect/PlaneComponent.h"
 #include "RuntimeEffect/TestGeometryShaderComponent.h"
 #include "RuntimeEffect/PixelBillboardComponent.h"
 #include "RuntimeEffect/SizeBillboardComponent.h"
 #include "RuntimeEffect/InstancedComponet.h"
-#include "Model/ModelComponent.h"
+#include "RuntimeEffect/TextComponent.h"
 
 namespace Destiny
 {
@@ -43,7 +44,10 @@ namespace Destiny
 			m_scene->getDirectionLightNode()->addComponent(lightGzimoComponent);
 			m_scene->getDirectionLightNode()->set_transform(transform);
 		}
-
+		{
+			auto sizeBillboardComponent = std::make_shared<SizeBillboardComponent>();
+			m_scene->addComponent(sizeBillboardComponent);
+		}
 		//plane
 		{
 			auto planeComponent = std::make_shared<PlaneComponent>();
@@ -93,15 +97,15 @@ namespace Destiny
 			node3->addToParent(m_scene);
 			node3->set_transform(transform3);
 
-			auto modelComponent4 = std::make_shared<ModelComponent>();
-			modelComponent4->set_path("builtin://model/Ymca Dance/Ymca Dance.dae");
-			auto node4 = std::make_shared<Node>();
-			Transform transform4;
-			transform4.set_translation({ 0.0f, 0.0f, 2.0f });
-			node4->set_name("Ymca Dance");
-			node4->addComponent(modelComponent4);
-			node4->addToParent(m_scene);
-			node4->set_transform(transform4);
+			//auto modelComponent4 = std::make_shared<ModelComponent>();
+			//modelComponent4->set_path("builtin://model/Ymca Dance/Ymca Dance.dae");
+			//auto node4 = std::make_shared<Node>();
+			//Transform transform4;
+			//transform4.set_translation({ 0.0f, 0.0f, 2.0f });
+			//node4->set_name("Ymca Dance");
+			//node4->addComponent(modelComponent4);
+			//node4->addToParent(m_scene);
+			//node4->set_transform(transform4);
 
 			auto modelComponent5 = std::make_shared<ModelComponent>();
 			modelComponent5->set_path("builtin://model/planet/planet.obj");
@@ -113,6 +117,15 @@ namespace Destiny
 			node5->addComponent(modelComponent5);
 			node5->addToParent(m_scene);
 			node5->set_transform(transform5);
+		}
+
+		//text
+		{			
+			auto textComponent = std::make_shared<TextComponent>();
+			auto node = std::make_shared<Node>();
+			node->set_name("Text");
+			node->addComponent(textComponent);
+			node->addToParent(m_scene);
 		}
 	}
 

@@ -1,9 +1,10 @@
 #pragma once
 #include "Engine/Asset.h"
+#include "Engine/Object.h"
 #include <string>
 #include <unordered_map>
 
-struct ID3D11Resource;
+struct ID3D11Texture2D;
 struct ID3D11ShaderResourceView;
 namespace Destiny
 {
@@ -30,6 +31,26 @@ namespace Destiny
 		unsigned int startSlot;
 	};
 
+	class TextureCreationParam : public Object
+	{
+	public:
+		enum CreateTextureType
+		{
+			None,
+			Create2D,
+			CreateTextureTypeCount
+		};
+	public:
+		CreateTextureType m_type	= CreateTextureType::None;
+		int format					= -1;
+		unsigned int width			= 0;
+		unsigned int height			= 0;
+
+		const void* data			= nullptr;
+		unsigned int pitch			= 0;
+		unsigned int slicePitch		= 0;
+	};
+
 	class TextureLoader;
 	class Texture : public Asset
 	{
@@ -40,12 +61,13 @@ namespace Destiny
 	public:
 		static std::shared_ptr<TextureLoader> s_textureLoader;
 		static std::shared_ptr<Texture> Create(const char* path);
+		static std::shared_ptr<Texture> Create2D(int format, unsigned int width, unsigned int height, const void* data, unsigned int pitch, unsigned int slicePitch);
 		static std::unordered_map<std::string, std::shared_ptr<Texture>> s_cache;
 	public:
 		void bind(std::shared_ptr<TextureDesc> desc);
 		ID3D11ShaderResourceView* getShaderResourceView();
 	private:
-		ID3D11Resource* m_resource;
+		ID3D11Texture2D* m_resource;
 		ID3D11ShaderResourceView* m_shaderResourceView;
 	};
 

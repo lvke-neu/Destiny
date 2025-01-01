@@ -13,6 +13,7 @@ void ScenePanel::traversal(std::shared_ptr<Destiny::Node> node)
 		return;
 	}
 	
+	ImGui::PushID(node->get_uuid().c_str());
 	if (ImGui::TreeNodeEx(node->get_name().c_str(), ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_Selected))
 	{
 		send(ChoosedNode, &node);
@@ -24,6 +25,7 @@ void ScenePanel::traversal(std::shared_ptr<Destiny::Node> node)
 
 		ImGui::TreePop();
 	}
+	ImGui::PopID();
 }
 
 void ScenePanel::update()

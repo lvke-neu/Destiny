@@ -18,7 +18,7 @@ namespace Destiny
 		{
 			LOG_ERROR("ERROR::FREETYPE: Could not init FreeType Library");
 			return;
-		}
+		} 
 
 		const char* fontPath = "builtin://fonts/opensans/OpenSans-Regular.ttf";
 		auto blobLoader = Engine::GetInstance()->getBlobLoaderManager()->getBlobLoader(fontPath);

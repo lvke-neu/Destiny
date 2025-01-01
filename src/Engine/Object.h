@@ -10,8 +10,12 @@ namespace Destiny
 	{
 		RTTR_ENABLE();
 	public:
+		Object();
 		virtual ~Object() = default;
 	public:
 		GET_CLASS_NAME(Object);
+		GET(std::string, uuid);
+	private:
+		std::string m_uuid;
 	};
 }

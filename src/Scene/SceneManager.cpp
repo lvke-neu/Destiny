@@ -132,13 +132,13 @@ namespace Destiny
 			auto t7 = std::make_shared<TextComponent>();
 
 			t0->updateScreenPosition(-0.9f, 0.9f);
-			t1->updateScreenPosition(-0.8f, 0.9f);
-			t2->updateScreenPosition(-0.7f, 0.9f);
-			t3->updateScreenPosition(-0.6f, 0.9f);
-			t4->updateScreenPosition(-0.5f, 0.9f);
-			t5->updateScreenPosition(-0.4f, 0.9f);
-			t6->updateScreenPosition(-0.3f, 0.9f);
-			t7->updateScreenPosition(-0.2f, 0.9f);
+			t1->updateScreenPosition(-0.85f, 0.9f);
+			t2->updateScreenPosition(-0.8f, 0.9f);
+			t3->updateScreenPosition(-0.75f, 0.9f);
+			t4->updateScreenPosition(-0.7f, 0.9f);
+			t5->updateScreenPosition(-0.65f, 0.9f);
+			t6->updateScreenPosition(-0.6f, 0.9f);
+			t7->updateScreenPosition(-0.55f, 0.9f);
 
 			node->addComponent(t0);
 			node->addComponent(t1);

@@ -1,9 +1,11 @@
 #pragma once
 #include <memory>
+#include <vector>
 
 namespace Destiny
 {
 	class VisualScene;
+	class TextComponent;
 	class SceneManager
 	{
 	public:
@@ -13,11 +15,11 @@ namespace Destiny
 		void							initialize();
 		void							uninitialize();
 		void							update(float deltaTime);
-		void							updateText(unsigned char text);
 	public:
 		std::shared_ptr<VisualScene>	getScene();
 	private:
 		std::shared_ptr<VisualScene>	m_scene;
+		std::vector<std::shared_ptr<TextComponent>> m_texts;
 	};
 
 	inline std::shared_ptr<VisualScene> SceneManager::getScene()

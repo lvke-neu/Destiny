@@ -39,14 +39,7 @@ namespace Destiny
 			return;
 		}
 
-		if (!m_vertexBuffer)
-		{
-			loadFailed__();
-			LOG_ERROR("CreateMesh failed");
-			return;
-		}
-
-		if (m_vertexBuffer->isLoadingPending())
+		if (m_vertexBuffer && m_vertexBuffer->isLoadingPending())
 		{
 			m_vertexBuffer->load(0);
 		}
@@ -56,7 +49,8 @@ namespace Destiny
 			m_indexBuffer->load(0);
 		}
 
-		if (!m_vertexBuffer->isLoadingSucceed())
+		if ((m_vertexBuffer && !m_vertexBuffer->isLoadingSucceed()) ||
+			(m_indexBuffer && !m_indexBuffer->isLoadingSucceed()) )
 		{
 			loadFailed__();
 			LOG_ERROR("CreateMesh failed");
@@ -77,14 +71,22 @@ namespace Destiny
 
 	void Mesh::fillDrawParameters(std::shared_ptr<DrawParameters> drawParameters, std::shared_ptr<Blob> inputSignatureBlob)
 	{
-		if (!drawParameters || !m_vertexBuffer || !m_vertexBuffer->m_inputLayout)
+		if (!drawParameters)
 		{
 			return;
 		}
 
-		drawParameters->vertexBuffer = m_vertexBuffer->m_vertexBuffer;
-		drawParameters->vertexBuffer_stride = m_vertexBuffer->m_stride;
-		drawParameters->vertexBuffer_offset = m_vertexBuffer->m_offset;
+		if (m_vertexBuffer)
+		{
+			drawParameters->vertexBuffer = m_vertexBuffer->m_vertexBuffer;
+			drawParameters->vertexBuffer_stride = m_vertexBuffer->m_stride;
+			drawParameters->vertexBuffer_offset = m_vertexBuffer->m_offset;
+			
+			if (m_vertexBuffer->m_inputLayout)
+			{
+				drawParameters->inputLayout = m_vertexBuffer->m_inputLayout->getInputLayout(inputSignatureBlob);
+			}
+		}
 
 		if (m_indexBuffer)
 		{
@@ -92,11 +94,7 @@ namespace Destiny
 			drawParameters->format = (short)m_indexBuffer->m_indexType;
 		}
 
-
-		drawParameters->primitiveTopology = (short)m_drawCall.primitiveTopology;
-
-		drawParameters->inputLayout = m_vertexBuffer->m_inputLayout->getInputLayout(inputSignatureBlob);
-		
+		drawParameters->primitiveTopology = (short)m_drawCall.primitiveTopology;		
 		drawParameters->drawType = (short)m_drawCall.drawMethod;
 		drawParameters->indexCount = m_drawCall.indexCount;
 		drawParameters->vertexCount = m_drawCall.vertexCount;

@@ -16,7 +16,7 @@ namespace Destiny
 		FontManager(const FontManager&) = default;
 		FontManager& operator=(const FontManager&) = default;
 	public:
-		std::shared_ptr<Texture> getFontTexture(char text, unsigned int width, unsigned int height);
+		std::shared_ptr<Texture> getFontTexture(char text, unsigned int height);
 	private:
 		FT_LibraryRec_*		m_ft;
 		FT_FaceRec_*		m_face;

@@ -3,12 +3,9 @@
 cbuffer cbPerObject : register(b0)
 {
 	float2 c_size;
+    float2 c_screenPosition;
+    float3 c_color;
 }
-
-struct VertexIn
-{
-	float2 positionL : POSITION;
-};
 
 struct VertexOut
 {
@@ -16,10 +13,10 @@ struct VertexOut
 	float2 texcoord : TEXCOORD;
 };
 
-VertexOut VS(VertexIn vIn)
+VertexOut VS()
 {
 	VertexOut vOut;
-    vOut.positionH = float4(vIn.positionL, 0.0f, 1.0f);
+    vOut.positionH = float4(c_screenPosition, 0.0f, 1.0f);
 	return vOut;
 }
 
@@ -61,6 +58,6 @@ Texture2D	 t_texture : register(t0);
 SamplerState s_sampler : register(s0);
 float4 PS(VertexOut pIn) : SV_Target
 {
-	return t_texture.Sample(s_sampler, pIn.texcoord);
+    return t_texture.Sample(s_sampler, pIn.texcoord) * float4(c_color, 1.0f);
 }
 

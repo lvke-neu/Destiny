@@ -227,36 +227,4 @@ namespace Destiny
 
 		return mesh;
 	}
-
-	std::shared_ptr<Mesh> MeshProvider::Create_Position2(float x, float y)
-	{
-		auto iter = m_cache.find("Position2");
-		if (iter != m_cache.end())
-		{
-			return m_cache["Position2"];
-		}
-
-		std::shared_ptr<Blob> data = nullptr;
-		std::vector<Position2> vertices;
-		vertices.resize(1);
-
-		vertices[0].position = { x, y };
-
-		data.reset(new Blob(vertices.size() * sizeof(Position2)));
-		data->copyfrom(vertices.data(), vertices.size() * sizeof(Position2));
-		std::shared_ptr<VertexBuffer> vertexBuffer = std::make_shared<VertexBuffer>(InputLayout::Create_Position2(), (unsigned int)sizeof(Position2), 0, data);
-
-
-		DirectX::BoundingBox aabb{ { 0.0f, 0.0f, 0.0f },{ FLT_MAX, FLT_MAX, FLT_MAX } };
-		Mesh::DrawCall drawCall;
-		drawCall.drawMethod = Mesh::DrawMethod::Draw;
-		drawCall.primitiveTopology = Mesh::PrimitiveTopology::PointList;
-		drawCall.indexCount = 0;
-		drawCall.vertexCount = 1;
-
-		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(aabb, drawCall, vertexBuffer, nullptr);
-		m_cache["Position2"] = mesh;
-
-		return mesh;
-	}
 }

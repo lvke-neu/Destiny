@@ -43,7 +43,7 @@ namespace Destiny
 		FT_Done_FreeType(m_ft);
 	}
 
-	std::shared_ptr<Texture> FontManager::getFontTexture(char text, unsigned int width, unsigned int height)
+	std::shared_ptr<Texture> FontManager::getFontTexture(char text, unsigned int height)
 	{
 		auto iter = m_cache.find(text);
 		if (iter != m_cache.end())
@@ -51,7 +51,7 @@ namespace Destiny
 			return iter->second;
 		}
 
-		FT_Set_Pixel_Sizes(m_face, width, height);
+		FT_Set_Pixel_Sizes(m_face, 0, height);
 
 		if (FT_Load_Char(m_face, text, FT_LOAD_RENDER))
 		{

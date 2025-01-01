@@ -16,7 +16,9 @@ namespace Destiny
 	{
 		auto renderer = std::make_shared<Renderer>("builtin://renderer/text.hlsl");
 		renderer->load(0);
-		renderer->setConstant("c_size", DirectX::XMFLOAT2{ 15.0f, 15.0f });
+		renderer->setConstant("c_size", DirectX::XMFLOAT2{ 10.0f, 20.0f });
+		renderer->setConstant("c_screenPosition", DirectX::XMFLOAT2{ 0.0f, 0.0f });
+		renderer->setConstant("c_color", DirectX::XMFLOAT3{ 1.0f, 1.0f, 1.0f });
 
 		//renderer->setShaderResource("t_texture", FontManager::GetInstance()->getFontTexture('A', 5000, 5000));
 
@@ -32,8 +34,14 @@ namespace Destiny
 		renderPass->setRenderer(renderer);
 		renderPass->setRenderStates(renderStates);
 
-		auto mesh = MeshProvider::Create_Position2(-0.9f, 0.9f);
-		mesh->load(0);
+		DirectX::BoundingBox aabb{ { 0.0f, 0.0f, 0.0f },{ FLT_MAX, FLT_MAX, FLT_MAX } };
+		Mesh::DrawCall drawCall;
+		drawCall.drawMethod = Mesh::DrawMethod::Draw;
+		drawCall.primitiveTopology = Mesh::PrimitiveTopology::PointList;
+		drawCall.indexCount = 0;
+		drawCall.vertexCount = 1;
+
+		auto mesh = std::make_shared<Mesh>(aabb, drawCall, nullptr, nullptr);
 
 		setRenderPass(renderPass);
 		setMesh(mesh);
@@ -43,7 +51,31 @@ namespace Destiny
 	{
 		if (getVisual())
 		{
-			getVisual()->setShaderResource("t_texture", FontManager::GetInstance()->getFontTexture(text, 500, 500));
+			getVisual()->setShaderResource("t_texture", FontManager::GetInstance()->getFontTexture(text, 500));
+		}
+	}
+
+	void TextComponent::updateSize(float size_x, float size_y)
+	{
+		if (getVisual())
+		{
+			getVisual()->setConstant("c_size", DirectX::XMFLOAT2{ size_x, size_y });
+		}
+	}
+
+	void TextComponent::updateScreenPosition(float screen_x, float screen_y)
+	{
+		if (getVisual())
+		{
+			getVisual()->setConstant("c_screenPosition", DirectX::XMFLOAT2{ screen_x, screen_y });
+		}
+	}
+
+	void TextComponent::updateTextColor(float r, float g, float b)
+	{
+		if (getVisual())
+		{
+			getVisual()->setConstant("c_color", DirectX::XMFLOAT3{ r, g, b });
 		}
 	}
 

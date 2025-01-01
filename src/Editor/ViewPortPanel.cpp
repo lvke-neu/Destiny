@@ -43,7 +43,7 @@ void ViewPortPanel::update()
 	{
 		ImGui::Image(*(rtv->getShaderResourceView()), { (float)rtv->getWidth(), (float)rtv->getHeight() });
 	}
-	Destiny::Engine::GetInstance()->getSceneManager()->updateText(std::to_string(ImGui::GetIO().Framerate).back());
+	
 	processGzimo();
 
 	ImGui::End();

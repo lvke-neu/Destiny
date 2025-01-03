@@ -172,11 +172,11 @@ namespace Destiny
 		{
 			if (errorBlob != nullptr)
 			{
-				LOG_ERROR("CreatePixelShader Failed:{0}", reinterpret_cast<const char*>(errorBlob->GetBufferPointer()));
+				LOG_ERROR("CompilePixelShader Failed:{0}", reinterpret_cast<const char*>(errorBlob->GetBufferPointer()));
 			}
 			else
 			{
-				LOG_ERROR("CreatePixelShader {0} Failed:{1}", normalizedPath, "path error");
+				LOG_ERROR("CompilePixelShader {0} Failed:{1}", normalizedPath, "path error");
 			}
 			SAFE_RELEASE(errorBlob);
 			return false;
@@ -220,11 +220,11 @@ namespace Destiny
 		{
 			if (errorBlob != nullptr)
 			{
-				LOG_ERROR("CreateGeometryShader Failed:{0}", reinterpret_cast<const char*>(errorBlob->GetBufferPointer()));
+				LOG_ERROR("CompileGeometryShader Failed:{0}", reinterpret_cast<const char*>(errorBlob->GetBufferPointer()));
 			}
 			else
 			{
-				LOG_ERROR("CreateGeometryShader {0} Failed:{1}", normalizedPath, "path error");
+				LOG_ERROR("CompileGeometryShader {0} Failed:{1}", normalizedPath, "path error");
 			}
 			SAFE_RELEASE(errorBlob);
 			return false;

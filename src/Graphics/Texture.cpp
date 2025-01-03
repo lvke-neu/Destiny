@@ -44,7 +44,7 @@ namespace Destiny
 		return texture;
 	}
 
-	std::shared_ptr<Texture> Texture::Create2D(int format, unsigned int width, unsigned int height, const void* data, unsigned int pitch, unsigned int slicePitch)
+	std::shared_ptr<Texture> Texture::Create2D(int format, unsigned int width, unsigned int height, std::shared_ptr<Blob> data, unsigned int pitch, unsigned int slicePitch)
 	{
 		std::shared_ptr<Texture> texture = std::make_shared<Texture>();
 		std::shared_ptr<TextureCreationParam> creationParam = std::make_shared<TextureCreationParam>();

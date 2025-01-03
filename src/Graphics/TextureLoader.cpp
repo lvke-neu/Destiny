@@ -102,7 +102,7 @@ namespace Destiny
 			CD3D11_TEXTURE2D_DESC textureDesc((DXGI_FORMAT)creationParam->format, creationParam->width, creationParam->height, 1, 1);
 	
 			D3D11_SUBRESOURCE_DATA data;
-			data.pSysMem = creationParam->data;
+			data.pSysMem = creationParam->data->getData();
 			data.SysMemPitch = creationParam->pitch;
 			data.SysMemSlicePitch = creationParam->slicePitch;
 

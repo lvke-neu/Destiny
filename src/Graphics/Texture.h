@@ -31,6 +31,7 @@ namespace Destiny
 		unsigned int startSlot;
 	};
 
+	class Blob;
 	class TextureCreationParam : public Object
 	{
 	public:
@@ -46,7 +47,7 @@ namespace Destiny
 		unsigned int width			= 0;
 		unsigned int height			= 0;
 
-		const void* data			= nullptr;
+		std::shared_ptr<Blob> data	= nullptr;
 		unsigned int pitch			= 0;
 		unsigned int slicePitch		= 0;
 	};
@@ -61,7 +62,7 @@ namespace Destiny
 	public:
 		static std::shared_ptr<TextureLoader> s_textureLoader;
 		static std::shared_ptr<Texture> Create(const char* path);
-		static std::shared_ptr<Texture> Create2D(int format, unsigned int width, unsigned int height, const void* data, unsigned int pitch, unsigned int slicePitch);
+		static std::shared_ptr<Texture> Create2D(int format, unsigned int width, unsigned int height, std::shared_ptr<Blob> data, unsigned int pitch, unsigned int slicePitch);
 		static std::unordered_map<std::string, std::shared_ptr<Texture>> s_cache;
 	public:
 		void bind(std::shared_ptr<TextureDesc> desc);

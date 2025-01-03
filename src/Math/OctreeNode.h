@@ -9,8 +9,13 @@ namespace Destiny
 	struct OctreeNode
 	{
 		DirectX::BoundingBox					box;
+		unsigned int							depth;
 		std::shared_ptr<OctreeNode>				childs[8];
-		int										level;
-		std::vector<std::shared_ptr<Visual>>	visual;
+		std::vector<std::shared_ptr<Visual>>	visuals;
+
+		bool isLeafNode()
+		{
+			return visuals.size() ? false : true;
+		}
 	};
 }

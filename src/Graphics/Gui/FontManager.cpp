@@ -2,6 +2,7 @@
 #include "Engine/Engine.h"
 #include "Engine/BlobLoaderManager.h"
 #include "Engine/BlobLoader.h"
+#include "Engine/Blob.h"
 #include "Graphics/Texture.h"
 #include "Math/Color.h"
 #include <ft2build.h>
@@ -77,7 +78,9 @@ namespace Destiny
 					}
 				}
 
-				texture = Texture::Create2D(DXGI_FORMAT_R8G8B8A8_UNORM, bitMap.width, bitMap.rows, data.data(), bitMap.width * sizeof(Pixel), bitMap.width * sizeof(Pixel) * bitMap.rows);
+				auto blobData = std::make_shared<Blob>(data.size() * sizeof(Pixel));
+				blobData->copyfrom(data.data(), blobData->getLength());
+				texture = Texture::Create2D(DXGI_FORMAT_R8G8B8A8_UNORM, bitMap.width, bitMap.rows, blobData, bitMap.width * sizeof(Pixel), bitMap.width * sizeof(Pixel) * bitMap.rows);
 				texture->load(0);
 
 				m_cache[text] = texture;

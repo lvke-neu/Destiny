@@ -1,26 +1,18 @@
 #pragma once
-#include <memory>
-#include <DirectXCollision.h>
+#include "OctreeNode.h"
 
 namespace Destiny
 {
-	struct OctreeNode;
 	class Visual;
-	class Octree
+	class Octree : public OctreeNode
 	{
 	public:
-		Octree(float sceneRadius, int octreeDepth);
+		Octree(float sceneRadius, unsigned int octreeMaxDepth, unsigned int octreeMaxCapacity);
 	public:
 		void addVisual(std::shared_ptr<Visual> visual, const DirectX::BoundingBox& worldAABB);
-		void onCull(const DirectX::BoundingFrustum& frustum);
 	private:
-		void addVisual(std::shared_ptr<OctreeNode> octreeNode, std::shared_ptr<Visual> visual, const DirectX::BoundingBox& worldAABB);
-		void onCull(std::shared_ptr<OctreeNode> OctreeNode, const DirectX::BoundingFrustum& frustum);
-	private:
-		void constructOctree(float sceneRadius);
-		void constructOctreeNodeChilds(std::shared_ptr<OctreeNode> octreeNode);
-	private:
-		std::shared_ptr<OctreeNode> m_rootOctreeNode;
-		int m_octreeDepth;
+		float m_sceneRadius;
+		unsigned int m_octreeMaxDepth;
+		unsigned int m_octreeMaxCapacity;
 	};
 }

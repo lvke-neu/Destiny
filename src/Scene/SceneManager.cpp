@@ -125,7 +125,7 @@ namespace Destiny
 			textComponent->updateTextColor(1.0f, 1.0f, 0.0f);
 
 			frameText = std::make_shared<TextComponent>();
-			frameText->updateSize(30.0f, 30.0f);
+			frameText->updateSize(200.0f, 40.0f);
 			frameText->updateScreenPosition(-0.8f, 0.8f);
 			frameText->updateTextColor(0.0f, 1.0f, 0.0f);
 
@@ -156,7 +156,7 @@ namespace Destiny
 
 		if (sumTime > 1.0f)
 		{
-			auto timeStr = std::to_string(framCount);
+			auto timeStr = "F r a m e C o u n t : " + std::to_string(framCount);
 			frameText->updateText(timeStr);
 			sumTime = 0.0f;
 		}

@@ -114,9 +114,6 @@ namespace Destiny
 	{
 		rttr::registration::class_<CameraController>("CameraController")
 			.constructor<>()
-			(
-				rttr::policy::ctor::as_raw_ptr
-			)
 			.property("speed", &CameraController::get_speed, &CameraController::set_speed);
 	}
 }

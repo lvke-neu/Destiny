@@ -44,4 +44,10 @@ namespace Destiny
 			LOG_INFO("Model:{0} load successfully", m_path);	
 		}
 	}
+
+	RTTR_REGISTRATION
+	{
+		rttr::registration::class_<ModelComponent>("ModelComponent")
+			.constructor<>();
+	}
 }

@@ -22,7 +22,7 @@ namespace Destiny
 	{
 
 	}	
-
+	static std::shared_ptr<TextComponent> frameText;
 	void SceneManager::initialize()
 	{
 		m_scene->initialize();
@@ -120,12 +120,20 @@ namespace Destiny
 		{			
 			auto textComponent = std::make_shared<TextComponent>();
 			textComponent->updateText("l v k e");
-			textComponent->updateSize(100.0f, 100.0f);
+			textComponent->updateSize(50.0f, 50.0f);
+			textComponent->updateScreenPosition(0.8f, 0.8f);
+			textComponent->updateTextColor(1.0f, 1.0f, 0.0f);
+
+			frameText = std::make_shared<TextComponent>();
+			frameText->updateSize(30.0f, 30.0f);
+			frameText->updateScreenPosition(-0.8f, 0.8f);
+			frameText->updateTextColor(0.0f, 1.0f, 0.0f);
 
 			auto node = std::make_shared<Node>();
 			node->set_name("Text");
 			node->addToParent(m_scene);
 			node->addComponent(textComponent);
+			node->addComponent(frameText);
 
 		}
 	}
@@ -140,27 +148,17 @@ namespace Destiny
 		m_scene->update(deltaTime);
 		m_scene->onCull();
 
-		//static unsigned int framCount = 0;
-		//framCount ++;
+		static unsigned int framCount = 0;
+		framCount ++;
 
-		//static float sumTime = 0.0f;
-		//sumTime += deltaTime;
+		static float sumTime = 0.0f;
+		sumTime += deltaTime;
 
-		//if (sumTime > 1.0f)
-		//{
-		//	auto timeStr = std::to_string(framCount);
-		//	if (timeStr.size() < 8)
-		//	{
-		//		for (int i = 0; i < timeStr.size(); i++)
-		//		{
-		//			m_texts[i]->updateText(timeStr[i]);
-		//		}
-		//		for (size_t i = timeStr.size(); i < 8; i++)
-		//		{
-		//			m_texts[i]->updateText(' ');
-		//		}
-		//	}
-		//	sumTime = 0.0f;
-		//}
+		if (sumTime > 1.0f)
+		{
+			auto timeStr = std::to_string(framCount);
+			frameText->updateText(timeStr);
+			sumTime = 0.0f;
+		}
 	}
 }

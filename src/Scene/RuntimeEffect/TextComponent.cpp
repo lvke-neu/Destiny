@@ -47,11 +47,11 @@ namespace Destiny
 		setMesh(mesh);
 	}
 
-	void TextComponent::updateText(unsigned char text)
+	void TextComponent::updateText(const std::string& text)
 	{
 		if (getVisual())
 		{
-			getVisual()->setShaderResource("t_texture", FontManager::GetInstance()->getFontTexture(text, 500));
+			getVisual()->setShaderResource("t_texture", FontManager::GetInstance()->getFontTexture(text));
 		}
 	}
 

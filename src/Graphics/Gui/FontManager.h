@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/Utility.h"
+#include "Math/Color.h"
 #include <unordered_map>
 
 struct FT_LibraryRec_;
@@ -16,11 +17,13 @@ namespace Destiny
 		FontManager(const FontManager&) = default;
 		FontManager& operator=(const FontManager&) = default;
 	public:
-		std::shared_ptr<Texture> getFontTexture(char text, unsigned int height);
+		std::shared_ptr<Texture> getFontTexture(const std::string& text);
+	private:
+		void generateText(unsigned char ch);
 	private:
 		FT_LibraryRec_*		m_ft;
 		FT_FaceRec_*		m_face;
 
-		std::unordered_map<char, std::shared_ptr<Texture>> m_cache;
+		std::unordered_map<unsigned char, std::vector<std::vector<Pixel>>> m_cache;
 	};
 }

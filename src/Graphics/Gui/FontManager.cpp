@@ -4,7 +4,6 @@
 #include "Engine/BlobLoader.h"
 #include "Engine/Blob.h"
 #include "Graphics/Texture.h"
-#include "Math/Color.h"
 #include <ft2build.h>
 #include <freetype/freetype.h>
 #include <dxgiformat.h>
@@ -36,6 +35,15 @@ namespace Destiny
 				}
 			}
 		}
+
+	
+		std::vector<Pixel> pixel;
+		for (int i = 0; i < 100; i++)
+		{
+			pixel.push_back({ 0,0,0,0 });
+		}
+		
+		m_cache[' '].push_back(pixel);
 	}
 
 	FontManager::~FontManager()
@@ -44,49 +52,71 @@ namespace Destiny
 		FT_Done_FreeType(m_ft);
 	}
 
-	std::shared_ptr<Texture> FontManager::getFontTexture(char text, unsigned int height)
+	std::shared_ptr<Texture> FontManager::getFontTexture(const std::string& text)
 	{
-		auto iter = m_cache.find(text);
-		if (iter != m_cache.end())
+		unsigned int maxHeight = 0;
+		unsigned int width = 0;
+		
+		std::vector<std::vector<std::vector<Pixel>>> allArr;
+		for (const auto& ch : text)
 		{
-			return iter->second;
-		}
-
-		FT_Set_Pixel_Sizes(m_face, 0, height);
-
-		if (FT_Load_Char(m_face, text, FT_LOAD_RENDER))
-		{
-			LOG_ERROR("ERROR::FREETYTPE: Failed to load Glyph:{0}", text);
-			return nullptr;
-		}
-		std::shared_ptr<Texture> texture = nullptr;
-
-		if (m_face->glyph)
-		{
-			auto bitMap = m_face->glyph->bitmap;
-			if (bitMap.pixel_mode == FT_RENDER_MODE_MONO)
+			auto iter = m_cache.find(ch);
+			if (iter == m_cache.end())
 			{
-				std::vector<Pixel> data;
-				data.resize(bitMap.width * bitMap.rows, { 0,0,0,0 });
+				generateText(ch);
+			}
+			iter = m_cache.find(ch);
 
-				for (unsigned int i = 0; i < bitMap.rows; i++)
+			width += (int)iter->second[0].size();
+	
+			allArr.push_back(iter->second);
+			maxHeight = maxHeight > iter->second.size() ? maxHeight : (unsigned int)iter->second.size();
+		}
+
+		std::vector<Pixel> res;
+		res.resize(width * maxHeight);
+		int offset = 0;
+
+		for (unsigned int i = 0; i < maxHeight; i++)
+		{
+			for (const auto& arr : allArr)
+			{
+				if (i < arr.size())
 				{
-					for (unsigned int j = 0; j < bitMap.width; j++)
-					{
-						unsigned char pixel = *(bitMap.buffer + i * bitMap.width + j);
-						data[i * bitMap.width + j] = { pixel, pixel, pixel, pixel };
-					}
+					memcpy_s(res.data() + offset, arr[i].size() * sizeof(int), arr[i].data(), arr[i].size() * sizeof(int));
+					offset += (int)arr[i].size();
 				}
-
-				auto blobData = std::make_shared<Blob>(data.size() * sizeof(Pixel));
-				blobData->copyfrom(data.data(), blobData->getLength());
-				texture = Texture::Create2D(DXGI_FORMAT_R8G8B8A8_UNORM, bitMap.width, bitMap.rows, blobData, bitMap.width * sizeof(Pixel), bitMap.width * sizeof(Pixel) * bitMap.rows);
-				texture->load(0);
-
-				m_cache[text] = texture;
+				else
+				{
+					offset += (int)arr[0].size();
+				}
 			}
 		}
 
+		auto blobData = std::make_shared<Blob>(res.size() * sizeof(Pixel));
+		blobData->copyfrom(res.data(), blobData->getLength());
+		auto texture = Texture::Create2D(DXGI_FORMAT_R8G8B8A8_UNORM, width, maxHeight, blobData, width * sizeof(Pixel), width * sizeof(Pixel) * maxHeight);
+		texture->load(0);
+
 		return texture;
+	}
+
+	void FontManager::generateText(unsigned char ch)
+	{
+		FT_Set_Pixel_Sizes(m_face, 0, 500);
+
+		FT_Load_Char(m_face, ch, FT_LOAD_RENDER);
+		auto bitMap = m_face->glyph->bitmap;
+		m_cache[ch].resize(bitMap.rows);
+
+		for (int i = 0; i < m_cache[ch].size(); i++)
+		{
+			m_cache[ch][i].resize(bitMap.width);
+			for (int j = 0; j < m_cache[ch][i].size(); j++)
+			{
+				unsigned char pixel = *(bitMap.buffer + i * bitMap.width + j);
+				m_cache[ch][i][j] = { pixel, pixel, pixel, pixel };
+			}
+		}
 	}
 }

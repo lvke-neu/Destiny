@@ -118,68 +118,15 @@ namespace Destiny
 
 		//text
 		{			
+			auto textComponent = std::make_shared<TextComponent>();
+			textComponent->updateText("l v k e");
+			textComponent->updateSize(100.0f, 100.0f);
+
 			auto node = std::make_shared<Node>();
 			node->set_name("Text");
 			node->addToParent(m_scene);
+			node->addComponent(textComponent);
 
-			auto t0 = std::make_shared<TextComponent>();
-			auto t1 = std::make_shared<TextComponent>();
-			auto t2= std::make_shared<TextComponent>();
-			auto t3 = std::make_shared<TextComponent>();
-			auto t4 = std::make_shared<TextComponent>();
-			auto t5= std::make_shared<TextComponent>();
-			auto t6 = std::make_shared<TextComponent>();
-			auto t7 = std::make_shared<TextComponent>();
-
-			t0->updateScreenPosition(-0.9f, 0.9f);
-			t1->updateScreenPosition(-0.85f, 0.9f);
-			t2->updateScreenPosition(-0.8f, 0.9f);
-			t3->updateScreenPosition(-0.75f, 0.9f);
-			t4->updateScreenPosition(-0.7f, 0.9f);
-			t5->updateScreenPosition(-0.65f, 0.9f);
-			t6->updateScreenPosition(-0.6f, 0.9f);
-			t7->updateScreenPosition(-0.55f, 0.9f);
-
-			node->addComponent(t0);
-			node->addComponent(t1);
-			node->addComponent(t2);
-			node->addComponent(t3);
-			node->addComponent(t4);
-			node->addComponent(t5);
-			node->addComponent(t6);
-			node->addComponent(t7);
-
-
-			m_texts.push_back(t0);
-			m_texts.push_back(t1);
-			m_texts.push_back(t2);
-			m_texts.push_back(t3);
-			m_texts.push_back(t4);
-			m_texts.push_back(t5);
-			m_texts.push_back(t6);
-			m_texts.push_back(t7);
-
-
-			auto l = std::make_shared<TextComponent>();
-			auto v = std::make_shared<TextComponent>();
-			auto k = std::make_shared<TextComponent>();
-			auto e = std::make_shared<TextComponent>();
-			l->updateScreenPosition(0.7f, 0.9f);
-			v->updateScreenPosition(0.75f, 0.9f);
-			k->updateScreenPosition(0.80f, 0.9f);
-			e->updateScreenPosition(0.85f, 0.9f);
-			l->updateText('L');
-			v->updateText('V');
-			k->updateText('K');
-			e->updateText('E');
-			l->updateTextColor(1.0f, 0.0f, 0.0f);
-			v->updateTextColor(0.0f, 1.0f, 0.0f);
-			k->updateTextColor(0.0f, 0.0f, 1.0f);
-			e->updateTextColor(1.0f, 1.0f, 0.0f);
-			node->addComponent(l);
-			node->addComponent(v);
-			node->addComponent(k);
-			node->addComponent(e);
 		}
 	}
 
@@ -193,27 +140,27 @@ namespace Destiny
 		m_scene->update(deltaTime);
 		m_scene->onCull();
 
-		static unsigned int framCount = 0;
-		framCount ++;
+		//static unsigned int framCount = 0;
+		//framCount ++;
 
-		static float sumTime = 0.0f;
-		sumTime += deltaTime;
+		//static float sumTime = 0.0f;
+		//sumTime += deltaTime;
 
-		if (sumTime > 1.0f)
-		{
-			auto timeStr = std::to_string(framCount);
-			if (timeStr.size() < 8)
-			{
-				for (int i = 0; i < timeStr.size(); i++)
-				{
-					m_texts[i]->updateText(timeStr[i]);
-				}
-				for (size_t i = timeStr.size(); i < 8; i++)
-				{
-					m_texts[i]->updateText(' ');
-				}
-			}
-			sumTime = 0.0f;
-		}
+		//if (sumTime > 1.0f)
+		//{
+		//	auto timeStr = std::to_string(framCount);
+		//	if (timeStr.size() < 8)
+		//	{
+		//		for (int i = 0; i < timeStr.size(); i++)
+		//		{
+		//			m_texts[i]->updateText(timeStr[i]);
+		//		}
+		//		for (size_t i = timeStr.size(); i < 8; i++)
+		//		{
+		//			m_texts[i]->updateText(' ');
+		//		}
+		//	}
+		//	sumTime = 0.0f;
+		//}
 	}
 }

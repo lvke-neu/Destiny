@@ -4,9 +4,8 @@
 
 namespace Destiny
 {
-	class Transform : public Object
+	class Transform
 	{
-		RTTR_ENABLE(Object);
 	public:
 		Transform();
 	public:

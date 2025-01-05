@@ -2,7 +2,7 @@
 #include "Engine/Node.h"
 #include "Engine/Component.h"
 #include "Imgui/imgui.h"
-
+#include "ImGui/imgui_internal.h"
 
 PropertyPanel::PropertyPanel() :
 	m_choosedNode(nullptr)
@@ -65,6 +65,10 @@ void PropertyPanel::reflectProperty(const rttr::property& property, std::shared_
 	{
 		reflectFloat(property, object);
 	}
+	else if (property.get_type() == rttr::type::get<DirectX::XMFLOAT2>())
+	{
+		reflectFloat2(property, object);
+	}
 }
 
 void PropertyPanel::reflectString(const rttr::property& property, std::shared_ptr<Destiny::Object> object)
@@ -98,44 +102,74 @@ void PropertyPanel::reflectFloat(const rttr::property& property, std::shared_ptr
 	}
 	ImGui::Columns(1);
 	ImGui::PopID();
+}
 
+void PropertyPanel::reflectFloat2(const rttr::property& property, std::shared_ptr<Destiny::Object> object)
+{
+	bool changed = false;
 
-	//float step = 1.0f;
-	//float columnWidth = 100.0f;
+	DirectX::XMFLOAT2 value;
+	property.get_value(object).convert(value);
 
-	//ImGuiIO& io = ImGui::GetIO();
-	//auto boldFont = io.Fonts->Fonts[0];
+	ImGuiIO& io = ImGui::GetIO();
+	auto boldFont = io.Fonts->Fonts[0];
 
-	//ImGui::PushID(property.get_name().data());
+	ImGui::PushID(property.get_name().data());
+	ImGui::Columns(2);
+	ImGui::SetColumnWidth(0, 100.0f);
+	ImGui::Text(property.get_name().data());
+	ImGui::NextColumn();
 
-	//ImGui::Columns(2);
-	//ImGui::SetColumnWidth(0, columnWidth);
-	//ImGui::Text(property.get_name().data());
-	//ImGui::NextColumn();
+	ImGui::PushMultiItemsWidths(2, ImGui::CalcItemWidth());
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0, 0 });
 
-	//ImGui::PushItemWidth(ImGui::CalcItemWidth());
-	//ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0, 0 });
+	float lineHeigh = ImGui::GetFontSize() + ImGui::GetStyle().FramePadding.y * 2.0f;
+	ImVec2 buttonSize = { lineHeigh + 3.0f, lineHeigh };
 
-	//float lineHeigh = ImGui::GetFontSize() + ImGui::GetStyle().FramePadding.y * 2.0f;
-	//ImVec2 buttonSize = { lineHeigh + 3.0f, lineHeigh };
+	ImGui::PushStyleColor(ImGuiCol_Button, { 0.8f, 0.1f, 0.15f, 1.0f });
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.9f, 0.2f, 0.2f, 1.0f });
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 0.8f, 0.1f, 0.15f, 1.0f });
+	ImGui::PushFont(boldFont);
+	if (ImGui::Button("X", buttonSize))
+	{
+		value.x = 0.0f;
+	}
+	ImGui::PopFont();
+	ImGui::PopStyleColor(3);
+	ImGui::SameLine();
+	if (ImGui::DragFloat("##X", &value.x))
+	{
+		changed = true;
+	}
+	ImGui::PopItemWidth();
+	ImGui::SameLine();
 
-	//ImGui::PushStyleColor(ImGuiCol_Button, { 0.8f, 0.1f, 0.15f, 1.0f });
-	//ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.9f, 0.2f, 0.2f, 1.0f });
-	//ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 0.8f, 0.1f, 0.15f, 1.0f });
-	//ImGui::PushFont(boldFont);
-	//if (ImGui::Button("X", buttonSize))
-	//{
-	//	value = 0.0f;
-	//}
-	//ImGui::PopFont();
-	//ImGui::PopStyleColor(3);
-	//ImGui::SameLine();
-	//ImGui::DragFloat("##X", &value, step, 0.0f, 0.0f, "%.2f");
-	//ImGui::PopStyleVar();
-	//ImGui::PopItemWidth();
-	//ImGui::Columns(1);
+	ImGui::PushStyleColor(ImGuiCol_Button, { 0.2f, 0.7f, 0.2f, 1.0f });
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.3f, 0.8f, 0.3f, 1.0f });
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 0.2f, 0.7f, 0.2f, 1.0f });
+	ImGui::PushFont(boldFont);
+	if (ImGui::Button("Y", buttonSize))
+	{
+		value.y = 0.0f;
+	}
+	ImGui::PopFont();
+	ImGui::PopStyleColor(3);
+	ImGui::SameLine();
+	if (ImGui::DragFloat("##Y", &value.y))
+	{
+		changed = true;
+	}
+	ImGui::PopItemWidth();
 
-	//ImGui::PopID();
+	ImGui::PopStyleVar();
+	
+	ImGui::Columns(1);
+	ImGui::PopID();
+
+	if (changed)
+	{
+		property.set_value(object, value);
+	}
 }
 
 void PropertyPanel::onChoosedNode(void* parameter)

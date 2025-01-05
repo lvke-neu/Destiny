@@ -65,6 +65,7 @@ void ScenePanel::update()
 				node->set_name(derived_type.get_name().data());
 				node->addComponent(component);
 				node->addToParent(Destiny::Engine::GetInstance()->getSceneManager()->getScene());
+				ImGui::CloseCurrentPopup();
 			}
 		}
 		

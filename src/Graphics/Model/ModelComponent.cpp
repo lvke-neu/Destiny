@@ -18,7 +18,7 @@ namespace Destiny
 
 	}
 
-	void ModelComponent::set_path(const std::string& path)
+	void ModelComponent::set_path(std::string path)
 	{
 		if (m_path != path)
 		{
@@ -48,6 +48,7 @@ namespace Destiny
 	RTTR_REGISTRATION
 	{
 		rttr::registration::class_<ModelComponent>("ModelComponent")
-			.constructor<>();
+			.constructor<>()
+			.property("path", &ModelComponent::get_path, &ModelComponent::set_path);
 	}
 }

@@ -12,7 +12,7 @@ namespace Destiny
 		virtual ~ModelComponent();
 	public:
 		GET(std::string, path);
-		void set_path(const std::string& path);
+		void set_path(std::string path);
 	private:
 		virtual void onUpdate(float deltaTime) override;
 	private:

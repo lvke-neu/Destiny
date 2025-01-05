@@ -12,7 +12,8 @@
 
 namespace Destiny
 {
-	TextComponent::TextComponent()
+	TextComponent::TextComponent() :
+		m_text("")
 	{
 		auto renderer = std::make_shared<Renderer>("builtin://renderer/text.hlsl");
 		renderer->load(0);
@@ -47,10 +48,11 @@ namespace Destiny
 		setMesh(mesh);
 	}
 
-	void TextComponent::updateText(const std::string& text)
+	void TextComponent::set_text(std::string text)
 	{
-		if (getVisual())
+		if (m_text != text && getVisual())
 		{
+			m_text = text;
 			getVisual()->setShaderResource("t_texture", FontManager::GetInstance()->getFontTexture(text));
 		}
 	}
@@ -82,6 +84,7 @@ namespace Destiny
 	RTTR_REGISTRATION
 	{
 		rttr::registration::class_<TextComponent>("TextComponent")
-			.constructor<>();
+			.constructor<>()
+			.property("text", &TextComponent::get_text, &TextComponent::set_text);
 	}
 }

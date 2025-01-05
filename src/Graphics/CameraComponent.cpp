@@ -2,7 +2,7 @@
 #include "VisualComponent.h"
 #include "Graphics/VisualScene.h"
 #include "Engine/EventSystem.h"
-
+#include "Math/Math.h"
 
 namespace Destiny
 {
@@ -20,6 +20,30 @@ namespace Destiny
 	CameraComponent::~CameraComponent()
 	{
 		Engine::GetInstance()->getEventSystem()->unRegisterEvent(EventType::WindowResize, std::bind(&CameraComponent::onWindowResize, this, std::placeholders::_1));
+	}
+
+	void CameraComponent::set_fovy(float fovy)
+	{
+		m_fovy = fovy;
+		traversalProjChanged(m_scene);
+	}
+
+	void CameraComponent::set_aspect(float aspect)
+	{
+		m_aspect = aspect;
+		traversalProjChanged(m_scene);
+	}
+
+	void CameraComponent::set_nearz(float nearz)
+	{
+		m_nearz = nearz;
+		traversalProjChanged(m_scene);
+	}
+
+	void CameraComponent::set_farz(float farz)
+	{
+		m_farz = farz;
+		traversalProjChanged(m_scene);
 	}
 
 	void CameraComponent::onEnterScene()
@@ -83,7 +107,7 @@ namespace Destiny
 			auto visualComponent = std::dynamic_pointer_cast<VisualComponent>(component);
 			if (visualComponent)
 			{
-				visualComponent->onCameraProjChanged(DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(m_fovy, m_aspect, m_nearz, m_farz)), m_viewportWidth, m_viewportHeight);
+				visualComponent->onCameraProjChanged(DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(m_fovy * Math::DEG2RAD, m_aspect, m_nearz, m_farz)), m_viewportWidth, m_viewportHeight);
 			}
 		}
 
@@ -96,6 +120,10 @@ namespace Destiny
 	RTTR_REGISTRATION
 	{
 		rttr::registration::class_<CameraComponent>("CameraComponent")
-			.constructor<>();
+			.constructor<>()
+			.property("fovy", &CameraComponent::get_fovy, &CameraComponent::set_fovy)
+			.property("aspect", &CameraComponent::get_aspect, &CameraComponent::set_aspect)
+			.property("nearz", &CameraComponent::get_nearz, &CameraComponent::set_nearz)
+			.property("farz", &CameraComponent::get_farz, &CameraComponent::set_farz);
 	}
 }

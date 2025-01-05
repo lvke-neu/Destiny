@@ -119,7 +119,7 @@ namespace Destiny
 		//text
 		{			
 			auto textComponent = std::make_shared<TextComponent>();
-			textComponent->updateText("l v k e");
+			textComponent->set_text("l v k e");
 			textComponent->updateSize(50.0f, 50.0f);
 			textComponent->updateScreenPosition(0.8f, 0.8f);
 			textComponent->updateTextColor(1.0f, 1.0f, 0.0f);
@@ -157,7 +157,7 @@ namespace Destiny
 		if (sumTime > 1.0f)
 		{
 			auto timeStr = "F r a m e C o u n t : " + std::to_string(framCount);
-			frameText->updateText(timeStr);
+			frameText->set_text(timeStr);
 			sumTime = 0.0f;
 		}
 	}

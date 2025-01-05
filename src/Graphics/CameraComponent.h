@@ -12,9 +12,13 @@ namespace Destiny
 		virtual ~CameraComponent();
 	public:
 		GET(float, fovy);
+		void set_fovy(float fovy);
 		GET(float, aspect);
+		void set_aspect(float aspect);
 		GET(float, nearz);
+		void set_nearz(float nearz);
 		GET(float, farz);
+		void set_farz(float farz);
 		GET(float, viewportWidth);
 		GET(float, viewportHeight);
 	public:

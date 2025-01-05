@@ -23,9 +23,9 @@ namespace Destiny
 
 		float arr[4][4];
 		memcpy_s(arr, sizeof(arr), &worldMatrix, sizeof(arr));
-		m_rotation.x = RAD2DEG * atan2f(arr[1][2], arr[2][2]);
-		m_rotation.y = RAD2DEG* atan2f(-arr[0][2], sqrtf(arr[1][2] * arr[1][2] + arr[2][2] * arr[2][2]));
-		m_rotation.z = RAD2DEG * atan2f(arr[0][1], arr[0][0]);
+		m_rotation.x = Math::RAD2DEG * atan2f(arr[1][2], arr[2][2]);
+		m_rotation.y = Math::RAD2DEG* atan2f(-arr[0][2], sqrtf(arr[1][2] * arr[1][2] + arr[2][2] * arr[2][2]));
+		m_rotation.z = Math::RAD2DEG * atan2f(arr[0][1], arr[0][0]);
 	}
 
 	DirectX::XMMATRIX Transform::getTransposeWorldMatrix() const

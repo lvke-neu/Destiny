@@ -96,15 +96,15 @@ void ViewPortPanel::processGzimo()
 
 	ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
 
-	auto fullWorldMatrix = m_choosedNode->getRootToThisWorldMatrix();
-	auto ancestorsWorldMatrix = fullWorldMatrix * m_choosedNode->get_transform().getInverseWorldMatrix();
-	ImGuizmo::Manipulate((float*)&viewMatrix, (float*)&projMatrix, (ImGuizmo::OPERATION)m_gzimoType, ImGuizmo::MODE::LOCAL, (float*)&fullWorldMatrix);
+	//auto fullWorldMatrix = m_choosedNode->getRootToThisWorldMatrix();
+	//auto ancestorsWorldMatrix = fullWorldMatrix * m_choosedNode->get_transform().getInverseWorldMatrix();
+	auto worldMatrix = m_choosedNode->get_transform().getWorldMatrix();
+	ImGuizmo::Manipulate((float*)&viewMatrix, (float*)&projMatrix, (ImGuizmo::OPERATION)m_gzimoType, ImGuizmo::MODE::LOCAL, (float*)&worldMatrix);
 
 	if (ImGuizmo::IsUsing())
 	{
-		ancestorsWorldMatrix = DirectX::XMMatrixInverse(nullptr, ancestorsWorldMatrix);
 		Destiny::Transform transform;
-		transform.setWorldMatrix(ancestorsWorldMatrix * fullWorldMatrix);
+		transform.setWorldMatrix(worldMatrix);
 		m_choosedNode->set_transform(transform);
 	}
 }

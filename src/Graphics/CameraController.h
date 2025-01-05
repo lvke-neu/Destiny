@@ -15,7 +15,6 @@ namespace Destiny
 		void onMouseRelease(void* data);
 		void onMouseMove(void* data);
 	public:
-		GET_CLASS_NAME(CameraController);
 		GET_SET(float, speed);
 	private:
 		float m_speed;

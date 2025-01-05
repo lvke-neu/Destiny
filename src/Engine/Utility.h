@@ -55,10 +55,4 @@ namespace Destiny
 #define GET_SET(TYPE, NAME)\
 	GET(TYPE, NAME);\
 	SET(TYPE, NAME);
-
-#define GET_CLASS_NAME(NAME)\
-	virtual std::string get_class_name() const\
-	{\
-		return #NAME;\
-	}\
 //**********************************************************************************************************

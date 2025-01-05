@@ -3,6 +3,7 @@
 #include "ImGui/ImGuizmo.h"
 #include "Engine/Engine.h"
 #include "Engine/EventSystem.h"
+#include "Graphics/GraphicsSystem.h"
 #include "Graphics/RenderTargetView.h"
 #include "Graphics/BindRenderTargets.h"
 #include "Graphics/VisualScene.h"
@@ -35,6 +36,12 @@ void ViewPortPanel::update()
 	{
 		m_gzimoType = 2;
 	}
+	ImGui::SameLine();
+	ImGui::Text("%.3f ms/frame (%.1f FPS),", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+	ImGui::SameLine();
+	ImGui::Text("DrawCallCount:%ld,", Destiny::Engine::GetInstance()->getGraphicsSystem()->getGraphicsStat().DrawCallCount);
+	ImGui::SameLine();
+	ImGui::Text("TriangleCount:%ld", Destiny::Engine::GetInstance()->getGraphicsSystem()->getGraphicsStat().TriangleCount);
 
 	onViewPortResize();
 

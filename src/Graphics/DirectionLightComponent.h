@@ -9,8 +9,6 @@ namespace Destiny
 	public:
 		virtual ~DirectionLightComponent() = default;
 	public:
-		GET_CLASS_NAME(DirectionLightComponent);
-	public:
 		virtual void		onEnterScene() override;
 		virtual void		onNodeTransformChanged() override;
 	private:

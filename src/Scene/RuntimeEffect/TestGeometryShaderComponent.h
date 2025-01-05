@@ -9,7 +9,5 @@ namespace Destiny
 	public:
 		TestGeometryShaderComponent();
 		virtual ~TestGeometryShaderComponent() = default;
-	public:
-		GET_CLASS_NAME(TestGeometryShaderComponent);
 	};
 }

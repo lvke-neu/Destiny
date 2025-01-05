@@ -13,7 +13,6 @@ namespace Destiny
 		Component();
 		virtual ~Component() = default;
 	public:
-		GET_CLASS_NAME(Component);
 		GET_SET(bool, enable);
 		GET(std::shared_ptr<Node>, node);
 		GET(std::shared_ptr<Scene>, scene);

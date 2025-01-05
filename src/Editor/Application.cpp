@@ -1,7 +1,7 @@
 #include "Application.h"
 #include "ViewPortPanel.h"
 #include "ScenePanel.h"
-#include "StatPanel.h"
+#include "PropertyPanel.h"
 #include "AssetPanel.h"
 #include "Engine/Engine.h"
 #include "Engine/BlobLoaderManager.h"
@@ -110,11 +110,11 @@ Application::Application() :
 	m_hInstance(nullptr),
 	m_viewPortPanel(std::make_shared<ViewPortPanel>()),
 	m_scenePanel(std::make_shared<ScenePanel>()),
-	m_statPanel(std::make_shared<StatPanel>()),
+	m_propertyPanel(std::make_shared<PropertyPanel>()),
 	m_assetPanel(std::make_shared<AssetPanel>())
 {
 	AllocConsole();
-	MetaConnect(m_scenePanel, ScenePanel::ChoosedNode, m_statPanel, &StatPanel::onChoosedNode);
+	MetaConnect(m_scenePanel, ScenePanel::ChoosedNode, m_propertyPanel, &PropertyPanel::onChoosedNode);
 	MetaConnect(m_scenePanel, ScenePanel::ChoosedNode, m_viewPortPanel, &ViewPortPanel::onChoosedNode);
 }
 
@@ -353,7 +353,7 @@ void Application::drawDock()
 
 	m_viewPortPanel->update();
 	m_scenePanel->update();
-	m_statPanel->update();
+	m_propertyPanel->update();
 	m_assetPanel->update();
 
 	ImGui::End();

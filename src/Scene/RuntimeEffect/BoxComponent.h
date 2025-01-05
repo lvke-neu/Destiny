@@ -9,7 +9,5 @@ namespace Destiny
 	public:
 		BoxComponent();
 		virtual ~BoxComponent() = default;
-	public:
-		GET_CLASS_NAME(BoxComponent);
 	};
 }

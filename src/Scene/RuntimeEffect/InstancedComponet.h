@@ -9,7 +9,5 @@ namespace Destiny
 	public:
 		InstancedComponet();
 		virtual ~InstancedComponet() = default;
-	public:
-		GET_CLASS_NAME(InstancedComponet);
 	};
 }

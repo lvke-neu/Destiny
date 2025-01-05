@@ -12,8 +12,6 @@ namespace Destiny
 		VisualComponent();
 		virtual ~VisualComponent() = default;
 	public:
-		GET_CLASS_NAME(VisualComponent);
-	public:
 		virtual void				onAddToNode() override;
 		virtual void				onNodeTransformChanged() override;
 		virtual void				onEnterScene();

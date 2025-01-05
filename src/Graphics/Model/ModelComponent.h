@@ -11,8 +11,6 @@ namespace Destiny
 		ModelComponent();
 		virtual ~ModelComponent();
 	public:
-		GET_CLASS_NAME(ModelComponent);
-	public:
 		GET(std::string, path);
 		void set_path(const std::string& path);
 	private:

@@ -61,27 +61,6 @@ namespace Destiny
 		updateWorldMatrix();
 	}
 
-	bool Transform::operator==(const Transform& other)
-	{
-		return
-			DirectX::XMVector4Equal(m_worldMatrix.r[0], other.m_worldMatrix.r[0]) &&
-			DirectX::XMVector4Equal(m_worldMatrix.r[1], other.m_worldMatrix.r[1]) &&
-			DirectX::XMVector4Equal(m_worldMatrix.r[2], other.m_worldMatrix.r[2]) &&
-			DirectX::XMVector4Equal(m_worldMatrix.r[3], other.m_worldMatrix.r[3]) &&
-
-			m_translation.x == other.m_translation.x &&
-			m_translation.y == other.m_translation.y &&
-			m_translation.z == other.m_translation.z &&
-
-			m_rotation.x == other.m_rotation.x &&
-			m_rotation.y == other.m_rotation.y &&
-			m_rotation.z == other.m_rotation.z &&
-
-			m_scale.x == other.m_scale.x &&
-			m_scale.y == other.m_scale.y &&
-			m_scale.z == other.m_scale.z;
-	}
-
 	void Transform::moveZAxis(float distance)
 	{
 		DirectX::XMFLOAT3 radiansRotation{ DirectX::XMConvertToRadians(m_rotation.x), DirectX::XMConvertToRadians(m_rotation.y), DirectX::XMConvertToRadians(m_rotation.z) };

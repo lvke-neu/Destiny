@@ -16,8 +16,12 @@ void ScenePanel::traversal(std::shared_ptr<Destiny::Node> node)
 		return;
 	}
 	
+	ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_FramePadding;
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 4,4 });
+	ImGui::Separator();
+
 	ImGui::PushID(node->get_uuid().c_str());
-	if (ImGui::TreeNodeEx(node->get_name().c_str(), ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_Selected))
+	if (ImGui::TreeNodeEx(node->get_name().c_str(), treeNodeFlags))
 	{
 		send(ChoosedNode, &node);
 
@@ -29,6 +33,8 @@ void ScenePanel::traversal(std::shared_ptr<Destiny::Node> node)
 		ImGui::TreePop();
 	}
 	ImGui::PopID();
+
+	ImGui::PopStyleVar();
 }
 
 void ScenePanel::update()

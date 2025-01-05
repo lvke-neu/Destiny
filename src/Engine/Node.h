@@ -27,10 +27,9 @@ namespace Destiny
 		void												rotateYAxis(float angle);
 		DirectX::XMMATRIX									getRootToThisWorldMatrix();
 	public:
-		GET_CLASS_NAME(Node);
 		GET_SET(std::string, name);
 		GET(Transform, transform);
-		void												set_transform(const Transform& transform);
+		void												set_transform(Transform transform);
 	private:
 		void												onEnterScene();
 		void												onNodeTransformChanged();

@@ -16,7 +16,6 @@ namespace Destiny
 		DirectX::XMMATRIX		getInverseWorldMatrix() const;
 		DirectX::XMMATRIX		getInvTransposeWorldMatrix() const;
 	public:
-		GET_CLASS_NAME(Transform3D);
 		GET(DirectX::XMFLOAT3, translation);
 		void set_translation(DirectX::XMFLOAT3 translation);
 		GET(DirectX::XMFLOAT3, rotation);
@@ -24,7 +23,6 @@ namespace Destiny
 		GET(DirectX::XMFLOAT3, scale);
 		void set_scale(DirectX::XMFLOAT3 scale);
 	public:
-		bool					operator==(const Transform& other);
 		void					moveZAxis(float distance);
 		void					moveXAxis(float distance);
 		void					rotateXAxis(float angle);

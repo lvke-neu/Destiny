@@ -12,7 +12,15 @@
 
 namespace Destiny
 {
-	VisualScene::VisualScene(const std::string& name) : 
+	VisualScene::VisualScene() :
+		Scene(),
+		m_bindRenderTargets(nullptr),
+		m_clearRenderTargets(nullptr)
+	{
+
+	}
+
+	VisualScene::VisualScene(const std::string& name) :
 		Scene(name),
 		m_bindRenderTargets(nullptr),
 		m_clearRenderTargets(nullptr)
@@ -111,5 +119,11 @@ namespace Destiny
 				nodes.push(node);
 			}
 		}
+	}
+
+	RTTR_REGISTRATION
+	{
+		rttr::registration::class_<VisualScene>("VisualScene")
+			.constructor<>();
 	}
 }

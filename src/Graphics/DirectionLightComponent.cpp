@@ -39,4 +39,9 @@ namespace Destiny
 		}
     }
 
+	RTTR_REGISTRATION
+	{
+		rttr::registration::class_<DirectionLightComponent>("DirectionLightComponent")
+			.constructor<>();
+	}
 }

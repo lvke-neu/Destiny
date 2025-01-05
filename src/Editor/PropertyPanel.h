@@ -4,16 +4,19 @@
 namespace Destiny
 {
 	class Node;
+	class Object;
 }
 
-class StatPanel : public Meta
+class PropertyPanel : public Meta
 {
 public:
-	StatPanel();
+	PropertyPanel();
 public:
 	void update();
 public slots:
 	void onChoosedNode(void* parameter);
+private:
+	void reflect(std::shared_ptr<Destiny::Object> object);
 private:
 	std::shared_ptr<Destiny::Node> m_choosedNode;
 };

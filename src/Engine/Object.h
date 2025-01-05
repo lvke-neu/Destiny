@@ -13,9 +13,8 @@ namespace Destiny
 		Object();
 		virtual ~Object() = default;
 	public:
-		GET_CLASS_NAME(Object);
-		GET(std::string, uuid);
+		GET_SET(std::string, uuid);
 	private:
-		std::string m_uuid;
+		std::string		m_uuid;
 	};
 }

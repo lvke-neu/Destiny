@@ -2,7 +2,7 @@
 
 namespace Destiny
 {
-	Object::Object() : 
+	Object::Object() :
 		m_uuid(Utility::GenerateUUID())
 	{
 

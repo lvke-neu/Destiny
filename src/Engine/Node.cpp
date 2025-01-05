@@ -90,13 +90,8 @@ namespace Destiny
 		m_components.erase(iter);
 	}
 
-	void Node::set_transform(const Transform& transform)
+	void Node::set_transform(Transform transform)
 	{
-		if (m_transform == transform)
-		{
-			return;
-		}
-
 		m_transform = transform;
 		onNodeTransformChanged();
 	}
@@ -190,6 +185,7 @@ namespace Destiny
 	{
 		rttr::registration::class_<Node>("Node")
 			.constructor<>()
-		    .property("name", &Node::get_name, &Node::set_name);
+			.property("name", &Node::get_name, &Node::set_name)
+			.property("transform", &Node::get_transform, &Node::set_transform);
 	}
 }

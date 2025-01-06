@@ -4,7 +4,7 @@ cbuffer cbPerObject : register(b0)
 {
 	float2 c_size;
     float2 c_screenPosition;
-    float3 c_color;
+    float4 c_color;
 }
 
 struct VertexOut
@@ -58,6 +58,6 @@ Texture2D	 t_texture : register(t0);
 SamplerState s_sampler : register(s0);
 float4 PS(VertexOut pIn) : SV_Target
 {
-    return t_texture.Sample(s_sampler, pIn.texcoord) * float4(c_color, 1.0f);
+    return t_texture.Sample(s_sampler, pIn.texcoord) * c_color;
 }
 

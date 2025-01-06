@@ -18,6 +18,14 @@ namespace Destiny
 		return { m_r / 255.0f, m_g / 255.0f, m_b / 255.0f, m_a / 255.0f };
 	}
 
+	void Color::fromColor32(const DirectX::XMFLOAT4& color32)
+	{
+		m_r = (unsigned char)(color32.x * 255);
+		m_g = (unsigned char)(color32.y * 255);
+		m_b = (unsigned char)(color32.z * 255);
+		m_a = (unsigned char)(color32.w * 255);
+	}
+
 	RTTR_REGISTRATION
 	{
 		rttr::registration::class_<Color>("Color")

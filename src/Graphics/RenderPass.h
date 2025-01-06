@@ -14,7 +14,8 @@ namespace Destiny
 		{
 			None,
 			ForwardOpaque,
-			ForwardTransparent
+			ForwardTransparent,
+			Gui
 		};
 	public:
 		RenderPass();

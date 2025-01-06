@@ -4,6 +4,7 @@
 #include "RenderPass.h"
 #include "ForwardOpaquePipeline.h"
 #include "ForwardTransparentPipeline.h"
+#include "GuiPipeline.h"
 
 namespace Destiny
 {
@@ -13,6 +14,7 @@ namespace Destiny
 
 		m_forwardOpaquePipeline = std::make_shared<ForwardOpaquePipeline>();
 		m_forwardTransparentPipeline = std::make_shared<ForwardTransparentPipeline>();
+		m_guiPipeline = std::make_shared<GuiPipeline>();
 	}
 
 	void RenderSystem::render()
@@ -20,15 +22,18 @@ namespace Destiny
 		m_beforePipelineCommandList->execute(getImmediateContext());
 		m_forwardOpaquePipeline->execute(getImmediateContext());
 		m_forwardTransparentPipeline->execute(getImmediateContext());
+		m_guiPipeline->execute(getImmediateContext());
 	}
 
 	void RenderSystem::syncState()
 	{
 		m_graphicsStat.DrawCallCount = 0;
 		m_graphicsStat.TriangleCount = 0;
+		m_graphicsStat.VisualCount = 0;
 		m_beforePipelineCommandList->clearGraphicsCommand();
 		m_forwardOpaquePipeline->syncState();
 		m_forwardTransparentPipeline->syncState();
+		m_guiPipeline->syncState();
 	}
 
 	void RenderSystem::addBeforePipelineCommand(std::shared_ptr<GraphicsCommand> graphicsCommand)
@@ -48,6 +53,8 @@ namespace Destiny
 			m_graphicsStat.TriangleCount += visual->getMesh()->getDrawCall().indexCount / 3;
 		}
 
+		m_graphicsStat.VisualCount++;
+
 		visual->updateDrawParameters();
 		auto renderPass = visual->getRenderPass();
 		switch (renderPass->getRendererCategory())
@@ -64,6 +71,14 @@ namespace Destiny
 		case RenderPass::ForwardTransparent :
 		{
 			if (m_forwardTransparentPipeline->addGraphicsCommand(visual))
+			{
+				++m_graphicsStat.DrawCallCount;
+			}
+			return;
+		}
+		case RenderPass::Gui :
+		{
+			if (m_guiPipeline->addGraphicsCommand(visual))
 			{
 				++m_graphicsStat.DrawCallCount;
 			}

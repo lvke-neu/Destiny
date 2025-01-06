@@ -18,6 +18,7 @@ namespace Destiny
 	private:
 		std::shared_ptr<GraphicsPipeline>		m_forwardOpaquePipeline;
 		std::shared_ptr<GraphicsPipeline>		m_forwardTransparentPipeline;
+		std::shared_ptr<GraphicsPipeline>		m_guiPipeline;
 		std::shared_ptr<GraphicsCommandList>	m_beforePipelineCommandList;
 	};
 

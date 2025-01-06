@@ -15,13 +15,14 @@ namespace Destiny
 	TextComponent::TextComponent() :
 		m_text(""),
 		m_size({ 10.0f, 20.0f }),
-		m_screenPosition({ 0.0f, 0.0f })
+		m_screenPosition({ 0.0f, 0.0f }),
+		m_color({255, 255, 255, 255})
 	{
 		auto renderer = std::make_shared<Renderer>("builtin://renderer/text.hlsl");
 		renderer->load(0);
 		renderer->setConstant("c_size", m_size);
 		renderer->setConstant("c_screenPosition", m_screenPosition);
-		renderer->setConstant("c_color", DirectX::XMFLOAT3{ 1.0f, 1.0f, 1.0f });
+		renderer->setConstant("c_color", m_color.toColor32());
 
 		//renderer->setShaderResource("t_texture", FontManager::GetInstance()->getFontTexture('A', 5000, 5000));
 
@@ -33,7 +34,7 @@ namespace Destiny
 		renderStates->load();
 
 		std::shared_ptr<RenderPass> renderPass = std::make_shared<RenderPass>();
-		renderPass->setRendererCategory(RenderPass::ForwardTransparent);
+		renderPass->setRendererCategory(RenderPass::Gui);
 		renderPass->setRenderer(renderer);
 		renderPass->setRenderStates(renderStates);
 
@@ -77,11 +78,12 @@ namespace Destiny
 		}
 	}
 
-	void TextComponent::updateTextColor(float r, float g, float b)
+	void TextComponent::set_color(Color color)
 	{
 		if (getVisual())
 		{
-			getVisual()->setConstant("c_color", DirectX::XMFLOAT3{ r, g, b });
+			m_color = color;
+			getVisual()->setConstant("c_color", m_color.toColor32());
 		}
 	}
 
@@ -91,6 +93,7 @@ namespace Destiny
 			.constructor<>()
 			.property("text", &TextComponent::get_text, &TextComponent::set_text)
 			.property("size", &TextComponent::get_size, &TextComponent::set_size)
-			.property("screenPosition", &TextComponent::get_screenPosition, &TextComponent::set_screenPosition);
+			.property("screenPosition", &TextComponent::get_screenPosition, &TextComponent::set_screenPosition)
+			.property("color", &TextComponent::get_color, &TextComponent::set_color);
 	}
 }

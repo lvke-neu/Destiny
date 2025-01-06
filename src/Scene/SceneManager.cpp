@@ -121,12 +121,12 @@ namespace Destiny
 			textComponent->set_text("l v k e");
 			textComponent->set_size({ 50.0f, 50.0f });
 			textComponent->set_screenPosition({ 0.8f, 0.8f });
-			textComponent->updateTextColor(1.0f, 1.0f, 0.0f);
+			textComponent->set_color({ 255, 255, 0, 255 });
 
 			frameText = std::make_shared<TextComponent>();
 			frameText->set_size({ 200.0f, 40.0f });
 			frameText->set_screenPosition({ -0.8f, 0.8f });
-			frameText->updateTextColor(0.0f, 1.0f, 0.0f);
+			frameText->set_color({ 0, 255, 0, 255 });
 
 			auto node = std::make_shared<Node>();
 			node->set_name("Text");

@@ -41,7 +41,9 @@ void ViewPortPanel::update()
 	ImGui::SameLine();
 	ImGui::Text("DrawCallCount:%ld,", Destiny::Engine::GetInstance()->getGraphicsSystem()->getGraphicsStat().DrawCallCount);
 	ImGui::SameLine();
-	ImGui::Text("TriangleCount:%ld", Destiny::Engine::GetInstance()->getGraphicsSystem()->getGraphicsStat().TriangleCount);
+	ImGui::Text("TriangleCount:%ld,", Destiny::Engine::GetInstance()->getGraphicsSystem()->getGraphicsStat().TriangleCount);
+	ImGui::SameLine();
+	ImGui::Text("VisualCount:%ld", Destiny::Engine::GetInstance()->getGraphicsSystem()->getGraphicsStat().VisualCount);
 
 	onViewPortResize();
 

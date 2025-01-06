@@ -74,7 +74,7 @@ namespace Destiny
 		}
 
 		std::vector<Color> res;
-		res.resize(width * maxHeight);
+		res.resize(width * maxHeight, { 0,0,0,0 });
 		int offset = 0;
 
 		for (unsigned int i = 0; i < maxHeight; i++)

@@ -24,6 +24,7 @@ private:
 	void reflectString(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
 	void reflectFloat(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
 	void reflectFloat2(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
+	void reflectColor(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
 private:
 	std::shared_ptr<Destiny::Node> m_choosedNode;
 };

@@ -1,5 +1,6 @@
 #pragma once
 #include "Graphics/VisualComponent.h"
+#include "Math/Color.h"
 
 namespace Destiny
 {
@@ -16,11 +17,12 @@ namespace Destiny
 		void set_size(DirectX::XMFLOAT2 size);
 		GET(DirectX::XMFLOAT2, screenPosition);
 		void set_screenPosition(DirectX::XMFLOAT2 screenPosition);
-	public:
-		void updateTextColor(float r, float g, float b);
+		GET(Color, color);
+		void set_color(Color color);
 	private:
 		std::string m_text;
 		DirectX::XMFLOAT2 m_size;
 		DirectX::XMFLOAT2 m_screenPosition;
+		Color m_color;
 	};
 }

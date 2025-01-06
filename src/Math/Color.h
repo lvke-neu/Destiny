@@ -17,6 +17,7 @@ namespace Destiny
 		GET_SET(unsigned char, a);
 	public:
 		DirectX::XMFLOAT4 toColor32();
+		void fromColor32(const DirectX::XMFLOAT4& color32);
 	private:
 		unsigned char m_r;
 		unsigned char m_g;

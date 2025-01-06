@@ -48,13 +48,6 @@ namespace Destiny
 			return;
 		}
 
-		if (visual->getMesh() && visual->getMesh()->getDrawCall().primitiveTopology == Mesh::PrimitiveTopology::TriangleList)
-		{
-			m_graphicsStat.TriangleCount += visual->getMesh()->getDrawCall().indexCount / 3;
-		}
-
-		m_graphicsStat.VisualCount++;
-
 		visual->updateDrawParameters();
 		auto renderPass = visual->getRenderPass();
 		switch (renderPass->getRendererCategory())
@@ -64,6 +57,11 @@ namespace Destiny
 			if (m_forwardOpaquePipeline->addGraphicsCommand(visual))
 			{
 				++m_graphicsStat.DrawCallCount;
+				++m_graphicsStat.VisualCount;
+				if (visual->getMesh() && visual->getMesh()->getDrawCall().primitiveTopology == Mesh::PrimitiveTopology::TriangleList)
+				{
+					m_graphicsStat.TriangleCount += visual->getMesh()->getDrawCall().indexCount / 3;
+				}
 			}
 			return;
 			}
@@ -73,6 +71,11 @@ namespace Destiny
 			if (m_forwardTransparentPipeline->addGraphicsCommand(visual))
 			{
 				++m_graphicsStat.DrawCallCount;
+				++m_graphicsStat.VisualCount;
+				if (visual->getMesh() && visual->getMesh()->getDrawCall().primitiveTopology == Mesh::PrimitiveTopology::TriangleList)
+				{
+					m_graphicsStat.TriangleCount += visual->getMesh()->getDrawCall().indexCount / 3;
+				}
 			}
 			return;
 		}
@@ -81,6 +84,11 @@ namespace Destiny
 			if (m_guiPipeline->addGraphicsCommand(visual))
 			{
 				++m_graphicsStat.DrawCallCount;
+				++m_graphicsStat.VisualCount;
+				if (visual->getMesh() && visual->getMesh()->getDrawCall().primitiveTopology == Mesh::PrimitiveTopology::TriangleList)
+				{
+					m_graphicsStat.TriangleCount += visual->getMesh()->getDrawCall().indexCount / 3;
+				}
 			}
 			return;
 		}

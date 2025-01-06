@@ -1,14 +1,17 @@
 #include "GraphicsDefine.h"
-#include <rttr/registration.h>
+#include <rttr/registration>
 
 namespace Destiny
 {
 	RTTR_REGISTRATION
 	{
-		rttr::registration::class_<RendererCategory>("RendererCategory")
-		.enumeration<RendererCategory>("None")
-		.enumeration<RendererCategory>("ForwardOpaque")
-		.enumeration<RendererCategory>("ForwardTransparent")
-		.enumeration<RendererCategory>("Gui");
+
+	rttr::registration::enumeration<RendererCategory>("RendererCategory")
+		(
+			rttr::value("None", RendererCategory::None),
+			rttr::value("ForwardOpaque", RendererCategory::ForwardOpaque),
+			rttr::value("ForwardTransparent", RendererCategory::ForwardTransparent),
+			rttr::value("Gui", RendererCategory::Gui)
+		);
 	}
 }

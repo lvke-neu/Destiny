@@ -49,6 +49,7 @@ void PropertyPanel::reflect(std::shared_ptr<Destiny::Object> object)
 		for (const auto& property : type.get_properties())
 		{
 			reflectProperty(property, object);
+			ImGui::Separator();
 		}
 
 		//if (std::dynamic_pointer_cast<Destiny::Node>(object))
@@ -120,7 +121,9 @@ void PropertyPanel::reflectString(const rttr::property& property, std::shared_pt
 	char buffer[MAX_BUFFER_SIZE];
 	memset(buffer, 0, MAX_BUFFER_SIZE);
 	memcpy_s(buffer, value.size(), value.c_str(), value.size());
-	if (ImGui::InputText(property.get_name().data(), buffer, MAX_BUFFER_SIZE))
+	ImGui::Text((property.get_name().to_string() + " :").c_str());
+	ImGui::SameLine();
+	if (ImGui::InputText("##", buffer, MAX_BUFFER_SIZE))
 	{
 		value = buffer;
 		property.set_value(object, value);
@@ -391,10 +394,14 @@ void PropertyPanel::reflectColor(const rttr::property& property, std::shared_ptr
 	Destiny::Color32 value;
 	property.get_value(object).convert(value);
 
-	if (ImGui::ColorEdit4(property.get_name().data(), (float*)&value, ImGuiColorEditFlags_Float))
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0, 0 });
+	ImGui::Text((property.get_name().to_string() + " :").c_str());
+	ImGui::SameLine();
+	if (ImGui::ColorEdit4("##", (float*)&value, ImGuiColorEditFlags_Float))
 	{
 		property.set_value(object, value);
 	}
+	ImGui::PopStyleVar();
 }
 
 void PropertyPanel::reflectTransform(const rttr::property& property, std::shared_ptr<Destiny::Object> object)
@@ -436,9 +443,31 @@ void PropertyPanel::reflectTransform(const rttr::property& property, std::shared
 void PropertyPanel::reflectEnumeration(const rttr::property& property, std::shared_ptr<Destiny::Object> object)
 {
 	auto enumeration = property.get_enumeration();
-	ImGui::Text((enumeration.get_type().get_name().to_string() + ":").data());
+
+	std::vector<std::string> items;
+	for (const auto& value : enumeration.get_values())
+	{
+		items.push_back(value.to_string());
+	}
+
+	ImGui::Text((property.get_name().to_string() + " :").c_str());
 	ImGui::SameLine();
-	ImGui::Text(enumeration.get_name().data());
+
+	int itemIndex = property.get_value(object).to_int();
+	if (ImGui::Combo(("##" + property.get_name().to_string()).c_str(), &itemIndex,
+		[](void* data, int idx, const char** out_text)
+		{
+			auto& vector = *static_cast<std::vector<std::string>*>(data);
+			if (idx < 0 || idx >= static_cast<int>(vector.size())) {
+				return false;
+			}
+			*out_text = vector[idx].c_str();
+			return true;
+		},
+		&items, (int)items.size()))
+	{
+		property.set_value(object, enumeration.name_to_value(items[itemIndex]));
+	}
 }
 
 void PropertyPanel::onChoosedNode(void* parameter)

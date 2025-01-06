@@ -20,6 +20,7 @@ private:
 	void reflect(std::shared_ptr<Destiny::Object> object);
 	void reflectProperty(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
 
+	void reflectBool(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
 	void reflectString(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
 	void reflectFloat(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
 	void reflectFloat2(const rttr::property& property, std::shared_ptr<Destiny::Object> object);

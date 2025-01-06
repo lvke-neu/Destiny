@@ -15,7 +15,8 @@ namespace Destiny
 	VisualScene::VisualScene() :
 		Scene(),
 		m_bindRenderTargets(nullptr),
-		m_clearRenderTargets(nullptr)
+		m_clearRenderTargets(nullptr),
+		m_enableCull(true)
 	{
 
 	}
@@ -97,22 +98,28 @@ namespace Destiny
 				{
 					continue;
 				}
-				std::dynamic_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->commitVisual(visualComponent->getVisual());
-				//if (visualComponent->getVisual() && visualComponent->getVisual()->getMesh())
-				//{
-				//	if (visualComponent->getVisual()->getMesh()->getDrawCall().drawMethod == Mesh::DrawMethod::DrawIndexedInstanced)
-				//	{
-				//		std::dynamic_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->commitVisual(visualComponent->getVisual());
-				//		continue;
-				//	}
 
-				//	auto visualAABB = visualComponent->getVisual()->getMesh()->getBoundingBox();
-				//	visualAABB.Transform(visualAABB, topNode->get_transform().getWorldMatrix());
-				//	if (cameraFrustum.Intersects(visualAABB))
-				//	{
-				//		std::dynamic_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->commitVisual(visualComponent->getVisual());
-				//	}
-				//}
+				if (!m_enableCull)
+				{
+					std::dynamic_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->commitVisual(visualComponent->getVisual());
+					continue;
+				}
+
+				if (visualComponent->getVisual() && visualComponent->getVisual()->getMesh())
+				{
+					if (visualComponent->getVisual()->getMesh()->getDrawCall().drawMethod == Mesh::DrawMethod::DrawIndexedInstanced)
+					{
+						std::dynamic_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->commitVisual(visualComponent->getVisual());
+						continue;
+					}
+
+					auto visualAABB = visualComponent->getVisual()->getMesh()->getBoundingBox();
+					visualAABB.Transform(visualAABB, topNode->getRootToThisWorldMatrix());
+					if (cameraFrustum.Intersects(visualAABB))
+					{
+						std::dynamic_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->commitVisual(visualComponent->getVisual());
+					}
+				}
 			}
 			for (const auto& node : topNode->getChilds())
 			{
@@ -124,6 +131,7 @@ namespace Destiny
 	RTTR_REGISTRATION
 	{
 		rttr::registration::class_<VisualScene>("VisualScene")
-			.constructor<>();
+			.constructor<>()
+		.property("enableCull", &VisualScene::get_enableCull, &VisualScene::set_enableCull);
 	}
 }

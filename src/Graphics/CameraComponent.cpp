@@ -25,24 +25,40 @@ namespace Destiny
 	void CameraComponent::set_fovy(float fovy)
 	{
 		m_fovy = fovy;
+		if (m_fovy < Math::FLT_THRESHOLD)
+		{
+			m_fovy = 45.0f;
+		}
 		traversalProjChanged(m_scene);
 	}
 
 	void CameraComponent::set_aspect(float aspect)
 	{
 		m_aspect = aspect;
+		if (m_aspect < Math::FLT_THRESHOLD)
+		{
+			m_aspect = 1.0f;
+		}
 		traversalProjChanged(m_scene);
 	}
 
 	void CameraComponent::set_nearz(float nearz)
 	{
 		m_nearz = nearz;
+		if (m_nearz < Math::FLT_THRESHOLD)
+		{
+			m_nearz = 0.1f;
+		}
 		traversalProjChanged(m_scene);
 	}
 
 	void CameraComponent::set_farz(float farz)
 	{
 		m_farz = farz;
+		if (m_farz < Math::FLT_THRESHOLD)
+		{
+			m_farz = 1000.0f;
+		}
 		traversalProjChanged(m_scene);
 	}
 
@@ -58,7 +74,7 @@ namespace Destiny
 
 	DirectX::XMMATRIX CameraComponent::getProjectionMatrix()
 	{
-		return DirectX::XMMatrixPerspectiveFovLH(m_fovy, m_aspect, m_nearz, m_farz);
+		return DirectX::XMMatrixPerspectiveFovLH(m_fovy * Math::DEG2RAD, m_aspect, m_nearz, m_farz);
 	}
 
 	void CameraComponent::onWindowResize(void* data)
@@ -67,6 +83,10 @@ namespace Destiny
 		m_viewportWidth = (float)ws.width;
 		m_viewportHeight = (float)ws.height;
 		m_aspect = m_viewportWidth / m_viewportHeight;
+		if (m_aspect < Math::FLT_THRESHOLD)
+		{
+			m_aspect = 1.0f;
+		}
 		traversalProjChanged(m_scene);
 	}
 

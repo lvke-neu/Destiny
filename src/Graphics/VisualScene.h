@@ -16,6 +16,8 @@ namespace Destiny
 		VisualScene(const std::string& name);
 		virtual ~VisualScene() = default;
 	public:
+		GET_SET(bool, enableCull);
+	public:
 		virtual void								initialize() override;
 		virtual void								uninitialize() override;
 		virtual void								update(float deltaTime) override;
@@ -38,6 +40,8 @@ namespace Destiny
 
 		std::shared_ptr<DirectionLightComponent>	m_directionLight;
 		std::shared_ptr<Node>						m_directionLightNode;
+
+		bool										m_enableCull;
 	};
 
 	inline std::shared_ptr<CameraComponent> VisualScene::getCamera()

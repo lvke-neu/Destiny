@@ -5,6 +5,7 @@
 #include "Renderer.h"
 #include "Engine/Scene.h"
 #include "Engine/Node.h"
+#include "Math/Math.h"
 
 namespace Destiny
 {
@@ -49,7 +50,7 @@ namespace Destiny
 		onCameraProjChanged(
 			DirectX::XMMatrixTranspose
 			(
-				DirectX::XMMatrixPerspectiveFovLH(visualScene->getCamera()->get_fovy(), visualScene->getCamera()->get_aspect(), visualScene->getCamera()->get_nearz(), visualScene->getCamera()->get_farz())
+				DirectX::XMMatrixPerspectiveFovLH(visualScene->getCamera()->get_fovy() * Math::DEG2RAD, visualScene->getCamera()->get_aspect(), visualScene->getCamera()->get_nearz(), visualScene->getCamera()->get_farz())
 			),
 			visualScene->getCamera()->get_viewportWidth(), visualScene->getCamera()->get_viewportHeight()
 		);

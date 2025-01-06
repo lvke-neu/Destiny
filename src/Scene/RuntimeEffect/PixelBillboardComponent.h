@@ -7,10 +7,15 @@ namespace Destiny
 	{
 		RTTR_ENABLE(VisualComponent);
 	public:
-		PixelBillboardComponent() = default;
-		PixelBillboardComponent(const char* texturePath);
+		PixelBillboardComponent();
 		virtual ~PixelBillboardComponent() = default;
 	public:
-		void set_size(const DirectX::XMFLOAT2& size);
+		GET(DirectX::XMFLOAT2, size);
+		void set_size(DirectX::XMFLOAT2 size);
+		GET(std::string, texturePath);
+		void set_texturePath(std::string texturePath);
+	private:
+		DirectX::XMFLOAT2 m_size;
+		std::string m_texturePath;
 	};
 }

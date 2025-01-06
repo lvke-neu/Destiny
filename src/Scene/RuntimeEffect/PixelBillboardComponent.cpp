@@ -11,15 +11,13 @@
 
 namespace Destiny
 {
-	PixelBillboardComponent::PixelBillboardComponent(const char* texturePath)
+	PixelBillboardComponent::PixelBillboardComponent() :
+		m_size({ 150.0f, 150.0f }),
+		m_texturePath("")
 	{
 		auto renderer = std::make_shared<Renderer>("builtin://renderer/pixel_billboard.hlsl");
 		renderer->load(0);
-		renderer->setConstant("c_size", DirectX::XMFLOAT2{ 150.0f, 150.0f });
-
-		auto texture = Texture::Create(texturePath);
-		texture->load();
-		renderer->setShaderResource("t_texture", texture);
+		renderer->setConstant("c_size", m_size);
 
 		auto samplerState = std::make_shared<SamplerState>();
 		samplerState->load();
@@ -40,18 +38,33 @@ namespace Destiny
 		setMesh(mesh);
 	}
 
-	void PixelBillboardComponent::set_size(const DirectX::XMFLOAT2& size)
+	void PixelBillboardComponent::set_size(DirectX::XMFLOAT2 size)
 	{
 		auto visual = getVisual();
 		if (visual)
 		{
+			m_size = size;
 			visual->setConstant("c_size", size);
+		}
+	}
+
+	void PixelBillboardComponent::set_texturePath(std::string texturePath)
+	{
+		auto visual = getVisual();
+		if (visual)
+		{
+			m_texturePath = texturePath;
+			auto texture = Texture::Create(m_texturePath.c_str());
+			texture->load();
+			visual->setShaderResource("t_texture", texture);
 		}
 	}
 
 	RTTR_REGISTRATION
 	{
 		rttr::registration::class_<PixelBillboardComponent>("PixelBillboardComponent")
-			.constructor<>();
+			.constructor<>()
+			.property("size", &PixelBillboardComponent::get_size, &PixelBillboardComponent::set_size)
+			.property("texturePath", &PixelBillboardComponent::get_texturePath, &PixelBillboardComponent::set_texturePath);
 	}
 }

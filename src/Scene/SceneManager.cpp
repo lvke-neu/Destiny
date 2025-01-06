@@ -35,9 +35,9 @@ namespace Destiny
 
 		//light gzimo
 		{
-			auto lightGzimoComponent = std::make_shared<PixelBillboardComponent>("builtin://texture/directional_light_icon.png");
-			lightGzimoComponent->set_enable(true);
+			auto lightGzimoComponent = std::make_shared<PixelBillboardComponent>();
 			lightGzimoComponent->set_size({ 50.0f, 50.0f });
+			lightGzimoComponent->set_texturePath("builtin://texture/directional_light_icon.png");
 			Transform transform;
 			transform.set_translation({ 0.0f, 2.0f, -2.0f });
 			transform.set_rotation({ 0.0f, -1.0f, 1.0f });
@@ -48,7 +48,6 @@ namespace Destiny
 		//plane
 		{
 			auto planeComponent = std::make_shared<PlaneComponent>();
-			planeComponent->set_enable(true);
 			planeComponent->set_color({ 65.0f / 255, 90.0f / 255, 20.0f / 255, 1.0f });
 
 			auto node = std::make_shared<Node>();

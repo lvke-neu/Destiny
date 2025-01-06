@@ -57,7 +57,11 @@ void PropertyPanel::reflect(std::shared_ptr<Destiny::Object> object)
 
 void PropertyPanel::reflectProperty(const rttr::property& property, std::shared_ptr<Destiny::Object> object)
 {
-	if (property.get_type() == rttr::type::get<std::string>())
+	if (property.get_type() == rttr::type::get<bool>())
+	{
+		reflectBool(property, object);
+	}
+	else if (property.get_type() == rttr::type::get<std::string>())
 	{
 		reflectString(property, object);
 	}
@@ -68,6 +72,15 @@ void PropertyPanel::reflectProperty(const rttr::property& property, std::shared_
 	else if (property.get_type() == rttr::type::get<DirectX::XMFLOAT2>())
 	{
 		reflectFloat2(property, object);
+	}
+}
+
+void PropertyPanel::reflectBool(const rttr::property& property, std::shared_ptr<Destiny::Object> object)
+{
+	auto value = property.get_value(object).to_bool();
+	if (ImGui::Checkbox(property.get_name().data(), &value))
+	{
+		property.set_value(object, value);
 	}
 }
 

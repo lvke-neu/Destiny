@@ -12,14 +12,4 @@ namespace Destiny
 	{
 
 	}
-
-	RTTR_REGISTRATION
-	{
-		rttr::registration::class_<Color32>("Color32")
-			.constructor<>()
-			.property("r", &Color32::get_r, &Color32::set_r)
-			.property("g", &Color32::get_g, &Color32::set_g)
-			.property("b", &Color32::get_b, &Color32::set_b)
-			.property("a", &Color32::get_a, &Color32::set_a);
-	}
 }

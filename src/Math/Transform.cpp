@@ -12,6 +12,15 @@ namespace Destiny
 
 	}
 
+	Transform::Transform(const Transform& other) :
+		m_translation(other.m_translation),
+		m_rotation(other.m_rotation),
+		m_scale(other.m_scale),
+		m_worldMatrix(other.m_worldMatrix)
+	{
+
+	}
+
 	DirectX::XMMATRIX Transform::getWorldMatrix() const
 	{
 		return m_worldMatrix;
@@ -23,9 +32,25 @@ namespace Destiny
 
 		float arr[4][4];
 		memcpy_s(arr, sizeof(arr), &worldMatrix, sizeof(arr));
+
+		//translation
+		memcpy_s(&m_translation, sizeof(m_translation), arr[3], sizeof(m_translation));
+		
+		//rotation
+		
 		m_rotation.x = Math::RAD2DEG * atan2f(arr[1][2], arr[2][2]);
 		m_rotation.y = Math::RAD2DEG* atan2f(-arr[0][2], sqrtf(arr[1][2] * arr[1][2] + arr[2][2] * arr[2][2]));
 		m_rotation.z = Math::RAD2DEG * atan2f(arr[0][1], arr[0][0]);
+
+		//scale
+		DirectX::XMFLOAT3 radiansRotation{ DirectX::XMConvertToRadians(m_rotation.x), DirectX::XMConvertToRadians(m_rotation.y), DirectX::XMConvertToRadians(m_rotation.z) };
+		auto rotationMatrixInverse = DirectX::XMMatrixInverse(nullptr, DirectX::XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&radiansRotation)));
+		auto translationMatrixInverse = DirectX::XMMatrixInverse(nullptr, DirectX::XMMatrixTranslationFromVector(XMLoadFloat3(&m_translation)));
+		auto scaleMatrix = m_worldMatrix * rotationMatrixInverse * translationMatrixInverse;
+		memcpy_s(arr, sizeof(arr), &scaleMatrix, sizeof(arr));
+		m_scale.x = arr[0][0];
+		m_scale.y = arr[1][1];
+		m_scale.z = arr[2][2];
 	}
 
 	DirectX::XMMATRIX Transform::getTransposeWorldMatrix() const
@@ -110,33 +135,11 @@ namespace Destiny
 			DirectX::XMMatrixTranslationFromVector(XMLoadFloat3(&m_translation));
 	}
 
-	std::string Transform::toString()
-	{
-		DirectX::XMFLOAT4 r0;
-		DirectX::XMFLOAT4 r1;
-		DirectX::XMFLOAT4 r2;
-		DirectX::XMFLOAT4 r3;
-		DirectX::XMStoreFloat4(&r0, m_worldMatrix.r[0]);
-		DirectX::XMStoreFloat4(&r1, m_worldMatrix.r[1]);
-		DirectX::XMStoreFloat4(&r2, m_worldMatrix.r[2]);
-		DirectX::XMStoreFloat4(&r3, m_worldMatrix.r[3]);
-		return "scale_x:" +std::to_string(m_scale.x) + "\nscale_y:" + std::to_string(m_scale.y) + "\nscale_z:" + std::to_string(m_scale.z) + 
-			"\nrotation_x:" + std::to_string(m_rotation.x) + "\nrotation_y:" + std::to_string(m_rotation.y) + "\nrotation_z:" + std::to_string(m_rotation.z) +
-			"\ntranslation_x:" + std::to_string(m_translation.x) + "\ntranslation_y:" + std::to_string(m_translation.y) + "\ntranslation_z:" + std::to_string(m_translation.z) + 
-			"WorldMatrix:\n"+
-			std::to_string(r0.x) + "," + std::to_string(r0.y) + ","+ std::to_string(r0.z) + ","+ std::to_string(r0.w) + "\n" +
-			std::to_string(r1.x) + "," + std::to_string(r1.y) + ","+ std::to_string(r1.z) + ","+ std::to_string(r1.w) + "\n" +
-			std::to_string(r2.x) + "," + std::to_string(r2.y) + ","+ std::to_string(r2.z) + ","+ std::to_string(r2.w) + "\n" +
-			std::to_string(r3.x) + "," + std::to_string(r3.y) + ","+ std::to_string(r3.z) + ","+ std::to_string(r3.w) + "\n";
-	}
 
 	RTTR_REGISTRATION
 	{
 		rttr::registration::class_<Transform>("Transform")
 		.constructor<>()
-		(
-			rttr::policy::ctor::as_raw_ptr
-			)
 		.property("translation", &Transform::get_translation, &Transform::set_translation)
 		.property("rotation", &Transform::get_rotation, &Transform::set_rotation)
 		.property("scale", &Transform::get_scale, &Transform::set_scale);

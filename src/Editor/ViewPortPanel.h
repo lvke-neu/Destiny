@@ -22,5 +22,6 @@ private:
 	unsigned int m_height = 0;
 
 	int m_gzimoType;
+	int m_gzimoMode;
 	std::shared_ptr<Destiny::Node> m_choosedNode;
 };

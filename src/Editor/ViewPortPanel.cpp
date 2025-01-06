@@ -12,7 +12,8 @@
 
 ViewPortPanel::ViewPortPanel() :
 	m_choosedNode(nullptr),
-	m_gzimoType(0)
+	m_gzimoType(0),
+	m_gzimoMode(0)
 {
 
 }
@@ -37,6 +38,16 @@ void ViewPortPanel::update()
 		m_gzimoType = 2;
 	}
 	ImGui::SameLine();
+	if (ImGui::Button("Local"))
+	{
+		m_gzimoMode = 0;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("World"))
+	{
+		m_gzimoMode = 1;
+	}
+
 	ImGui::Text("%.3f ms/frame (%.1f FPS),", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 	ImGui::SameLine();
 	ImGui::Text("DrawCallCount:%ld,", Destiny::Engine::GetInstance()->getGraphicsSystem()->getGraphicsStat().DrawCallCount);
@@ -107,7 +118,7 @@ void ViewPortPanel::processGzimo()
 
 	auto fullWorldMatrix = m_choosedNode->getRootToThisWorldMatrix();
 	auto ancestorsWorldMatrix = fullWorldMatrix * m_choosedNode->get_transform().getInverseWorldMatrix();
-	ImGuizmo::Manipulate((float*)&viewMatrix, (float*)&projMatrix, (ImGuizmo::OPERATION)m_gzimoType, ImGuizmo::MODE::LOCAL, (float*)&fullWorldMatrix);
+	ImGuizmo::Manipulate((float*)&viewMatrix, (float*)&projMatrix, (ImGuizmo::OPERATION)m_gzimoType, (ImGuizmo::MODE)m_gzimoMode, (float*)&fullWorldMatrix);
 
 	if (ImGuizmo::IsUsing())
 	{

@@ -4,10 +4,12 @@
 
 namespace Destiny
 {
-	class Transform
+	class Transform : public Object
 	{
+		RTTR_ENABLE(Object);
 	public:
 		Transform();
+		Transform(const Transform& other);
 	public:
 		DirectX::XMMATRIX		getWorldMatrix() const;
 		void					setWorldMatrix(const DirectX::XMMATRIX& worldMatrix);
@@ -26,8 +28,6 @@ namespace Destiny
 		void					moveXAxis(float distance);
 		void					rotateXAxis(float angle);
 		void					rotateYAxis(float angle);
-	public:
-		std::string				toString();
 	private:
 		void					updateWorldMatrix();
 	private:

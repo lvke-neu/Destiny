@@ -9,13 +9,19 @@
 #include <rttr/registration>
 #include <rttr/type>
 
+ScenePanel::ScenePanel() :
+	m_choosedNode(nullptr)
+{
+
+}
+
 void ScenePanel::traversal(std::shared_ptr<Destiny::Node> node)
 {
 	if (!node)
 	{
 		return;
 	}
-	
+
 	ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_FramePadding;
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 4,4 });
 	ImGui::Separator();
@@ -23,6 +29,7 @@ void ScenePanel::traversal(std::shared_ptr<Destiny::Node> node)
 	ImGui::PushID(node->get_uuid().c_str());
 	if (ImGui::TreeNodeEx(node->get_name().c_str(), treeNodeFlags))
 	{
+		m_choosedNode = node;
 		send(ChoosedNode, &node);
 
 		for (const auto& child : node->getChilds())
@@ -45,7 +52,7 @@ void ScenePanel::update()
 
 	traversal(Destiny::Engine::GetInstance()->getSceneManager()->getScene());
 
-	if (ImGui::BeginPopup("Components"))
+	if (ImGui::BeginPopup("AddComponent"))
 	{
 		//rttr::type base_type = rttr::type::get<Destiny::CameraComponent>();
 		//auto aa = base_type.create();
@@ -59,12 +66,13 @@ void ScenePanel::update()
 		{
 			if (ImGui::Button(derived_type.get_name().data()))
 			{
-				auto variant = derived_type.create();
-				auto component = variant.get_value<std::shared_ptr<Destiny::Component>>();
-				auto node = std::make_shared<Destiny::Node>();
-				node->set_name(derived_type.get_name().data());
-				node->addComponent(component);
-				node->addToParent(Destiny::Engine::GetInstance()->getSceneManager()->getScene());
+				if (m_choosedNode)
+				{
+					auto variant = derived_type.create();
+					auto component = variant.get_value<std::shared_ptr<Destiny::Component>>();
+					m_choosedNode->addComponent(component);
+				}
+
 				ImGui::CloseCurrentPopup();
 			}
 		}
@@ -76,10 +84,24 @@ void ScenePanel::update()
 		ImGui::EndPopup();
 	}
 
+	if (ImGui::BeginPopup("AddNode"))
+	{
+		auto node = std::make_shared<Destiny::Node>();
+		node->set_name("New Node");
+		node->addToParent(Destiny::Engine::GetInstance()->getSceneManager()->getScene());
+
+		ImGui::CloseCurrentPopup();
+		ImGui::EndPopup();
+	}
+
 	if (ImGui::Button("AddComponent"))
 	{
+		ImGui::OpenPopup("AddComponent");
+	}
 
-		ImGui::OpenPopup("Components");
+	if (ImGui::Button("AddNode"))
+	{
+		ImGui::OpenPopup("AddNode");
 	}
 
 	if (ImGui::Button("RemoveNode"))

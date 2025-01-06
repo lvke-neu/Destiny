@@ -13,6 +13,7 @@ namespace Destiny
 	RTTR_REGISTRATION
 	{
 		rttr::registration::class_<Component>("Component")
-			.constructor<>();
+			.constructor<>()
+			.property("enable", &Component::get_enable, &Component::set_enable);
 	}
 }

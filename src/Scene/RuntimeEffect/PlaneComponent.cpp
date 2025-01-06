@@ -5,6 +5,7 @@
 #include "Graphics/InputLayout.h"
 #include "Graphics/Mesh.h"
 #include "Graphics/MeshProvider.h"
+#include <d3d11.h>
 
 namespace Destiny
 {
@@ -16,6 +17,7 @@ namespace Destiny
 		renderer->setConstant("u_color", m_color);
 
 		std::shared_ptr<RenderStates> renderStates = std::make_shared<RenderStates>();
+		renderStates->getRasterizerStateDesc()->CullMode = D3D11_CULL_NONE;
 		renderStates->load();
 
 		std::shared_ptr<RenderPass> renderPass = std::make_shared<RenderPass>();

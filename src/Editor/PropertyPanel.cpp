@@ -95,6 +95,10 @@ void PropertyPanel::reflectProperty(const rttr::property& property, std::shared_
 	{
 		reflectTransform(property, object);
 	}
+	else if (property.get_type().is_enumeration())
+	{
+		reflectEnumeration(property, object);
+	}
 }
 
 void PropertyPanel::reflectBool(const rttr::property& property, std::shared_ptr<Destiny::Object> object)
@@ -427,6 +431,14 @@ void PropertyPanel::reflectTransform(const rttr::property& property, std::shared
 		property.set_value(object, value);
 	}
 
+}
+
+void PropertyPanel::reflectEnumeration(const rttr::property& property, std::shared_ptr<Destiny::Object> object)
+{
+	auto enumeration = property.get_enumeration();
+	ImGui::Text((enumeration.get_type().get_name().to_string() + ":").data());
+	ImGui::SameLine();
+	ImGui::Text(enumeration.get_name().data());
 }
 
 void PropertyPanel::onChoosedNode(void* parameter)

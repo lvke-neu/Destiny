@@ -33,6 +33,19 @@ namespace Destiny
 		}
 	}
 
+	RendererCategory Visual::get_rendererCategory()
+	{
+		return m_renderPass ? m_renderPass->getRendererCategory() : RendererCategory::None;
+	}
+
+	void Visual::set_rendererCategory(RendererCategory rendererCategory)
+	{
+		if (m_renderPass)
+		{
+			m_renderPass->setRendererCategory(rendererCategory);
+		}
+	}
+
 	void Visual::setRenderPass(std::shared_ptr<RenderPass> renderPass)
 	{
 		if (!renderPass)

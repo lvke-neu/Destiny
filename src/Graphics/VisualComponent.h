@@ -15,6 +15,8 @@ namespace Destiny
 		//for ui 
 		std::string get_renderer();
 		void set_renderer(std::string renderer);
+		RendererCategory				get_rendererCategory();
+		void							set_rendererCategory(RendererCategory rendererCategory);
 	public:
 		virtual void				onAddToNode() override;
 		virtual void				onNodeTransformChanged() override;

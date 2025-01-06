@@ -1,5 +1,6 @@
 #pragma once
 #include "Renderer.h"
+#include "GraphicsDefine.h"
 
 namespace Destiny
 {
@@ -9,14 +10,6 @@ namespace Destiny
 	class SamplerState;
 	class RenderPass
 	{
-	public:
-		enum RendererCategory
-		{
-			None,
-			ForwardOpaque,
-			ForwardTransparent,
-			Gui
-		};
 	public:
 		RenderPass();
 	public:
@@ -55,7 +48,7 @@ namespace Destiny
 		return m_renderStates;
 	}
 
-	inline RenderPass::RendererCategory RenderPass::getRendererCategory()
+	inline RendererCategory RenderPass::getRendererCategory()
 	{
 		return m_rendererCategory;
 	}

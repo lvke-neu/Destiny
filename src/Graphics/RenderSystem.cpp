@@ -59,7 +59,7 @@ namespace Destiny
 		auto renderPass = visual->getRenderPass();
 		switch (renderPass->getRendererCategory())
 		{
-		case RenderPass::ForwardOpaque :
+		case RendererCategory::ForwardOpaque :
 			{
 			if (m_forwardOpaquePipeline->addGraphicsCommand(visual))
 			{
@@ -68,7 +68,7 @@ namespace Destiny
 			return;
 			}
 
-		case RenderPass::ForwardTransparent :
+		case RendererCategory::ForwardTransparent :
 		{
 			if (m_forwardTransparentPipeline->addGraphicsCommand(visual))
 			{
@@ -76,7 +76,7 @@ namespace Destiny
 			}
 			return;
 		}
-		case RenderPass::Gui :
+		case RendererCategory::Gui :
 		{
 			if (m_guiPipeline->addGraphicsCommand(visual))
 			{

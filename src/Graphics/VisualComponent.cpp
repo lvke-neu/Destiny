@@ -29,6 +29,19 @@ namespace Destiny
 		}
 	}
 
+	RendererCategory VisualComponent::get_rendererCategory()
+	{
+		return m_visual ? m_visual->get_rendererCategory() : RendererCategory::None;
+	}
+
+	void VisualComponent::set_rendererCategory(RendererCategory rendererCategory)
+	{
+		if (m_visual)
+		{
+			m_visual->set_rendererCategory(rendererCategory);
+		}
+	}
+
 	void VisualComponent::onAddToNode()
 	{
 		if (m_visual)
@@ -110,6 +123,7 @@ namespace Destiny
 	{
 		rttr::registration::class_<VisualComponent>("VisualComponent")
 			.constructor<>()
-			.property("renderer", &VisualComponent::get_renderer, &VisualComponent::set_renderer);
+			.property("renderer", &VisualComponent::get_renderer, &VisualComponent::set_renderer)
+			.property("rendererCategory", &VisualComponent::get_rendererCategory, &VisualComponent::set_rendererCategory);
 	}
 }

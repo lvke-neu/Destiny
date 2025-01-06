@@ -8,11 +8,12 @@
 
 namespace Destiny
 {
-	BoxComponent::BoxComponent()
+	BoxComponent::BoxComponent() :
+		m_color({ 1.0f, 1.0f, 1.0f, 1.0f })
 	{
 		auto renderer = std::make_shared<Renderer>("builtin://renderer/basic.hlsl");
 		renderer->load(0);
-		renderer->setConstant("u_color", DirectX::XMFLOAT4{ 1.0f, 1.0f, 0.0f, 1.0f });
+		renderer->setConstant("u_color", m_color);
 
 		std::shared_ptr<RenderStates> renderStates = std::make_shared<RenderStates>();
 		renderStates->load();
@@ -29,9 +30,20 @@ namespace Destiny
 		setMesh(mesh);
 	}
 
+	void BoxComponent::set_color(Color32 color)
+	{
+		auto visual = getVisual();
+		if (visual)
+		{
+			m_color = color;
+			visual->setConstant("u_color", m_color);
+		}
+	}
+
 	RTTR_REGISTRATION
 	{
 		rttr::registration::class_<BoxComponent>("BoxComponent")
-			.constructor<>();
+			.constructor<>()
+			.property("color", &BoxComponent::get_color, &BoxComponent::set_color);
 	}
 }

@@ -36,7 +36,7 @@ namespace Destiny
 		if (visual)
 		{
 			m_color = color;
-			visual->setConstant("u_color", color);
+			visual->setConstant("u_color", m_color);
 		}
 	}
 

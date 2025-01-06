@@ -15,6 +15,7 @@ namespace Destiny
 		void set_path(std::string path);
 	private:
 		virtual void onUpdate(float deltaTime) override;
+		virtual void onPropertyChanged(const std::string& property) override;
 	private:
 		std::string				m_path;
 		std::shared_ptr<Model>	m_model;

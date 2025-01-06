@@ -98,4 +98,15 @@ namespace Destiny
 			}
 		}
 	}
+
+	void Model::setEnable(bool enable)
+	{
+		for (const auto& visual_material_pair : m_visuals)
+		{
+			if (visual_material_pair.first)
+			{
+				visual_material_pair.first->set_enable(enable);
+			}
+		}
+	}
 }

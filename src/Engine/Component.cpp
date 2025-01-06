@@ -10,6 +10,12 @@ namespace Destiny
 
 	}
 
+	void Component::set_enable(bool enable)
+	{
+		m_enable = enable;
+		onPropertyChanged("enable");
+	}
+
 	RTTR_REGISTRATION
 	{
 		rttr::registration::class_<Component>("Component")

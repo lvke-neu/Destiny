@@ -37,7 +37,7 @@ namespace Destiny
 		}
 
 	
-		std::vector<Color> color;
+		std::vector<Pixel> color;
 		for (int i = 0; i < 100; i++)
 		{
 			color.push_back({ 0,0,0,0 });
@@ -57,7 +57,7 @@ namespace Destiny
 		unsigned int maxHeight = 0;
 		unsigned int width = 0;
 		
-		std::vector<std::vector<std::vector<Color>>> allArr;
+		std::vector<std::vector<std::vector<Pixel>>> allArr;
 		for (const auto& ch : text)
 		{
 			auto iter = m_cache.find(ch);
@@ -73,7 +73,7 @@ namespace Destiny
 			maxHeight = maxHeight > iter->second.size() ? maxHeight : (unsigned int)iter->second.size();
 		}
 
-		std::vector<Color> res;
+		std::vector<Pixel> res;
 		res.resize(width * maxHeight, { 0,0,0,0 });
 		int offset = 0;
 
@@ -93,9 +93,9 @@ namespace Destiny
 			}
 		}
 
-		auto blobData = std::make_shared<Blob>(res.size() * sizeof(Color));
+		auto blobData = std::make_shared<Blob>(res.size() * sizeof(Pixel));
 		blobData->copyfrom(res.data(), blobData->getLength());
-		auto texture = Texture::Create2D(DXGI_FORMAT_R8G8B8A8_UNORM, width, maxHeight, blobData, width * sizeof(Color), width * sizeof(Color) * maxHeight);
+		auto texture = Texture::Create2D(DXGI_FORMAT_R8G8B8A8_UNORM, width, maxHeight, blobData, width * sizeof(Pixel), width * sizeof(Pixel) * maxHeight);
 		texture->load(0);
 
 		return texture;

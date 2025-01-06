@@ -1,7 +1,7 @@
 #include "PropertyPanel.h"
 #include "Engine/Node.h"
 #include "Engine/Component.h"
-#include "Math/Color.h"
+#include "Math/Color32.h"
 #include "Imgui/imgui.h"
 #include "ImGui/imgui_internal.h"
 
@@ -74,7 +74,7 @@ void PropertyPanel::reflectProperty(const rttr::property& property, std::shared_
 	{
 		reflectFloat2(property, object);
 	}
-	else if (property.get_type() == rttr::type::get<Destiny::Color>())
+	else if (property.get_type() == rttr::type::get<Destiny::Color32>())
 	{
 		reflectColor(property, object);
 	}
@@ -192,13 +192,11 @@ void PropertyPanel::reflectFloat2(const rttr::property& property, std::shared_pt
 
 void PropertyPanel::reflectColor(const rttr::property& property, std::shared_ptr<Destiny::Object> object)
 {
-	Destiny::Color value;
+	Destiny::Color32 value;
 	property.get_value(object).convert(value);
 
-	auto color32 = value.toColor32();
-	if (ImGui::ColorEdit4(property.get_name().data(), (float*)&color32))
+	if (ImGui::ColorEdit4(property.get_name().data(), (float*)&value, ImGuiColorEditFlags_Float))
 	{
-		value.fromColor32(color32);
 		property.set_value(object, value);
 	}
 }

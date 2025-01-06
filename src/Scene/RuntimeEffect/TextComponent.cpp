@@ -16,13 +16,13 @@ namespace Destiny
 		m_text(""),
 		m_size({ 10.0f, 20.0f }),
 		m_screenPosition({ 0.0f, 0.0f }),
-		m_color({255, 255, 255, 255})
+		m_color({1.0f, 1.0f, 1.0f, 1.0f})
 	{
 		auto renderer = std::make_shared<Renderer>("builtin://renderer/text.hlsl");
 		renderer->load(0);
 		renderer->setConstant("c_size", m_size);
 		renderer->setConstant("c_screenPosition", m_screenPosition);
-		renderer->setConstant("c_color", m_color.toColor32());
+		renderer->setConstant("c_color", m_color);
 
 		//renderer->setShaderResource("t_texture", FontManager::GetInstance()->getFontTexture('A', 5000, 5000));
 
@@ -78,12 +78,12 @@ namespace Destiny
 		}
 	}
 
-	void TextComponent::set_color(Color color)
+	void TextComponent::set_color(Color32 color)
 	{
 		if (getVisual())
 		{
 			m_color = color;
-			getVisual()->setConstant("c_color", m_color.toColor32());
+			getVisual()->setConstant("c_color", m_color);
 		}
 	}
 

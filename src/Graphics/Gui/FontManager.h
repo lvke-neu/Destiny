@@ -1,6 +1,6 @@
 #pragma once
 #include "Engine/Utility.h"
-#include "Math/Color.h"
+#include "Math/Color32.h"
 #include <unordered_map>
 
 struct FT_LibraryRec_;
@@ -24,6 +24,6 @@ namespace Destiny
 		FT_LibraryRec_*		m_ft;
 		FT_FaceRec_*		m_face;
 
-		std::unordered_map<unsigned char, std::vector<std::vector<Color>>> m_cache;
+		std::unordered_map<unsigned char, std::vector<std::vector<Pixel>>> m_cache;
 	};
 }

@@ -8,11 +8,12 @@
 
 namespace Destiny
 {
-	PlaneComponent::PlaneComponent()
+	PlaneComponent::PlaneComponent() :
+		m_color({1.0f, 1.0f, 1.0f, 1.0f})
 	{
 		auto renderer = std::make_shared<Renderer>("builtin://renderer/basic.hlsl");
 		renderer->load(0);
-		renderer->setConstant("u_color", DirectX::XMFLOAT4{ 1.0f, 1.0f, 1.0f, 1.0f });
+		renderer->setConstant("u_color", m_color);
 
 		std::shared_ptr<RenderStates> renderStates = std::make_shared<RenderStates>();
 		renderStates->load();
@@ -29,11 +30,12 @@ namespace Destiny
 		setMesh(mesh);
 	}
 
-	void PlaneComponent::set_color(const DirectX::XMFLOAT4& color)
+	void PlaneComponent::set_color(Color32 color)
 	{
 		auto visual = getVisual();
 		if (visual)
 		{
+			m_color = color;
 			visual->setConstant("u_color", color);
 		}
 	}
@@ -41,6 +43,7 @@ namespace Destiny
 	RTTR_REGISTRATION
 	{
 		rttr::registration::class_<PlaneComponent>("PlaneComponent")
-			.constructor<>();
+			.constructor<>()
+			.property("color", &PlaneComponent::get_color, &PlaneComponent::set_color);
 	}
 }

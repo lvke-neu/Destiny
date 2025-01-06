@@ -398,4 +398,32 @@ namespace Destiny
 		drawParameters->textures = m_textures;
 		drawParameters->samplerStates = m_samplerStates;
 	}
+
+	void Renderer::copy_constant_texture_sampler(std::shared_ptr<Renderer> other)
+	{
+		if (!other)
+		{
+			return;
+		}
+
+		for (const auto& constant : other->m_constantBuffers)
+		{
+			m_constantBuffers.insert(constant);
+		}
+
+		for (const auto& link : other->m_variableLinkConstant)
+		{
+			m_variableLinkConstant.insert(link);
+		}
+
+		for (const auto& texture : other->m_textures)
+		{
+			m_textures.insert(texture);
+		}
+		
+		for (const auto& sampler : other->m_samplerStates)
+		{
+			m_samplerStates.insert(sampler);
+		}
+	}
 }

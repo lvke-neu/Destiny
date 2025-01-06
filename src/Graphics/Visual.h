@@ -11,6 +11,10 @@ namespace Destiny
 	public:
 		Visual();
 	public:
+		//for ui 
+		std::string get_renderer();
+		void set_renderer(std::string renderer);
+	public:
 		std::shared_ptr<RenderPass>			getRenderPass();
 		void								setRenderPass(std::shared_ptr<RenderPass> renderPass);
 		std::shared_ptr<Mesh>				getMesh();

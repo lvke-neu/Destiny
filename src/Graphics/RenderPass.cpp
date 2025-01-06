@@ -11,6 +11,21 @@ namespace Destiny
 
 	}
 
+	std::string RenderPass::get_renderer()
+	{
+		return m_renderer ? m_renderer->getPath() : "";
+	}
+
+	void RenderPass::set_renderer(std::string renderer)
+	{
+		auto rdr = std::make_shared<Renderer>(renderer.c_str());
+		rdr->load(0);
+		if (rdr->isLoadingSucceed())
+		{
+			setRenderer(rdr);
+		}
+	}
+
 	void RenderPass::setRenderer(std::shared_ptr<Renderer> renderer)
 	{
 		//if (!renderer)
@@ -27,7 +42,12 @@ namespace Destiny
 		//{
 		//	return;
 		//}
+		if (!renderer)
+		{
+			return;
+		}
 
+		//renderer->copy_constant_texture_sampler(m_renderer);
 		m_renderer.reset();
 		m_renderer = renderer;
 	}

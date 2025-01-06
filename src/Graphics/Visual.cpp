@@ -20,6 +20,19 @@ namespace Destiny
 
 	}
 
+	std::string Visual::get_renderer()
+	{
+		return m_renderPass ? m_renderPass->get_renderer() : "";
+	}
+
+	void Visual::set_renderer(std::string renderer)
+	{
+		if (m_renderPass)
+		{
+			m_renderPass->set_renderer(renderer);
+		}
+	}
+
 	void Visual::setRenderPass(std::shared_ptr<RenderPass> renderPass)
 	{
 		if (!renderPass)

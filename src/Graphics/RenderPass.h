@@ -20,6 +20,10 @@ namespace Destiny
 	public:
 		RenderPass();
 	public:
+		//for ui 
+		std::string get_renderer();
+		void set_renderer(std::string renderer);
+	public:
 		std::shared_ptr<Renderer>		getRenderer();
 		void							setRenderer(std::shared_ptr<Renderer> renderer);
 

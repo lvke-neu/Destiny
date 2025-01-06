@@ -15,6 +15,20 @@ namespace Destiny
 
 	}
 
+	std::string VisualComponent::get_renderer()
+	{
+		return m_visual ? m_visual->get_renderer() : "";
+	}
+
+	void VisualComponent::set_renderer(std::string renderer)
+	{
+		if (m_visual)
+		{
+			m_visual->set_renderer(renderer);
+			onEnterScene();
+		}
+	}
+
 	void VisualComponent::onAddToNode()
 	{
 		if (m_visual)
@@ -95,6 +109,7 @@ namespace Destiny
 	RTTR_REGISTRATION
 	{
 		rttr::registration::class_<VisualComponent>("VisualComponent")
-			.constructor<>();
+			.constructor<>()
+			.property("renderer", &VisualComponent::get_renderer, &VisualComponent::set_renderer);
 	}
 }

@@ -12,6 +12,10 @@ namespace Destiny
 		VisualComponent();
 		virtual ~VisualComponent() = default;
 	public:
+		//for ui 
+		std::string get_renderer();
+		void set_renderer(std::string renderer);
+	public:
 		virtual void				onAddToNode() override;
 		virtual void				onNodeTransformChanged() override;
 		virtual void				onEnterScene();

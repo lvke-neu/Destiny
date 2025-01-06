@@ -29,6 +29,7 @@ namespace Destiny
 	public:
 		std::shared_ptr<Blob>			getInputSignatureBlob();
 		void							fillDrawParameters(std::shared_ptr<DrawParameters> drawParameters);
+		void							copy_constant_texture_sampler(std::shared_ptr<Renderer> other);
 	public:
 		template<typename T>
 		void							setConstant(const char* name, T value);

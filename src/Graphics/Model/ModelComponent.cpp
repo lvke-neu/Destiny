@@ -16,7 +16,10 @@ namespace Destiny
 
 	ModelComponent::~ModelComponent()
 	{
-
+		if (m_model && m_model->getNode())
+		{
+			m_model->getNode()->removeFromParent();
+		}
 	}
 
 	void ModelComponent::set_path(std::string path)
@@ -41,7 +44,7 @@ namespace Destiny
 			m_model->loadVisuals();
 			m_model->getNode()->addToParent(m_node);
 			m_model->setEnable(m_enable);
-			m_model.reset();
+			//m_model.reset();
 			m_modelChanged = false;
 			LOG_INFO("Model:{0} load successfully", m_path);	
 		}
@@ -51,26 +54,9 @@ namespace Destiny
 	{
 		if (property == "enable")
 		{
-			std::queue<std::shared_ptr<Node>> nodes;
-			nodes.push(m_node);
-			while (!nodes.empty())
+			if (m_model)
 			{
-				auto topNode = nodes.front();
-				nodes.pop();
-				if (topNode)
-				{
-					for (const auto& component : topNode->getComponents())
-					{
-						if (std::dynamic_pointer_cast<VisualComponent>(component))
-						{
-							component->set_enable(m_enable);
-						}
-					}
-					for (const auto& node : topNode->getChilds())
-					{
-						nodes.push(node);
-					}
-				}
+				m_model->setEnable(m_enable);
 			}
 		}
 	}

@@ -59,6 +59,16 @@ void PropertyPanel::reflect(std::shared_ptr<Destiny::Object> object)
 		//		reflect(componet);
 		//	}
 		//}
+
+		auto component = std::dynamic_pointer_cast<Destiny::Component>(object);
+		if (component)
+		{
+			if (ImGui::Button("Remove"))
+			{
+				component->get_node()->removeComponent(component);
+			}
+		}
+		
 		ImGui::TreePop();
 	}
 	ImGui::PopID();

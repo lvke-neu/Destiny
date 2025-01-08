@@ -5,7 +5,7 @@ namespace Destiny
 {
 	RenderPass::RenderPass() :
 		m_renderer(nullptr),
-		m_renderStates(nullptr),
+		m_renderStates(std::make_shared<RenderStates>()),
 		m_rendererCategory(RendererCategory::None)
 	{
 

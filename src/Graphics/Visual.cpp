@@ -12,7 +12,7 @@
 namespace Destiny
 {
 	Visual::Visual() :
-		m_renderPass(nullptr),
+		m_renderPass(std::make_shared<RenderPass>()),
 		m_mesh(nullptr),
 		m_drawParameters(std::make_shared<DrawParameters>()),
 		m_component(nullptr)

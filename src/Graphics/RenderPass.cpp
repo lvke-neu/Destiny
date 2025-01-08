@@ -26,6 +26,24 @@ namespace Destiny
 		}
 	}
 
+	D3D11_RASTERIZER_DESC RenderPass::get_rasterizerDesc()
+	{
+		if (m_renderStates)
+		{
+			return *m_renderStates->getRasterizerStateDesc();
+		}
+		return D3D11_RASTERIZER_DESC();
+	}
+
+	void RenderPass::set_rasterizerDesc(D3D11_RASTERIZER_DESC desc)
+	{
+		if (m_renderStates && m_renderStates->getRasterizerStateDesc())
+		{
+			memcpy_s(m_renderStates->getRasterizerStateDesc().get(), sizeof(D3D11_RASTERIZER_DESC), &desc, sizeof(D3D11_RASTERIZER_DESC));
+			m_renderStates->load(0);
+		}
+	}
+
 	void RenderPass::setRenderer(std::shared_ptr<Renderer> renderer)
 	{
 		//if (!renderer)

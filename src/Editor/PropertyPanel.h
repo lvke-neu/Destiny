@@ -1,6 +1,7 @@
 #pragma once
 #include "Meta.h"
 #include <rttr/property.h>
+#include <DirectXMath.h>
 
 namespace Destiny
 {
@@ -28,6 +29,13 @@ private:
 	void reflectColor(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
 	void reflectTransform(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
 	void reflectEnumeration(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
+	void reflectRasterizerDesc(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
+
+	bool reflectFloat(const rttr::property& property, float& value);
+	bool reflectFloat3(const rttr::property& property, DirectX::XMFLOAT3& value);
+	bool reflectEnumeration(const rttr::property& property, int& value);
+	bool reflectBool(const rttr::property& property, bool& value);
+	bool reflectInt(const rttr::property& property, int& value);
 private:
 	std::shared_ptr<Destiny::Node> m_choosedNode;
 };

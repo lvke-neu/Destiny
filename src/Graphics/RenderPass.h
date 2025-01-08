@@ -1,6 +1,7 @@
 #pragma once
 #include "Renderer.h"
 #include "GraphicsDefine.h"
+#include <d3d11.h>
 
 namespace Destiny
 {
@@ -16,6 +17,8 @@ namespace Destiny
 		//for ui 
 		std::string get_renderer();
 		void set_renderer(std::string renderer);
+		D3D11_RASTERIZER_DESC			get_rasterizerDesc();
+		void							set_rasterizerDesc(D3D11_RASTERIZER_DESC desc);
 	public:
 		std::shared_ptr<Renderer>		getRenderer();
 		void							setRenderer(std::shared_ptr<Renderer> renderer);

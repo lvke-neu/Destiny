@@ -17,6 +17,8 @@ namespace Destiny
 		void set_renderer(std::string renderer);
 		RendererCategory				get_rendererCategory();
 		void							set_rendererCategory(RendererCategory rendererCategory);
+		D3D11_RASTERIZER_DESC			get_rasterizerDesc();
+		void							set_rasterizerDesc(D3D11_RASTERIZER_DESC desc);
 	public:
 		virtual void				onAddToNode() override;
 		virtual void				onNodeTransformChanged() override;

@@ -5,6 +5,7 @@
 #include "Math/Transform.h"
 #include "Imgui/imgui.h"
 #include "ImGui/imgui_internal.h"
+#include <d3d11.h>
 
 PropertyPanel::PropertyPanel() :
 	m_choosedNode(nullptr)
@@ -110,12 +111,18 @@ void PropertyPanel::reflectProperty(const rttr::property& property, std::shared_
 	{
 		reflectEnumeration(property, object);
 	}
+	else if (property.get_type() == rttr::type::get<D3D11_RASTERIZER_DESC>())
+	{
+		reflectRasterizerDesc(property, object);
+	}
 }
 
 void PropertyPanel::reflectBool(const rttr::property& property, std::shared_ptr<Destiny::Object> object)
 {
 	auto value = property.get_value(object).to_bool();
-	if (ImGui::Checkbox(property.get_name().data(), &value))
+	ImGui::Text((property.get_name().to_string() + " :").c_str());
+	ImGui::SameLine();
+	if (ImGui::Checkbox(("##" + property.get_name().to_string()).c_str(), &value))
 	{
 		property.set_value(object, value);
 	}
@@ -133,7 +140,7 @@ void PropertyPanel::reflectString(const rttr::property& property, std::shared_pt
 	memcpy_s(buffer, value.size(), value.c_str(), value.size());
 	ImGui::Text((property.get_name().to_string() + " :").c_str());
 	ImGui::SameLine();
-	if (ImGui::InputText("##", buffer, MAX_BUFFER_SIZE))
+	if (ImGui::InputText(("##" + property.get_name().to_string()).c_str(), buffer, MAX_BUFFER_SIZE))
 	{
 		value = buffer;
 		property.set_value(object, value);
@@ -148,7 +155,7 @@ void PropertyPanel::reflectFloat(const rttr::property& property, std::shared_ptr
 	ImGui::Columns(2);
 	ImGui::Text(property.get_name().data());
 	ImGui::NextColumn();
-	if (ImGui::DragFloat("##", &value))
+	if (ImGui::DragFloat(("##" + property.get_name().to_string()).c_str(), &value))
 	{
 		property.set_value(object, value);
 	}
@@ -315,7 +322,191 @@ void PropertyPanel::reflectFloat3(const rttr::property& property, std::shared_pt
 	}
 }
 
-bool reflectTransformFloat3(const rttr::property& property, DirectX::XMFLOAT3& value)
+void PropertyPanel::reflectColor(const rttr::property& property, std::shared_ptr<Destiny::Object> object)
+{
+	Destiny::Color32 value;
+	property.get_value(object).convert(value);
+
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0, 0 });
+	ImGui::Text((property.get_name().to_string() + " :").c_str());
+	ImGui::SameLine();
+	if (ImGui::ColorEdit4(("##" + property.get_name().to_string()).c_str(), (float*)&value, ImGuiColorEditFlags_Float))
+	{
+		property.set_value(object, value);
+	}
+	ImGui::PopStyleVar();
+}
+
+void PropertyPanel::reflectTransform(const rttr::property& property, std::shared_ptr<Destiny::Object> object)
+{
+	Destiny::Transform value;
+	property.get_value(object).convert(value);
+
+	auto translation = value.get_translation();
+	auto rotation = value.get_rotation();
+	auto scale = value.get_scale();
+
+	auto type = rttr::type::get<Destiny::Transform>();
+	bool changed = false;
+	if (reflectFloat3(type.get_property("translation"), translation))
+	{
+		changed = true;
+		value.set_translation(translation);
+	}
+	
+	if (reflectFloat3(type.get_property("rotation"), rotation))
+	{
+		changed = true;
+		value.set_rotation(rotation);
+	}
+
+	if (reflectFloat3(type.get_property("scale"), scale))
+	{
+		changed = true;
+		value.set_scale(scale);
+	}
+
+	if (changed)
+	{
+		property.set_value(object, value);
+	}
+}
+
+void PropertyPanel::reflectEnumeration(const rttr::property& property, std::shared_ptr<Destiny::Object> object)
+{
+	auto enumeration = property.get_enumeration();
+
+	std::vector<std::string> items;
+	for (const auto& value : enumeration.get_values())
+	{
+		items.push_back(value.to_string());
+	}
+
+	ImGui::Text((property.get_name().to_string() + " :").c_str());
+	ImGui::SameLine();
+
+	//int itemIndex = property.get_value(object).to_int();
+	auto itemIndex = (int)std::distance(items.begin(), std::find(items.begin(), items.end(), property.get_value(object).to_string()));
+	if (ImGui::Combo(("##" + property.get_name().to_string()).c_str(), &itemIndex,
+		[](void* data, int idx, const char** out_text)
+		{
+			auto& vector = *static_cast<std::vector<std::string>*>(data);
+			if (idx < 0 || idx >= static_cast<int>(vector.size())) {
+				return false;
+			}
+			*out_text = vector[idx].c_str();
+			return true;
+		},
+		&items, (int)items.size()))
+	{
+		property.set_value(object, enumeration.name_to_value(items[itemIndex]));
+	}
+}
+
+void PropertyPanel::reflectRasterizerDesc(const rttr::property& property, std::shared_ptr<Destiny::Object> object)
+{
+	bool changed = false;
+
+	D3D11_RASTERIZER_DESC desc;
+	property.get_value(object).convert(desc);
+
+	auto type = rttr::type::get<D3D11_RASTERIZER_DESC>();
+
+	auto FillMode = (int)desc.FillMode;
+	if (reflectEnumeration(type.get_property("FillMode"), FillMode))
+	{
+		desc.FillMode = (D3D11_FILL_MODE)FillMode;
+		changed = true;
+	}
+
+	auto CullMode = (int)desc.CullMode;
+	if (reflectEnumeration(type.get_property("CullMode"), CullMode))
+	{
+		desc.CullMode = (D3D11_CULL_MODE)CullMode;
+		changed = true;
+	}
+
+	auto FrontCounterClockwise = (bool)desc.FrontCounterClockwise;
+	if (reflectBool(type.get_property("FrontCounterClockwise"), FrontCounterClockwise))
+	{
+		desc.FrontCounterClockwise = FrontCounterClockwise;
+		changed = true;
+	}
+
+	auto DepthBias = desc.DepthBias;
+	if (reflectInt(type.get_property("DepthBias"), DepthBias))
+	{
+		desc.DepthBias = DepthBias;
+		changed = true;
+	}
+	
+	auto DepthBiasClamp = desc.DepthBiasClamp;
+	if (reflectFloat(type.get_property("DepthBiasClamp"), DepthBiasClamp))
+	{
+		desc.DepthBiasClamp = DepthBiasClamp;
+		changed = true;
+	}
+
+	auto SlopeScaledDepthBias = desc.SlopeScaledDepthBias;
+	if (reflectFloat(type.get_property("SlopeScaledDepthBias"), SlopeScaledDepthBias))
+	{
+		desc.SlopeScaledDepthBias = SlopeScaledDepthBias;
+		changed = true;
+	}
+
+	auto DepthClipEnable = (bool)desc.DepthClipEnable;
+	if (reflectBool(type.get_property("DepthClipEnable"), DepthClipEnable))
+	{
+		desc.DepthClipEnable = DepthClipEnable;
+		changed = true;
+	}
+
+	auto ScissorEnable = (bool)desc.ScissorEnable;
+	if (reflectBool(type.get_property("ScissorEnable"), ScissorEnable))
+	{
+		desc.ScissorEnable = ScissorEnable;
+		changed = true;
+	}
+
+	auto MultisampleEnable = (bool)desc.MultisampleEnable;
+	if (reflectBool(type.get_property("MultisampleEnable"), MultisampleEnable))
+	{
+		desc.MultisampleEnable = MultisampleEnable;
+		changed = true;
+	}
+
+	auto AntialiasedLineEnable = (bool)desc.AntialiasedLineEnable;
+	if (reflectBool(type.get_property("AntialiasedLineEnable"), AntialiasedLineEnable))
+	{
+		desc.AntialiasedLineEnable = AntialiasedLineEnable;
+		changed = true;
+	}
+
+	if (changed)
+	{
+		property.set_value(object, desc);
+	}
+}
+
+bool PropertyPanel::reflectFloat(const rttr::property& property, float& value)
+{
+	bool changed = false;
+
+	ImGui::PushID(property.get_name().data());
+	ImGui::Columns(2);
+	ImGui::Text(property.get_name().data());
+	ImGui::NextColumn();
+	if (ImGui::DragFloat(("##" + property.get_name().to_string()).c_str(), &value))
+	{
+		changed = true;
+	}
+	ImGui::Columns(1);
+	ImGui::PopID();
+
+	return changed;
+}
+
+bool PropertyPanel::reflectFloat3(const rttr::property& property, DirectX::XMFLOAT3& value)
 {
 	bool changed = false;
 
@@ -399,59 +590,10 @@ bool reflectTransformFloat3(const rttr::property& property, DirectX::XMFLOAT3& v
 	return changed;
 }
 
-void PropertyPanel::reflectColor(const rttr::property& property, std::shared_ptr<Destiny::Object> object)
+bool PropertyPanel::reflectEnumeration(const rttr::property& property, int& value)
 {
-	Destiny::Color32 value;
-	property.get_value(object).convert(value);
-
-	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0, 0 });
-	ImGui::Text((property.get_name().to_string() + " :").c_str());
-	ImGui::SameLine();
-	if (ImGui::ColorEdit4("##", (float*)&value, ImGuiColorEditFlags_Float))
-	{
-		property.set_value(object, value);
-	}
-	ImGui::PopStyleVar();
-}
-
-void PropertyPanel::reflectTransform(const rttr::property& property, std::shared_ptr<Destiny::Object> object)
-{
-	Destiny::Transform value;
-	property.get_value(object).convert(value);
-
-	auto translation = value.get_translation();
-	auto rotation = value.get_rotation();
-	auto scale = value.get_scale();
-
-	auto type = rttr::type::get<Destiny::Transform>();
 	bool changed = false;
-	if (reflectTransformFloat3(type.get_property("translation"), translation))
-	{
-		changed = true;
-		value.set_translation(translation);
-	}
-	
-	if (reflectTransformFloat3(type.get_property("rotation"), rotation))
-	{
-		changed = true;
-		value.set_rotation(rotation);
-	}
 
-	if (reflectTransformFloat3(type.get_property("scale"), scale))
-	{
-		changed = true;
-		value.set_scale(scale);
-	}
-
-	if (changed)
-	{
-		property.set_value(object, value);
-	}
-
-}
-
-void PropertyPanel::reflectEnumeration(const rttr::property& property, std::shared_ptr<Destiny::Object> object)
-{
 	auto enumeration = property.get_enumeration();
 
 	std::vector<std::string> items;
@@ -464,7 +606,8 @@ void PropertyPanel::reflectEnumeration(const rttr::property& property, std::shar
 	ImGui::SameLine();
 
 	//int itemIndex = property.get_value(object).to_int();
-	auto itemIndex = (int)std::distance(items.begin(), std::find(items.begin(), items.end(), property.get_value(object).to_string()));
+	auto itemIndex = (int)std::distance(items.begin(), std::find(items.begin(), items.end(), enumeration.value_to_name(value).to_string()));
+	auto offset = value - itemIndex;
 	if (ImGui::Combo(("##" + property.get_name().to_string()).c_str(), &itemIndex,
 		[](void* data, int idx, const char** out_text)
 		{
@@ -477,8 +620,41 @@ void PropertyPanel::reflectEnumeration(const rttr::property& property, std::shar
 		},
 		&items, (int)items.size()))
 	{
-		property.set_value(object, enumeration.name_to_value(items[itemIndex]));
+		value = itemIndex + offset;
+		changed = true;
 	}
+
+	return changed;
+}
+
+bool PropertyPanel::reflectBool(const rttr::property& property, bool& value)
+{
+	bool changed = false;
+	ImGui::Text((property.get_name().to_string() + " :").c_str());
+	ImGui::SameLine();
+	if (ImGui::Checkbox(("##" + property.get_name().to_string()).c_str(), &value))
+	{
+		changed = true;
+	}
+	return changed;
+}
+
+bool PropertyPanel::reflectInt(const rttr::property& property, int& value)
+{
+	bool changed = false;
+
+	ImGui::PushID(property.get_name().data());
+	ImGui::Columns(2);
+	ImGui::Text(property.get_name().data());
+	ImGui::NextColumn();
+	if (ImGui::DragInt(("##" + property.get_name().to_string()).c_str(), &value))
+	{
+		changed = true;
+	}
+	ImGui::Columns(1);
+	ImGui::PopID();
+
+	return changed;
 }
 
 void PropertyPanel::onChoosedNode(void* parameter)

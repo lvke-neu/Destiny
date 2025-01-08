@@ -46,6 +46,23 @@ namespace Destiny
 		}
 	}
 
+	D3D11_RASTERIZER_DESC Visual::get_rasterizerDesc()
+	{
+		if (m_renderPass)
+		{
+			return m_renderPass->get_rasterizerDesc();
+		}
+		return D3D11_RASTERIZER_DESC();
+	}
+
+	void Visual::set_rasterizerDesc(D3D11_RASTERIZER_DESC desc)
+	{
+		if (m_renderPass)
+		{
+			m_renderPass->set_rasterizerDesc(desc);
+		}
+	}
+
 	void Visual::setRenderPass(std::shared_ptr<RenderPass> renderPass)
 	{
 		if (!renderPass)

@@ -26,10 +26,10 @@ namespace Destiny
 
 	void RenderStates::doLoad()
 	{
-		if (isLoadingSucceed())
-		{
-			return;
-		}
+		//if (isLoadingSucceed())
+		//{
+		//	return;
+		//}
 
 		if (!m_rasterizerStateDesc || !m_depthStencilStateDesc || !m_blendStateDesc)
 		{

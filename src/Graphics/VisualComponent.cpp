@@ -42,6 +42,23 @@ namespace Destiny
 		}
 	}
 
+	D3D11_RASTERIZER_DESC	VisualComponent::get_rasterizerDesc()
+	{
+		if (m_visual)
+		{
+			return m_visual->get_rasterizerDesc();
+		}
+		return D3D11_RASTERIZER_DESC();
+	}
+
+	void VisualComponent::set_rasterizerDesc(D3D11_RASTERIZER_DESC desc)
+	{
+		if (m_visual)
+		{
+			m_visual->set_rasterizerDesc(desc);
+		}
+	}
+
 	void VisualComponent::onAddToNode()
 	{
 		if (m_visual)
@@ -124,6 +141,7 @@ namespace Destiny
 		rttr::registration::class_<VisualComponent>("VisualComponent")
 			.constructor<>()
 			.property("renderer", &VisualComponent::get_renderer, &VisualComponent::set_renderer)
-			.property("rendererCategory", &VisualComponent::get_rendererCategory, &VisualComponent::set_rendererCategory);
+			.property("rendererCategory", &VisualComponent::get_rendererCategory, &VisualComponent::set_rendererCategory)
+			.property("rasterizerDesc", &VisualComponent::get_rasterizerDesc, &VisualComponent::set_rasterizerDesc);
 	}
 }

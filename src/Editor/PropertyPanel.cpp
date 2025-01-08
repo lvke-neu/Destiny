@@ -114,6 +114,10 @@ void PropertyPanel::reflectProperty(const rttr::property& property, std::shared_
 	else if (property.get_type() == rttr::type::get<D3D11_RASTERIZER_DESC>())
 	{
 		reflectRasterizerDesc(property, object);
+	}	
+	else if (property.get_type() == rttr::type::get<D3D11_DEPTH_STENCIL_DESC>())
+	{
+		reflectDepthStencilStateDesc(property, object);
 	}
 }
 
@@ -488,6 +492,115 @@ void PropertyPanel::reflectRasterizerDesc(const rttr::property& property, std::s
 	}
 }
 
+void PropertyPanel::reflectDepthStencilStateDesc(const rttr::property& property, std::shared_ptr<Destiny::Object> object)
+{
+	bool changed = false;
+
+	D3D11_DEPTH_STENCIL_DESC desc;
+	property.get_value(object).convert(desc);
+
+	auto type = rttr::type::get<D3D11_DEPTH_STENCIL_DESC>();
+
+	auto DepthEnable = (bool)desc.DepthEnable;
+	if (reflectBool(type.get_property("DepthEnable"), DepthEnable))
+	{
+		desc.DepthEnable = DepthEnable;
+		changed = true;
+	}
+
+	auto DepthWriteMask = (int)desc.DepthWriteMask;
+	if (reflectEnumeration(type.get_property("DepthWriteMask"), DepthWriteMask))
+	{
+		desc.DepthWriteMask = (D3D11_DEPTH_WRITE_MASK)DepthWriteMask;
+		changed = true;
+	}
+
+	auto DepthFunc = (int)desc.DepthFunc;
+	if (reflectEnumeration(type.get_property("DepthFunc"), DepthFunc))
+	{
+		desc.DepthFunc = (D3D11_COMPARISON_FUNC)DepthFunc;
+		changed = true;
+	}
+
+	auto StencilEnable = (bool)desc.StencilEnable;
+	if (reflectBool(type.get_property("StencilEnable"), StencilEnable))
+	{
+		desc.StencilEnable = StencilEnable;
+		changed = true;
+	}
+
+	int StencilReadMask = desc.StencilReadMask;
+	if (reflectInt(type.get_property("StencilReadMask"), StencilReadMask, 1.0f, 0, 255))
+	{
+		desc.StencilReadMask = (unsigned char)StencilReadMask;
+		changed = true;
+	}
+
+	int StencilWriteMask = desc.StencilWriteMask;
+	if (reflectInt(type.get_property("StencilWriteMask"), StencilWriteMask, 1.0f, 0, 255))
+	{
+		desc.StencilWriteMask = (unsigned char)StencilWriteMask;
+		changed = true;
+	}
+
+	auto FrontFace = desc.FrontFace;
+	if (reflectDepthStencilOpDesc("FrontFace-", FrontFace))
+	{
+		desc.FrontFace = FrontFace;
+		changed = true;
+	}
+
+	auto BackFace = desc.BackFace;
+	if (reflectDepthStencilOpDesc("BackFace-", BackFace))
+	{
+		desc.BackFace = BackFace;
+		changed = true;
+
+	}
+
+	if (changed)
+	{
+		property.set_value(object, desc);
+	}
+}
+
+bool PropertyPanel::reflectDepthStencilOpDesc(const std::string& name, D3D11_DEPTH_STENCILOP_DESC& desc)
+{
+	bool changed = false;
+
+	auto type = rttr::type::get<D3D11_DEPTH_STENCILOP_DESC>();
+
+	auto StencilFailOp = (int)desc.StencilFailOp;
+	if (reflectEnumeration(type.get_property("StencilFailOp"), StencilFailOp, name))
+	{
+		desc.StencilFailOp = (D3D11_STENCIL_OP)StencilFailOp;
+		changed = true;
+	}
+	
+	auto StencilDepthFailOp = (int)desc.StencilDepthFailOp;
+	if (reflectEnumeration(type.get_property("StencilDepthFailOp"), StencilDepthFailOp, name))
+	{
+		desc.StencilDepthFailOp = (D3D11_STENCIL_OP)StencilDepthFailOp;
+		changed = true;
+	}
+
+	auto StencilPassOp = (int)desc.StencilPassOp;
+	if (reflectEnumeration(type.get_property("StencilPassOp"), StencilPassOp, name))
+	{
+		desc.StencilPassOp = (D3D11_STENCIL_OP)StencilPassOp;
+		changed = true;
+	}
+
+	auto StencilFunc = (int)desc.StencilFunc;
+	if (reflectEnumeration(type.get_property("StencilFunc"), StencilFunc, name))
+	{
+		desc.StencilFunc = (D3D11_COMPARISON_FUNC)StencilFunc;
+		changed = true;
+	}
+
+	return changed;
+}
+
 bool PropertyPanel::reflectFloat(const rttr::property& property, float& value)
 {
 	bool changed = false;
@@ -590,7 +703,7 @@ bool PropertyPanel::reflectFloat3(const rttr::property& property, DirectX::XMFLO
 	return changed;
 }
 
-bool PropertyPanel::reflectEnumeration(const rttr::property& property, int& value)
+bool PropertyPanel::reflectEnumeration(const rttr::property& property, int& value, const std::string& name)
 {
 	bool changed = false;
 
@@ -602,13 +715,13 @@ bool PropertyPanel::reflectEnumeration(const rttr::property& property, int& valu
 		items.push_back(value.to_string());
 	}
 
-	ImGui::Text((property.get_name().to_string() + " :").c_str());
+	ImGui::Text((name + property.get_name().to_string() + " :").c_str());
 	ImGui::SameLine();
 
 	//int itemIndex = property.get_value(object).to_int();
 	auto itemIndex = (int)std::distance(items.begin(), std::find(items.begin(), items.end(), enumeration.value_to_name(value).to_string()));
 	auto offset = value - itemIndex;
-	if (ImGui::Combo(("##" + property.get_name().to_string()).c_str(), &itemIndex,
+	if (ImGui::Combo(("##" + property.get_name().to_string() + name).c_str(), &itemIndex,
 		[](void* data, int idx, const char** out_text)
 		{
 			auto& vector = *static_cast<std::vector<std::string>*>(data);
@@ -639,7 +752,7 @@ bool PropertyPanel::reflectBool(const rttr::property& property, bool& value)
 	return changed;
 }
 
-bool PropertyPanel::reflectInt(const rttr::property& property, int& value)
+bool PropertyPanel::reflectInt(const rttr::property& property, int& value, float speed, int min, int max)
 {
 	bool changed = false;
 
@@ -647,7 +760,7 @@ bool PropertyPanel::reflectInt(const rttr::property& property, int& value)
 	ImGui::Columns(2);
 	ImGui::Text(property.get_name().data());
 	ImGui::NextColumn();
-	if (ImGui::DragInt(("##" + property.get_name().to_string()).c_str(), &value))
+	if (ImGui::DragInt(("##" + property.get_name().to_string()).c_str(), &value, speed, min, max))
 	{
 		changed = true;
 	}

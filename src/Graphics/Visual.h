@@ -18,6 +18,8 @@ namespace Destiny
 		void							set_rendererCategory(RendererCategory rendererCategory);
 		D3D11_RASTERIZER_DESC			get_rasterizerDesc();
 		void							set_rasterizerDesc(D3D11_RASTERIZER_DESC desc);
+		D3D11_DEPTH_STENCIL_DESC		get_depthStencilDesc();
+		void							set_depthStencilDesc(D3D11_DEPTH_STENCIL_DESC desc);
 	public:
 		std::shared_ptr<RenderPass>			getRenderPass();
 		void								setRenderPass(std::shared_ptr<RenderPass> renderPass);

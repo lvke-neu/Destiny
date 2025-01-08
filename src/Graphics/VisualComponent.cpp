@@ -59,6 +59,23 @@ namespace Destiny
 		}
 	}
 
+	D3D11_DEPTH_STENCIL_DESC VisualComponent::get_depthStencilDesc()
+	{
+		if (m_visual)
+		{
+			return m_visual->get_depthStencilDesc();
+		}
+		return D3D11_DEPTH_STENCIL_DESC();
+	}
+
+	void VisualComponent::set_depthStencilDesc(D3D11_DEPTH_STENCIL_DESC desc)
+	{
+		if (m_visual)
+		{
+			m_visual->set_depthStencilDesc(desc);
+		}
+	}
+
 	void VisualComponent::onAddToNode()
 	{
 		if (m_visual)
@@ -142,6 +159,7 @@ namespace Destiny
 			.constructor<>()
 			.property("renderer", &VisualComponent::get_renderer, &VisualComponent::set_renderer)
 			.property("rendererCategory", &VisualComponent::get_rendererCategory, &VisualComponent::set_rendererCategory)
-			.property("rasterizerDesc", &VisualComponent::get_rasterizerDesc, &VisualComponent::set_rasterizerDesc);
+			.property("rasterizerDesc", &VisualComponent::get_rasterizerDesc, &VisualComponent::set_rasterizerDesc)
+			.property("depthStencilDesc", &VisualComponent::get_depthStencilDesc, &VisualComponent::set_depthStencilDesc);
 	}
 }

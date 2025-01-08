@@ -44,6 +44,24 @@ namespace Destiny
 		}
 	}
 
+	D3D11_DEPTH_STENCIL_DESC RenderPass::get_depthStencilDesc()
+	{
+		if (m_renderStates)
+		{
+			return *m_renderStates->getDepthStencilStateDesc();
+		}
+		return D3D11_DEPTH_STENCIL_DESC();
+	}
+
+	void RenderPass::set_depthStencilDesc(D3D11_DEPTH_STENCIL_DESC desc)
+	{
+		if (m_renderStates && m_renderStates->getDepthStencilStateDesc())
+		{
+			memcpy_s(m_renderStates->getDepthStencilStateDesc().get(), sizeof(D3D11_DEPTH_STENCIL_DESC), &desc, sizeof(D3D11_DEPTH_STENCIL_DESC));
+			m_renderStates->load(0);
+		}
+	}
+
 	void RenderPass::setRenderer(std::shared_ptr<Renderer> renderer)
 	{
 		//if (!renderer)

@@ -63,6 +63,23 @@ namespace Destiny
 		}
 	}
 
+	D3D11_DEPTH_STENCIL_DESC Visual::get_depthStencilDesc()
+	{
+		if (m_renderPass)
+		{
+			return m_renderPass->get_depthStencilDesc();
+		}
+		return D3D11_DEPTH_STENCIL_DESC();
+	}
+
+	void Visual::set_depthStencilDesc(D3D11_DEPTH_STENCIL_DESC desc)
+	{
+		if (m_renderPass)
+		{
+			m_renderPass->set_depthStencilDesc(desc);
+		}
+	}
+
 	void Visual::setRenderPass(std::shared_ptr<RenderPass> renderPass)
 	{
 		if (!renderPass)

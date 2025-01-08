@@ -3,6 +3,7 @@
 #include "Engine/Component.h"
 #include "Math/Color32.h"
 #include "Math/Transform.h"
+#include "Graphics/GraphicsDefine.h"
 #include "Imgui/imgui.h"
 #include "ImGui/imgui_internal.h"
 #include <d3d11.h>
@@ -122,6 +123,10 @@ void PropertyPanel::reflectProperty(const rttr::property& property, std::shared_
 	else if (property.get_type() == rttr::type::get<D3D11_BLEND_DESC>())
 	{
 		reflectBlendDesc(property, object);
+	}
+	else if (property.get_type() == rttr::type::get<Destiny::Button>())
+	{
+		reflectButton(property, object);
 	}
 
 }
@@ -602,6 +607,14 @@ void PropertyPanel::reflectBlendDesc(const rttr::property& property, std::shared
 	if (changed)
 	{
 		property.set_value(object, desc);
+	}
+}
+
+void PropertyPanel::reflectButton(const rttr::property& property, std::shared_ptr<Destiny::Object> object)
+{
+	if (ImGui::Button(property.get_name().data()))
+	{
+		property.set_value(object, Destiny::Button());
 	}
 }
 

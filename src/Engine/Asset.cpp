@@ -44,7 +44,38 @@ namespace Destiny
 		}
 	}
 
+	void Asset::reload(int priority)
+	{
+		if (m_assetLoader)
+		{
+			if (priority)
+			{
+				Engine::GetInstance()->getThreadPool()->commitTask(std::bind(&AssetLoader::reloadAsset, m_assetLoader, shared_from_this()));
+			}
+			else
+			{
+				m_assetLoader->reloadAsset(shared_from_this());
+			}
+		}
+		else
+		{
+			if (priority)
+			{
+				Engine::GetInstance()->getThreadPool()->commitTask(std::bind(&Asset::doReload, this));
+			}
+			else
+			{
+				reload();
+			}
+		}
+	}
+
 	void Asset::doLoad()
+	{
+		loadFailed__();
+	}
+
+	void Asset::doReload()
 	{
 		loadFailed__();
 	}

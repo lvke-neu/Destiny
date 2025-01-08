@@ -93,6 +93,19 @@ namespace Destiny
 		}
 	}
 
+	void VisualComponent::set_reCompileShader(Button button)
+	{
+		if (m_visual)
+		{
+			m_visual->reCompileShader();
+		}
+	}
+
+	Button VisualComponent::get_reCompileShader()
+	{
+		return Button();
+	}
+
 	void VisualComponent::onAddToNode()
 	{
 		if (m_visual)
@@ -178,6 +191,7 @@ namespace Destiny
 			.property("rendererCategory", &VisualComponent::get_rendererCategory, &VisualComponent::set_rendererCategory)
 			.property("rasterizerDesc", &VisualComponent::get_rasterizerDesc, &VisualComponent::set_rasterizerDesc)
 			.property("depthStencilDesc", &VisualComponent::get_depthStencilDesc, &VisualComponent::set_depthStencilDesc)
-			.property("blendDesc", &VisualComponent::get_blendDesc, &VisualComponent::set_blendDesc);
+			.property("blendDesc", &VisualComponent::get_blendDesc, &VisualComponent::set_blendDesc)
+			.property("reCompileShader", &VisualComponent::get_reCompileShader, &VisualComponent::set_reCompileShader);
 	}
 }

@@ -39,6 +39,8 @@ namespace Destiny
 		void							setConstant(const char* name, T value);
 		void							setShaderResource(const char* name, std::shared_ptr<Texture> texture);
 		void							setSamplerSate(const char* name, std::shared_ptr<SamplerState> samplerState);
+
+		void							reCompileShader();
 	private:
 		std::shared_ptr<Renderer>		m_renderer;
 		std::shared_ptr<RenderStates>	m_renderStates;
@@ -87,6 +89,14 @@ namespace Destiny
 		if (m_renderer)
 		{
 			m_renderer->setSamplerSate(name, samplerState);
+		}
+	}
+
+	inline void RenderPass::reCompileShader()
+	{
+		if (m_renderer)
+		{
+			m_renderer->reload(0);
 		}
 	}
 }

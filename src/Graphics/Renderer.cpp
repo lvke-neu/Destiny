@@ -67,6 +67,23 @@ namespace Destiny
 		SAFE_RELEASE(m_gsCompiledBlob);
 	}
 
+	void Renderer::doReload()
+	{
+		if (!m_blobHolder)
+		{
+			return;
+		}
+
+		auto blobLoader = Engine::GetInstance()->getBlobLoaderManager()->getBlobLoader(m_blobHolder->getPath().c_str());
+		if (blobLoader)
+		{
+			m_blobHolder = blobLoader->createBlobHolder(m_blobHolder->getPath().c_str());
+			m_blobHolder->load(0);
+		}
+		loadPending_();
+		doLoad();
+	}
+
 	void Renderer::setShaderResource(const char* name, std::shared_ptr<Texture> texture)
 	{
 		auto iter = m_textures.find(name);

@@ -11,5 +11,6 @@ namespace Destiny
 		virtual ~AssetLoader() = default;
 	public:
 		virtual void loadAsset(std::shared_ptr<Asset> asset) = 0;
+		virtual void reloadAsset(std::shared_ptr<Asset> asset) {};
 	};
 }

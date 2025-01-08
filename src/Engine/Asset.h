@@ -21,6 +21,7 @@ namespace Destiny
 		void						initialize(std::shared_ptr<AssetLoader> assetLoader, std::shared_ptr<Object> creationParam);
 		std::shared_ptr<Object>		getCreationParam();
 		void						load(int priority = 1);
+		void						reload(int priority = 1);
 		void						loadSucceeded__();
 		void						loadFailed__();
 		void						loadPending_();
@@ -29,6 +30,7 @@ namespace Destiny
 		bool						isLoadingPending();
 	private:
 		virtual void				doLoad();
+		virtual void				doReload();
 	protected:
 		std::shared_ptr<AssetLoader>	m_assetLoader;
 		std::shared_ptr<Object>			m_creationParam;

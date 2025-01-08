@@ -26,6 +26,7 @@ namespace Destiny
 		virtual ~Renderer();
 	public:
 		virtual void doLoad() override;
+		virtual void doReload() override;
 	public:
 		std::shared_ptr<Blob>			getInputSignatureBlob();
 		void							fillDrawParameters(std::shared_ptr<DrawParameters> drawParameters);

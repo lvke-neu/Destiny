@@ -132,6 +132,8 @@ namespace Destiny
 		.property("IndependentBlendEnable", &D3D11_BLEND_DESC::IndependentBlendEnable)
 		.property("RenderTarget", &D3D11_BLEND_DESC::RenderTarget);
 
-	}
+	rttr::registration::class_<Button>("Button")
+		.constructor<>();
 
+	}
 }

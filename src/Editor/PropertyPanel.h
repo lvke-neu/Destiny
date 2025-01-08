@@ -33,6 +33,7 @@ private:
 	void reflectRasterizerDesc(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
 	void reflectDepthStencilStateDesc(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
 	void reflectBlendDesc(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
+	void reflectButton(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
 
 	bool reflectDepthStencilOpDesc(const std::string& name, D3D11_DEPTH_STENCILOP_DESC& desc);
 	bool reflectRendertargetBlendDesc(D3D11_RENDER_TARGET_BLEND_DESC& desc);

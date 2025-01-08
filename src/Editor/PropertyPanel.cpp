@@ -119,6 +119,11 @@ void PropertyPanel::reflectProperty(const rttr::property& property, std::shared_
 	{
 		reflectDepthStencilStateDesc(property, object);
 	}
+	else if (property.get_type() == rttr::type::get<D3D11_BLEND_DESC>())
+	{
+		reflectBlendDesc(property, object);
+	}
+
 }
 
 void PropertyPanel::reflectBool(const rttr::property& property, std::shared_ptr<Destiny::Object> object)
@@ -564,6 +569,42 @@ void PropertyPanel::reflectDepthStencilStateDesc(const rttr::property& property,
 	}
 }
 
+void PropertyPanel::reflectBlendDesc(const rttr::property& property, std::shared_ptr<Destiny::Object> object)
+{
+	bool changed = false;
+
+	D3D11_BLEND_DESC desc;
+	property.get_value(object).convert(desc);
+
+	auto type = rttr::type::get<D3D11_BLEND_DESC>();
+
+	auto AlphaToCoverageEnable = (bool)desc.AlphaToCoverageEnable;
+	if (reflectBool(type.get_property("AlphaToCoverageEnable"), AlphaToCoverageEnable))
+	{
+		desc.AlphaToCoverageEnable = AlphaToCoverageEnable;
+		changed = true;
+	}
+
+	auto IndependentBlendEnable = (bool)desc.IndependentBlendEnable;
+	if (reflectBool(type.get_property("IndependentBlendEnable"), IndependentBlendEnable))
+	{
+		desc.IndependentBlendEnable = IndependentBlendEnable;
+		changed = true;
+	}
+
+	auto rendertargetBlendDesc = desc.RenderTarget[0];
+	if (reflectRendertargetBlendDesc(rendertargetBlendDesc))
+	{
+		desc.RenderTarget[0] = rendertargetBlendDesc;
+		changed = true;
+	}
+
+	if (changed)
+	{
+		property.set_value(object, desc);
+	}
+}
+
 bool PropertyPanel::reflectDepthStencilOpDesc(const std::string& name, D3D11_DEPTH_STENCILOP_DESC& desc)
 {
 	bool changed = false;
@@ -595,6 +636,71 @@ bool PropertyPanel::reflectDepthStencilOpDesc(const std::string& name, D3D11_DEP
 	if (reflectEnumeration(type.get_property("StencilFunc"), StencilFunc, name))
 	{
 		desc.StencilFunc = (D3D11_COMPARISON_FUNC)StencilFunc;
+		changed = true;
+	}
+
+	return changed;
+}
+
+bool PropertyPanel::reflectRendertargetBlendDesc(D3D11_RENDER_TARGET_BLEND_DESC& desc)
+{
+	bool changed = false;
+
+	auto type = rttr::type::get<D3D11_RENDER_TARGET_BLEND_DESC>();
+
+	auto BlendEnable = (bool)desc.BlendEnable;
+	if (reflectBool(type.get_property("BlendEnable"), BlendEnable))
+	{
+		desc.BlendEnable = BlendEnable;
+		changed = true;
+	}
+
+	auto SrcBlend = (int)desc.SrcBlend;
+	if (reflectEnumeration(type.get_property("SrcBlend"), SrcBlend))
+	{
+		desc.SrcBlend = (D3D11_BLEND)SrcBlend;
+		changed = true;
+	}
+
+	auto DestBlend = (int)desc.DestBlend;
+	if (reflectEnumeration(type.get_property("DestBlend"), DestBlend))
+	{
+		desc.DestBlend = (D3D11_BLEND)DestBlend;
+		changed = true;
+	}
+
+	auto BlendOp = (int)desc.BlendOp;
+	if (reflectEnumeration(type.get_property("BlendOp"), BlendOp))
+	{
+		desc.BlendOp = (D3D11_BLEND_OP)BlendOp;
+		changed = true;
+	}
+
+	auto SrcBlendAlpha = (int)desc.SrcBlendAlpha;
+	if (reflectEnumeration(type.get_property("SrcBlendAlpha"), SrcBlendAlpha))
+	{
+		desc.SrcBlendAlpha = (D3D11_BLEND)SrcBlendAlpha;
+		changed = true;
+	}
+
+	auto DestBlendAlpha = (int)desc.DestBlendAlpha;
+	if (reflectEnumeration(type.get_property("DestBlendAlpha"), DestBlendAlpha))
+	{
+		desc.DestBlendAlpha = (D3D11_BLEND)DestBlendAlpha;
+		changed = true;
+	}
+
+	auto BlendOpAlpha = (int)desc.BlendOpAlpha;
+	if (reflectEnumeration(type.get_property("BlendOpAlpha"), BlendOpAlpha))
+	{
+		desc.BlendOpAlpha = (D3D11_BLEND_OP)BlendOpAlpha;
+		changed = true;
+	}
+
+	int RenderTargetWriteMask = desc.RenderTargetWriteMask;
+	if (reflectInt(type.get_property("RenderTargetWriteMask"), RenderTargetWriteMask, 1.0f, 0, 255))
+	{
+		desc.RenderTargetWriteMask = (unsigned char)RenderTargetWriteMask;
 		changed = true;
 	}
 

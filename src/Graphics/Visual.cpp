@@ -80,6 +80,23 @@ namespace Destiny
 		}
 	}
 
+	D3D11_BLEND_DESC Visual::get_blendDesc()
+	{
+		if (m_renderPass)
+		{
+			return m_renderPass->get_blendDesc();
+		}
+		return D3D11_BLEND_DESC();
+	}
+
+	void Visual::set_blendDesc(D3D11_BLEND_DESC desc)
+	{
+		if (m_renderPass)
+		{
+			return m_renderPass->set_blendDesc(desc);
+		}
+	}
+
 	void Visual::setRenderPass(std::shared_ptr<RenderPass> renderPass)
 	{
 		if (!renderPass)

@@ -32,8 +32,10 @@ private:
 	void reflectEnumeration(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
 	void reflectRasterizerDesc(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
 	void reflectDepthStencilStateDesc(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
+	void reflectBlendDesc(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
 
 	bool reflectDepthStencilOpDesc(const std::string& name, D3D11_DEPTH_STENCILOP_DESC& desc);
+	bool reflectRendertargetBlendDesc(D3D11_RENDER_TARGET_BLEND_DESC& desc);
 	bool reflectFloat(const rttr::property& property, float& value);
 	bool reflectFloat3(const rttr::property& property, DirectX::XMFLOAT3& value);
 	bool reflectEnumeration(const rttr::property& property, int& value, const std::string& name = "");

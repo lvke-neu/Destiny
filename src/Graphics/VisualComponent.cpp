@@ -76,6 +76,23 @@ namespace Destiny
 		}
 	}
 
+	D3D11_BLEND_DESC VisualComponent::get_blendDesc()
+	{
+		if (m_visual)
+		{
+			return m_visual->get_blendDesc();
+		}
+		return D3D11_BLEND_DESC();
+	}
+
+	void VisualComponent::set_blendDesc(D3D11_BLEND_DESC desc)
+	{
+		if (m_visual)
+		{
+			return m_visual->set_blendDesc(desc);
+		}
+	}
+
 	void VisualComponent::onAddToNode()
 	{
 		if (m_visual)
@@ -160,6 +177,7 @@ namespace Destiny
 			.property("renderer", &VisualComponent::get_renderer, &VisualComponent::set_renderer)
 			.property("rendererCategory", &VisualComponent::get_rendererCategory, &VisualComponent::set_rendererCategory)
 			.property("rasterizerDesc", &VisualComponent::get_rasterizerDesc, &VisualComponent::set_rasterizerDesc)
-			.property("depthStencilDesc", &VisualComponent::get_depthStencilDesc, &VisualComponent::set_depthStencilDesc);
+			.property("depthStencilDesc", &VisualComponent::get_depthStencilDesc, &VisualComponent::set_depthStencilDesc)
+			.property("blendDesc", &VisualComponent::get_blendDesc, &VisualComponent::set_blendDesc);
 	}
 }

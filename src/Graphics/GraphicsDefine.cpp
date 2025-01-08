@@ -87,5 +87,51 @@ namespace Destiny
 		.property("StencilWriteMask", &D3D11_DEPTH_STENCIL_DESC::StencilWriteMask)
 		.property("FrontFace", &D3D11_DEPTH_STENCIL_DESC::FrontFace)
 		.property("BackFace", &D3D11_DEPTH_STENCIL_DESC::BackFace);
+
+	rttr::registration::enumeration<D3D11_BLEND>("D3D11_BLEND")
+		(
+			rttr::value("D3D11_BLEND_ZERO", D3D11_BLEND::D3D11_BLEND_ZERO),
+			rttr::value("D3D11_BLEND_ONE", D3D11_BLEND::D3D11_BLEND_ONE),
+			rttr::value("D3D11_BLEND_SRC_COLOR", D3D11_BLEND::D3D11_BLEND_SRC_COLOR),
+			rttr::value("D3D11_BLEND_INV_SRC_COLOR", D3D11_BLEND::D3D11_BLEND_INV_SRC_COLOR),
+			rttr::value("D3D11_BLEND_SRC_ALPHA", D3D11_BLEND::D3D11_BLEND_SRC_ALPHA),
+			rttr::value("D3D11_BLEND_INV_SRC_ALPHA", D3D11_BLEND::D3D11_BLEND_INV_SRC_ALPHA),
+			rttr::value("D3D11_BLEND_DEST_ALPHA", D3D11_BLEND::D3D11_BLEND_DEST_ALPHA),
+			rttr::value("D3D11_BLEND_INV_DEST_ALPHA", D3D11_BLEND::D3D11_BLEND_INV_DEST_ALPHA),
+			rttr::value("D3D11_BLEND_DEST_COLOR", D3D11_BLEND::D3D11_BLEND_DEST_COLOR),
+			rttr::value("D3D11_BLEND_INV_DEST_COLOR", D3D11_BLEND::D3D11_BLEND_INV_DEST_COLOR),
+			rttr::value("D3D11_BLEND_SRC_ALPHA_SAT", D3D11_BLEND::D3D11_BLEND_SRC_ALPHA_SAT),
+			rttr::value("D3D11_BLEND_BLEND_FACTOR", D3D11_BLEND::D3D11_BLEND_BLEND_FACTOR),
+			rttr::value("D3D11_BLEND_INV_BLEND_FACTOR", D3D11_BLEND::D3D11_BLEND_INV_BLEND_FACTOR),
+			rttr::value("D3D11_BLEND_SRC1_COLOR", D3D11_BLEND::D3D11_BLEND_SRC1_COLOR),
+			rttr::value("D3D11_BLEND_INV_SRC1_COLOR", D3D11_BLEND::D3D11_BLEND_INV_SRC1_COLOR),
+			rttr::value("D3D11_BLEND_SRC1_ALPHA", D3D11_BLEND::D3D11_BLEND_SRC1_ALPHA),
+			rttr::value("D3D11_BLEND_INV_SRC1_ALPHA", D3D11_BLEND::D3D11_BLEND_INV_SRC1_ALPHA)
+		);
+	rttr::registration::enumeration<D3D11_BLEND_OP>("D3D11_BLEND_OP")
+		(
+			rttr::value("D3D11_BLEND_OP_ADD", D3D11_BLEND_OP::D3D11_BLEND_OP_ADD),
+			rttr::value("D3D11_BLEND_OP_SUBTRACT", D3D11_BLEND_OP::D3D11_BLEND_OP_SUBTRACT),
+			rttr::value("D3D11_BLEND_OP_REV_SUBTRACT", D3D11_BLEND_OP::D3D11_BLEND_OP_REV_SUBTRACT),
+			rttr::value("D3D11_BLEND_OP_MIN", D3D11_BLEND_OP::D3D11_BLEND_OP_MIN),
+			rttr::value("D3D11_BLEND_OP_MAX", D3D11_BLEND_OP::D3D11_BLEND_OP_MAX)
+		);
+	rttr::registration::class_<D3D11_RENDER_TARGET_BLEND_DESC>("D3D11_RENDER_TARGET_BLEND_DESC")
+		.constructor<>()
+		.property("BlendEnable", &D3D11_RENDER_TARGET_BLEND_DESC::BlendEnable)
+		.property("SrcBlend", &D3D11_RENDER_TARGET_BLEND_DESC::SrcBlend)
+		.property("DestBlend", &D3D11_RENDER_TARGET_BLEND_DESC::DestBlend)
+		.property("BlendOp", &D3D11_RENDER_TARGET_BLEND_DESC::BlendOp)
+		.property("SrcBlendAlpha", &D3D11_RENDER_TARGET_BLEND_DESC::SrcBlendAlpha)
+		.property("DestBlendAlpha", &D3D11_RENDER_TARGET_BLEND_DESC::DestBlendAlpha)
+		.property("BlendOpAlpha", &D3D11_RENDER_TARGET_BLEND_DESC::BlendOpAlpha)
+		.property("RenderTargetWriteMask", &D3D11_RENDER_TARGET_BLEND_DESC::RenderTargetWriteMask);
+	rttr::registration::class_<D3D11_BLEND_DESC>("D3D11_BLEND_DESC")
+		.constructor<>()
+		.property("AlphaToCoverageEnable", &D3D11_BLEND_DESC::AlphaToCoverageEnable)
+		.property("IndependentBlendEnable", &D3D11_BLEND_DESC::IndependentBlendEnable)
+		.property("RenderTarget", &D3D11_BLEND_DESC::RenderTarget);
+
 	}
+
 }

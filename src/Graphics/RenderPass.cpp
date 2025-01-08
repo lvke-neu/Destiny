@@ -62,6 +62,24 @@ namespace Destiny
 		}
 	}
 
+	D3D11_BLEND_DESC RenderPass::get_blendDesc()
+	{
+		if (m_renderStates)
+		{
+			return *m_renderStates->getBlendStateDesc();
+		}
+		return D3D11_BLEND_DESC();
+	}
+
+	void RenderPass::set_blendDesc(D3D11_BLEND_DESC desc)
+	{
+		if (m_renderStates && m_renderStates->getBlendStateDesc())
+		{
+			memcpy_s(m_renderStates->getBlendStateDesc().get(), sizeof(D3D11_BLEND_DESC), &desc, sizeof(D3D11_BLEND_DESC));
+			m_renderStates->load(0);
+		}
+	}
+
 	void RenderPass::setRenderer(std::shared_ptr<Renderer> renderer)
 	{
 		//if (!renderer)

@@ -463,7 +463,8 @@ void PropertyPanel::reflectEnumeration(const rttr::property& property, std::shar
 	ImGui::Text((property.get_name().to_string() + " :").c_str());
 	ImGui::SameLine();
 
-	int itemIndex = property.get_value(object).to_int();
+	//int itemIndex = property.get_value(object).to_int();
+	auto itemIndex = (int)std::distance(items.begin(), std::find(items.begin(), items.end(), property.get_value(object).to_string()));
 	if (ImGui::Combo(("##" + property.get_name().to_string()).c_str(), &itemIndex,
 		[](void* data, int idx, const char** out_text)
 		{

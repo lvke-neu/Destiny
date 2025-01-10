@@ -3,7 +3,6 @@
 #include "Graphics/Texture.h"
 #include "Graphics/SamplerState.h"
 #include "Engine/BlobHolder.h"
-#include <rttr/registration.h>
 #include <d3d11.h>
 
 namespace Destiny

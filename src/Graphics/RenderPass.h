@@ -1,5 +1,6 @@
 #pragma once
 #include "Renderer.h"
+#include "Material.h"
 #include "GraphicsDefine.h"
 #include <d3d11.h>
 
@@ -27,6 +28,7 @@ namespace Destiny
 	public:
 		std::shared_ptr<Renderer>		getRenderer();
 		void							setRenderer(std::shared_ptr<Renderer> renderer);
+		std::shared_ptr<Material>		getMaterial();
 		void							setMaterial(std::shared_ptr<Material> material);
 
 		std::shared_ptr<RenderStates>	getRenderStates();
@@ -53,6 +55,11 @@ namespace Destiny
 	inline std::shared_ptr<Renderer> RenderPass::getRenderer()
 	{
 		return m_renderer;
+	}
+
+	inline std::shared_ptr<Material> RenderPass::getMaterial()
+	{
+		return m_material;
 	}
 
 	inline std::shared_ptr<RenderStates> RenderPass::getRenderStates()

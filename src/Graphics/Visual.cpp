@@ -97,6 +97,23 @@ namespace Destiny
 		}
 	}
 
+	std::shared_ptr<Material> Visual::get_material()
+	{
+		if (m_renderPass)
+		{
+			return m_renderPass->getMaterial();
+		}
+		return nullptr;
+	}
+
+	void Visual::set_material(std::shared_ptr<Material> material)
+	{
+		if (m_renderPass)
+		{
+			m_renderPass->setMaterial(material);
+		}
+	}
+
 	void Visual::setRenderPass(std::shared_ptr<RenderPass> renderPass)
 	{
 		if (!renderPass)

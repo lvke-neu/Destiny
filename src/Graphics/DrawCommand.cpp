@@ -89,6 +89,30 @@ namespace Destiny
 				break;
 			}
 
+			for (const auto& constantBuffer : drawParameters->constantBuffers)
+			{
+				if (constantBuffer.second)
+				{
+					constantBuffer.second->unBind();
+				}
+			}
+
+			for (const auto& texture : drawParameters->textures)
+			{
+				if (texture.second.second)
+				{
+					texture.second.second->unBind(texture.second.first);
+				}
+			}
+
+			for (const auto& samplerState : drawParameters->samplerStates)
+			{
+				if (samplerState.second.second)
+				{
+					samplerState.second.second->unBind(samplerState.second.first);
+				}
+			}
+
 			if (drawParameters->afterDrawCommandList)
 			{
 				drawParameters->afterDrawCommandList->execute(deviceContext);

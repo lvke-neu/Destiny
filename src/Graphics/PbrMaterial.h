@@ -8,6 +8,7 @@ namespace Destiny
 	class Texture;
 	class PbrMaterial : public Material
 	{
+		RTTR_ENABLE(Material);
 	public:
 		PbrMaterial();
 		virtual ~PbrMaterial() = default;

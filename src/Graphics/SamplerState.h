@@ -38,6 +38,7 @@ namespace Destiny
 		virtual void doLoad() override;
 	public:
 		void bind(std::shared_ptr<SamplerStateDesc> desc);
+		void unBind(std::shared_ptr<SamplerStateDesc> desc);
 		std::shared_ptr<D3D11_SAMPLER_DESC> getSamplerDesc();
 	private:
 		ID3D11SamplerState* m_samplerState;

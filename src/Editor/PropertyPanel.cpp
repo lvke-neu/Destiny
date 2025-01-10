@@ -4,6 +4,7 @@
 #include "Math/Color32.h"
 #include "Math/Transform.h"
 #include "Graphics/GraphicsDefine.h"
+#include "Graphics/PbrMaterial.h"
 #include "Imgui/imgui.h"
 #include "ImGui/imgui_internal.h"
 #include <d3d11.h>
@@ -128,7 +129,12 @@ void PropertyPanel::reflectProperty(const rttr::property& property, std::shared_
 	{
 		reflectButton(property, object);
 	}
-
+	else if (property.get_type() == rttr::type::get<std::shared_ptr<Destiny::Material>>())
+	{
+		std::shared_ptr<Destiny::Material> material = nullptr;
+		property.get_value(object).convert(material);
+		reflectMaterial(material);
+	}
 }
 
 void PropertyPanel::reflectBool(const rttr::property& property, std::shared_ptr<Destiny::Object> object)
@@ -616,6 +622,22 @@ void PropertyPanel::reflectButton(const rttr::property& property, std::shared_pt
 	{
 		property.set_value(object, Destiny::Button());
 	}
+}
+
+void PropertyPanel::reflectMaterial(std::shared_ptr<Destiny::Object> object)
+{
+	if (!object)
+	{
+		return;
+	}
+
+	auto type = rttr::type::get(*object);
+	ImGui::Text((type.get_name().to_string() + ":").c_str());
+	for (const auto& property : type.get_properties())
+	{
+		reflectProperty(property, object);
+	}
+
 }
 
 bool PropertyPanel::reflectDepthStencilOpDesc(const std::string& name, D3D11_DEPTH_STENCILOP_DESC& desc)

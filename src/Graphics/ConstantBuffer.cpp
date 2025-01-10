@@ -88,6 +88,29 @@ namespace Destiny
 		}
 	}
 
+	void ConstantBuffer::unBind()
+	{
+		ID3D11Buffer* buffer = nullptr;
+		for (const auto& constantBufferBindFlag : m_constantBufferBindFlag)
+		{
+			if (constantBufferBindFlag.second)
+			{
+				switch (constantBufferBindFlag.first)
+				{
+				case ConstantBufferBindFlag::BindVS:
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->VSSetConstantBuffers(m_startSlot, 1, &buffer);
+					break;
+				case ConstantBufferBindFlag::BindPS:
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetConstantBuffers(m_startSlot, 1, &buffer);
+					break;
+				case ConstantBufferBindFlag::BindGS:
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->GSSetConstantBuffers(m_startSlot, 1, &buffer);
+					break;
+				}
+			}
+		}
+	}
+
 	void ConstantBuffer::addVariable(const std::string& name, ConstantBufferVariable variable)
 	{
 		m_variables[name] = variable;

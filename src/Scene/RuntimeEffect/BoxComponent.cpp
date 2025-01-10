@@ -18,7 +18,6 @@ namespace Destiny
 		renderStates->load();
 
 		std::shared_ptr<RenderPass> renderPass = std::make_shared<RenderPass>();
-		renderPass->setMaterial(PbrMaterial::Create_Wall());
 		renderPass->setRendererCategory(RendererCategory::ForwardOpaque);
 		renderPass->setRenderer(renderer);
 		renderPass->setRenderStates(renderStates);

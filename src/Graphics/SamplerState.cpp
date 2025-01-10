@@ -65,4 +65,32 @@ namespace Destiny
 			}
 		}
 	}
+
+	void SamplerState::unBind(std::shared_ptr<SamplerStateDesc> desc)
+	{
+		if (!desc)
+		{
+			return;
+		}
+
+		ID3D11SamplerState* sampler = nullptr;
+		for (const auto& samplerStateBindFlag : desc->samplerStateBindFlag)
+		{
+			if (samplerStateBindFlag.second)
+			{
+				switch (samplerStateBindFlag.first)
+				{
+				case SamplerStateBindFlag::BindVS:
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->VSSetSamplers(desc->startSlot, 1, &sampler);
+					break;
+				case SamplerStateBindFlag::BindPS:
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetSamplers(desc->startSlot, 1, &sampler);
+					break;
+				case SamplerStateBindFlag::BindGS:
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->GSSetSamplers(desc->startSlot, 1, &sampler);
+					break;
+				}
+			}
+		}
+	}
 }

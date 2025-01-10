@@ -107,6 +107,23 @@ namespace Destiny
 		return Button();
 	}
 
+	std::shared_ptr<Material> VisualComponent::get_material()
+	{
+		if (m_visual)
+		{
+			return m_visual->get_material();
+		}
+		return nullptr;
+	}
+
+	void VisualComponent::set_material(std::shared_ptr<Material> material)
+	{
+		if (m_visual)
+		{
+			m_visual->set_material(material);
+		}
+	}
+
 	void VisualComponent::onAddToNode()
 	{
 		if (m_visual)
@@ -214,6 +231,7 @@ namespace Destiny
 			.property("rasterizerDesc", &VisualComponent::get_rasterizerDesc, &VisualComponent::set_rasterizerDesc)
 			.property("depthStencilDesc", &VisualComponent::get_depthStencilDesc, &VisualComponent::set_depthStencilDesc)
 			.property("blendDesc", &VisualComponent::get_blendDesc, &VisualComponent::set_blendDesc)
-			.property("reCompileShader", &VisualComponent::get_reCompileShader, &VisualComponent::set_reCompileShader);
+			.property("reCompileShader", &VisualComponent::get_reCompileShader, &VisualComponent::set_reCompileShader)
+			.property("material", &VisualComponent::get_material, &VisualComponent::set_material);
 	}
 }

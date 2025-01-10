@@ -1,6 +1,5 @@
 #include "RenderPass.h"
 #include "RenderStates.h"
-#include "Material.h"
 
 namespace Destiny
 {

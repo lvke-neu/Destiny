@@ -66,6 +66,7 @@ namespace Destiny
 		static std::unordered_map<std::string, std::shared_ptr<Texture>> s_cache;
 	public:
 		void bind(std::shared_ptr<TextureDesc> desc);
+		void unBind(std::shared_ptr<TextureDesc> desc);
 		ID3D11ShaderResourceView* getShaderResourceView();
 	private:
 		ID3D11Texture2D* m_resource;

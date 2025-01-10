@@ -3,6 +3,7 @@
 #include "Graphics/CameraController.h"
 //#include "Graphics/Model/ModelComponent.h"
 #include "Graphics/DirectionLightComponent.h"
+#include "Graphics/PbrMaterial.h"
 #include "RuntimeEffect/BoxComponent.h"
 #include "RuntimeEffect/PlaneComponent.h"
 #include "RuntimeEffect/TestGeometryShaderComponent.h"
@@ -50,7 +51,8 @@ namespace Destiny
 		//plane
 		{
 			auto planeComponent = std::make_shared<PlaneComponent>();
-			
+			planeComponent->set_material(PbrMaterial::Create_Rusted_Iron());
+
 			auto node = std::make_shared<Node>();
 			node->set_name("PlaneNode");
 			node->addComponent(planeComponent);

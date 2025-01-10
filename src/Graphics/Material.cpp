@@ -13,4 +13,11 @@ namespace Destiny
 		m_renderer = renderer;
 		update();
 	}
+
+
+	RTTR_REGISTRATION
+	{
+		rttr::registration::class_<Material>("Material")
+			.constructor<>();
+	}
 }

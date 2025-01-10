@@ -87,4 +87,32 @@ namespace Destiny
 			}
 		}
 	}
+
+	void Texture::unBind(std::shared_ptr<TextureDesc> desc)
+	{
+		if (!desc)
+		{
+			return;
+		}
+
+		ID3D11ShaderResourceView* srv = nullptr;
+		for (const auto& textureBindFlag : desc->textureBindFlag)
+		{
+			if (textureBindFlag.second)
+			{
+				switch (textureBindFlag.first)
+				{
+				case TextureBindFlag::BindVS:
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->VSSetShaderResources(desc->startSlot, 1, &srv);
+					break;
+				case TextureBindFlag::BindPS:
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetShaderResources(desc->startSlot, 1, &srv);
+					break;
+				case TextureBindFlag::BindGS:
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->GSSetShaderResources(desc->startSlot, 1, &srv);
+					break;
+				}
+			}
+		}
+	}
 }

@@ -21,16 +21,19 @@ namespace Destiny
 
 		std::shared_ptr<RenderPass> renderPass = std::make_shared<RenderPass>();
 		renderPass->setRendererCategory(RendererCategory::ForwardOpaque);
-		renderPass->setMaterial(PbrMaterial::Create_Rusted_Iron());
 		renderPass->setRenderer(renderer);
 		renderPass->setRenderStates(renderStates);
 		
-
 		auto mesh = MeshProvider::Create_Plane_PositionNormalTexcoord();
 		mesh->load();
 
-
 		setRenderPass(renderPass);
 		setMesh(mesh);
+	}
+
+	RTTR_REGISTRATION
+	{
+		rttr::registration::class_<PlaneComponent>("PlaneComponent")
+			.constructor<>();
 	}
 }

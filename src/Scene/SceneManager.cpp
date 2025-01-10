@@ -11,6 +11,7 @@
 #include "RuntimeEffect/SizeBillboardComponent.h"
 #include "RuntimeEffect/InstancedComponet.h"
 #include "RuntimeEffect/TextComponent.h"
+#include "RuntimeEffect/SphereComponent.h"
 
 namespace Destiny
 {
@@ -31,8 +32,8 @@ namespace Destiny
 
 		//camera
 		auto cameraTransfrom = m_scene->getCameraNode()->get_transform();
-		cameraTransfrom.set_translation({ 3.159f, 8.347f, 16.423f });
-		cameraTransfrom.set_rotation({ 25.980f, 179.901f, 1.0f });
+		cameraTransfrom.set_translation({ 0.764f, 7.887f, -12.614f });
+		cameraTransfrom.set_rotation({ 18.880f, 0.0f, 1.0f });
 		m_scene->getCameraNode()->set_transform(cameraTransfrom);
 
 		//light gzimo
@@ -51,7 +52,7 @@ namespace Destiny
 		//plane
 		{
 			auto planeComponent = std::make_shared<PlaneComponent>();
-			planeComponent->set_material(PbrMaterial::Create_Rusted_Iron());
+			planeComponent->set_material(PbrMaterial::Create_Default());
 
 			auto node = std::make_shared<Node>();
 			node->set_name("PlaneNode");
@@ -64,7 +65,96 @@ namespace Destiny
 			transform.set_translation({ 0.0f, 0.0f, 0.0f });
 			node->set_transform(transform);
 		}
+		//sphere
+		{
+			auto sphereNode = std::make_shared<Node>();
+			sphereNode->set_name("SphereNode");
+			sphereNode->addToParent(m_scene);
 
+			{
+				auto sphereComponent = std::make_shared<SphereComponent>();
+				sphereComponent->set_material(PbrMaterial::Create_Default());
+
+				auto node = std::make_shared<Node>();
+				node->set_name("SphereNode1");
+				node->addComponent(sphereComponent);
+				node->addToParent(sphereNode);
+
+				Transform transform;
+				transform.set_translation({ -4.0f, 3.0f, 0.0f });
+				node->set_transform(transform);
+			}
+
+			{
+				auto sphereComponent = std::make_shared<SphereComponent>();
+				sphereComponent->set_material(PbrMaterial::Create_Gold());
+
+				auto node = std::make_shared<Node>();
+				node->set_name("SphereNode2");
+				node->addComponent(sphereComponent);
+				node->addToParent(sphereNode);
+
+				Transform transform;
+				transform.set_translation({ -2.0f, 3.0f, 0.0f });
+				node->set_transform(transform);
+			}
+
+			{
+				auto sphereComponent = std::make_shared<SphereComponent>();
+				sphereComponent->set_material(PbrMaterial::Create_Grass());
+
+				auto node = std::make_shared<Node>();
+				node->set_name("SphereNode3");
+				node->addComponent(sphereComponent);
+				node->addToParent(sphereNode);
+
+				Transform transform;
+				transform.set_translation({ 0.0f, 3.0f, 0.0f });
+				node->set_transform(transform);
+			}
+
+			{
+				auto sphereComponent = std::make_shared<SphereComponent>();
+				sphereComponent->set_material(PbrMaterial::Create_Plastic());
+
+				auto node = std::make_shared<Node>();
+				node->set_name("SphereNode4");
+				node->addComponent(sphereComponent);
+				node->addToParent(sphereNode);
+
+				Transform transform;
+				transform.set_translation({ 2.0f, 3.0f, 0.0f });
+				node->set_transform(transform);
+			}
+
+			{
+				auto sphereComponent = std::make_shared<SphereComponent>();
+				sphereComponent->set_material(PbrMaterial::Create_Rusted_Iron());
+
+				auto node = std::make_shared<Node>();
+				node->set_name("SphereNode5");
+				node->addComponent(sphereComponent);
+				node->addToParent(sphereNode);
+
+				Transform transform;
+				transform.set_translation({ 4.0f, 3.0f, 0.0f });
+				node->set_transform(transform);
+			}
+
+			{
+				auto sphereComponent = std::make_shared<SphereComponent>();
+				sphereComponent->set_material(PbrMaterial::Create_Wall());
+
+				auto node = std::make_shared<Node>();
+				node->set_name("SphereNode6");
+				node->addComponent(sphereComponent);
+				node->addToParent(sphereNode);
+
+				Transform transform;
+				transform.set_translation({ 6.0f, 3.0f, 0.0f });
+				node->set_transform(transform);
+			}
+		}
 		////model
 		//{
 		//	auto modelComponent1 = std::make_shared<ModelComponent>();

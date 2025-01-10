@@ -5,6 +5,7 @@
 #include "InputLayout.h"
 #include "VertexDefine.h"
 #include "Engine/Blob.h"
+#include "Math/Math.h"
 
 namespace Destiny
 {
@@ -144,6 +145,109 @@ namespace Destiny
 		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(aabb, drawCall, vertexBuffer, indexBuffer);
 
 		m_cache["Plane_PositionNormalTexcoord"] = mesh;
+
+		return mesh;
+	}
+
+	std::shared_ptr<Mesh> MeshProvider::Create_Sphere_PositionNormalTexcoord()
+	{
+		auto iter = m_cache.find("Sphere_PositionNormalTexcoord");
+		if (iter != m_cache.end())
+		{
+			return m_cache["Sphere_PositionNormalTexcoord"];
+		}
+
+		const float radius = 1.0f;
+		const unsigned int levels = 20;
+		const unsigned int slices = 20;
+
+		const unsigned int vertexCount = 2 + (levels - 1) * (slices + 1);
+	
+
+		unsigned int vIndex = 0, iIndex = 0;
+
+		float phi = 0.0f, theta = 0.0f;
+		float per_phi =  Math::PI/ levels;
+		float per_theta = 2.0f * Math::PI / slices;
+		float x, y, z;
+
+		std::shared_ptr<Blob> data = nullptr;
+		std::vector<PositionNormalTexcoord> vertices;
+		vertices.resize(vertexCount);
+
+		vertices[vIndex++] = { { 0.0f, radius, 0.0f },{ 0.0f, 1.0f, 0.0f },{ 0.0f, 0.0f } };
+		for (unsigned int i = 1; i < levels; ++i)
+		{
+			phi = per_phi * i;
+
+			for (unsigned int j = 0; j <= slices; ++j)
+			{
+				theta = per_theta * j;
+				x = radius * sinf(phi) * cosf(theta);
+				y = radius * cosf(phi);
+				z = radius * sinf(phi) * sinf(theta);
+
+				DirectX::XMFLOAT3 pos = { x, y, z }, normal;
+				XMStoreFloat3(&normal, DirectX::XMVector3Normalize(XMLoadFloat3(&pos)));
+
+				vertices[vIndex++] = PositionNormalTexcoord({ pos, normal, {theta / (2.0f * Math::PI), phi / (2.0f * Math::PI)} });
+			}
+		}
+		vertices[vIndex++] = PositionNormalTexcoord({ {0.0f, -radius, 0.0f}, {0.0f, -1.0f, 0.0f}, {0.0f, 1.0f} });
+
+
+		data.reset(new Blob(vertices.size() * sizeof(PositionNormalTexcoord)));
+		data->copyfrom(vertices.data(), vertices.size() * sizeof(PositionNormalTexcoord));
+		std::shared_ptr<VertexBuffer> vertexBuffer = std::make_shared<VertexBuffer>(InputLayout::Create_PositionNormalTexcoord(), (unsigned int)sizeof(PositionNormalTexcoord), 0, data);
+
+		std::vector<unsigned short> indices;
+		indices.resize(6 * (levels - 1) * slices);
+		if (levels > 1)
+		{
+			for (unsigned int j = 1; j <= slices; ++j)
+			{
+				indices[iIndex++] = 0;
+				indices[iIndex++] = j % (slices + 1) + 1;
+				indices[iIndex++] = j;
+			}
+		}
+		for (unsigned int i = 1; i < levels - 1; ++i)
+		{
+			for (unsigned int j = 1; j <= slices; ++j)
+			{
+				indices[iIndex++] = (i - 1) * (slices + 1) + j;
+				indices[iIndex++] = (i - 1) * (slices + 1) + j % (slices + 1) + 1;
+				indices[iIndex++] = i * (slices + 1) + j % (slices + 1) + 1;
+
+				indices[iIndex++] = i * (slices + 1) + j % (slices + 1) + 1;
+				indices[iIndex++] = i * (slices + 1) + j;
+				indices[iIndex++] = (i - 1) * (slices + 1) + j;
+			}
+		}
+		if (levels > 1)
+		{
+			for (unsigned int j = 1; j <= slices; ++j)
+			{
+				indices[iIndex++] = (levels - 2) * (slices + 1) + j;
+				indices[iIndex++] = (levels - 2) * (slices + 1) + j % (slices + 1) + 1;
+				indices[iIndex++] = (levels - 1) * (slices + 1) + 1;
+			}
+		}
+
+		data.reset(new Blob(indices.size() * sizeof(unsigned short)));
+		data->copyfrom(indices.data(), indices.size() * sizeof(unsigned short));
+		std::shared_ptr<IndexBuffer> indexBuffer = std::make_shared<IndexBuffer>(IndexBuffer::IndexType::Index16, data);
+
+		DirectX::BoundingBox aabb;
+		DirectX::BoundingBox::CreateFromPoints(aabb, { -1.0f, -1.0f, 0.0f }, { 1.0f, 1.0f, 0.0f });
+		Mesh::DrawCall drawCall;
+		drawCall.drawMethod = Mesh::DrawMethod::DrawIndexed;
+		drawCall.primitiveTopology = Mesh::PrimitiveTopology::TriangleList;
+		drawCall.indexCount = (unsigned int)indices.size();
+
+		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(aabb, drawCall, vertexBuffer, indexBuffer);
+
+		m_cache["Sphere_PositionNormalTexcoord"] = mesh;
 
 		return mesh;
 	}

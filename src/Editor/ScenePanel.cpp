@@ -84,16 +84,6 @@ void ScenePanel::update()
 		ImGui::EndPopup();
 	}
 
-	if (ImGui::BeginPopup("AddNode"))
-	{
-		auto node = std::make_shared<Destiny::Node>();
-		node->set_name("New Node");
-		node->addToParent(Destiny::Engine::GetInstance()->getSceneManager()->getScene());
-
-		ImGui::CloseCurrentPopup();
-		ImGui::EndPopup();
-	}
-
 	if (ImGui::Button("AddComponent"))
 	{
 		ImGui::OpenPopup("AddComponent");
@@ -101,7 +91,9 @@ void ScenePanel::update()
 
 	if (ImGui::Button("AddNode"))
 	{
-		ImGui::OpenPopup("AddNode");
+		auto node = std::make_shared<Destiny::Node>();
+		node->set_name("New Node");
+		node->addToParent(Destiny::Engine::GetInstance()->getSceneManager()->getScene());
 	}
 
 	if (ImGui::Button("RemoveNode"))

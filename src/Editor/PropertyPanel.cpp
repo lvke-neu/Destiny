@@ -5,6 +5,7 @@
 #include "Math/Transform.h"
 #include "Graphics/GraphicsDefine.h"
 #include "Graphics/PbrMaterial.h"
+#include "Graphics/VisualComponent.h"
 #include "Imgui/imgui.h"
 #include "ImGui/imgui_internal.h"
 #include <d3d11.h>
@@ -133,6 +134,42 @@ void PropertyPanel::reflectProperty(const rttr::property& property, std::shared_
 	{
 		std::shared_ptr<Destiny::Material> material = nullptr;
 		property.get_value(object).convert(material);
+
+		if (!material)
+		{
+			if (ImGui::BeginPopup("AddMaterial"))
+			{
+				rttr::type base_type = rttr::type::get<Destiny::Material>();
+				auto derived_types = base_type.get_derived_classes();
+				for (const auto& derived_type : derived_types)
+				{
+					if (ImGui::Button(derived_type.get_name().data()))
+					{
+						auto variant = derived_type.create();
+						auto material = variant.get_value<std::shared_ptr<Destiny::Material>>();
+
+						if (std::dynamic_pointer_cast<Destiny::VisualComponent>(object))
+						{
+							std::dynamic_pointer_cast<Destiny::VisualComponent>(object)->set_material(material);
+						}
+
+						ImGui::CloseCurrentPopup();
+					}
+				}
+
+				if (ImGui::Button("Close"))
+				{
+					ImGui::CloseCurrentPopup();
+				}
+				ImGui::EndPopup();
+			}
+
+			if (ImGui::Button("AddMaterial"))
+			{
+				ImGui::OpenPopup("AddMaterial");
+			}
+		}
+
 		reflectMaterial(material);
 	}
 }

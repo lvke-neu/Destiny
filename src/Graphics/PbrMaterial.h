@@ -12,6 +12,13 @@ namespace Destiny
 		PbrMaterial();
 		virtual ~PbrMaterial() = default;
 	public:
+		static std::shared_ptr<PbrMaterial> Create_Default();
+		static std::shared_ptr<PbrMaterial> Create_Gold();
+		static std::shared_ptr<PbrMaterial> Create_Grass();
+		static std::shared_ptr<PbrMaterial> Create_Plastic();
+		static std::shared_ptr<PbrMaterial> Create_Rusted_Iron();
+		static std::shared_ptr<PbrMaterial> Create_Wall();
+	public: 
 		std::string get_albedo();
 		void set_albedo(std::string albedo);
 		std::string get_normal();

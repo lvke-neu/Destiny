@@ -30,8 +30,8 @@ namespace Destiny
 
 		//camera
 		auto cameraTransfrom = m_scene->getCameraNode()->get_transform();
-		cameraTransfrom.set_translation({ -1.17f, 1.4f, -2.6f });
-		cameraTransfrom.set_rotation({ -1.12f, 36.6f, 0.0f });
+		cameraTransfrom.set_translation({ 3.159f, 8.347f, 16.423f });
+		cameraTransfrom.set_rotation({ 25.980f, 179.901f, 1.0f });
 		m_scene->getCameraNode()->set_transform(cameraTransfrom);
 
 		//light gzimo
@@ -44,7 +44,7 @@ namespace Destiny
 			transform.set_rotation({ 0.0f, -1.0f, 1.0f });
 			m_scene->getDirectionLightNode()->addComponent(lightGzimoComponent);
 			m_scene->getDirectionLightNode()->set_transform(transform);
-			m_scene->getDirectionLight()->set_intensity(10.0f);
+			m_scene->getDirectionLight()->set_intensity(3.0f);
 		}
 
 		//plane
@@ -57,7 +57,7 @@ namespace Destiny
 			node->addToParent(m_scene);
 
 			Transform transform;
-			transform.set_scale({ 100.0f, 100.0f, 1.0f });
+			transform.set_scale({ 20.0f, 20.0f, 1.0f });
 			transform.set_rotation({ 90.0f, 0.0f, 0.0f });
 			transform.set_translation({ 0.0f, 0.0f, 0.0f });
 			node->set_transform(transform);

@@ -22,6 +22,78 @@ namespace Destiny
 		m_sampler->load(0);
 	}
 
+	std::shared_ptr<PbrMaterial> PbrMaterial::Create_Default()
+	{
+		auto pbrMaterial = std::make_shared<PbrMaterial>();
+		pbrMaterial->set_albedo("builtin://texture/pbr/default/albedo.png");
+		pbrMaterial->set_normal("builtin://texture/pbr/default/normal.png");
+		pbrMaterial->set_metallic("builtin://texture/pbr/default/metallic.png");
+		pbrMaterial->set_roughness("builtin://texture/pbr/default/roughness.png");
+		pbrMaterial->set_ao("builtin://texture/pbr/default/ao.png");
+
+		return pbrMaterial;
+	}
+
+	std::shared_ptr<PbrMaterial> PbrMaterial::Create_Gold()
+	{
+		auto pbrMaterial = std::make_shared<PbrMaterial>();
+		pbrMaterial->set_albedo("builtin://texture/pbr/gold/albedo.png");
+		pbrMaterial->set_normal("builtin://texture/pbr/gold/normal.png");
+		pbrMaterial->set_metallic("builtin://texture/pbr/gold/metallic.png");
+		pbrMaterial->set_roughness("builtin://texture/pbr/gold/roughness.png");
+		pbrMaterial->set_ao("builtin://texture/pbr/gold/ao.png");
+
+		return pbrMaterial;
+	}
+
+	std::shared_ptr<PbrMaterial> PbrMaterial::Create_Grass()
+	{
+		auto pbrMaterial = std::make_shared<PbrMaterial>();
+		pbrMaterial->set_albedo("builtin://texture/pbr/grass/albedo.png");
+		pbrMaterial->set_normal("builtin://texture/pbr/grass/normal.png");
+		pbrMaterial->set_metallic("builtin://texture/pbr/grass/metallic.png");
+		pbrMaterial->set_roughness("builtin://texture/pbr/grass/roughness.png");
+		pbrMaterial->set_ao("builtin://texture/pbr/grass/ao.png");
+
+		return pbrMaterial;
+	}
+
+	std::shared_ptr<PbrMaterial> PbrMaterial::Create_Plastic()
+	{
+		auto pbrMaterial = std::make_shared<PbrMaterial>();
+		pbrMaterial->set_albedo("builtin://texture/pbr/plastic/albedo.png");
+		pbrMaterial->set_normal("builtin://texture/pbr/plastic/normal.png");
+		pbrMaterial->set_metallic("builtin://texture/pbr/plastic/metallic.png");
+		pbrMaterial->set_roughness("builtin://texture/pbr/plastic/roughness.png");
+		pbrMaterial->set_ao("builtin://texture/pbr/plastic/ao.png");
+
+		return pbrMaterial;
+	}
+
+	std::shared_ptr<PbrMaterial> PbrMaterial::Create_Rusted_Iron()
+	{
+		auto pbrMaterial = std::make_shared<PbrMaterial>();
+		pbrMaterial->set_albedo("builtin://texture/pbr/rusted_iron/albedo.png");
+		pbrMaterial->set_normal("builtin://texture/pbr/rusted_iron/normal.png");
+		pbrMaterial->set_metallic("builtin://texture/pbr/rusted_iron/metallic.png");
+		pbrMaterial->set_roughness("builtin://texture/pbr/rusted_iron/roughness.png");
+		pbrMaterial->set_ao("builtin://texture/pbr/rusted_iron/ao.png");
+
+		return pbrMaterial;
+	}
+
+	std::shared_ptr<PbrMaterial> PbrMaterial::Create_Wall()
+	{
+		auto pbrMaterial = std::make_shared<PbrMaterial>();
+		pbrMaterial->set_albedo("builtin://texture/pbr/wall/albedo.png");
+		pbrMaterial->set_normal("builtin://texture/pbr/wall/normal.png");
+		pbrMaterial->set_metallic("builtin://texture/pbr/wall/metallic.png");
+		pbrMaterial->set_roughness("builtin://texture/pbr/wall/roughness.png");
+		pbrMaterial->set_ao("builtin://texture/pbr/wall/ao.png");
+
+		return pbrMaterial;
+	}
+
 	std::string PbrMaterial::get_albedo()
 	{
 		if (m_albedo && std::dynamic_pointer_cast<BlobHolder>(m_albedo->getCreationParam()))

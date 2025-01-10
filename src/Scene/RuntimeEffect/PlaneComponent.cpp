@@ -28,9 +28,10 @@ namespace Destiny
 
 		std::shared_ptr<RenderPass> renderPass = std::make_shared<RenderPass>();
 		renderPass->setRendererCategory(RendererCategory::ForwardOpaque);
+		renderPass->setMaterial(pbrMaterial);
 		renderPass->setRenderer(renderer);
 		renderPass->setRenderStates(renderStates);
-		renderPass->setMaterial(pbrMaterial);
+		
 
 		auto mesh = MeshProvider::Create_Plane_PositionNormalTexcoord();
 		mesh->load();

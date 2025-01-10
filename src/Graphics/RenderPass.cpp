@@ -105,6 +105,11 @@ namespace Destiny
 		//renderer->copy_constant_texture_sampler(m_renderer);
 		m_renderer.reset();
 		m_renderer = renderer;
+
+		if (m_material && m_renderer)
+		{
+			m_material->bind(m_renderer);
+		}
 	}
 
 	void RenderPass::setMaterial(std::shared_ptr<Material> material)

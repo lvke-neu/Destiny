@@ -2,6 +2,7 @@
 #include "Graphics/VisualScene.h"
 #include "Graphics/CameraController.h"
 #include "Graphics/Model/ModelComponent.h"
+#include "Graphics/DirectionLightComponent.h"
 #include "RuntimeEffect/BoxComponent.h"
 #include "RuntimeEffect/PlaneComponent.h"
 #include "RuntimeEffect/TestGeometryShaderComponent.h"
@@ -43,6 +44,7 @@ namespace Destiny
 			transform.set_rotation({ 0.0f, -1.0f, 1.0f });
 			m_scene->getDirectionLightNode()->addComponent(lightGzimoComponent);
 			m_scene->getDirectionLightNode()->set_transform(transform);
+			m_scene->getDirectionLight()->set_intensity(10.0f);
 		}
 
 		//plane

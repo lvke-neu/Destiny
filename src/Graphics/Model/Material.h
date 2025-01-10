@@ -11,20 +11,11 @@ namespace Destiny
 	public:
 		Material();
 	public:
-		unsigned int					c_has_c_ambient;
-		unsigned int					c_has_c_diffuse;
-		unsigned int					c_has_c_specular;
-		unsigned int					c_has_t_ambient;
-		unsigned int					c_has_t_diffuse;
-		unsigned int					c_has_t_specular;
-
-		DirectX::XMFLOAT4				c_ambient;
-		DirectX::XMFLOAT4				c_diffuse;
-		DirectX::XMFLOAT4				c_specular;
-
-		std::shared_ptr<Texture>		t_ambient;
-		std::shared_ptr<Texture>		t_diffuse;
-		std::shared_ptr<Texture>		t_specular;
+		std::shared_ptr<Texture>		t_albedo;
+		std::shared_ptr<Texture>		t_normal;
+		std::shared_ptr<Texture>		t_metallic;
+		std::shared_ptr<Texture>		t_roughness;
+		std::shared_ptr<Texture>		t_ao;
 
 		std::shared_ptr<SamplerState>	s_sampler;
 	};

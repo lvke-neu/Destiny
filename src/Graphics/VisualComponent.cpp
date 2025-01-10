@@ -1,5 +1,6 @@
 #include "VisualComponent.h"
 #include "CameraComponent.h"
+#include "DirectionLightComponent.h"
 #include "VisualScene.h"
 #include "RenderPass.h"
 #include "Renderer.h"
@@ -147,6 +148,8 @@ namespace Destiny
 		);
 
 		onLightDirectionChanged(visualScene->getDirectionLightNode()->get_transform().get_rotation());
+		onLightColorChanged(visualScene->getDirectionLight()->get_color());
+		onLightIntensityChanged(visualScene->getDirectionLight()->get_intensity());
 	}
 
 	void VisualComponent::onCameraViewChanged(const DirectX::XMMATRIX& cameraView, const DirectX::XMFLOAT3& eyePosition)
@@ -180,7 +183,26 @@ namespace Destiny
 		{
 			return;
 		}
-		m_visual->setConstant("g_direction", direction);
+		m_visual->setConstant("g_lightDirection", direction);
+		
+	}
+
+	void VisualComponent::onLightColorChanged(const Color32& color)
+	{
+		if (!m_visual)
+		{
+			return;
+		}
+		m_visual->setConstant("g_lightColor", color);
+	}
+
+	void VisualComponent::onLightIntensityChanged(float intensity)
+	{
+		if (!m_visual)
+		{
+			return;
+		}
+		m_visual->setConstant("g_lightIntensity", intensity);
 	}
 
 	RTTR_REGISTRATION

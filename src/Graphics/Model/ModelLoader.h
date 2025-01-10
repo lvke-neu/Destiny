@@ -13,6 +13,7 @@ namespace Destiny
 	class Mesh;
 	class Material;
 	class Model;
+	class Texture;
 	class ModelLoader : public AssetLoader
 	{
 	public:
@@ -20,6 +21,12 @@ namespace Destiny
 		virtual ~ModelLoader();
 	public:
 		virtual void loadAsset(std::shared_ptr<Asset> asset) override;
+	private:
+		static std::shared_ptr<Texture>		s_albedo;
+		static std::shared_ptr<Texture>		s_normal;
+		static std::shared_ptr<Texture>		s_metallic;
+		static std::shared_ptr<Texture>		s_roughness;
+		static std::shared_ptr<Texture>		s_ao;
 	private:
 		std::shared_ptr<Node>			copyTree(const aiScene* otherScene, std::shared_ptr<Node> myNodeParent, aiNode* otherNode, std::shared_ptr<Model> model);
 		std::shared_ptr<RenderPass>		getRenderPass();

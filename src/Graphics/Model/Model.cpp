@@ -62,31 +62,32 @@ namespace Destiny
 						{
 							material->s_sampler->load();
 						}
-						if (material->t_ambient)
+						if (material->t_albedo)
 						{
-							material->t_ambient->load();
+							material->t_albedo->load();
 						}
-						if (material->t_diffuse)
+						if (material->t_normal)
 						{
-							material->t_diffuse->load();
+							material->t_normal->load();
 						}
-						if (material->t_specular)
+						if (material->t_metallic)
 						{
-							material->t_specular->load();
+							material->t_metallic->load();
 						}
-						visual->setConstant("c_has_c_ambient", material->c_has_c_ambient);
-						visual->setConstant("c_has_c_diffuse", material->c_has_c_diffuse);
-						visual->setConstant("c_has_c_specular", material->c_has_c_specular);
-						visual->setConstant("c_has_t_ambient", material->c_has_t_ambient);
-						visual->setConstant("c_has_t_diffuse", material->c_has_t_diffuse);
-						visual->setConstant("c_has_t_specular", material->c_has_t_specular);
-						visual->setConstant("c_ambient", material->c_ambient);
-						visual->setConstant("c_diffuse", material->c_diffuse);
-						visual->setConstant("c_specular", material->c_specular);
-						
-						visual->setShaderResource("t_ambient", material->t_ambient);
-						visual->setShaderResource("t_diffuse", material->t_diffuse);
-						visual->setShaderResource("t_specular", material->t_specular);
+						if (material->t_roughness)
+						{
+							material->t_roughness->load();
+						}
+						if (material->t_ao)
+						{
+							material->t_ao->load();
+						}
+
+						visual->setShaderResource("t_albedo", material->t_albedo);
+						visual->setShaderResource("t_normal", material->t_normal);
+						visual->setShaderResource("t_metallic", material->t_metallic);
+						visual->setShaderResource("t_roughness", material->t_roughness);
+						visual->setShaderResource("t_ao", material->t_ao);
 						visual->setSamplerSate("s_sampler", material->s_sampler);
 					}
 

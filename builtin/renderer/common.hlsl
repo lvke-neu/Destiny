@@ -1,3 +1,5 @@
+#include "utility.hlsl"
+
 cbuffer cbView : register(b1)
 {
 	matrix g_view;  
@@ -15,5 +17,7 @@ cbuffer cbProj : register(b2)
 
 cbuffer cbLight : register(b3)
 {
-    float3 g_direction;
+	float3 g_lightDirection;
+	float4 g_lightColor;
+	float  g_lightIntensity;
 }

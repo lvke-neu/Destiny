@@ -23,9 +23,19 @@
 
 namespace Destiny
 {
+	std::shared_ptr<Texture>	ModelLoader::s_albedo = nullptr;
+	std::shared_ptr<Texture>	ModelLoader::s_normal = nullptr;
+	std::shared_ptr<Texture>	ModelLoader::s_metallic = nullptr;
+	std::shared_ptr<Texture>	ModelLoader::s_roughness = nullptr;
+	std::shared_ptr<Texture>	ModelLoader::s_ao = nullptr;
+
 	ModelLoader::ModelLoader()
 	{
-
+		s_albedo = Texture::Create("builtin://texture/pbr/default/albedo.png");
+		s_normal = Texture::Create("builtin://texture/pbr/default/normal.png");
+		s_metallic = Texture::Create("builtin://texture/pbr/default/metallic.png");
+		s_roughness = Texture::Create("builtin://texture/pbr/default/roughness.png");
+		s_ao = Texture::Create("builtin://texture/pbr/default/ao.png");
 	}
 
 	ModelLoader::~ModelLoader()
@@ -202,40 +212,57 @@ namespace Destiny
 		material->s_sampler->getSamplerDesc()->AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 		material->s_sampler->getSamplerDesc()->AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 
-		aiColor4D otherColor;
-		if (otherMaterial->Get(AI_MATKEY_COLOR_AMBIENT, otherColor) == aiReturn_SUCCESS)
-		{
-			material->c_has_c_ambient = true;
-			material->c_ambient = { otherColor.r, otherColor.g, otherColor.b, otherColor.a };
-		}
-		if (otherMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, otherColor) == aiReturn_SUCCESS)
-		{
-			material->c_has_c_diffuse = true;
-			material->c_diffuse = { otherColor.r, otherColor.g, otherColor.b, otherColor.a };
-		}
-		if (otherMaterial->Get(AI_MATKEY_COLOR_SPECULAR, otherColor) == aiReturn_SUCCESS)
-		{
-			material->c_has_c_specular = true;
-			material->c_specular = { otherColor.r, otherColor.g, otherColor.b, otherColor.a };
-		}
+		//aiColor4D otherColor;
+		//if (otherMaterial->Get(AI_MATKEY_COLOR_AMBIENT, otherColor) == aiReturn_SUCCESS)
+		//{
+		//	material->c_has_c_ambient = true;
+		//	material->c_ambient = { otherColor.r, otherColor.g, otherColor.b, otherColor.a };
+		//}
+		//if (otherMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, otherColor) == aiReturn_SUCCESS)
+		//{
+		//	material->c_has_c_diffuse = true;
+		//	material->c_diffuse = { otherColor.r, otherColor.g, otherColor.b, otherColor.a };
+		//}
+		//if (otherMaterial->Get(AI_MATKEY_COLOR_SPECULAR, otherColor) == aiReturn_SUCCESS)
+		//{
+		//	material->c_has_c_specular = true;
+		//	material->c_specular = { otherColor.r, otherColor.g, otherColor.b, otherColor.a };
+		//}
 	
 		aiString otherStr;
-		if (otherMaterial->GetTexture(aiTextureType_AMBIENT, 0, &otherStr) == aiReturn_SUCCESS)
-		{
-			material->c_has_t_ambient = true;
-			material->t_ambient = Texture::Create(otherStr.C_Str());
+		//if (otherMaterial->GetTexture(aiTextureType_AMBIENT, 0, &otherStr) == aiReturn_SUCCESS)
+		//{
+		//	material->c_has_t_ambient = true;
+		//	material->t_ambient = Texture::Create(otherStr.C_Str());
 
-		}
+		//}
 		if (otherMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &otherStr) == aiReturn_SUCCESS)
 		{
-			material->c_has_t_diffuse = true;
-			material->t_diffuse = Texture::Create(otherStr.C_Str());
+			material->t_albedo = Texture::Create(otherStr.C_Str());
+		}
+		else
+		{
+			material->t_albedo = s_albedo;
+		}
+		if (otherMaterial->GetTexture(aiTextureType_NORMALS, 0, &otherStr) == aiReturn_SUCCESS)
+		{
+			material->t_normal = Texture::Create(otherStr.C_Str());
+		}
+		else
+		{
+			material->t_normal = s_normal;
 		}
 		if (otherMaterial->GetTexture(aiTextureType_SPECULAR, 0, &otherStr) == aiReturn_SUCCESS)
 		{
-			material->c_has_t_specular = true;
-			material->t_specular = Texture::Create(otherStr.C_Str());
+			material->t_metallic = Texture::Create(otherStr.C_Str());
 		}
+		else
+		{
+			material->t_metallic = s_metallic;
+		}
+		material->t_roughness = s_roughness;
+		material->t_ao = s_ao;
+
 		return material;
 	}
 }

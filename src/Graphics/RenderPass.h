@@ -5,6 +5,7 @@
 
 namespace Destiny
 {
+	class Material;
 	class RenderStates;
 	class DrawParameters;
 	class Texture;
@@ -26,6 +27,7 @@ namespace Destiny
 	public:
 		std::shared_ptr<Renderer>		getRenderer();
 		void							setRenderer(std::shared_ptr<Renderer> renderer);
+		void							setMaterial(std::shared_ptr<Material> material);
 
 		std::shared_ptr<RenderStates>	getRenderStates();
 		void							setRenderStates(std::shared_ptr<RenderStates> renderStates);
@@ -44,6 +46,7 @@ namespace Destiny
 	private:
 		std::shared_ptr<Renderer>		m_renderer;
 		std::shared_ptr<RenderStates>	m_renderStates;
+		std::shared_ptr<Material>		m_material;
 		RendererCategory m_rendererCategory;
 	};
 

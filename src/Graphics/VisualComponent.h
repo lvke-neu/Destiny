@@ -39,6 +39,7 @@ namespace Destiny
 	public:
 		void						setRenderPass(std::shared_ptr<RenderPass> renderPass);
 		void						setMesh(std::shared_ptr<Mesh> mesh);
+		void						setMaterial(std::shared_ptr<Material> material);
 		std::shared_ptr<Visual>		getVisual();
 	private:
 		std::shared_ptr<Visual> m_visual;

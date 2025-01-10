@@ -10,10 +10,5 @@ namespace Destiny
 	public:
 		PlaneComponent();
 		virtual ~PlaneComponent() = default;
-	public:
-		GET(Color32, color);
-		void set_color(Color32 color);
-	private:
-		Color32 m_color;
 	};
 }

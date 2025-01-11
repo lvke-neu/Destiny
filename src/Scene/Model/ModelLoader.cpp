@@ -23,19 +23,9 @@
 
 namespace Destiny
 {
-	std::shared_ptr<Texture>	ModelLoader::s_albedo = nullptr;
-	std::shared_ptr<Texture>	ModelLoader::s_normal = nullptr;
-	std::shared_ptr<Texture>	ModelLoader::s_metallic = nullptr;
-	std::shared_ptr<Texture>	ModelLoader::s_roughness = nullptr;
-	std::shared_ptr<Texture>	ModelLoader::s_ao = nullptr;
-
 	ModelLoader::ModelLoader()
 	{
-		s_albedo = Texture::Create("builtin://texture/pbr/default/albedo.png");
-		s_normal = Texture::Create("builtin://texture/pbr/default/normal.png");
-		s_metallic = Texture::Create("builtin://texture/pbr/default/metallic.png");
-		s_roughness = Texture::Create("builtin://texture/pbr/default/roughness.png");
-		s_ao = Texture::Create("builtin://texture/pbr/default/ao.png");
+
 	}
 
 	ModelLoader::~ModelLoader()

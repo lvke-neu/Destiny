@@ -71,27 +71,30 @@ float4 PS(VertexOut pIn) : SV_Target
 	float3 Lo = float3(0.0f, 0.0f, 0.0f);
 
 	//radiance
-	float3 L = normalize(-g_lightDirection);
-	float3 H = normalize(V + L);
+    for (int i = 0; i < g_directionLightCount; i++)
+    {
+        float3 L = normalize(-g_directionLights[i].lightDirection);
+        float3 H = normalize(V + L);
 
-	float3 radiance = g_lightColor.xyz * g_lightIntensity;
+        float3 radiance = g_directionLights[i].lightColor.xyz * g_directionLights[i].lightIntensity;
 
 	// cook-torrance brdf
-	float NDF = DistributionGGX(N, H, roughness);
-	float G = GeometrySmith(N, V, L, roughness);
-	float3 F = fresnelSchlick(max(dot(H, V), 0.0f), F0);
+        float NDF = DistributionGGX(N, H, roughness);
+        float G = GeometrySmith(N, V, L, roughness);
+        float3 F = fresnelSchlick(max(dot(H, V), 0.0f), F0);
 
-	float3 nominator = NDF * G * F;
-	float denominator = 4.0f * max(dot(N, V), 0.0f) * max(dot(N, L), 0.0f) + 0.001f;
-	float3 specular = nominator / denominator;
+        float3 nominator = NDF * G * F;
+        float denominator = 4.0f * max(dot(N, V), 0.0f) * max(dot(N, L), 0.0f) + 0.001f;
+        float3 specular = nominator / denominator;
 
-	float3 kS = F;
-	float3 kD = float3(1.0f, 1.0f, 1.0f) - kS;
-	kD *= 1.0f - metallic;
+        float3 kS = F;
+        float3 kD = float3(1.0f, 1.0f, 1.0f) - kS;
+        kD *= 1.0f - metallic;
 
-	float NdotL = max(dot(N, L), 0.0f);
-    Lo += (kD * albedo / PI + specular /*+ t_environment.Sample(s_sampler, reflect(-V, N_)).xyz * kS*/) * radiance * NdotL;
+        float NdotL = max(dot(N, L), 0.0f);
+        Lo += (kD * albedo / PI + specular /*+ t_environment.Sample(s_sampler, reflect(-V, N_)).xyz * kS*/) * radiance * NdotL;
 
+    }
 
     float3 ambient = float3(0.03f, 0.03f, 0.03f) * albedo * ao;
 	float3 color = ambient + Lo;

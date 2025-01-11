@@ -32,6 +32,7 @@ namespace Destiny
 		void							fillDrawParameters(std::shared_ptr<DrawParameters> drawParameters);
 		void							copy_constant_texture_sampler(std::shared_ptr<Renderer> other);
 	public:
+		std::shared_ptr<ConstantBuffer> getConstant(const char* name);
 		template<typename T>
 		void							setConstant(const char* name, T value);
 		void							setShaderResource(const char* name, std::shared_ptr<Texture> texture);
@@ -63,6 +64,16 @@ namespace Destiny
 	inline std::shared_ptr<Blob> Renderer::getInputSignatureBlob()
 	{
 		return m_inputSignatureBlob;
+	}
+
+	inline std::shared_ptr<ConstantBuffer> Renderer::getConstant(const char* name)
+	{
+		auto iter = m_variableLinkConstant.find(name);
+		if (iter == m_variableLinkConstant.end())
+		{
+			return nullptr;
+		}
+		return m_constantBuffers[iter->second];
 	}
 
 	template<typename T>

@@ -34,6 +34,8 @@ namespace Destiny
 	public:
 		void								updateDrawParameters();
 		void								load(int priority = 1);
+
+		std::shared_ptr<ConstantBuffer>		getConstant(const char* name);
 		template<typename T>
 		void								setConstant(const char* name, T value);
 		void								setShaderResource(const char* name, std::shared_ptr<Texture> texture);
@@ -64,6 +66,15 @@ namespace Destiny
 	inline void Visual::setComponent(std::shared_ptr<Component> component)
 	{
 		m_component = component;
+	}
+
+	inline std::shared_ptr<ConstantBuffer> Visual::getConstant(const char* name)
+	{
+		if (m_renderPass)
+		{
+			return m_renderPass->getConstant(name);
+		}
+		return nullptr;
 	}
 
 	template<typename T>

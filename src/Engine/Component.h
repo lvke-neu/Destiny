@@ -22,7 +22,9 @@ namespace Destiny
 		virtual void			onAddToNode() {};
 		virtual void			onNodeTransformChanged() {};
 		virtual void			onEnterScene() {};
+		virtual void			onLeaveScene() {};
 		virtual void			onPropertyChanged(const std::string& property) {};
+			
 	protected:
 		std::shared_ptr<Node>	m_node;
 		std::shared_ptr<Scene>	m_scene;

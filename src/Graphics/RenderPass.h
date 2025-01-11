@@ -39,6 +39,8 @@ namespace Destiny
 
 		void							fillDrawParameters(std::shared_ptr<DrawParameters> drawParameters);
 		void							load(int priority = 1);
+		
+		std::shared_ptr<ConstantBuffer> getConstant(const char* name);
 		template<typename T>
 		void							setConstant(const char* name, T value);
 		void							setShaderResource(const char* name, std::shared_ptr<Texture> texture);
@@ -75,6 +77,15 @@ namespace Destiny
 	inline void RenderPass::setRendererCategory(RendererCategory rendererCategory)
 	{
 		m_rendererCategory = rendererCategory;
+	}
+
+	inline std::shared_ptr<ConstantBuffer> RenderPass::getConstant(const char* name)
+	{
+		if (m_renderer)
+		{
+			return m_renderer->getConstant(name);
+		}
+		return nullptr;
 	}
 
 	template<typename T>

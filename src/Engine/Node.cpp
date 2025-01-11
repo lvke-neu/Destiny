@@ -88,6 +88,7 @@ namespace Destiny
 		}
 
 		m_components.erase(iter);
+		onLeaveScene();
 	}
 
 	void Node::set_transform(Transform transform)
@@ -147,6 +148,34 @@ namespace Destiny
 					{
 						component->m_scene = scene;
 						component->onEnterScene();
+					}
+				}
+				for (const auto& childNode : m_childs)
+				{
+					if (childNode)
+					{
+						childNode->onEnterScene();
+					}
+				}
+				break;
+			}
+			tmpParent = tmpParent->m_parent;
+		}
+	}
+
+	void Node::onLeaveScene()
+	{
+		auto tmpParent = shared_from_this();
+		while (tmpParent)
+		{
+			auto scene = std::dynamic_pointer_cast<Scene>(tmpParent);
+			if (scene)
+			{
+				for (const auto& component : m_components)
+				{
+					if (component)
+					{
+						component->onLeaveScene();
 					}
 				}
 				for (const auto& childNode : m_childs)

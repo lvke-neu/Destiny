@@ -32,6 +32,7 @@ namespace Destiny
 		void												set_transform(Transform transform);
 	private:
 		void												onEnterScene();
+		void												onLeaveScene();
 		void												onNodeTransformChanged();
 	protected:
 		std::string											m_name;

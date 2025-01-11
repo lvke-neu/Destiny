@@ -13,30 +13,43 @@ namespace Destiny
 
 	void DirectionLightComponent::onEnterScene()
     {
-		traversalLightDirectionChanged(m_scene);
-		traversalLightColorChanged(m_scene);
-		traversalLightIntensityChanged(m_scene);
+		std::vector<DirectionLight> directionLights;
+		traversal(m_scene, directionLights);
+		traversalDirectionLightChanged(m_scene, directionLights);
     }
+
+	void DirectionLightComponent::onLeaveScene()
+	{
+		std::vector<DirectionLight> directionLights;
+		traversal(m_scene, directionLights, true);
+		traversalDirectionLightChanged(m_scene, directionLights);
+	}
 
     void DirectionLightComponent::onNodeTransformChanged()
     {
-		traversalLightDirectionChanged(m_scene);
+		std::vector<DirectionLight> directionLights;
+		traversal(m_scene, directionLights);
+		traversalDirectionLightChanged(m_scene, directionLights);
     }
 
 	void DirectionLightComponent::set_color(Color32 color)
 	{
 		m_color = color;
-		traversalLightColorChanged(m_scene);
+		std::vector<DirectionLight> directionLights;
+		traversal(m_scene, directionLights);
+		traversalDirectionLightChanged(m_scene, directionLights);
 	}
 
 	void DirectionLightComponent::set_intensity(float intensity)
 	{
 		m_intensity = intensity;
-		traversalLightIntensityChanged(m_scene);
+		std::vector<DirectionLight> directionLights;
+		traversal(m_scene, directionLights);
+		traversalDirectionLightChanged(m_scene, directionLights);
 	}
 
-	void DirectionLightComponent::traversalLightDirectionChanged(std::shared_ptr<Node> node)
-    {
+	void DirectionLightComponent::traversal(std::shared_ptr<Node> node, std::vector<DirectionLight>& directionLights, bool ignoreSelf)
+	{
 		if (!node)
 		{
 			return;
@@ -44,23 +57,24 @@ namespace Destiny
 
 		for (const auto& component : node->getComponents())
 		{
-			auto visualComponent = std::dynamic_pointer_cast<VisualComponent>(component);
-			if (visualComponent)
+			auto dlComponent = std::dynamic_pointer_cast<DirectionLightComponent>(component);
+			if (ignoreSelf && dlComponent == shared_from_this())
 			{
-				if (m_node)
-				{
-					visualComponent->onLightDirectionChanged(m_node->get_transform().get_rotation());
-				}
+				continue;
+			}
+			if (dlComponent && dlComponent->get_node())
+			{
+				directionLights.push_back({ {dlComponent->get_color()}, {dlComponent->get_node()->get_transform().get_rotation()}, dlComponent->get_intensity() });
 			}
 		}
 
 		for (const auto& childNode : node->getChilds())
 		{
-			traversalLightDirectionChanged(childNode);
+			traversal(childNode, directionLights, ignoreSelf);
 		}
-    }
+	}
 
-	void DirectionLightComponent::traversalLightColorChanged(std::shared_ptr<Node> node)
+	void DirectionLightComponent::traversalDirectionLightChanged(std::shared_ptr<Node> node, const std::vector<DirectionLight>& directionLights)
 	{
 		if (!node)
 		{
@@ -74,39 +88,14 @@ namespace Destiny
 			{
 				if (m_node)
 				{
-					visualComponent->onLightColorChanged(m_color);
+					visualComponent->onDirectionLightChanged(directionLights);
 				}
 			}
 		}
 
 		for (const auto& childNode : node->getChilds())
 		{
-			traversalLightColorChanged(childNode);
-		}
-	}
-
-	void DirectionLightComponent::traversalLightIntensityChanged(std::shared_ptr<Node> node)
-	{
-		if (!node)
-		{
-			return;
-		}
-
-		for (const auto& component : node->getComponents())
-		{
-			auto visualComponent = std::dynamic_pointer_cast<VisualComponent>(component);
-			if (visualComponent)
-			{
-				if (m_node)
-				{
-					visualComponent->onLightIntensityChanged(m_intensity);
-				}
-			}
-		}
-
-		for (const auto& childNode : node->getChilds())
-		{
-			traversalLightIntensityChanged(childNode);
+			traversalDirectionLightChanged(childNode, directionLights);
 		}
 	}
 

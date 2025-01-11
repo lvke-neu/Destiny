@@ -2,7 +2,7 @@
 #include "Visual.h"
 #include "Engine/Component.h"
 #include "Math/Color32.h"
-#include <DirectXMath.h>
+#include "GraphicsDefine.h"
 
 namespace Destiny
 {
@@ -35,9 +35,8 @@ namespace Destiny
 
 		void						onCameraViewChanged(const DirectX::XMMATRIX& cameraView, const DirectX::XMFLOAT3& eyePosition);
 		void						onCameraProjChanged(const DirectX::XMMATRIX& cameraProj, float viewportWidth, float viewportHeight);
-		void						onLightDirectionChanged(const DirectX::XMFLOAT3& direction);
-		void						onLightColorChanged(const Color32& color);
-		void						onLightIntensityChanged(float intensity);
+		void						onDirectionLightChanged(const std::vector<DirectionLight>& directionLights);
+		void						traversal(std::shared_ptr<Node> node, std::vector<DirectionLight>& directionLights);
 	public:
 		void						setRenderPass(std::shared_ptr<RenderPass> renderPass);
 		void						setMesh(std::shared_ptr<Mesh> mesh);

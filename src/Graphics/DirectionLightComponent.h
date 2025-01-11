@@ -1,10 +1,11 @@
 #pragma once
 #include "Engine/Component.h"
 #include "Math/Color32.h"
+#include "Graphics/GraphicsDefine.h"
 
 namespace Destiny
 {
-	class DirectionLightComponent : public Component
+	class DirectionLightComponent : public Component, public std::enable_shared_from_this<DirectionLightComponent>
 	{
 		RTTR_ENABLE(Component);
 	public:
@@ -12,6 +13,7 @@ namespace Destiny
 		virtual ~DirectionLightComponent() = default;
 	public:
 		virtual void		onEnterScene() override;
+		virtual void		onLeaveScene() override;
 		virtual void		onNodeTransformChanged() override;
 	public:
 		GET(Color32, color);
@@ -19,9 +21,8 @@ namespace Destiny
 		GET(float, intensity);
 		void set_intensity(float intensity);
 	private:
-		void				traversalLightDirectionChanged(std::shared_ptr<Node> node);
-		void				traversalLightColorChanged(std::shared_ptr<Node> node);
-		void				traversalLightIntensityChanged(std::shared_ptr<Node> node);
+		void				traversal(std::shared_ptr<Node> node, std::vector<DirectionLight>& directionLights, bool ignoreSelf = false);
+		void				traversalDirectionLightChanged(std::shared_ptr<Node> node, const std::vector<DirectionLight>& directionLights);
 	private:
 		Color32				m_color;
 		float				m_intensity;

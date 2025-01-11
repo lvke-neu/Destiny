@@ -46,7 +46,12 @@ namespace Destiny
 			return;
 		}
 
-		if (!m_constantBuffer ||!m_backData || !data || iter->second.size != data->getLength() || iter->second.offset + data->getLength() > m_byteWidth)
+		//if (!m_constantBuffer ||!m_backData || !data || iter->second.size != data->getLength() || iter->second.offset + data->getLength() > m_byteWidth)
+		//{
+		//	return;
+		//}
+
+		if (!m_constantBuffer || !m_backData || !data || iter->second.offset + data->getLength() > m_byteWidth)
 		{
 			return;
 		}

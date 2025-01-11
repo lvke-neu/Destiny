@@ -37,17 +37,75 @@ namespace Destiny
 		m_scene->getCameraNode()->set_transform(cameraTransfrom);
 		m_scene->getCameraController()->set_speed(15.0f);
 
-		//light gzimo
+		//light 
 		{
-			auto lightGzimoComponent = std::make_shared<PixelBillboardComponent>();
-			lightGzimoComponent->set_size({ 50.0f, 50.0f });
-			lightGzimoComponent->set_texturePath("builtin://texture/directional_light_icon.png");
-			Transform transform;
-			transform.set_translation({ 0.0f, 2.0f, -2.0f });
-			transform.set_rotation({ 0.0f, -1.0f, 1.0f });
-			m_scene->getDirectionLightNode()->addComponent(lightGzimoComponent);
-			m_scene->getDirectionLightNode()->set_transform(transform);
-			m_scene->getDirectionLight()->set_intensity(5.0f);
+			{
+				auto directionLightComponent = std::make_shared<DirectionLightComponent>();
+				directionLightComponent->set_intensity(3.0f);
+				auto directionLightNode = std::make_shared<Node>("DirectionLight");
+				directionLightNode->addComponent(directionLightComponent);
+				directionLightNode->addToParent(m_scene);
+				Transform transform;
+				transform.set_rotation({ -1.0f, 1.0f, 1.0f });
+				transform.set_translation({ 1.0f, -1.0f, -1.0f });
+				directionLightNode->set_transform(transform);
+
+				auto lightGzimoComponent = std::make_shared<PixelBillboardComponent>();
+				lightGzimoComponent->set_size({ 50.0f, 50.0f });
+				lightGzimoComponent->set_texturePath("builtin://texture/directional_light_icon.png");
+				directionLightNode->addComponent(lightGzimoComponent);
+			}
+
+
+			{
+				auto directionLightComponent = std::make_shared<DirectionLightComponent>();
+				directionLightComponent->set_intensity(3.0f);
+				auto directionLightNode = std::make_shared<Node>("DirectionLight");
+				directionLightNode->addComponent(directionLightComponent);
+				directionLightNode->addToParent(m_scene);
+				Transform transform;
+				transform.set_rotation({ 1.0f, 1.0f, 1.0f });
+				transform.set_translation({ -1.0f, -1.0f, -1.0f });
+				directionLightNode->set_transform(transform);
+				auto lightGzimoComponent = std::make_shared<PixelBillboardComponent>();
+				lightGzimoComponent->set_size({ 50.0f, 50.0f });
+				lightGzimoComponent->set_texturePath("builtin://texture/directional_light_icon.png");
+				directionLightNode->addComponent(lightGzimoComponent);
+			}
+			{
+				auto directionLightComponent = std::make_shared<DirectionLightComponent>();
+				directionLightComponent->set_intensity(3.0f);
+				auto directionLightNode = std::make_shared<Node>("DirectionLight");
+				directionLightNode->addComponent(directionLightComponent);
+				directionLightNode->addToParent(m_scene);
+				Transform transform;
+				transform.set_rotation({ 1.0f, -1.0f, 1.0f });
+				transform.set_translation({ -1.0f, 1.0f, -1.0f });
+				directionLightNode->set_transform(transform);
+				auto lightGzimoComponent = std::make_shared<PixelBillboardComponent>();
+				lightGzimoComponent->set_size({ 50.0f, 50.0f });
+				lightGzimoComponent->set_texturePath("builtin://texture/directional_light_icon.png");
+				directionLightNode->addComponent(lightGzimoComponent);
+			}
+
+			{
+				auto directionLightComponent = std::make_shared<DirectionLightComponent>();
+				directionLightComponent->set_intensity(3.0f);
+				auto directionLightNode = std::make_shared<Node>("DirectionLight");
+				directionLightNode->addComponent(directionLightComponent);
+				directionLightNode->addToParent(m_scene);
+				Transform transform;
+				transform.set_rotation({ -1.0f, -1.0f, 1.0f });
+				transform.set_translation({ 1.0f, 1.0f, -1.0f });
+				directionLightNode->set_transform(transform);
+				auto lightGzimoComponent = std::make_shared<PixelBillboardComponent>();
+				lightGzimoComponent->set_size({ 50.0f, 50.0f });
+				lightGzimoComponent->set_texturePath("builtin://texture/directional_light_icon.png");
+				directionLightNode->addComponent(lightGzimoComponent);
+
+			}
+
+
 		}
 
 		//plane

@@ -26,9 +26,6 @@ namespace Destiny
 		std::shared_ptr<CameraComponent>			getCamera();
 		std::shared_ptr<CameraController>			getCameraController();
 		std::shared_ptr<Node>						getCameraNode();
-
-		std::shared_ptr<DirectionLightComponent>	getDirectionLight();
-		std::shared_ptr<Node>						getDirectionLightNode();
 	public:
 		std::shared_ptr<BindRenderTargets>			m_bindRenderTargets;
 	private:
@@ -37,9 +34,6 @@ namespace Destiny
 		std::shared_ptr<CameraComponent>			m_camera;
 		std::shared_ptr<CameraController>			m_cameraController;
 		std::shared_ptr<Node>						m_cameraNode;
-
-		std::shared_ptr<DirectionLightComponent>	m_directionLight;
-		std::shared_ptr<Node>						m_directionLightNode;
 
 		bool										m_enableCull;
 	};
@@ -57,15 +51,5 @@ namespace Destiny
 	inline std::shared_ptr<Node> VisualScene::getCameraNode()
 	{
 		return m_cameraNode;
-	}
-
-	inline std::shared_ptr<DirectionLightComponent> VisualScene::getDirectionLight()
-	{
-		return m_directionLight;
-	}
-	
-	inline std::shared_ptr<Node> VisualScene::getDirectionLightNode()
-	{
-		return m_directionLightNode;
 	}
 }

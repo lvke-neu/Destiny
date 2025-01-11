@@ -164,9 +164,9 @@ namespace Destiny
 			visualScene->getCamera()->get_viewportWidth(), visualScene->getCamera()->get_viewportHeight()
 		);
 
-		onLightDirectionChanged(visualScene->getDirectionLightNode()->get_transform().get_rotation());
-		onLightColorChanged(visualScene->getDirectionLight()->get_color());
-		onLightIntensityChanged(visualScene->getDirectionLight()->get_intensity());
+		std::vector<DirectionLight> directionLights;
+		traversal(m_scene, directionLights);
+		onDirectionLightChanged(directionLights);
 	}
 
 	void VisualComponent::onCameraViewChanged(const DirectX::XMMATRIX& cameraView, const DirectX::XMFLOAT3& eyePosition)
@@ -194,32 +194,43 @@ namespace Destiny
 		m_visual->setConstant("g_rcpViewportHeight", 1.0f / viewportHeight);
 	}
 
-	void VisualComponent::onLightDirectionChanged(const DirectX::XMFLOAT3& direction)
+	void VisualComponent::onDirectionLightChanged(const std::vector<DirectionLight>& directionLights)
 	{
 		if (!m_visual)
 		{
 			return;
 		}
-		m_visual->setConstant("g_lightDirection", direction);
-		
+		m_visual->setConstant("g_directionLightCount", (int)directionLights.size());
+		auto constantBuffer = m_visual->getConstant("g_directionLights");
+		if (!constantBuffer)
+		{
+			return;
+		}
+		std::shared_ptr<Blob> blob = std::make_shared<Blob>(directionLights.size() * sizeof(DirectionLight));
+		blob->copyfrom((void*)directionLights.data(), blob->getLength());
+		constantBuffer->setVariable("g_directionLights", blob);
 	}
 
-	void VisualComponent::onLightColorChanged(const Color32& color)
+	void VisualComponent::traversal(std::shared_ptr<Node> node, std::vector<DirectionLight>& directionLights)
 	{
-		if (!m_visual)
+		if (!node)
 		{
 			return;
 		}
-		m_visual->setConstant("g_lightColor", color);
-	}
 
-	void VisualComponent::onLightIntensityChanged(float intensity)
-	{
-		if (!m_visual)
+		for (const auto& component : node->getComponents())
 		{
-			return;
+			auto dlComponent = std::dynamic_pointer_cast<DirectionLightComponent>(component);
+			if (dlComponent && dlComponent->get_node())
+			{
+				directionLights.push_back({{dlComponent->get_color()}, {dlComponent->get_node()->get_transform().get_rotation()}, dlComponent->get_intensity()});
+			}
 		}
-		m_visual->setConstant("g_lightIntensity", intensity);
+
+		for (const auto& childNode : node->getChilds())
+		{
+			traversal(childNode, directionLights);
+		}
 	}
 
 	RTTR_REGISTRATION

@@ -15,9 +15,15 @@ cbuffer cbProj : register(b2)
 	float g_rcpViewportHeight;
 }
 
+
+struct DirectionLight
+{
+    float4 lightColor;
+    float3 lightDirection;
+    float lightIntensity;
+};
 cbuffer cbLight : register(b3)
 {
-	float3 g_lightDirection;
-	float4 g_lightColor;
-	float  g_lightIntensity;
+    int g_directionLightCount;
+    DirectionLight g_directionLights[250];
 }

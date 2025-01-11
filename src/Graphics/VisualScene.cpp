@@ -40,11 +40,6 @@ namespace Destiny
 		m_cameraNode->addComponent(m_camera);
 		m_cameraNode->addComponent(m_cameraController);
 		m_cameraNode->addToParent(shared_from_this());
-
-		m_directionLight = std::make_shared<DirectionLightComponent>();
-		m_directionLightNode = std::make_shared<Node>("DirectionLight");
-		m_directionLightNode->addComponent(m_directionLight);
-		m_directionLightNode->addToParent(shared_from_this());
 	}
 
 	void VisualScene::uninitialize()

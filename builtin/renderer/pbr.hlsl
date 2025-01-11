@@ -37,6 +37,7 @@ Texture2D t_normal : register(t1);
 Texture2D t_metallic : register(t2);
 Texture2D t_roughness : register(t3);
 Texture2D t_ao : register(t4);
+TextureCube t_environment : register(t5);
 SamplerState s_sampler : register(s0);
 
 float4 PS(VertexOut pIn) : SV_Target
@@ -89,10 +90,10 @@ float4 PS(VertexOut pIn) : SV_Target
 	kD *= 1.0f - metallic;
 
 	float NdotL = max(dot(N, L), 0.0f);
-	Lo += (kD * albedo / PI + specular) * radiance * NdotL;
+    Lo += (kD * albedo / PI + specular /*+ t_environment.Sample(s_sampler, reflect(-V, N_)).xyz * kS*/) * radiance * NdotL;
 
 
-	float3 ambient = float3(0.03f, 0.03f, 0.03f) * albedo * ao;
+    float3 ambient = float3(0.03f, 0.03f, 0.03f) * albedo * ao;
 	float3 color = ambient + Lo;
 
 	color = color / (color + float3(1.0f, 1.0f, 1.0f));

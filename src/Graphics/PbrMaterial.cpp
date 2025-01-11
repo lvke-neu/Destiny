@@ -57,6 +57,18 @@ namespace Destiny
 		return pbrMaterial;
 	}
 
+	std::shared_ptr<PbrMaterial> PbrMaterial::Create_Peel()
+	{
+		auto pbrMaterial = std::make_shared<PbrMaterial>();
+		pbrMaterial->set_albedo("builtin://texture/pbr/peel/albedo.png");
+		pbrMaterial->set_normal("builtin://texture/pbr/peel/normal.png");
+		pbrMaterial->set_metallic("builtin://texture/pbr/peel/metallic.png");
+		pbrMaterial->set_roughness("builtin://texture/pbr/peel/roughness.png");
+		pbrMaterial->set_ao("builtin://texture/pbr/peel/ao.png");
+
+		return pbrMaterial;
+	}
+
 	std::shared_ptr<PbrMaterial> PbrMaterial::Create_Plastic()
 	{
 		auto pbrMaterial = std::make_shared<PbrMaterial>();

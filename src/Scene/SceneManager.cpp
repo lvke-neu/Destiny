@@ -35,6 +35,7 @@ namespace Destiny
 		cameraTransfrom.set_translation({ 0.764f, 7.887f, -12.614f });
 		cameraTransfrom.set_rotation({ 18.880f, 0.0f, 1.0f });
 		m_scene->getCameraNode()->set_transform(cameraTransfrom);
+		m_scene->getCameraController()->set_speed(10.0f);
 
 		//light gzimo
 		{
@@ -52,7 +53,7 @@ namespace Destiny
 		//plane
 		{
 			auto planeComponent = std::make_shared<PlaneComponent>();
-			planeComponent->set_material(PbrMaterial::Create_Default());
+			planeComponent->set_material(PbrMaterial::Create_Peel());
 
 			auto node = std::make_shared<Node>();
 			node->set_name("PlaneNode");

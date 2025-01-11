@@ -16,6 +16,7 @@ namespace Destiny
 		static std::shared_ptr<PbrMaterial> Create_Default();
 		static std::shared_ptr<PbrMaterial> Create_Gold();
 		static std::shared_ptr<PbrMaterial> Create_Grass();
+		static std::shared_ptr<PbrMaterial> Create_Peel();
 		static std::shared_ptr<PbrMaterial> Create_Plastic();
 		static std::shared_ptr<PbrMaterial> Create_Rusted_Iron();
 		static std::shared_ptr<PbrMaterial> Create_Wall();

@@ -159,6 +159,10 @@ namespace Destiny
 		if (m_renderer)
 		{
 			m_renderer->load(priority);
+			if (m_material && m_renderer)
+			{
+				m_material->bind(m_renderer);
+			}
 		}
 		if (m_renderStates)
 		{

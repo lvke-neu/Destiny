@@ -157,7 +157,7 @@ namespace Destiny
 			return m_cache["Sphere_PositionNormalTexcoord"];
 		}
 
-		const float radius = 1.0f;
+		const float radius = 0.5f;
 		const unsigned int levels = 20;
 		const unsigned int slices = 20;
 

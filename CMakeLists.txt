@@ -3,10 +3,6 @@ cmake_minimum_required(VERSION 3.14)
 project(Destiny)
 
 add_compile_definitions(UNICODE _UNICODE)
-if (WIN7_SYSTEM_SUPPORT MATCHES ON)
-    add_compile_definitions(_WIN32_WINNT=0x601)
-endif()
-
 add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/source-charset:utf-8>")
 
 ######################使用多处理器编译########################
@@ -48,7 +44,14 @@ add_subdirectory("3rdparty/assimp")
  ENDIF()
 
  #rttr
- #add_subdirectory("3rdparty/rttr")
+ set(BUILD_UNIT_TESTS OFF)
+ set(BUILD_EXAMPLES OFF)
+ set(BUILD_DOCUMENTATION OFF)
+ set(BUILD_INSTALLER OFF)
+ set(BUILD_PACKAGE OFF)
+ set(USE_PCH OFF)
+ set(CUSTOM_DOXYGEN_STYLE OFF)
+ add_subdirectory("3rdparty/rttr")
 
 file(GLOB SRC_MAIN src/*)
 file(GLOB SRC_ENGINE src/Engine/*)
@@ -85,7 +88,6 @@ source_group("builtin\\model" FILES ${BUILTIN_MODEL})
 
 include_directories("src/")
 include_directories("3rdparty/spdlog/include")
-include_directories("3rdparty/rttr/include")
 include_directories("3rdparty/freetype/include")
 
 link_directories("3rdparty/freetype/lib/")
@@ -105,7 +107,7 @@ ${SRC_SCENE}
 ${SRC_SCENE_RUNTIMEEFFECT}
 ${SRC_SCENE_MODEL}
 ${BUILTIN} ${BUILTIN_TEXTURE})
-target_link_libraries(Destiny assimp d3d11.lib dxgi.lib dxguid.lib D3DCompiler.lib d2d1.lib dwrite.lib winmm.lib)
+target_link_libraries(Destiny assimp rttr_core d3d11.lib dxgi.lib dxguid.lib D3DCompiler.lib d2d1.lib dwrite.lib winmm.lib)
 
 
 add_custom_command(TARGET Destiny
@@ -117,6 +119,12 @@ add_custom_command(TARGET Destiny
 add_custom_command(TARGET Destiny
                    POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy
-                   ${PROJECT_BINARY_DIR}/3rdparty/assimp/bin/Debug/assimp-${ASSIMP_MSVC_VERSION}-mt.dll
+                   ${PROJECT_BINARY_DIR}/3rdparty/assimp/bin/$(Configuration)/assimp-${ASSIMP_MSVC_VERSION}-mt.dll
                     ${PROJECT_BINARY_DIR}/$(Configuration)
                    COMMENT "Copying file assimp-${ASSIMP_MSVC_VERSION}-mt.dll to ${PROJECT_BINARY_DIR}/$(Configuration)")
+add_custom_command(TARGET Destiny
+                   POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy
+                   ${PROJECT_BINARY_DIR}/3rdparty/rttr/bin/$(Configuration)/rttr_core.dll
+                    ${PROJECT_BINARY_DIR}/$(Configuration)
+                   COMMENT "Copying file rttr_core.dll to ${PROJECT_BINARY_DIR}/$(Configuration)")

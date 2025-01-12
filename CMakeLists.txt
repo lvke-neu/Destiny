@@ -7,7 +7,7 @@ if (WIN7_SYSTEM_SUPPORT MATCHES ON)
     add_compile_definitions(_WIN32_WINNT=0x601)
 endif()
 
-add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
+add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/source-charset:utf-8>")
 
 ######################使用多处理器编译########################
 IF (WIN32)
@@ -22,6 +22,30 @@ IF (WIN32)
 				set(VS_STARTUP_PROJECT ${PROJECT_NAME})
 		ENDIF(MSVC)
 ENDIF()
+
+#assimp
+set(ASSIMP_BUILD_ZLIB ON)
+set(ASSIMP_BUILD_ASSIMP_TOOLS OFF)
+set(ASSIMP_BUILD_TESTS OFF)
+set(ASSIMP_INSTALL OFF)
+set(ASSIMP_INJECT_DEBUG_POSTFIX OFF)
+add_subdirectory("3rdparty/assimp")
+ IF(MSVC_TOOLSET_VERSION)
+    SET(MSVC_PREFIX "vc${MSVC_TOOLSET_VERSION}")
+    SET(ASSIMP_MSVC_VERSION ${MSVC_PREFIX})
+ ELSE()
+   IF(MSVC12)
+     SET(ASSIMP_MSVC_VERSION "vc120")
+   ELSEIF(MSVC14)
+     SET(ASSIMP_MSVC_VERSION "vc140")
+   ELSEIF(MSVC15)
+     SET(ASSIMP_MSVC_VERSION "vc141")
+   ELSEIF(MSV142)
+     SET(ASSIMP_MSVC_VERSION "vc142")
+   ELSEIF(MSVC143)
+     SET(ASSIMP_MSVC_VERSION "vc143")
+   ENDIF()
+ ENDIF()
 
 file(GLOB SRC_MAIN src/*)
 file(GLOB SRC_ENGINE src/Engine/*)
@@ -59,15 +83,16 @@ source_group("builtin\\model" FILES ${BUILTIN_MODEL})
 include_directories("src/")
 include_directories("3rdparty/spdlog/include")
 include_directories("3rdparty/rttr/include")
-include_directories("3rdparty/assimp/include")
 include_directories("3rdparty/freetype/include")
+include_directories("3rdparty/assimp/include")
+include_directories("${PROJECT_BINARY_DIR}/3rdparty/assimp/include")
 
 link_directories("3rdparty/rttr/lib/")
 link_libraries(rttr_core.lib)
-link_directories("3rdparty/assimp/lib/")
-link_libraries(assimp.lib)
 link_directories("3rdparty/freetype/lib/")
 link_libraries(freetype.lib)
+link_directories("${PROJECT_BINARY_DIR}/3rdparty/assimp/lib/${CMAKE_BUILD_TYPE}/")
+link_libraries(assimp-${ASSIMP_MSVC_VERSION}-mt.lib)
 
 add_executable(Destiny WIN32 ${SRC_MAIN} 
 ${SRC_ENGINE} ${SRC_ENGINE_DETAIL} 
@@ -80,8 +105,27 @@ ${SRC_Math}
 ${SRC_SCENE} 
 ${SRC_SCENE_RUNTIMEEFFECT}
 ${SRC_SCENE_MODEL}
-${BUILTIN} ${BUILTIN_RENDERER} ${BUILTIN_TEXTURE})
+${BUILTIN} ${BUILTIN_TEXTURE})
 target_link_libraries(Destiny d3d11.lib dxgi.lib dxguid.lib D3DCompiler.lib d2d1.lib dwrite.lib winmm.lib)
+add_dependencies(Destiny assimp)
 
-file(COPY builtin DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Debug)
-file(COPY builtin DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Release)
+add_custom_command(TARGET Destiny
+                   POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy_directory
+                   ${PROJECT_SOURCE_DIR}/builtin/ 
+                    ${PROJECT_BINARY_DIR}/Debug/builtin/
+                   COMMENT "Copying builtin to  ${PROJECT_BINARY_DIR}/Debug")
+
+
+add_custom_command(TARGET Destiny
+                   POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy
+                   ${PROJECT_BINARY_DIR}/3rdparty/assimp/bin/Debug/assimp-${ASSIMP_MSVC_VERSION}-mt.dll
+                    ${PROJECT_BINARY_DIR}/Debug
+                   COMMENT "Copying file assimp-${ASSIMP_MSVC_VERSION}-mt.dll to ${PROJECT_BINARY_DIR}/Debug")
+add_custom_command(TARGET Destiny
+                   POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy
+                   ${PROJECT_BINARY_DIR}/3rdparty/assimp/bin/Release/assimp-${ASSIMP_MSVC_VERSION}-mt.dll
+                    ${PROJECT_BINARY_DIR}/Release
+                   COMMENT "Copying file to assimp-${ASSIMP_MSVC_VERSION}-mt.dll ${PROJECT_BINARY_DIR}/Release")

@@ -19,6 +19,9 @@ IF (WIN32)
 		ENDIF(MSVC)
 ENDIF()
 
+#spdlog
+include_directories("3rdparty/spdlog/include")
+
 #assimp
 set(ASSIMP_BUILD_ZLIB ON)
 set(ASSIMP_BUILD_ASSIMP_TOOLS OFF)
@@ -43,15 +46,22 @@ add_subdirectory("3rdparty/assimp")
    ENDIF()
  ENDIF()
 
- #rttr
- set(BUILD_UNIT_TESTS OFF)
- set(BUILD_EXAMPLES OFF)
- set(BUILD_DOCUMENTATION OFF)
- set(BUILD_INSTALLER OFF)
- set(BUILD_PACKAGE OFF)
- set(USE_PCH OFF)
- set(CUSTOM_DOXYGEN_STYLE OFF)
- add_subdirectory("3rdparty/rttr")
+#rttr
+set(BUILD_UNIT_TESTS OFF)
+set(BUILD_EXAMPLES OFF)
+set(BUILD_DOCUMENTATION OFF)
+set(BUILD_INSTALLER OFF)
+set(BUILD_PACKAGE OFF)
+set(USE_PCH OFF)
+set(CUSTOM_DOXYGEN_STYLE OFF)
+add_subdirectory("3rdparty/rttr")
+#freetype
+set(FT_DISABLE_ZLIB ON)
+set(DISABLE_FORCE_DEBUG_POSTFIX ON)
+add_subdirectory("3rdparty/freetype")
+
+
+include_directories("src/")
 
 file(GLOB SRC_MAIN src/*)
 file(GLOB SRC_ENGINE src/Engine/*)
@@ -86,15 +96,6 @@ source_group("builtin\\renderer" FILES ${BUILTIN_RENDERER})
 source_group("builtin\\texture" FILES ${BUILTIN_TEXTURE})
 source_group("builtin\\model" FILES ${BUILTIN_MODEL})
 
-include_directories("src/")
-include_directories("3rdparty/spdlog/include")
-include_directories("3rdparty/freetype/include")
-
-link_directories("3rdparty/freetype/lib/")
-link_libraries(freetype.lib)
-link_directories("${PROJECT_BINARY_DIR}/3rdparty/assimp/lib/${CMAKE_BUILD_TYPE}/")
-
-
 add_executable(Destiny WIN32 ${SRC_MAIN} 
 ${SRC_ENGINE} ${SRC_ENGINE_DETAIL} 
 ${SRC_EDITOR} ${SRC_EDITOR_IMGUI} 
@@ -107,7 +108,7 @@ ${SRC_SCENE}
 ${SRC_SCENE_RUNTIMEEFFECT}
 ${SRC_SCENE_MODEL}
 ${BUILTIN} ${BUILTIN_TEXTURE})
-target_link_libraries(Destiny assimp rttr_core d3d11.lib dxgi.lib dxguid.lib D3DCompiler.lib d2d1.lib dwrite.lib winmm.lib)
+target_link_libraries(Destiny assimp rttr_core freetype d3d11.lib dxgi.lib dxguid.lib D3DCompiler.lib d2d1.lib dwrite.lib winmm.lib)
 
 
 add_custom_command(TARGET Destiny
@@ -128,3 +129,9 @@ add_custom_command(TARGET Destiny
                    ${PROJECT_BINARY_DIR}/3rdparty/rttr/bin/$(Configuration)/rttr_core.dll
                     ${PROJECT_BINARY_DIR}/$(Configuration)
                    COMMENT "Copying file rttr_core.dll to ${PROJECT_BINARY_DIR}/$(Configuration)")
+add_custom_command(TARGET Destiny
+                   POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy
+                   ${PROJECT_BINARY_DIR}/3rdparty/freetype/$(Configuration)/freetype.dll
+                    ${PROJECT_BINARY_DIR}/$(Configuration)
+                   COMMENT "Copying file freetype.dll to ${PROJECT_BINARY_DIR}/$(Configuration)")

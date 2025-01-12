@@ -121,11 +121,3 @@ add_custom_command(TARGET Destiny
                    ${PROJECT_BINARY_DIR}/3rdparty/assimp/bin/Debug/assimp-${ASSIMP_MSVC_VERSION}-mt.dll
                     ${PROJECT_BINARY_DIR}/$(Configuration)
                    COMMENT "Copying file assimp-${ASSIMP_MSVC_VERSION}-mt.dll to ${PROJECT_BINARY_DIR}/$(Configuration)")
-add_custom_command(TARGET Destiny
-                   POST_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E copy
-                   ${PROJECT_SOURCE_DIR}/imgui.ini
-                    ${PROJECT_BINARY_DIR}/$(Configuration)
-                   COMMENT "Copying ini to  ${PROJECT_BINARY_DIR}/$(Configuration)")
-
-set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT Destiny)

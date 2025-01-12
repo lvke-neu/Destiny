@@ -127,3 +127,5 @@ add_custom_command(TARGET Destiny
                    ${PROJECT_SOURCE_DIR}/imgui.ini
                     ${PROJECT_BINARY_DIR}/$(Configuration)
                    COMMENT "Copying ini to  ${PROJECT_BINARY_DIR}/$(Configuration)")
+
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT Destiny)

@@ -15,6 +15,8 @@
 #include "Graphics/SamplerState.h"
 #include "Graphics/Texture.h"
 #include "Graphics/PbrMaterial.h"
+#define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
+#include <experimental/filesystem>
 #include <queue>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -66,12 +68,12 @@ namespace Destiny
 		}
 
 		auto model = std::dynamic_pointer_cast<Model>(asset);
-		model->m_node = copyTree(aiScene, nullptr, aiScene->mRootNode, model);
+		model->m_node = copyTree(aiScene, nullptr, aiScene->mRootNode, model, creationParam->getPath());
 
 		asset->loadSucceeded__();
 	}
 
-	std::shared_ptr<Node> ModelLoader::copyTree(const aiScene* otherScene, std::shared_ptr<Node> myNodeParent, aiNode* otherNode, std::shared_ptr<Model> model)
+	std::shared_ptr<Node> ModelLoader::copyTree(const aiScene* otherScene, std::shared_ptr<Node> myNodeParent, aiNode* otherNode, std::shared_ptr<Model> model, const std::string& path)
 	{
 		if (!otherScene || !otherNode || !model)
 		{
@@ -88,7 +90,7 @@ namespace Destiny
 
 			visualComponent->setRenderPass(getRenderPass());
 			visualComponent->setMesh(getMesh(otherScene->mMeshes[otherNode->mMeshes[i]], model));
-			visualComponent->set_material(getMaterial(otherScene->mMaterials[otherScene->mMeshes[otherNode->mMeshes[i]]->mMaterialIndex]));
+			visualComponent->set_material(getMaterial(otherScene->mMaterials[otherScene->mMeshes[otherNode->mMeshes[i]]->mMaterialIndex], path));
 			myNode->addComponent(visualComponent);
 			
 			model->m_visualComponents.insert(visualComponent);
@@ -102,7 +104,7 @@ namespace Destiny
 
 		for (unsigned int i = 0; i < otherNode->mNumChildren; i++)
 		{
-			copyTree(otherScene, myNode, otherNode->mChildren[i], model);
+			copyTree(otherScene, myNode, otherNode->mChildren[i], model, path);
 		}
 
 		return myNode;
@@ -110,7 +112,7 @@ namespace Destiny
 
 	std::shared_ptr<RenderPass> ModelLoader::getRenderPass()
 	{
-		auto renderer = std::make_shared<Renderer>("builtin://renderer/pbr.hlsl");
+		auto renderer = std::make_shared<Renderer>("builtin://renderer/model.hlsl");
 		//renderer->load(0);
 
 		std::shared_ptr<RenderStates> renderStates = std::make_shared<RenderStates>();
@@ -190,7 +192,20 @@ namespace Destiny
 		return myMesh;
 	}
 
-	std::shared_ptr<Material> ModelLoader::getMaterial(aiMaterial* otherMaterial)
+	std::string reassembleStr(const aiString& otherStr, const std::string& path)
+	{
+		std::string stdString = otherStr.C_Str();
+		if (stdString.find("builtin://") == std::string::npos)
+		{
+			std::experimental::filesystem::path fullPath(path);
+			auto pos = path.find(fullPath.filename().string());
+			stdString = path.substr(0, pos) + stdString;
+		}
+
+		return stdString;
+	}
+
+	std::shared_ptr<Material> ModelLoader::getMaterial(aiMaterial* otherMaterial, const std::string& path)
 	{
 		if (!otherMaterial)
 		{
@@ -199,20 +214,31 @@ namespace Destiny
 
 		auto pbrMaterial = PbrMaterial::Create_Default();
 		aiString otherStr;
+		
 
 		if (otherMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &otherStr) == aiReturn_SUCCESS)
 		{
-			pbrMaterial->set_albedo(otherStr.C_Str());
+			pbrMaterial->set_albedo(reassembleStr(otherStr, path));
 		}
 
 		if (otherMaterial->GetTexture(aiTextureType_NORMALS, 0, &otherStr) == aiReturn_SUCCESS)
 		{
-			pbrMaterial->set_normal(otherStr.C_Str());
+			pbrMaterial->set_normal(reassembleStr(otherStr, path));
 		}
 
-		if (otherMaterial->GetTexture(aiTextureType_SPECULAR, 0, &otherStr) == aiReturn_SUCCESS)
+		if (otherMaterial->GetTexture(aiTextureType_METALNESS, 0, &otherStr) == aiReturn_SUCCESS)
 		{
-			pbrMaterial->set_metallic(otherStr.C_Str());
+			pbrMaterial->set_metallic(reassembleStr(otherStr, path));
+		}
+
+		if (otherMaterial->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, 0, &otherStr) == aiReturn_SUCCESS)
+		{
+			pbrMaterial->set_roughness(reassembleStr(otherStr, path));
+		}		
+		
+		if (otherMaterial->GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &otherStr) == aiReturn_SUCCESS)
+		{
+			pbrMaterial->set_ao(reassembleStr(otherStr, path));
 		}
 
 		return pbrMaterial;

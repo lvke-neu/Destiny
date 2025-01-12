@@ -9,7 +9,7 @@ endif()
 
 add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/source-charset:utf-8>")
 
-######################使用多处理器编译########################
+######################浣跨敤澶氬鐞嗗櫒缂栬瘧########################
 IF (WIN32)
 		if(MSVC)
 				OPTION(USE_MP "use multiple" ON)
@@ -46,6 +46,9 @@ add_subdirectory("3rdparty/assimp")
      SET(ASSIMP_MSVC_VERSION "vc143")
    ENDIF()
  ENDIF()
+
+ #rttr
+ #add_subdirectory("3rdparty/rttr")
 
 file(GLOB SRC_MAIN src/*)
 file(GLOB SRC_ENGINE src/Engine/*)
@@ -84,15 +87,11 @@ include_directories("src/")
 include_directories("3rdparty/spdlog/include")
 include_directories("3rdparty/rttr/include")
 include_directories("3rdparty/freetype/include")
-include_directories("3rdparty/assimp/include")
-include_directories("${PROJECT_BINARY_DIR}/3rdparty/assimp/include")
 
-link_directories("3rdparty/rttr/lib/")
-link_libraries(rttr_core.lib)
 link_directories("3rdparty/freetype/lib/")
 link_libraries(freetype.lib)
 link_directories("${PROJECT_BINARY_DIR}/3rdparty/assimp/lib/${CMAKE_BUILD_TYPE}/")
-link_libraries(assimp-${ASSIMP_MSVC_VERSION}-mt.lib)
+
 
 add_executable(Destiny WIN32 ${SRC_MAIN} 
 ${SRC_ENGINE} ${SRC_ENGINE_DETAIL} 
@@ -106,8 +105,8 @@ ${SRC_SCENE}
 ${SRC_SCENE_RUNTIMEEFFECT}
 ${SRC_SCENE_MODEL}
 ${BUILTIN} ${BUILTIN_TEXTURE})
-target_link_libraries(Destiny d3d11.lib dxgi.lib dxguid.lib D3DCompiler.lib d2d1.lib dwrite.lib winmm.lib)
-add_dependencies(Destiny assimp)
+target_link_libraries(Destiny assimp d3d11.lib dxgi.lib dxguid.lib D3DCompiler.lib d2d1.lib dwrite.lib winmm.lib)
+
 
 add_custom_command(TARGET Destiny
                    POST_BUILD

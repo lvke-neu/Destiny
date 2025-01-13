@@ -27,9 +27,12 @@ namespace Destiny
 
     void PointLightComponent::onNodeTransformChanged()
     {
-		std::vector<PointLight> pointLights;
-		traversal(m_scene, pointLights);
-		traversalPointLightChanged(m_scene, pointLights);
+		if (m_enable)
+		{
+			std::vector<PointLight> pointLights;
+			traversal(m_scene, pointLights);
+			traversalPointLightChanged(m_scene, pointLights);
+		}
     }
 
 	void PointLightComponent::onPropertyChanged(const std::string& property)
@@ -70,7 +73,7 @@ namespace Destiny
 			{
 				continue;
 			}
-			if (plComponent && plComponent->get_node())
+			if (plComponent && plComponent->get_enable() && plComponent->get_node())
 			{
 				pointLights.push_back({ {plComponent->get_color()}, {plComponent->get_node()->get_transform().get_translation()}, plComponent->get_intensity() });
 			}

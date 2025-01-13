@@ -70,7 +70,7 @@ namespace Destiny
 			{
 				continue;
 			}
-			if (dlComponent && dlComponent->get_node())
+			if (dlComponent && dlComponent->get_enable() && dlComponent->get_node())
 			{
 				directionLights.push_back({ {dlComponent->get_color()}, {dlComponent->get_node()->get_transform().get_rotation()}, dlComponent->get_intensity() });
 			}

@@ -70,7 +70,7 @@ namespace Destiny
 
 				auto scriptComponent = std::make_shared<ScriptComponent>();
 				scriptComponent->set_speed(5.0f);
-				scriptComponent->set_length(5.0f);
+				scriptComponent->set_length(10.0f);
 				scriptComponent->set_circularMotion(CircularMotion::X_Z);
 				pointLightNode->addComponent(scriptComponent);
 			}
@@ -93,7 +93,7 @@ namespace Destiny
 
 				auto scriptComponent = std::make_shared<ScriptComponent>();
 				scriptComponent->set_speed(5.0f);
-				scriptComponent->set_length(5.0f);
+				scriptComponent->set_length(10.0f);
 				scriptComponent->set_circularMotion(CircularMotion::Y_Z);
 				pointLightNode->addComponent(scriptComponent);
 			}
@@ -116,7 +116,7 @@ namespace Destiny
 
 				auto scriptComponent = std::make_shared<ScriptComponent>();
 				scriptComponent->set_speed(5.0f);
-				scriptComponent->set_length(5.0f);
+				scriptComponent->set_length(10.0f);
 				scriptComponent->set_circularMotion(CircularMotion::X_Y);
 				pointLightNode->addComponent(scriptComponent);
 			}

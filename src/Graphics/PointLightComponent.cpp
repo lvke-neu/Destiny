@@ -32,6 +32,14 @@ namespace Destiny
 		traversalPointLightChanged(m_scene, pointLights);
     }
 
+	void PointLightComponent::onPropertyChanged(const std::string& property)
+	{
+		if (property == "enable")
+		{
+			m_enable ? onEnterScene() : onLeaveScene();
+		}
+	}
+
 	void PointLightComponent::set_color(Color32 color)
 	{
 		m_color = color;

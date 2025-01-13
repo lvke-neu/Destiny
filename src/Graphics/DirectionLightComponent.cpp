@@ -32,6 +32,14 @@ namespace Destiny
 		traversalDirectionLightChanged(m_scene, directionLights);
     }
 
+	void DirectionLightComponent::onPropertyChanged(const std::string& property)
+	{
+		if (property == "enable")
+		{
+			m_enable ? onEnterScene() : onLeaveScene();
+		}
+	}
+
 	void DirectionLightComponent::set_color(Color32 color)
 	{
 		m_color = color;

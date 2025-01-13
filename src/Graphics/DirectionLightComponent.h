@@ -15,6 +15,7 @@ namespace Destiny
 		virtual void		onEnterScene() override;
 		virtual void		onLeaveScene() override;
 		virtual void		onNodeTransformChanged() override;
+		virtual void		onPropertyChanged(const std::string& property) override;
 	public:
 		GET(Color32, color);
 		void set_color(Color32 color);

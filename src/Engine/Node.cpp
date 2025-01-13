@@ -87,8 +87,8 @@ namespace Destiny
 			return;
 		}
 
-		m_components.erase(iter);
 		onLeaveScene();
+		m_components.erase(iter);
 	}
 
 	void Node::set_transform(Transform transform)

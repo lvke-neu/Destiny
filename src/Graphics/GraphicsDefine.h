@@ -24,4 +24,11 @@ namespace Destiny
 		DirectX::XMFLOAT3 lightDirection;
 		float lightIntensity;
 	};
+
+	struct PointLight
+	{
+		Color32 lightColor;
+		DirectX::XMFLOAT3 lightPosition;
+		float lightIntensity;
+	};
 }

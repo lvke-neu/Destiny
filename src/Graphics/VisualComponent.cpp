@@ -1,6 +1,7 @@
 #include "VisualComponent.h"
 #include "CameraComponent.h"
 #include "DirectionLightComponent.h"
+#include "PointLightComponent.h"
 #include "VisualScene.h"
 #include "RenderPass.h"
 #include "Renderer.h"
@@ -165,8 +166,11 @@ namespace Destiny
 		);
 
 		std::vector<DirectionLight> directionLights;
-		traversal(m_scene, directionLights);
+		traversalDirectionLight(m_scene, directionLights);
 		onDirectionLightChanged(directionLights);
+		std::vector<PointLight> pointLights;
+		traversalPointLight(m_scene, pointLights);
+		onPointLightChanged(pointLights);
 	}
 
 	void VisualComponent::onCameraViewChanged(const DirectX::XMMATRIX& cameraView, const DirectX::XMFLOAT3& eyePosition)
@@ -211,7 +215,7 @@ namespace Destiny
 		constantBuffer->setVariable("g_directionLights", blob);
 	}
 
-	void VisualComponent::traversal(std::shared_ptr<Node> node, std::vector<DirectionLight>& directionLights)
+	void VisualComponent::traversalDirectionLight(std::shared_ptr<Node> node, std::vector<DirectionLight>& directionLights)
 	{
 		if (!node)
 		{
@@ -229,7 +233,46 @@ namespace Destiny
 
 		for (const auto& childNode : node->getChilds())
 		{
-			traversal(childNode, directionLights);
+			traversalDirectionLight(childNode, directionLights);
+		}
+	}
+
+	void VisualComponent::onPointLightChanged(const std::vector<PointLight>& pointLights)
+	{
+		if (!m_visual)
+		{
+			return;
+		}
+		m_visual->setConstant("g_pointLightCount", (int)pointLights.size());
+		auto constantBuffer = m_visual->getConstant("g_pointLights");
+		if (!constantBuffer)
+		{
+			return;
+		}
+		std::shared_ptr<Blob> blob = std::make_shared<Blob>(pointLights.size() * sizeof(PointLight));
+		blob->copyfrom((void*)pointLights.data(), blob->getLength());
+		constantBuffer->setVariable("g_pointLights", blob);
+	}
+
+	void VisualComponent::traversalPointLight(std::shared_ptr<Node> node, std::vector<PointLight>& pointLights)
+	{
+		if (!node)
+		{
+			return;
+		}
+
+		for (const auto& component : node->getComponents())
+		{
+			auto plComponent = std::dynamic_pointer_cast<PointLightComponent>(component);
+			if (plComponent && plComponent->get_node())
+			{
+				pointLights.push_back({ {plComponent->get_color()}, {plComponent->get_node()->get_transform().get_translation()}, plComponent->get_intensity() });
+			}
+		}
+
+		for (const auto& childNode : node->getChilds())
+		{
+			traversalPointLight(childNode, pointLights);
 		}
 	}
 

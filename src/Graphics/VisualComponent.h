@@ -36,7 +36,9 @@ namespace Destiny
 		void						onCameraViewChanged(const DirectX::XMMATRIX& cameraView, const DirectX::XMFLOAT3& eyePosition);
 		void						onCameraProjChanged(const DirectX::XMMATRIX& cameraProj, float viewportWidth, float viewportHeight);
 		void						onDirectionLightChanged(const std::vector<DirectionLight>& directionLights);
-		void						traversal(std::shared_ptr<Node> node, std::vector<DirectionLight>& directionLights);
+		void						traversalDirectionLight(std::shared_ptr<Node> node, std::vector<DirectionLight>& directionLights);
+		void						onPointLightChanged(const std::vector<PointLight>& pointLights);
+		void						traversalPointLight(std::shared_ptr<Node> node, std::vector<PointLight>& pointLights);
 	public:
 		void						setRenderPass(std::shared_ptr<RenderPass> renderPass);
 		void						setMesh(std::shared_ptr<Mesh> mesh);

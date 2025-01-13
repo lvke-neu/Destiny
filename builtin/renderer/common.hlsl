@@ -22,8 +22,18 @@ struct DirectionLight
     float3 lightDirection;
     float lightIntensity;
 };
+
+struct PointLight
+{
+    float4 lightColor;
+    float3 lightPosition;
+    float lightIntensity;
+};
+
 cbuffer cbLight : register(b3)
 {
     int g_directionLightCount;
     DirectionLight g_directionLights[250];
+    int g_pointLightCount;
+    PointLight g_pointLights[250];
 }

@@ -1,0 +1,30 @@
+#pragma once
+#include "Engine/Component.h"
+#include "Math/Color32.h"
+#include "Graphics/GraphicsDefine.h"
+
+namespace Destiny
+{
+	class PointLightComponent : public Component, public std::enable_shared_from_this<PointLightComponent>
+	{
+		RTTR_ENABLE(Component);
+	public:
+		PointLightComponent();
+		virtual ~PointLightComponent() = default;
+	public:
+		virtual void		onEnterScene() override;
+		virtual void		onLeaveScene() override;
+		virtual void		onNodeTransformChanged() override;
+	public:
+		GET(Color32, color);
+		void set_color(Color32 color);
+		GET(float, intensity);
+		void set_intensity(float intensity);
+	private:
+		void				traversal(std::shared_ptr<Node> node, std::vector<PointLight>& pointLights, bool ignoreSelf = false);
+		void				traversalPointLightChanged(std::shared_ptr<Node> node, const std::vector<PointLight>& pointLights);
+	private:
+		Color32				m_color;
+		float				m_intensity;
+	};
+}

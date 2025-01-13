@@ -13,11 +13,13 @@ namespace Destiny
 {
 	PixelBillboardComponent::PixelBillboardComponent() :
 		m_size({ 150.0f, 150.0f }),
-		m_texturePath("")
+		m_texturePath(""),
+		m_color({ 1.0f, 1.0f, 1.0f, 1.0f })
 	{
 		auto renderer = std::make_shared<Renderer>("builtin://renderer/pixel_billboard.hlsl");
 		renderer->load(0);
 		renderer->setConstant("c_size", m_size);
+		renderer->setConstant("c_color", m_color);
 
 		auto samplerState = std::make_shared<SamplerState>();
 		samplerState->load();
@@ -60,11 +62,22 @@ namespace Destiny
 		}
 	}
 
+	void PixelBillboardComponent::set_color(Color32 color)
+	{
+		auto visual = getVisual();
+		if (visual)
+		{
+			m_color = color;
+			visual->setConstant("c_color", m_color);
+		}
+	}
+
 	RTTR_REGISTRATION
 	{
 		rttr::registration::class_<PixelBillboardComponent>("PixelBillboardComponent")
 			.constructor<>()
 			.property("size", &PixelBillboardComponent::get_size, &PixelBillboardComponent::set_size)
-			.property("texturePath", &PixelBillboardComponent::get_texturePath, &PixelBillboardComponent::set_texturePath);
+			.property("texturePath", &PixelBillboardComponent::get_texturePath, &PixelBillboardComponent::set_texturePath)
+			.property("color", &PixelBillboardComponent::get_color, &PixelBillboardComponent::set_color);
 	}
 }

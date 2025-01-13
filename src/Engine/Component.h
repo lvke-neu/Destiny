@@ -3,6 +3,8 @@
 
 namespace Destiny
 {
+	typedef std::function<void(const std::string& property)> PropertyCallBack;
+
 	class Scene;
 	class Node;
 	class Component : public Object

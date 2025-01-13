@@ -4,6 +4,7 @@ cbuffer cbPerObject : register(b0)
 {
 	matrix u_worldMatrix;
 	float2 c_size;
+    float4 c_color;
 }
 
 struct VertexIn
@@ -64,6 +65,6 @@ Texture2D	 t_texture : register(t0);
 SamplerState s_sampler : register(s0);
 float4 PS(VertexOut pIn) : SV_Target
 {
-	return t_texture.Sample(s_sampler, pIn.texcoord);
+    return t_texture.Sample(s_sampler, pIn.texcoord) * c_color;
 }
 

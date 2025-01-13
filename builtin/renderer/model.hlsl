@@ -100,7 +100,9 @@ float4 PS(VertexOut pIn) : SV_Target
         float3 L = normalize(g_pointLights[j].lightPosition - pIn.positionW.xyz);
         float3 H = normalize(V + L);
 
-        float3 radiance = g_pointLights[j].lightColor.xyz * g_pointLights[j].lightIntensity;
+        float distance = length(g_pointLights[j].lightPosition - pIn.positionW.xyz);
+        float attenuation = 1.0 / (distance * distance);
+        float3 radiance = g_pointLights[j].lightColor.xyz * g_pointLights[j].lightIntensity * attenuation;
 
 	// cook-torrance brdf
         float NDF = DistributionGGX(N, H, roughness);

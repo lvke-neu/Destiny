@@ -13,6 +13,7 @@
 #include "RuntimeEffect/InstancedComponet.h"
 #include "RuntimeEffect/TextComponent.h"
 #include "RuntimeEffect/SphereComponent.h"
+#include "RuntimeEffect/ScriptComponent.h"
 
 namespace Destiny
 {
@@ -53,18 +54,71 @@ namespace Destiny
 
 			{
 				auto pointLightComponent = std::make_shared<PointLightComponent>();
-				pointLightComponent->set_intensity(10.0f);
-				auto pointLightNode = std::make_shared<Node>("PointLight");
+				pointLightComponent->set_intensity(100.0f);
+				pointLightComponent->set_color({ 1.0f, 0.0f, 0.0f, 1.0f });
+				auto pointLightNode = std::make_shared<Node>("PointLight X_Z");
 				pointLightNode->addComponent(pointLightComponent);
 				pointLightNode->addToParent(m_scene);
 				Transform transform;
-				transform.set_translation({ -5.0f, 5.0f, 10.0f });
+				//transform.set_translation({ -5.0f, 5.0f, 5.0f });
 				pointLightNode->set_transform(transform);
 				auto lightGzimoComponent = std::make_shared<PixelBillboardComponent>();
 				lightGzimoComponent->set_size({ 50.0f, 50.0f });
 				lightGzimoComponent->set_texturePath("builtin://texture/directional_light_icon.png");
+				lightGzimoComponent->set_color({ 1.0f, 0.0f, 0.0f, 1.0f });
 				pointLightNode->addComponent(lightGzimoComponent);
 
+				auto scriptComponent = std::make_shared<ScriptComponent>();
+				scriptComponent->set_speed(5.0f);
+				scriptComponent->set_length(5.0f);
+				scriptComponent->set_circularMotion(CircularMotion::X_Z);
+				pointLightNode->addComponent(scriptComponent);
+			}
+
+			{
+				auto pointLightComponent = std::make_shared<PointLightComponent>();
+				pointLightComponent->set_intensity(100.0f);
+				pointLightComponent->set_color({ 0.0f, 1.0f, 0.0f, 1.0f });
+				auto pointLightNode = std::make_shared<Node>("PointLight Y_Z");
+				pointLightNode->addComponent(pointLightComponent);
+				pointLightNode->addToParent(m_scene);
+				Transform transform;
+				//transform.set_translation({ -5.0f, 5.0f, 5.0f });
+				pointLightNode->set_transform(transform);
+				auto lightGzimoComponent = std::make_shared<PixelBillboardComponent>();
+				lightGzimoComponent->set_size({ 50.0f, 50.0f });
+				lightGzimoComponent->set_texturePath("builtin://texture/directional_light_icon.png");
+				lightGzimoComponent->set_color({ 0.0f, 1.0f, 0.0f, 1.0f });
+				pointLightNode->addComponent(lightGzimoComponent);
+
+				auto scriptComponent = std::make_shared<ScriptComponent>();
+				scriptComponent->set_speed(5.0f);
+				scriptComponent->set_length(5.0f);
+				scriptComponent->set_circularMotion(CircularMotion::Y_Z);
+				pointLightNode->addComponent(scriptComponent);
+			}
+
+			{
+				auto pointLightComponent = std::make_shared<PointLightComponent>();
+				pointLightComponent->set_intensity(100.0f);
+				pointLightComponent->set_color({ 0.0f, 0.0f, 1.0f, 1.0f });
+				auto pointLightNode = std::make_shared<Node>("PointLight X_Y");
+				pointLightNode->addComponent(pointLightComponent);
+				pointLightNode->addToParent(m_scene);
+				Transform transform;
+				//transform.set_translation({ -5.0f, 5.0f, 5.0f });
+				pointLightNode->set_transform(transform);
+				auto lightGzimoComponent = std::make_shared<PixelBillboardComponent>();
+				lightGzimoComponent->set_size({ 50.0f, 50.0f });
+				lightGzimoComponent->set_texturePath("builtin://texture/directional_light_icon.png");
+				lightGzimoComponent->set_color({ 0.0f, 0.0f, 1.0f, 1.0f });
+				pointLightNode->addComponent(lightGzimoComponent);
+
+				auto scriptComponent = std::make_shared<ScriptComponent>();
+				scriptComponent->set_speed(5.0f);
+				scriptComponent->set_length(5.0f);
+				scriptComponent->set_circularMotion(CircularMotion::X_Y);
+				pointLightNode->addComponent(scriptComponent);
 			}
 		}
 

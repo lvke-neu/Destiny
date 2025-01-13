@@ -27,5 +27,6 @@ namespace Destiny
 		float m_speed;
 		float m_length;
 		CircularMotion m_circularMotion;
+		float m_sum;
 	};
 }

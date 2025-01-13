@@ -7,7 +7,8 @@ namespace Destiny
 	ScriptComponent::ScriptComponent() :
 		m_speed(1.0f),
 		m_length(1.0f),
-		m_circularMotion(CircularMotion::None)
+		m_circularMotion(CircularMotion::None),
+		m_sum(0.0f)
 	{
 
 	}
@@ -19,14 +20,13 @@ namespace Destiny
 			return;
 		}
 
-		static float sum = 0.0f;
-		sum += deltaTime;
-		if (sum > m_speed)
+		m_sum += deltaTime;
+		if (m_sum > m_speed)
 		{
-			sum = 0.0f;
+			m_sum = 0.0f;
 		}
 		
-		float radian = (sum / m_speed) * Math::PI * 2.0f ;
+		float radian = (m_sum / m_speed) * Math::PI * 2.0f ;
 
 		auto transform = m_node->get_transform();
 		auto translation = transform.get_translation();

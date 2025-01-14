@@ -50,6 +50,12 @@ namespace Destiny
 				Transform transform;
 				transform.set_rotation({ 0.0f, -1.0f, 1.0f });
 				directionLightNode->set_transform(transform);
+
+				auto lightGzimoComponent = std::make_shared<PixelBillboardComponent>();
+				lightGzimoComponent->set_size({ 50.0f, 50.0f });
+				lightGzimoComponent->set_texturePath("builtin://texture/directional_light_icon.png");
+				lightGzimoComponent->set_color({ 1.0f, 1.0f, 1.0f, 1.0f });
+				directionLightNode->addComponent(lightGzimoComponent);
 			}
 
 			{
@@ -64,7 +70,7 @@ namespace Destiny
 				pointLightNode->set_transform(transform);
 				auto lightGzimoComponent = std::make_shared<PixelBillboardComponent>();
 				lightGzimoComponent->set_size({ 50.0f, 50.0f });
-				lightGzimoComponent->set_texturePath("builtin://texture/directional_light_icon.png");
+				lightGzimoComponent->set_texturePath("builtin://texture/point_light_icon.png");
 				lightGzimoComponent->set_color({ 1.0f, 0.0f, 0.0f, 1.0f });
 				pointLightNode->addComponent(lightGzimoComponent);
 
@@ -87,7 +93,7 @@ namespace Destiny
 				pointLightNode->set_transform(transform);
 				auto lightGzimoComponent = std::make_shared<PixelBillboardComponent>();
 				lightGzimoComponent->set_size({ 50.0f, 50.0f });
-				lightGzimoComponent->set_texturePath("builtin://texture/directional_light_icon.png");
+				lightGzimoComponent->set_texturePath("builtin://texture/point_light_icon.png");
 				lightGzimoComponent->set_color({ 0.0f, 1.0f, 0.0f, 1.0f });
 				pointLightNode->addComponent(lightGzimoComponent);
 
@@ -110,7 +116,7 @@ namespace Destiny
 				pointLightNode->set_transform(transform);
 				auto lightGzimoComponent = std::make_shared<PixelBillboardComponent>();
 				lightGzimoComponent->set_size({ 50.0f, 50.0f });
-				lightGzimoComponent->set_texturePath("builtin://texture/directional_light_icon.png");
+				lightGzimoComponent->set_texturePath("builtin://texture/point_light_icon.png");
 				lightGzimoComponent->set_color({ 0.0f, 0.0f, 1.0f, 1.0f });
 				pointLightNode->addComponent(lightGzimoComponent);
 

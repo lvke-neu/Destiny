@@ -90,7 +90,7 @@ namespace Destiny
 		renderStates->getBlendStateDesc()->RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
 		renderStates->getBlendStateDesc()->RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 		renderStates->getBlendStateDesc()->RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-		renderStates->getDepthStencilStateDesc()->DepthEnable = false;
+		//renderStates->getDepthStencilStateDesc()->DepthEnable = false;
 
 		return renderStates;
 	}

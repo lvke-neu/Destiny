@@ -17,9 +17,6 @@ namespace Destiny
 		renderer->load(0);
 
 		auto sampler = std::make_shared<SamplerState>();
-		sampler->getSamplerDesc()->AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-		sampler->getSamplerDesc()->AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-		sampler->getSamplerDesc()->AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 		sampler->load();
 		auto texture = Texture::Create("builtin://texture/skybox/daylight.dds");
 		texture->load();

@@ -360,6 +360,25 @@ namespace Destiny
 				node->addToParent(m_scene);
 				node->set_transform(transform);
 			}
+		}		//text
+		{
+		auto textComponent = std::make_shared<TextComponent>();
+		textComponent->set_text("l v k e");
+		textComponent->set_size({ 150.0f, 50.0f });
+		textComponent->set_screenPosition({ -0.8f, 0.9f });
+		textComponent->set_color({ 1.0f, 1.0f, 0, 1.0f });
+
+		frameText = std::make_shared<TextComponent>();
+		frameText->set_size({ 400.0f, 50.0f });
+		frameText->set_screenPosition({ 0.0f, 0.8f });
+		frameText->set_color({ 0.0f, 1.0f, 0.0f, 1.0f });
+
+		auto node = std::make_shared<Node>();
+		node->set_name("Text");
+		node->addToParent(m_scene);
+		node->addComponent(textComponent);
+		node->addComponent(frameText);
+
 		}
 		
 		//skybox
@@ -370,26 +389,7 @@ namespace Destiny
 				node->addComponent(skyboxComponent);
 				node->addToParent(m_scene);
 		}
-		//text
-		{			
-			auto textComponent = std::make_shared<TextComponent>();
-			textComponent->set_text("l v k e");
-			textComponent->set_size({ 150.0f, 50.0f });
-			textComponent->set_screenPosition({ -0.8f, 0.9f });
-			textComponent->set_color({ 1.0f, 1.0f, 0, 1.0f });
 
-			frameText = std::make_shared<TextComponent>();
-			frameText->set_size({ 400.0f, 50.0f });
-			frameText->set_screenPosition({ 0.0f, 0.8f });
-			frameText->set_color({ 0.0f, 1.0f, 0.0f, 1.0f });
-
-			auto node = std::make_shared<Node>();
-			node->set_name("Text");
-			node->addToParent(m_scene);
-			node->addComponent(textComponent);
-			node->addComponent(frameText);
-
-		}
 	}
 
 	void SceneManager::uninitialize()

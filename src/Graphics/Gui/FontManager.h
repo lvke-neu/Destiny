@@ -1,6 +1,6 @@
 #pragma once
 #include "Engine/Utility.h"
-#include "Math/Color32.h"
+#include "Math/Color.h"
 #include <unordered_map>
 
 struct FT_LibraryRec_;

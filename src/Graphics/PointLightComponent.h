@@ -1,6 +1,6 @@
 #pragma once
 #include "Engine/Component.h"
-#include "Math/Color32.h"
+#include "Math/Color.h"
 #include "Graphics/GraphicsDefine.h"
 
 namespace Destiny
@@ -17,15 +17,15 @@ namespace Destiny
 		virtual void		onNodeTransformChanged() override;
 		virtual void		onPropertyChanged(const std::string& property) override;
 	public:
-		GET(Color32, color);
-		void set_color(Color32 color);
+		GET(Color, color);
+		void set_color(Color color);
 		GET(float, intensity);
 		void set_intensity(float intensity);
 	private:
 		void				traversal(std::shared_ptr<Node> node, std::vector<PointLight>& pointLights, bool ignoreSelf = false);
 		void				traversalPointLightChanged(std::shared_ptr<Node> node, const std::vector<PointLight>& pointLights);
 	private:
-		Color32				m_color;
+		Color				m_color;
 		float				m_intensity;
 	};
 }

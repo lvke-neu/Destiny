@@ -1,6 +1,6 @@
 #pragma once
 #include "Graphics/VisualComponent.h"
-#include "Math/Color32.h"
+#include "Math/Color.h"
 
 namespace Destiny
 {
@@ -15,11 +15,11 @@ namespace Destiny
 		void set_size(DirectX::XMFLOAT2 size);
 		GET(std::string, texturePath);
 		void set_texturePath(std::string texturePath);
-		GET(Color32, color);
-		void set_color(Color32 color);
+		GET(Color, color);
+		void set_color(Color color);
 	private:
 		DirectX::XMFLOAT2 m_size;
 		std::string m_texturePath;
-		Color32	m_color;
+		Color	m_color;
 	};
 }

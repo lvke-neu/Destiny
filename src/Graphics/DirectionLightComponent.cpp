@@ -40,7 +40,7 @@ namespace Destiny
 		}
 	}
 
-	void DirectionLightComponent::set_color(Color32 color)
+	void DirectionLightComponent::set_color(Color color)
 	{
 		m_color = color;
 		std::vector<DirectionLight> directionLights;

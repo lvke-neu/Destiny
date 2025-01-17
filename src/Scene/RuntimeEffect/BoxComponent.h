@@ -1,6 +1,6 @@
 #pragma once
 #include "Graphics/VisualComponent.h"
-#include "Math/Color32.h"
+#include "Math/Color.h"
 
 namespace Destiny
 {

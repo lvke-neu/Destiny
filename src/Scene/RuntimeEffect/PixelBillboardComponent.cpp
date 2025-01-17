@@ -62,7 +62,7 @@ namespace Destiny
 		}
 	}
 
-	void PixelBillboardComponent::set_color(Color32 color)
+	void PixelBillboardComponent::set_color(Color color)
 	{
 		auto visual = getVisual();
 		if (visual)

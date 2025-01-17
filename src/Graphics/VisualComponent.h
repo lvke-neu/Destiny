@@ -1,7 +1,7 @@
 #pragma once
 #include "Visual.h"
 #include "Engine/Component.h"
-#include "Math/Color32.h"
+#include "Math/Color.h"
 #include "GraphicsDefine.h"
 
 namespace Destiny

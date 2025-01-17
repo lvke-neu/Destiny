@@ -1,6 +1,6 @@
 #pragma once
 #include <DirectXMath.h>
-#include "Math/Color32.h"
+#include "Math/Color.h"
 
 namespace Destiny
 {
@@ -20,14 +20,14 @@ namespace Destiny
 	//Pay attention to memory alignment
 	struct DirectionLight
 	{
-		Color32 lightColor;
+		Color lightColor;
 		DirectX::XMFLOAT3 lightDirection;
 		float lightIntensity;
 	};
 
 	struct PointLight
 	{
-		Color32 lightColor;
+		Color lightColor;
 		DirectX::XMFLOAT3 lightPosition;
 		float lightIntensity;
 	};

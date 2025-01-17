@@ -13,11 +13,11 @@ namespace Destiny
 	};
 
 	// 0 - 255
-	class Color32
+	class Color
 	{
 	public:
-		Color32();
-		Color32(float r, float g, float b, float a);
+		Color();
+		Color(float r, float g, float b, float a);
 	public:
 		GET_SET(float, r);
 		GET_SET(float, g);

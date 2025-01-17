@@ -1,7 +1,7 @@
 #include "PropertyPanel.h"
 #include "Engine/Node.h"
 #include "Engine/Component.h"
-#include "Math/Color32.h"
+#include "Math/Color.h"
 #include "Math/Transform.h"
 #include "Graphics/GraphicsDefine.h"
 #include "Graphics/PbrMaterial.h"
@@ -102,7 +102,7 @@ void PropertyPanel::reflectProperty(const rttr::property& property, std::shared_
 	{
 		reflectFloat3(property, object);
 	}
-	else if (property.get_type() == rttr::type::get<Destiny::Color32>())
+	else if (property.get_type() == rttr::type::get<Destiny::Color>())
 	{
 		reflectColor(property, object);
 	}
@@ -381,7 +381,7 @@ void PropertyPanel::reflectFloat3(const rttr::property& property, std::shared_pt
 
 void PropertyPanel::reflectColor(const rttr::property& property, std::shared_ptr<Destiny::Object> object)
 {
-	Destiny::Color32 value;
+	Destiny::Color value;
 	property.get_value(object).convert(value);
 
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0, 0 });

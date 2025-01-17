@@ -43,7 +43,7 @@ namespace Destiny
 		}
 	}
 
-	void PointLightComponent::set_color(Color32 color)
+	void PointLightComponent::set_color(Color color)
 	{
 		m_color = color;
 		std::vector<PointLight> pointLights;

@@ -78,7 +78,7 @@ namespace Destiny
 		}
 	}
 
-	void TextComponent::set_color(Color32 color)
+	void TextComponent::set_color(Color color)
 	{
 		if (getVisual())
 		{

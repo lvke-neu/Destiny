@@ -53,7 +53,7 @@ namespace Destiny
 		switch (renderPass->getRendererCategory())
 		{
 		case RendererCategory::ForwardOpaque :
-			{
+		{
 			if (m_forwardOpaquePipeline->addGraphicsCommand(visual))
 			{
 				++m_graphicsStat.DrawCallCount;

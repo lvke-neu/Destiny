@@ -29,7 +29,6 @@ namespace Destiny
 		pbrMaterial->set_metallic("builtin://texture/pbr/default/metallic.png");
 		pbrMaterial->set_roughness("builtin://texture/pbr/default/roughness.png");
 		pbrMaterial->set_ao("builtin://texture/pbr/default/ao.png");
-		pbrMaterial->set_environment("builtin://texture/skybox/daylight.dds");
 
 		return pbrMaterial;
 	}
@@ -42,7 +41,6 @@ namespace Destiny
 		pbrMaterial->set_metallic("builtin://texture/pbr/gold/metallic.png");
 		pbrMaterial->set_roughness("builtin://texture/pbr/gold/roughness.png");
 		pbrMaterial->set_ao("builtin://texture/pbr/gold/ao.png");
-		pbrMaterial->set_environment("builtin://texture/skybox/daylight.dds");
 
 		return pbrMaterial;
 	}
@@ -55,7 +53,6 @@ namespace Destiny
 		pbrMaterial->set_metallic("builtin://texture/pbr/grass/metallic.png");
 		pbrMaterial->set_roughness("builtin://texture/pbr/grass/roughness.png");
 		pbrMaterial->set_ao("builtin://texture/pbr/grass/ao.png");
-		pbrMaterial->set_environment("builtin://texture/skybox/daylight.dds");
 
 		return pbrMaterial;
 	}
@@ -68,7 +65,6 @@ namespace Destiny
 		pbrMaterial->set_metallic("builtin://texture/pbr/peel/metallic.png");
 		pbrMaterial->set_roughness("builtin://texture/pbr/peel/roughness.png");
 		pbrMaterial->set_ao("builtin://texture/pbr/peel/ao.png");
-		pbrMaterial->set_environment("builtin://texture/skybox/daylight.dds");
 
 		return pbrMaterial;
 	}
@@ -81,7 +77,6 @@ namespace Destiny
 		pbrMaterial->set_metallic("builtin://texture/pbr/plastic/metallic.png");
 		pbrMaterial->set_roughness("builtin://texture/pbr/plastic/roughness.png");
 		pbrMaterial->set_ao("builtin://texture/pbr/plastic/ao.png");
-		pbrMaterial->set_environment("builtin://texture/skybox/daylight.dds");
 
 		return pbrMaterial;
 	}
@@ -94,7 +89,6 @@ namespace Destiny
 		pbrMaterial->set_metallic("builtin://texture/pbr/rusted_iron/metallic.png");
 		pbrMaterial->set_roughness("builtin://texture/pbr/rusted_iron/roughness.png");
 		pbrMaterial->set_ao("builtin://texture/pbr/rusted_iron/ao.png");
-		pbrMaterial->set_environment("builtin://texture/skybox/daylight.dds");
 
 		return pbrMaterial;
 	}
@@ -107,7 +101,6 @@ namespace Destiny
 		pbrMaterial->set_metallic("builtin://texture/pbr/wall/metallic.png");
 		pbrMaterial->set_roughness("builtin://texture/pbr/wall/roughness.png");
 		pbrMaterial->set_ao("builtin://texture/pbr/wall/ao.png");
-		pbrMaterial->set_environment("builtin://texture/skybox/daylight.dds");
 
 		return pbrMaterial;
 	}
@@ -197,23 +190,6 @@ namespace Destiny
 		update();
 	}
 
-	std::string PbrMaterial::get_environment()
-	{
-		if (m_environment && std::dynamic_pointer_cast<BlobHolder>(m_environment->getCreationParam()))
-		{
-			return std::dynamic_pointer_cast<BlobHolder>(m_environment->getCreationParam())->getPath();
-		}
-		return "";
-	}
-
-	void PbrMaterial::set_environment(std::string environment)
-	{
-		m_environment.reset();
-		m_environment = Texture::Create(environment.c_str());
-		m_environment->load();
-		update();
-	}
-
 	void PbrMaterial::update()
 	{
 		if (!m_renderer)
@@ -225,7 +201,6 @@ namespace Destiny
 		m_renderer->setShaderResource("t_metallic", m_metallic);
 		m_renderer->setShaderResource("t_roughness", m_roughness);
 		m_renderer->setShaderResource("t_ao", m_ao);
-		m_renderer->setShaderResource("t_environment", m_environment);
 		m_renderer->setSamplerSate("s_sampler", m_sampler);
 	}
 
@@ -237,8 +212,6 @@ namespace Destiny
 			.property("normal", &PbrMaterial::get_normal, &PbrMaterial::set_normal)
 			.property("metallic", &PbrMaterial::get_metallic, &PbrMaterial::set_metallic)
 			.property("roughness", &PbrMaterial::get_roughness, &PbrMaterial::set_roughness)
-			.property("ao", &PbrMaterial::get_ao, &PbrMaterial::set_ao)
-			.property("environment", &PbrMaterial::get_environment, &PbrMaterial::set_environment);
+			.property("ao", &PbrMaterial::get_ao, &PbrMaterial::set_ao);
 	}
-
 }

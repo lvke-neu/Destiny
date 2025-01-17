@@ -31,8 +31,6 @@ namespace Destiny
 		void set_roughness(std::string roughness);
 		std::string get_ao();
 		void set_ao(std::string ao);
-		std::string get_environment();
-		void set_environment(std::string environment);
 	private:
 		virtual void update() override;
 	private:
@@ -41,7 +39,6 @@ namespace Destiny
 		std::shared_ptr<Texture>		m_metallic;
 		std::shared_ptr<Texture>		m_roughness;
 		std::shared_ptr<Texture>		m_ao;
-		std::shared_ptr<Texture>		m_environment;
 
 		std::shared_ptr<SamplerState>	m_sampler;
 	};

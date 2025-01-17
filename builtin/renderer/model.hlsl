@@ -37,7 +37,6 @@ Texture2D t_normal : register(t1);
 Texture2D t_metallic : register(t2);
 Texture2D t_roughness : register(t3);
 Texture2D t_ao : register(t4);
-TextureCube t_environment : register(t5);
 SamplerState s_sampler : register(s0);
 
 float4 PS(VertexOut pIn) : SV_Target

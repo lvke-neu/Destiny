@@ -95,6 +95,70 @@ namespace Destiny
 		return mesh;
 	}
 
+	std::shared_ptr<Mesh> MeshProvider::Create_Box_Position()
+	{
+		auto iter = m_cache.find("Box_Position");
+		if (iter != m_cache.end())
+		{
+			return m_cache["Box_Position"];
+		}
+
+		std::shared_ptr<Blob> data = nullptr;
+		std::vector<Position3> vertices;
+
+		vertices.push_back({ {-0.5f, -0.5f, 0.5f} });
+		vertices.push_back({ {0.5f, -0.5f, 0.5f} });
+		vertices.push_back({ {0.5f, 0.5f, 0.5f} });
+		vertices.push_back({ {-0.5f, 0.5f, 0.5f} });
+
+		vertices.push_back({ {-0.5f, -0.5f, -0.5f} });
+		vertices.push_back({ {0.5f, -0.5f, -0.5f} });
+		vertices.push_back({ {0.5f, 0.5f, -0.5f} });
+		vertices.push_back({ {-0.5f, 0.5f, -0.5f} });
+		
+		data.reset(new Blob(vertices.size() * sizeof(Position3)));
+		data->copyfrom(vertices.data(), vertices.size() * sizeof(Position3));
+		std::shared_ptr<VertexBuffer> vertexBuffer = std::make_shared<VertexBuffer>(InputLayout::Create_Position3(), (unsigned int)sizeof(Position3), 0, data);
+
+		std::vector<unsigned short> indices;
+		indices.push_back(0); indices.push_back(1); indices.push_back(2);
+		indices.push_back(0); indices.push_back(2); indices.push_back(3);
+	
+		indices.push_back(4); indices.push_back(5); indices.push_back(6);
+		indices.push_back(4); indices.push_back(6); indices.push_back(7);
+	
+		indices.push_back(4); indices.push_back(0); indices.push_back(3);
+		indices.push_back(4); indices.push_back(3); indices.push_back(7);
+	
+		indices.push_back(1); indices.push_back(5); indices.push_back(6);
+		indices.push_back(1); indices.push_back(6); indices.push_back(2);
+	
+		indices.push_back(3); indices.push_back(2); indices.push_back(6);
+		indices.push_back(3); indices.push_back(6); indices.push_back(7);
+	
+		indices.push_back(0); indices.push_back(1); indices.push_back(5);
+		indices.push_back(0); indices.push_back(5); indices.push_back(4);
+
+
+		data.reset(new Blob(indices.size() * sizeof(unsigned short)));
+		data->copyfrom(indices.data(), indices.size() * sizeof(unsigned short));
+		std::shared_ptr<IndexBuffer> indexBuffer = std::make_shared<IndexBuffer>(IndexBuffer::IndexType::Index16, data);
+
+		DirectX::BoundingBox aabb;
+		DirectX::BoundingBox::CreateFromPoints(aabb, { -FLT_MAX,-FLT_MAX,-FLT_MAX }, { FLT_MAX,FLT_MAX,FLT_MAX });
+
+		Mesh::DrawCall drawCall;
+		drawCall.drawMethod = Mesh::DrawMethod::DrawIndexed;
+		drawCall.primitiveTopology = Mesh::PrimitiveTopology::TriangleList;
+		drawCall.indexCount = (unsigned int)indices.size();
+
+		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(aabb, drawCall, vertexBuffer, indexBuffer);
+
+		m_cache["Box_Position"] = mesh;
+
+		return mesh;
+	}
+
 	std::shared_ptr<Mesh> MeshProvider::Create_Plane_PositionNormalTexcoord()
 	{
 		auto iter = m_cache.find("Plane_PositionNormalTexcoord");

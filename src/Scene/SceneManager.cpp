@@ -14,6 +14,7 @@
 #include "RuntimeEffect/TextComponent.h"
 #include "RuntimeEffect/SphereComponent.h"
 #include "RuntimeEffect/ScriptComponent.h"
+#include "RuntimeEffect/SkyboxComponent.h"
 
 namespace Destiny
 {
@@ -360,7 +361,15 @@ namespace Destiny
 				node->set_transform(transform);
 			}
 		}
-
+		
+		//skybox
+		{
+				auto skyboxComponent = std::make_shared<SkyboxComponent>();
+				auto node = std::make_shared<Node>();
+				node->set_name("Skybox");
+				node->addComponent(skyboxComponent);
+				node->addToParent(m_scene);
+		}
 		//text
 		{			
 			auto textComponent = std::make_shared<TextComponent>();

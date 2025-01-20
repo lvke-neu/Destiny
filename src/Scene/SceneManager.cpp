@@ -385,7 +385,7 @@ namespace Destiny
 		//skybox
 		{
 			auto skyboxComponent = std::make_shared<SkyboxComponent>();
-			skyboxComponent->set_enable(false);
+			skyboxComponent->set_enable(true);
 			auto node = std::make_shared<Node>();
 			node->set_name("Skybox");
 			node->addComponent(skyboxComponent);

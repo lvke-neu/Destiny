@@ -11,14 +11,15 @@
 
 namespace Destiny
 {
-	SkyboxComponent::SkyboxComponent()
+	SkyboxComponent::SkyboxComponent() :
+		m_texture("builtin://texture/skybox/daylight.dds")
 	{
 		auto renderer = std::make_shared<Renderer>("builtin://renderer/skybox.hlsl");
 		renderer->load(0);
 
 		auto sampler = std::make_shared<SamplerState>();
 		sampler->load();
-		auto texture = Texture::Create("builtin://texture/skybox/daylight.dds");
+		auto texture = Texture::Create(m_texture.c_str());
 		texture->load();
 
 		renderer->setShaderResource("t_cube", texture);
@@ -41,9 +42,22 @@ namespace Destiny
 		setMesh(mesh);
 	}
 
+	void SkyboxComponent::set_texture(std::string texture)
+	{
+		auto visual = getVisual();
+		if (visual)
+		{
+			m_texture = texture;
+			auto texture = Texture::Create(m_texture.c_str());
+			texture->load();
+			visual->setShaderResource("t_cube", texture);
+		}
+	}
+
 	RTTR_REGISTRATION
 	{
 		rttr::registration::class_<SkyboxComponent>("SkyboxComponent")
-			.constructor<>();
+			.constructor<>()
+			.property("texture", &SkyboxComponent::get_texture, &SkyboxComponent::set_texture);
 	}
 }

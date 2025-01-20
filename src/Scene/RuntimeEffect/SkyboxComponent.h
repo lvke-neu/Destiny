@@ -10,5 +10,10 @@ namespace Destiny
 	public:
 		SkyboxComponent();
 		virtual ~SkyboxComponent() = default;
+	public:
+		GET(std::string, texture);
+		void set_texture(std::string texture);
+	private:
+		std::string m_texture;
 	};
 }

@@ -41,24 +41,24 @@ namespace Destiny
 		m_scene->getCameraNode()->set_transform(cameraTransfrom);
 		m_scene->getCameraController()->set_speed(15.0f);
 
-		////light 
+		//light 
 		//{
-		//	{
-		//		auto directionLightComponent = std::make_shared<DirectionLightComponent>();
-		//		directionLightComponent->set_intensity(10.0f);
-		//		auto directionLightNode = std::make_shared<Node>("DirectionLight");
-		//		directionLightNode->addComponent(directionLightComponent);
-		//		directionLightNode->addToParent(m_scene);
-		//		Transform transform;
-		//		transform.set_rotation({ 0.0f, -1.0f, 1.0f });
-		//		directionLightNode->set_transform(transform);
+			{
+				auto directionLightComponent = std::make_shared<DirectionLightComponent>();
+				directionLightComponent->set_intensity(10.0f);
+				auto directionLightNode = std::make_shared<Node>("DirectionLight");
+				directionLightNode->addComponent(directionLightComponent);
+				directionLightNode->addToParent(m_scene);
+				Transform transform;
+				transform.set_rotation({ 0.0f, -1.0f, 1.0f });
+				directionLightNode->set_transform(transform);
 
-		//		auto lightGzimoComponent = std::make_shared<PixelBillboardComponent>();
-		//		lightGzimoComponent->set_size({ 50.0f, 50.0f });
-		//		lightGzimoComponent->set_texturePath("builtin://texture/directional_light_icon.png");
-		//		lightGzimoComponent->set_color({ 1.0f, 1.0f, 1.0f, 1.0f });
-		//		directionLightNode->addComponent(lightGzimoComponent);
-		//	}
+				auto lightGzimoComponent = std::make_shared<PixelBillboardComponent>();
+				lightGzimoComponent->set_size({ 50.0f, 50.0f });
+				lightGzimoComponent->set_texturePath("builtin://texture/directional_light_icon.png");
+				lightGzimoComponent->set_color({ 1.0f, 1.0f, 1.0f, 1.0f });
+				directionLightNode->addComponent(lightGzimoComponent);
+			}
 
 		//	{
 		//		auto pointLightComponent = std::make_shared<PointLightComponent>();
@@ -130,22 +130,22 @@ namespace Destiny
 		//	}
 		//}
 
-		////plane
-		//{
-		//	auto planeComponent = std::make_shared<PlaneComponent>();
-		//	planeComponent->set_material(PbrMaterial::Create_Peel());
+		//plane
+		{
+			auto planeComponent = std::make_shared<PlaneComponent>();
+			planeComponent->set_material(PbrMaterial::Create_Peel());
 
-		//	auto node = std::make_shared<Node>();
-		//	node->set_name("PlaneNode");
-		//	node->addComponent(planeComponent);
-		//	node->addToParent(m_scene);
+			auto node = std::make_shared<Node>();
+			node->set_name("PlaneNode");
+			node->addComponent(planeComponent);
+			node->addToParent(m_scene);
 
-		//	Transform transform;
-		//	transform.set_scale({ 20.0f, 20.0f, 1.0f });
-		//	transform.set_rotation({ 90.0f, 0.0f, 0.0f });
-		//	transform.set_translation({ 0.0f, 0.0f, 0.0f });
-		//	node->set_transform(transform);
-		//}
+			Transform transform;
+			transform.set_scale({ 20.0f, 20.0f, 1.0f });
+			transform.set_rotation({ 90.0f, 0.0f, 0.0f });
+			transform.set_translation({ 0.0f, 0.0f, 0.0f });
+			node->set_transform(transform);
+		}
 		////sphere
 		//{
 		//	auto sphereNode = std::make_shared<Node>();

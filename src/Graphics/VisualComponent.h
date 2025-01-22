@@ -42,6 +42,7 @@ namespace Destiny
 	public:
 		void						setRenderPass(std::shared_ptr<RenderPass> renderPass);
 		void						setMesh(std::shared_ptr<Mesh> mesh);
+		std::shared_ptr<Mesh>		getMesh();
 		std::shared_ptr<Visual>		getVisual();
 	private:
 		std::shared_ptr<Visual> m_visual;
@@ -61,6 +62,15 @@ namespace Destiny
 		{
 			m_visual->setMesh(mesh);
 		}
+	}
+
+	inline std::shared_ptr<Mesh> VisualComponent::getMesh()
+	{
+		if (m_visual)
+		{
+			return m_visual->getMesh();
+		}
+		return nullptr;
 	}
 
 	inline std::shared_ptr<Visual> VisualComponent::getVisual()

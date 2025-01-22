@@ -121,4 +121,9 @@ namespace Destiny
 			m_vertexBuffer->load(0);
 		}
 	}
+
+	void Mesh::modifyDrawCall(const DrawCall& drawCall)
+	{
+		m_drawCall = drawCall;
+	}
 }

@@ -14,6 +14,7 @@ namespace Destiny
 		virtual ~VertexBuffer();
 	public:
 		virtual void doLoad() override;
+		void modify(std::shared_ptr<Blob> data);
 	private:
 		std::shared_ptr<InputLayout>	m_inputLayout;
 		unsigned int					m_stride;

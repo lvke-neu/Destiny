@@ -107,4 +107,18 @@ namespace Destiny
 			drawParameters->instanceCount = m_instanceBuffer->m_instanceCount;
 		}
 	}
+
+	void Mesh::modifyVertexBuffer(std::shared_ptr<VertexBuffer> vertexBuffer)
+	{
+		if (!vertexBuffer)
+		{
+			return;
+		}
+
+		m_vertexBuffer = vertexBuffer;
+		if (m_vertexBuffer->isLoadingPending())
+		{
+			m_vertexBuffer->load(0);
+		}
+	}
 }

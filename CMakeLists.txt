@@ -74,6 +74,7 @@ file(GLOB SRC_GRAPHICS_GUI src/Graphics/Gui/*)
 file(GLOB SRC_Math src/Math/*)
 file(GLOB SRC_SCENE src/Scene/*)
 file(GLOB SRC_SCENE_RUNTIMEEFFECT src/Scene/RuntimeEffect/*)
+file(GLOB SRC_SCENE_RUNTIMEEFFECT_PARTICLE src/Scene/RuntimeEffect/Particle/*)
 file(GLOB SRC_SCENE_MODEL src/Scene/Model/*)
 file(GLOB BUILTIN_RENDERER builtin/renderer/*)
 file(GLOB BUILTIN_TEXTURE builtin/texture/*)
@@ -91,6 +92,7 @@ source_group("Graphics\\Gui" FILES ${SRC_GRAPHICS_GUI})
 source_group("Math" FILES ${SRC_Math})
 source_group("Scene" FILES ${SRC_SCENE})
 source_group("Scene\\RuntimeEffect" FILES ${SRC_SCENE_RUNTIMEEFFECT})
+source_group("Scene\\RuntimeEffect\\Particle" FILES ${SRC_SCENE_RUNTIMEEFFECT_PARTICLE})
 source_group("Scene\\Model" FILES ${SRC_SCENE_MODEL})
 source_group("builtin\\renderer" FILES ${BUILTIN_RENDERER})
 source_group("builtin\\texture" FILES ${BUILTIN_TEXTURE})
@@ -106,6 +108,7 @@ ${SRC_GRAPHICS_GUI}
 ${SRC_Math} 
 ${SRC_SCENE} 
 ${SRC_SCENE_RUNTIMEEFFECT}
+${SRC_SCENE_RUNTIMEEFFECT_PARTICLE}
 ${SRC_SCENE_MODEL}
 ${BUILTIN} ${BUILTIN_TEXTURE})
 target_link_libraries(Destiny assimp rttr_core freetype d3d11.lib dxgi.lib dxguid.lib D3DCompiler.lib d2d1.lib dwrite.lib winmm.lib)

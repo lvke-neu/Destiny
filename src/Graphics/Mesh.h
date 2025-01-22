@@ -23,6 +23,7 @@ namespace Destiny
 		{
 			Undefined		= 0,
 			PointList		= 1,
+			LineList		= 2,
 			TriangleList	= 4
 		};
 		struct DrawCall
@@ -44,6 +45,7 @@ namespace Destiny
 		DirectX::BoundingBox			getBoundingBox();
 		void							setBoundingBox(const DirectX::BoundingBox& aabb);
 		DrawCall						getDrawCall();
+		void							modifyVertexBuffer(std::shared_ptr<VertexBuffer> vertexBuffer);
 	private:
 		DirectX::BoundingBox			m_aabb;
 		DrawCall						m_drawCall;

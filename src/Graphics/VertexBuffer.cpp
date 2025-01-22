@@ -31,12 +31,14 @@ namespace Destiny
 			return;
 		}
 
+		SAFE_RELEASE(m_vertexBuffer);
+
 		D3D11_BUFFER_DESC ibd;
 		ZeroMemory(&ibd, sizeof(ibd));
-		ibd.Usage = D3D11_USAGE_IMMUTABLE;
+		ibd.Usage = D3D11_USAGE_DYNAMIC;
 		ibd.ByteWidth = (UINT)m_data->getLength();
 		ibd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		ibd.CPUAccessFlags = 0;
+		ibd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
 		D3D11_SUBRESOURCE_DATA InitData;
 		ZeroMemory(&InitData, sizeof(InitData));
@@ -55,5 +57,15 @@ namespace Destiny
 			LOG_ERROR("Thread {0}, IndexBuffer load failed", std::to_string((*(uint32_t*)&std::this_thread::get_id())));
 			m_data.reset();
 		}
+	}
+
+	void VertexBuffer::modify(std::shared_ptr<Blob> data)
+	{
+		if (!data)
+		{
+			return;
+		}
+		m_data = data;
+		doLoad();
 	}
 }

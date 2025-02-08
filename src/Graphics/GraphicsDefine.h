@@ -8,7 +8,7 @@ namespace Destiny
 	{
 		None,
 		ForwardOpaque,
-		ForwardTransparent,
+		Transparent,
 		Gui
 	};
 

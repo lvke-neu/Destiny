@@ -10,7 +10,7 @@ namespace Destiny
 		(
 			rttr::value("None", RendererCategory::None),
 			rttr::value("ForwardOpaque", RendererCategory::ForwardOpaque),
-			rttr::value("ForwardTransparent", RendererCategory::ForwardTransparent),
+			rttr::value("Transparent", RendererCategory::Transparent),
 			rttr::value("Gui", RendererCategory::Gui)
 		);
 

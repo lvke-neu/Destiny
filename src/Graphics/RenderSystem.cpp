@@ -66,7 +66,7 @@ namespace Destiny
 			return;
 			}
 
-		case RendererCategory::ForwardTransparent :
+		case RendererCategory::Transparent:
 		{
 			if (m_forwardTransparentPipeline->addGraphicsCommand(visual))
 			{

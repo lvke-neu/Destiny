@@ -33,7 +33,7 @@ struct PointLight
 cbuffer cbLight : register(b3)
 {
     int g_directionLightCount;
-    DirectionLight g_directionLights[250];
+    DirectionLight g_directionLights[1000];
     int g_pointLightCount;
-    PointLight g_pointLights[250];
+    PointLight g_pointLights[1000];
 }

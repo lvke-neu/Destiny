@@ -86,6 +86,12 @@ namespace Destiny
 		{
 			auto topNode = nodes.front();
 			nodes.pop();
+
+			if (!topNode)
+			{
+				continue;
+			}
+
 			for (const auto& component : topNode->getComponents())
 			{
 				auto visualComponent = std::dynamic_pointer_cast<VisualComponent>(component);

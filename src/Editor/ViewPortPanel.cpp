@@ -58,11 +58,11 @@ void ViewPortPanel::update()
 
 	onViewPortResize();
 
-	auto rtv = Destiny::Engine::GetInstance()->getSceneManager()->getScene()->m_bindRenderTargets->getRenderTargetView();
-	if (rtv && rtv->isLoadingSucceed())
-	{
-		ImGui::Image(*(rtv->getShaderResourceView()), { (float)rtv->getWidth(), (float)rtv->getHeight() });
-	}
+	//auto rtv = Destiny::Engine::GetInstance()->getSceneManager()->getScene()->m_bindRenderTargets->getRenderTargetView();
+	//if (rtv && rtv->isLoadingSucceed())
+	//{
+	//	ImGui::Image(*(rtv->getShaderResourceView()), { (float)rtv->getWidth(), (float)rtv->getHeight() });
+	//}
 	
 	processGzimo();
 

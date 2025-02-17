@@ -14,8 +14,6 @@ namespace Destiny
 {
 	VisualScene::VisualScene() :
 		Scene(),
-		m_bindRenderTargets(nullptr),
-		m_clearRenderTargets(nullptr),
 		m_enableCull(true)
 	{
 
@@ -23,17 +21,13 @@ namespace Destiny
 
 	VisualScene::VisualScene(const std::string& name) :
 		Scene(name),
-		m_bindRenderTargets(nullptr),
-		m_clearRenderTargets(nullptr)
+		m_enableCull(true)
 	{
 
 	}
 
 	void VisualScene::initialize()
 	{
-		m_bindRenderTargets = std::make_shared<BindRenderTargetsOnResize>();
-		m_clearRenderTargets = std::make_shared<ClearRenderTargets>(m_bindRenderTargets);
-
 		m_camera = std::make_shared<CameraComponent>();
 		m_cameraController = std::make_shared<CameraController>();
 		m_cameraNode = std::make_shared<Node>("Camera");
@@ -74,8 +68,6 @@ namespace Destiny
 
 	void VisualScene::onCull()
 	{
-		std::dynamic_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->addBeforePipelineCommand(m_clearRenderTargets);
-
 		DirectX::BoundingFrustum cameraFrustum;
 		DirectX::BoundingFrustum::CreateFromMatrix(cameraFrustum, m_camera->getProjectionMatrix());
 		cameraFrustum.Transform(cameraFrustum, m_cameraNode->get_transform().getWorldMatrix());

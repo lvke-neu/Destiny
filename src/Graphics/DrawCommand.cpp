@@ -17,11 +17,6 @@ namespace Destiny
 				continue;
 			}
 
-			if (drawParameters->beforeDrawCommandList)
-			{
-				drawParameters->beforeDrawCommandList->execute(deviceContext);
-			}
-
 			switch (drawParameters->drawType)
 			{
 			case 1:
@@ -111,11 +106,6 @@ namespace Destiny
 				{
 					samplerState.second.second->unBind(samplerState.second.first);
 				}
-			}
-
-			if (drawParameters->afterDrawCommandList)
-			{
-				drawParameters->afterDrawCommandList->execute(deviceContext);
 			}
 		}
 		m_drawParameters.clear();

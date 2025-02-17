@@ -11,39 +11,21 @@ namespace Destiny
 	{
 	public:
 		BindRenderTargets();
-		virtual ~BindRenderTargets() = default;
+		virtual ~BindRenderTargets();
 	public:
 		void									setRenderTargetView(std::shared_ptr<RenderTargetView> renderTargetView);
 		std::shared_ptr<RenderTargetView>		getRenderTargetView();
 		void									setDepthStencilView(std::shared_ptr<DepthStencilView> depthStencilView);
 		std::shared_ptr<DepthStencilView>		getDepthStencilView();
 		void									setViewport(float topLeftX, float topLeftY, float width, float height, float minDepth, float naxDepth);
-		void									clearRenderTargets(ID3D11DeviceContext* deviceContext);
 	public:
 		virtual void execute(ID3D11DeviceContext* deviceContext) override;
+	private:
+		void onResize(void* data);
 	private:
 		std::shared_ptr<RenderTargetView>		m_renderTargetView;
 		std::shared_ptr<DepthStencilView>		m_depthStencilView;
 		std::shared_ptr<D3D11_VIEWPORT>			m_viewPort;
 
-	};
-
-	class BindRenderTargetsOnResize : public BindRenderTargets
-	{
-	public:
-		BindRenderTargetsOnResize();
-		virtual ~BindRenderTargetsOnResize();
-	private:
-		void onResize(void* data);
-	};
-
-	class ClearRenderTargets : public GraphicsCommand
-	{
-	public:
-		ClearRenderTargets(std::shared_ptr<BindRenderTargets> bindRenderTargets);
-	public:
-		virtual void execute(ID3D11DeviceContext* deviceContext) override;
-	private:
-		std::shared_ptr<BindRenderTargets> m_bindRenderTargets;
 	};
 }

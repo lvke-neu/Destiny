@@ -13,13 +13,11 @@ namespace Destiny
 		virtual void							createPipeline() override;
 		virtual void							render() override;
 		virtual void							syncState() override;
-		void									addBeforePipelineCommand(std::shared_ptr<GraphicsCommand> graphicsCommand);
 		void									commitVisual(std::shared_ptr<Visual> visual);
 	private:
 		std::shared_ptr<GraphicsPipeline>		m_forwardOpaquePipeline;
-		std::shared_ptr<GraphicsPipeline>		m_forwardTransparentPipeline;
+		std::shared_ptr<GraphicsPipeline>		m_transparentPipeline;
 		std::shared_ptr<GraphicsPipeline>		m_guiPipeline;
-		std::shared_ptr<GraphicsCommandList>	m_beforePipelineCommandList;
 	};
 
 }

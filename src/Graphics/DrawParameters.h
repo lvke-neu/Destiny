@@ -17,14 +17,10 @@ namespace Destiny
 	class  Texture;
 	struct TextureDesc;
 	class  SamplerState;
-	class  GraphicsCommandList;
 	struct SamplerStateDesc;
 	class DrawParameters
 	{
 	public:
-		std::shared_ptr<GraphicsCommandList> beforeDrawCommandList   = nullptr;
-		std::shared_ptr<GraphicsCommandList> afterDrawCommandList    = nullptr;
-
 		ID3D11Buffer* vertexBuffer									 = nullptr;
 		unsigned int vertexBuffer_stride							 = 0;
 		unsigned int vertexBuffer_offset							 = 0;

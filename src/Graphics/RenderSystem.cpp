@@ -10,18 +10,15 @@ namespace Destiny
 {
 	void RenderSystem::createPipeline()
 	{
-		m_beforePipelineCommandList = std::make_shared<GraphicsCommandList>();
-
 		m_forwardOpaquePipeline = std::make_shared<ForwardOpaquePipeline>();
-		m_forwardTransparentPipeline = std::make_shared<ForwardTransparentPipeline>();
+		m_transparentPipeline = std::make_shared<ForwardTransparentPipeline>();
 		m_guiPipeline = std::make_shared<GuiPipeline>();
 	}
 
 	void RenderSystem::render()
 	{
-		m_beforePipelineCommandList->execute(getImmediateContext());
 		m_forwardOpaquePipeline->execute(getImmediateContext());
-		m_forwardTransparentPipeline->execute(getImmediateContext());
+		m_transparentPipeline->execute(getImmediateContext());
 		m_guiPipeline->execute(getImmediateContext());
 	}
 
@@ -30,15 +27,10 @@ namespace Destiny
 		m_graphicsStat.DrawCallCount = 0;
 		m_graphicsStat.TriangleCount = 0;
 		m_graphicsStat.VisualCount = 0;
-		m_beforePipelineCommandList->clearGraphicsCommand();
-		m_forwardOpaquePipeline->syncState();
-		m_forwardTransparentPipeline->syncState();
-		m_guiPipeline->syncState();
-	}
 
-	void RenderSystem::addBeforePipelineCommand(std::shared_ptr<GraphicsCommand> graphicsCommand)
-	{
-		m_beforePipelineCommandList->addGraphicsCommand(graphicsCommand);
+		m_forwardOpaquePipeline->syncState();
+		m_transparentPipeline->syncState();
+		m_guiPipeline->syncState();
 	}
 
 	void RenderSystem::commitVisual(std::shared_ptr<Visual> visual)
@@ -68,7 +60,7 @@ namespace Destiny
 
 		case RendererCategory::Transparent:
 		{
-			if (m_forwardTransparentPipeline->addGraphicsCommand(visual))
+			if (m_transparentPipeline->addGraphicsCommand(visual))
 			{
 				++m_graphicsStat.DrawCallCount;
 				++m_graphicsStat.VisualCount;

@@ -6,8 +6,6 @@ namespace Destiny
 	class  CameraComponent;
 	class  CameraController;
 	class  DirectionLightComponent;
-	class  BindRenderTargets;
-	class  ClearRenderTargets;
 	class VisualScene : public Scene
 	{
 		RTTR_ENABLE(Scene);
@@ -26,10 +24,6 @@ namespace Destiny
 		std::shared_ptr<CameraComponent>			getCamera();
 		std::shared_ptr<CameraController>			getCameraController();
 		std::shared_ptr<Node>						getCameraNode();
-	public:
-		std::shared_ptr<BindRenderTargets>			m_bindRenderTargets;
-	private:
-		std::shared_ptr<ClearRenderTargets>			m_clearRenderTargets;
 	protected:
 		std::shared_ptr<CameraComponent>			m_camera;
 		std::shared_ptr<CameraController>			m_cameraController;

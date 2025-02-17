@@ -147,15 +147,15 @@ namespace Destiny
 			}
 		}
 
-		if (!m_drawParameters->beforeDrawCommandList)
-		{
-			m_drawParameters->beforeDrawCommandList = std::make_shared<GraphicsCommandList>();
-			auto scene = std::dynamic_pointer_cast<VisualScene>(m_component->get_scene());
-			if (scene)
-			{
-				m_drawParameters->beforeDrawCommandList->addGraphicsCommand(scene->m_bindRenderTargets);
-			}
-		}
+		//if (!m_drawParameters->beforeDrawCommandList)
+		//{
+		//	m_drawParameters->beforeDrawCommandList = std::make_shared<GraphicsCommandList>();
+		//	auto scene = std::dynamic_pointer_cast<VisualScene>(m_component->get_scene());
+		//	if (scene)
+		//	{
+		//		m_drawParameters->beforeDrawCommandList->addGraphicsCommand(scene->m_bindRenderTargets);
+		//	}
+		//}
 
 		addDrawParameter(m_drawParameters);
 	}

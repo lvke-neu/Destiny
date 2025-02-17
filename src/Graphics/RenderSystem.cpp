@@ -5,6 +5,7 @@
 #include "ForwardOpaquePipeline.h"
 #include "ForwardTransparentPipeline.h"
 #include "GuiPipeline.h"
+#include "PostProcessPipeline.h"
 
 namespace Destiny
 {
@@ -13,6 +14,7 @@ namespace Destiny
 		m_forwardOpaquePipeline = std::make_shared<ForwardOpaquePipeline>();
 		m_transparentPipeline = std::make_shared<ForwardTransparentPipeline>();
 		m_guiPipeline = std::make_shared<GuiPipeline>();
+		m_postProcessPipeline = std::make_shared<PostProcessPipeline>();
 	}
 
 	void RenderSystem::render()
@@ -20,6 +22,7 @@ namespace Destiny
 		m_forwardOpaquePipeline->execute(getImmediateContext());
 		m_transparentPipeline->execute(getImmediateContext());
 		m_guiPipeline->execute(getImmediateContext());
+		m_postProcessPipeline->execute(getImmediateContext());
 	}
 
 	void RenderSystem::syncState()

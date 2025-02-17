@@ -395,4 +395,26 @@ namespace Destiny
 
 		return mesh;
 	}
+
+	std::shared_ptr<Mesh> MeshProvider::Create_FullScreenTriangle()
+	{
+		auto iter = m_cache.find("FullScreenTriangle");
+		if (iter != m_cache.end())
+		{
+			return m_cache["FullScreenTriangle"];
+		}
+
+		DirectX::BoundingBox aabb{ { 0.0f, 0.0f, 0.0f },{ FLT_MAX, FLT_MAX, FLT_MAX } };
+		Mesh::DrawCall drawCall;
+		drawCall.drawMethod = Mesh::DrawMethod::Draw;
+		drawCall.primitiveTopology = Mesh::PrimitiveTopology::TriangleList;
+		drawCall.indexCount = 0;
+		drawCall.vertexCount = 3;
+
+		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(aabb, drawCall, nullptr, nullptr);
+
+		m_cache["FullScreenTriangle"] = mesh;
+
+		return mesh;
+	}
 }

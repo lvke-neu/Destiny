@@ -65,10 +65,10 @@ namespace Destiny
 
 		if (m_renderTargetView && m_depthStencilView)
 		{
-			deviceContext->OMSetRenderTargets(1, m_renderTargetView->getRenderTargetView(), m_depthStencilView->getDepthStencilView());
 			static Color color{ 0, 0, 0, 255 };
 			deviceContext->ClearRenderTargetView(*m_renderTargetView->getRenderTargetView(), (float*)&color);
 			deviceContext->ClearDepthStencilView(m_depthStencilView->getDepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+			deviceContext->OMSetRenderTargets(1, m_renderTargetView->getRenderTargetView(), m_depthStencilView->getDepthStencilView());
 		}
 	}
 

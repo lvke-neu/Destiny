@@ -49,16 +49,16 @@ namespace Destiny
 			m_indexBuffer->load(0);
 		}
 
-		if ((m_vertexBuffer && !m_vertexBuffer->isLoadingSucceed()) ||
-			(m_indexBuffer && !m_indexBuffer->isLoadingSucceed()) )
-		{
-			loadFailed__();
-			LOG_ERROR("CreateMesh failed");
-		}
-		else
-		{
-			loadSucceeded__();
-		}
+		//if ((m_vertexBuffer && !m_vertexBuffer->isLoadingSucceed()) ||
+		//	(m_indexBuffer && !m_indexBuffer->isLoadingSucceed()) )
+		//{
+		//	loadFailed__();
+		//	LOG_ERROR("CreateMesh failed");
+		//}
+		//else
+		//{
+		//	loadSucceeded__();
+		//}
 	}
 
 	void Mesh::updateInstanceBufferData(std::shared_ptr<Blob> data)

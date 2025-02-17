@@ -1,6 +1,7 @@
 #define NOMINMAX
 #include "GraphicsSystem.h"
 #include "Engine/Utility.h"
+#include "Math/Color.h"
 #include <d3d11.h>
 
 namespace Destiny
@@ -13,7 +14,8 @@ namespace Destiny
 		m_pRenderTargetView(nullptr),
 		m_pDepthStencilBuffer(nullptr),
 		m_pDepthStencilView(nullptr),
-		m_4xMsaaQuality(0)
+		m_4xMsaaQuality(0),
+		m_viewPort(std::make_shared<D3D11_VIEWPORT>())
 	{
 
 	}
@@ -45,8 +47,6 @@ namespace Destiny
 	void GraphicsSystem::update()
 	{
 		render();
-		m_pDXGISwapChain->Present(0, 0);
-		m_pD3D11ImmediateDeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
 	}
 
 	void GraphicsSystem::onResize_(unsigned int width, unsigned int height)
@@ -87,6 +87,13 @@ namespace Destiny
 		{
 			m_pD3D11Device->CreateDepthStencilView(m_pDepthStencilBuffer, nullptr, &m_pDepthStencilView);
 		}
+
+		m_viewPort->TopLeftX = 0.0f;
+		m_viewPort->TopLeftY = 0.0f;
+		m_viewPort->Width = width;
+		m_viewPort->Height = height;
+		m_viewPort->MinDepth = 0.0f;
+		m_viewPort->MaxDepth = 1.0f;
 	}
 
 	void GraphicsSystem::createDeviceAndContext()
@@ -151,5 +158,19 @@ namespace Destiny
 		SAFE_RELEASE(dxgiDevice);
 		SAFE_RELEASE(dxgiAdapter);
 		SAFE_RELEASE(dxgiFactory);
+	}
+
+	void GraphicsSystem::bindRenderTarget()
+	{
+		m_pD3D11ImmediateDeviceContext->RSSetViewports(1, m_viewPort.get());
+		static Color color{ 0, 0, 0, 255 };
+		m_pD3D11ImmediateDeviceContext->ClearRenderTargetView(m_pRenderTargetView, (float*)&color);
+		m_pD3D11ImmediateDeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+		m_pD3D11ImmediateDeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
+	}
+
+	void GraphicsSystem::present()
+	{
+		m_pDXGISwapChain->Present(0, 0);
 	}
 }

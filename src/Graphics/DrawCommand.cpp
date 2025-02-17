@@ -22,7 +22,7 @@ namespace Destiny
 			case 1:
 			case 2:
 			{
-				deviceContext->IASetVertexBuffers(0, 1, &drawParameters->vertexBuffer, &drawParameters->vertexBuffer_stride, &drawParameters->vertexBuffer_offset);
+				deviceContext->IASetVertexBuffers(0, drawParameters->vertexBuffer ? 1 : 0 , &drawParameters->vertexBuffer, &drawParameters->vertexBuffer_stride, &drawParameters->vertexBuffer_offset);
 				break;
 			}
 			case 3:
@@ -84,6 +84,20 @@ namespace Destiny
 				break;
 			}
 
+			//restore all
+			deviceContext->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
+			deviceContext->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
+			deviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_UNDEFINED);
+			deviceContext->IASetInputLayout(nullptr);
+
+			deviceContext->VSSetShader(nullptr, nullptr, 0);
+			deviceContext->PSSetShader(nullptr, nullptr, 0);
+			deviceContext->GSSetShader(nullptr, nullptr, 0);
+
+			deviceContext->RSSetState(nullptr);
+			deviceContext->OMSetDepthStencilState(nullptr, 0);
+			deviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
+			
 			for (const auto& constantBuffer : drawParameters->constantBuffers)
 			{
 				if (constantBuffer.second)
@@ -108,7 +122,7 @@ namespace Destiny
 				}
 			}
 		}
-		m_drawParameters.clear();
+		//m_drawParameters.clear();
 	}
 
 	void DrawCommand::addDrawParameter(std::shared_ptr<DrawParameters> drawParameters)

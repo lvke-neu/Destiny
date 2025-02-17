@@ -8,6 +8,7 @@ struct ID3D11DepthStencilView;
 struct ID3D11Device;
 struct IDXGISwapChain;
 struct ID3D11Texture2D;
+struct D3D11_VIEWPORT;
 namespace Destiny
 {
 	class GraphicsSystem
@@ -27,6 +28,8 @@ namespace Destiny
 		void						uninitialize();
 		void						update();
 		GraphicsStat				getGraphicsStat();
+		void						bindRenderTarget();
+		void						present();
 	public:
 		ID3D11Device*				getDevice();
 		ID3D11DeviceContext*		getImmediateContext();
@@ -55,6 +58,7 @@ namespace Destiny
 		ID3D11Texture2D*			m_pDepthStencilBuffer;
 		ID3D11DepthStencilView*		m_pDepthStencilView;
 		unsigned int				m_4xMsaaQuality;
+		std::shared_ptr<D3D11_VIEWPORT>			m_viewPort;
 	};
 
 	inline ID3D11Device* GraphicsSystem::getDevice()

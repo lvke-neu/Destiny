@@ -175,21 +175,26 @@ void Application::run()
 		}
 		else
 		{
+			//engine render
+			Destiny::Engine::GetInstance()->update();
+			Destiny::Engine::GetInstance()->getGraphicsSystem()->bindRenderTarget();
+
+			//imgui render
 			ImGui_ImplDX11_NewFrame();
 			ImGui_ImplWin32_NewFrame();
 			ImGui::NewFrame();
 
 			drawDock();
-			Destiny::Engine::GetInstance()->update();
-
+			
 			//static bool show = true;
 			//ImGui::ShowDemoWindow(&show);
 			//ImGui::ShowMetricsWindow();
 
-			
-
 			ImGui::Render();
 			ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
+			//present
+			Destiny::Engine::GetInstance()->getGraphicsSystem()->present();
 		}
 	}
 }
@@ -217,22 +222,22 @@ void Application::initImGui()
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
 	
-	//auto blobLoader = Destiny::Engine::GetInstance()->getBlobLoaderManager()->getBlobLoader("builtin://");
-	//if (blobLoader)
-	//{
-	//	auto blobHolder1 = blobLoader->createBlobHolder("builtin://fonts/opensans/OpenSans-Bold.ttf");
-	//	auto blobHolder2 = blobLoader->createBlobHolder("builtin://fonts/opensans/OpenSans-Regular.ttf");
-	//	
-	//	if (blobHolder1)
-	//	{
-	//		io.Fonts->AddFontFromFileTTF(blobLoader->normalizedPath(blobHolder1).c_str(), 20);
-	//	}
+	auto blobLoader = Destiny::Engine::GetInstance()->getBlobLoaderManager()->getBlobLoader("builtin://");
+	if (blobLoader)
+	{
+		auto blobHolder1 = blobLoader->createBlobHolder("builtin://fonts/opensans/OpenSans-Bold.ttf");
+		auto blobHolder2 = blobLoader->createBlobHolder("builtin://fonts/opensans/OpenSans-Regular.ttf");
+		
+		if (blobHolder1)
+		{
+			io.Fonts->AddFontFromFileTTF(blobLoader->normalizedPath(blobHolder1).c_str(), 20);
+		}
 
-	//	if (blobHolder2)
-	//	{
-	//		io.FontDefault = io.Fonts->AddFontFromFileTTF(blobLoader->normalizedPath(blobHolder2).c_str(), 20);
-	//	}
-	//}
+		if (blobHolder2)
+		{
+			io.FontDefault = io.Fonts->AddFontFromFileTTF(blobLoader->normalizedPath(blobHolder2).c_str(), 20);
+		}
+	}
 
 	auto& colors = ImGui::GetStyle().Colors;
 	colors[ImGuiCol_WindowBg] = ImVec4{ 0.1f, 0.105f, 0.11f, 1.0f };

@@ -4,7 +4,8 @@
 namespace Destiny
 {
 	class BindRenderTargets;
-	class FullScreenTriangleCommand;
+	class Visual;
+	class RenderTargetView;
 	class PostProcessPipeline : public GraphicsPipeline
 	{
 	public:
@@ -12,8 +13,10 @@ namespace Destiny
 		virtual ~PostProcessPipeline();
 	public:
 		virtual void syncState() override;
+	public:
+		std::shared_ptr<RenderTargetView> getRTV();
 	private:
 		std::shared_ptr<BindRenderTargets> m_bindRenderTargets;
-		std::shared_ptr<FullScreenTriangleCommand> m_fullScreenTriangleCommand;
+		std::shared_ptr<Visual> m_fullScreenTriangle;
 	};
 }

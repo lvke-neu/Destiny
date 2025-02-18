@@ -60,12 +60,12 @@ void ViewPortPanel::update()
 
 	onViewPortResize();
 
-	//auto postProcessPipeline = std::static_pointer_cast<Destiny::RenderSystem>(Destiny::Engine::GetInstance()->getGraphicsSystem())->getPostProcessPipeline();
-	//auto rtv = std::static_pointer_cast<Destiny::PostProcessPipeline>(postProcessPipeline)->m_bindRenderTargets->getRenderTargetView();
-	//if (rtv && rtv->isLoadingSucceed())
-	//{
-	//	ImGui::Image(*(rtv->getShaderResourceView()), { (float)rtv->getWidth(), (float)rtv->getHeight() });
-	//}
+	auto postProcessPipeline = std::static_pointer_cast<Destiny::RenderSystem>(Destiny::Engine::GetInstance()->getGraphicsSystem())->getPostProcessPipeline();
+	auto rtv = std::static_pointer_cast<Destiny::PostProcessPipeline>(postProcessPipeline)->getRTV();
+	if (rtv && rtv->isLoadingSucceed())
+	{
+		ImGui::Image(*(rtv->getShaderResourceView()), { (float)rtv->getWidth(), (float)rtv->getHeight() });
+	}
 	
 	processGzimo();
 

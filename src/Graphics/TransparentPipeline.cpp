@@ -1,29 +1,37 @@
-#include "ForwardTransparentPipeline.h"
+#include "TransparentPipeline.h"
 #include "Visual.h"
 #include "Mesh.h"
+#include "BindRenderTargets.h"
 #include "Engine/Component.h"
 #include "VisualScene.h"
 #include <algorithm>
 
 namespace Destiny
 {
-	ForwardTransparentPipeline::ForwardTransparentPipeline() 
+	TransparentPipeline::TransparentPipeline() :
+		m_bindRenderTargets(std::make_shared<BindRenderTargets>())
 	{
 		
 	}
 
-	ForwardTransparentPipeline::~ForwardTransparentPipeline()
+	TransparentPipeline::~TransparentPipeline()
 	{
 		
 	}
 
-	void ForwardTransparentPipeline::execute(ID3D11DeviceContext* deviceContext)
+	void TransparentPipeline::execute(ID3D11DeviceContext* deviceContext)
 	{
 		sort();
 		GraphicsCommandList::execute(deviceContext);
 	}
 
-	void ForwardTransparentPipeline::sort()
+	void TransparentPipeline::syncState()
+	{
+		GraphicsPipeline::syncState();
+		addGraphicsCommand(m_bindRenderTargets);
+	}
+
+	void TransparentPipeline::sort()
 	{
 		std::vector<std::shared_ptr<GraphicsCommand>> graphicsCommands(m_graphicsCommandList.begin(), m_graphicsCommandList.end());
 		std::sort(graphicsCommands.begin(), graphicsCommands.end(),

@@ -14,6 +14,7 @@ namespace Destiny
 		virtual void execute(ID3D11DeviceContext* deviceContext) override;
 	public:
 		void addDrawParameter(std::shared_ptr<DrawParameters> drawParameters);
+		void clearDrawParameter();
 	private:
 		std::unordered_set<std::shared_ptr<DrawParameters>> m_drawParameters;
 	};

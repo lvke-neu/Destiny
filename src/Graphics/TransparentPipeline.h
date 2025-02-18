@@ -4,13 +4,16 @@
 namespace Destiny 
 {
 	class BindRenderTargets;
-	class ForwardOpaquePipeline : public GraphicsPipeline
+	class TransparentPipeline : public GraphicsPipeline
 	{
 	public:
-		ForwardOpaquePipeline();
-		virtual ~ForwardOpaquePipeline();
+		TransparentPipeline();
+		virtual ~TransparentPipeline();
 	public:
+		virtual void execute(ID3D11DeviceContext* deviceContext) override;
 		virtual void syncState() override;
+	private:
+		void sort();
 	private:
 		std::shared_ptr<BindRenderTargets> m_bindRenderTargets;
 	};

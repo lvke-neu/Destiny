@@ -10,6 +10,8 @@ namespace Destiny
 		PostProcessPipeline();
 		virtual ~PostProcessPipeline();
 	public:
+		virtual void syncState() override;
+	private:
 		std::shared_ptr<BindRenderTargets> m_bindRenderTargets;
 	};
 }

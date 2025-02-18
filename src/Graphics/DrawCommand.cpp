@@ -122,11 +122,15 @@ namespace Destiny
 				}
 			}
 		}
-		//m_drawParameters.clear();
 	}
 
 	void DrawCommand::addDrawParameter(std::shared_ptr<DrawParameters> drawParameters)
 	{
 		m_drawParameters.emplace(drawParameters);
+	}
+
+	void DrawCommand::clearDrawParameter()
+	{
+		m_drawParameters.clear();
 	}
 }

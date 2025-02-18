@@ -157,6 +157,7 @@ namespace Destiny
 		//	}
 		//}
 
+		clearDrawParameter();
 		addDrawParameter(m_drawParameters);
 	}
 

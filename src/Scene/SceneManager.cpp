@@ -150,21 +150,21 @@ namespace Destiny
 		}
 
 		//plane
-		//{
-		//	auto planeComponent = std::make_shared<PlaneComponent>();
-		//	planeComponent->set_material(PbrMaterial::Create_Peel());
+		{
+			auto planeComponent = std::make_shared<PlaneComponent>();
+			planeComponent->set_material(PbrMaterial::Create_Peel());
 
-		//	auto node = std::make_shared<Node>();
-		//	node->set_name("PlaneNode");
-		//	node->addComponent(planeComponent);
-		//	node->addToParent(m_scene);
+			auto node = std::make_shared<Node>();
+			node->set_name("PlaneNode");
+			node->addComponent(planeComponent);
+			node->addToParent(m_scene);
 
-		//	Transform transform;
-		//	transform.set_scale({ 50.0f, 20.0f, 1.0f });
-		//	transform.set_rotation({ 90.0f, 0.0f, 0.0f });
-		//	transform.set_translation({ 0.0f, 0.0f, 0.0f });
-		//	node->set_transform(transform);
-		//}
+			Transform transform;
+			transform.set_scale({ 50.0f, 20.0f, 1.0f });
+			transform.set_rotation({ 90.0f, 0.0f, 0.0f });
+			transform.set_translation({ 0.0f, 0.0f, 0.0f });
+			node->set_transform(transform);
+		}
 		//sphere
 		//{
 		//	auto sphereNode = std::make_shared<Node>();

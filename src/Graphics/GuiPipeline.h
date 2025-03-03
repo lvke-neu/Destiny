@@ -3,15 +3,10 @@
 
 namespace Destiny
 {
-	class BindRenderTargets;
 	class GuiPipeline : public GraphicsPipeline
 	{
 	public:
-		GuiPipeline();
+		GuiPipeline(std::shared_ptr<RenderSystem> renderSystem);
 		virtual ~GuiPipeline();
-	public:
-		virtual void syncState() override;
-	private:
-		std::shared_ptr<BindRenderTargets> m_bindRenderTargets;
 	};
 }

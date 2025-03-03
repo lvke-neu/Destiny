@@ -1,15 +1,14 @@
 #include "TransparentPipeline.h"
 #include "Visual.h"
 #include "Mesh.h"
-#include "BindRenderTargets.h"
 #include "Engine/Component.h"
 #include "VisualScene.h"
 #include <algorithm>
 
 namespace Destiny
 {
-	TransparentPipeline::TransparentPipeline() :
-		m_bindRenderTargets(std::make_shared<BindRenderTargets>())
+	TransparentPipeline::TransparentPipeline(std::shared_ptr<RenderSystem> renderSystem) :
+		GraphicsPipeline(renderSystem)
 	{
 		
 	}
@@ -23,12 +22,6 @@ namespace Destiny
 	{
 		sort();
 		GraphicsCommandList::execute(deviceContext);
-	}
-
-	void TransparentPipeline::syncState()
-	{
-		GraphicsPipeline::syncState();
-		addGraphicsCommand(m_bindRenderTargets);
 	}
 
 	void TransparentPipeline::sort()

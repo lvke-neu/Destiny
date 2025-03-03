@@ -1,10 +1,9 @@
 #include "GuiPipeline.h"
-#include "BindRenderTargets.h"
 
 namespace Destiny
 {
-	GuiPipeline::GuiPipeline() :
-		m_bindRenderTargets(std::make_shared<BindRenderTargets>())
+	GuiPipeline::GuiPipeline(std::shared_ptr<RenderSystem> renderSystem) :
+		GraphicsPipeline(renderSystem)
 	{
 
 	}
@@ -12,11 +11,5 @@ namespace Destiny
 	GuiPipeline::~GuiPipeline()
 	{
 
-	}
-
-	void GuiPipeline::syncState()
-	{
-		GraphicsPipeline::syncState();
-		addGraphicsCommand(m_bindRenderTargets);
 	}
 }

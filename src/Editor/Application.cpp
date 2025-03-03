@@ -177,12 +177,11 @@ void Application::run()
 		{
 			//engine render
 			Destiny::Engine::GetInstance()->update();
-			Destiny::Engine::GetInstance()->getGraphicsSystem()->bindRenderTarget();
 
 			//imgui render
 			ImGui_ImplDX11_NewFrame();
 			ImGui_ImplWin32_NewFrame();
-			ImGui::NewFrame();
+			ImGui::NewFrame();	
 
 			drawDock();
 			

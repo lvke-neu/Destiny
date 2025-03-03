@@ -21,7 +21,7 @@ namespace Destiny
 	void TransparentPipeline::execute(ID3D11DeviceContext* deviceContext)
 	{
 		sort();
-		GraphicsCommandList::execute(deviceContext);
+		GraphicsPipeline::execute(deviceContext);
 	}
 
 	void TransparentPipeline::sort()

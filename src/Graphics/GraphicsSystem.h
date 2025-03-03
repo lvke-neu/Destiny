@@ -28,7 +28,6 @@ namespace Destiny
 		void						uninitialize();
 		void						update();
 		GraphicsStat				getGraphicsStat();
-		void						bindRenderTarget();
 		void						present();
 	public:
 		ID3D11Device*				getDevice();
@@ -45,6 +44,7 @@ namespace Destiny
 	private:
 		void						createDeviceAndContext();
 		void						createSwapChain(long long hwnd);
+		void						bindEditorRenderTarget();
 		virtual void				createPipeline() = 0;
 		virtual void				render() = 0;
 	protected:

@@ -47,6 +47,7 @@ namespace Destiny
 	void GraphicsSystem::update()
 	{
 		render();
+		bindEditorRenderTarget();
 	}
 
 	void GraphicsSystem::onResize_(unsigned int width, unsigned int height)
@@ -90,8 +91,8 @@ namespace Destiny
 
 		m_viewPort->TopLeftX = 0.0f;
 		m_viewPort->TopLeftY = 0.0f;
-		m_viewPort->Width = width;
-		m_viewPort->Height = height;
+		m_viewPort->Width = (float)width;
+		m_viewPort->Height = (float)height;
 		m_viewPort->MinDepth = 0.0f;
 		m_viewPort->MaxDepth = 1.0f;
 	}
@@ -160,7 +161,7 @@ namespace Destiny
 		SAFE_RELEASE(dxgiFactory);
 	}
 
-	void GraphicsSystem::bindRenderTarget()
+	void GraphicsSystem::bindEditorRenderTarget()
 	{
 		m_pD3D11ImmediateDeviceContext->RSSetViewports(1, m_viewPort.get());
 		static Color color{ 0, 0, 0, 255 };

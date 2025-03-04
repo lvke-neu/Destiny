@@ -3,6 +3,15 @@
 #include "ClearRenderTarget.h"
 #include "RenderTargetView.h"
 #include "DepthStencilView.h"
+#include "DrawCommand.h"
+#include "DrawParameters.h"
+#include "Renderer.h"
+#include "RenderStates.h"
+#include "RenderPass.h"
+#include "InputLayout.h"
+#include "Mesh.h"
+#include "MeshProvider.h"
+#include "RenderSystem.h"
 #include "Engine/EventSystem.h"
 #include "Engine/Engine.h"
 #include <d3d11.h>
@@ -14,8 +23,26 @@ namespace Destiny
 		m_bindRenderTargets(std::make_shared<BindRenderTargets>()),
 		m_clearRenderTarget0(std::make_shared<ClearRenderTarget>()),
 		m_clearRenderTarget1(std::make_shared<ClearRenderTarget>()),
-		m_clearRenderTarget2(std::make_shared<ClearRenderTarget>())
+		m_clearRenderTarget2(std::make_shared<ClearRenderTarget>()),
+		m_fullScreenTriangle(std::make_shared<DrawCommand>())
 	{
+		auto drawParameters = std::make_shared<DrawParameters>();
+
+		auto renderer = std::make_shared<Renderer>("builtin://renderer/full_screen_triangle.hlsl");
+		renderer->load(0);
+
+		std::shared_ptr<RenderStates> renderStates = std::make_shared<RenderStates>();
+		renderStates->load(0);
+
+		auto mesh = MeshProvider::Create_FullScreenTriangle();
+		mesh->load(0);
+
+		renderer->fillDrawParameters(drawParameters);
+		renderStates->fillDrawParameters(drawParameters);
+		mesh->fillDrawParameters(drawParameters, renderer->getInputSignatureBlob());
+
+		m_fullScreenTriangle->addDrawParameter(drawParameters);
+
 		Engine::GetInstance()->getEventSystem()->registerEvent(EventType::WindowResize, std::bind(&DeferredOpaquePipeline::onResize, this, std::placeholders::_1));
 	}
 
@@ -26,12 +53,21 @@ namespace Destiny
 
 	void DeferredOpaquePipeline::execute(ID3D11DeviceContext* deviceContext)
 	{
-		m_bindRenderTargets->execute(deviceContext);
-		m_clearRenderTarget0->execute(deviceContext);
-		m_clearRenderTarget1->execute(deviceContext);
-		m_clearRenderTarget2->execute(deviceContext);
+		////GBuffer
+		//m_bindRenderTargets->execute(deviceContext);
+		//m_clearRenderTarget0->execute(deviceContext);
+		//m_clearRenderTarget1->execute(deviceContext);
+		//m_clearRenderTarget2->execute(deviceContext);
 
-		GraphicsCommandList::execute(deviceContext);
+		////Draw DeferredOpaquePipeline Object 
+		//GraphicsCommandList::execute(deviceContext);
+
+		//full screen triangle
+		if (m_renderSystem && m_renderSystem->m_bindRenderTargets)
+		{
+			m_renderSystem->m_bindRenderTargets->execute(deviceContext);
+		}
+		m_fullScreenTriangle->execute(deviceContext);
 	}
 
 	void DeferredOpaquePipeline::onResize(void* data)

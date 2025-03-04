@@ -14,7 +14,12 @@ namespace Destiny
 	{
 		DirectX::XMFLOAT3 position;
 		DirectX::XMFLOAT4 color;
+	};
 
+	struct PositionTexcoord
+	{
+		DirectX::XMFLOAT3 position;
+		DirectX::XMFLOAT2 texcoord;
 	};
 
 	struct Position3

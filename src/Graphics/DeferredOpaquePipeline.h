@@ -5,6 +5,7 @@ namespace Destiny
 {
 	class BindRenderTargets;
 	class ClearRenderTarget;
+	class DrawCommand;
 	class DeferredOpaquePipeline : public GraphicsPipeline
 	{
 	public:
@@ -19,5 +20,6 @@ namespace Destiny
 		std::shared_ptr<ClearRenderTarget>		m_clearRenderTarget0;
 		std::shared_ptr<ClearRenderTarget>		m_clearRenderTarget1;
 		std::shared_ptr<ClearRenderTarget>		m_clearRenderTarget2;
+		std::shared_ptr<DrawCommand>			m_fullScreenTriangle;
 	};
 }

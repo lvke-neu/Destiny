@@ -6,11 +6,11 @@ namespace Destiny
 {
 	class RenderTargetView;
 	class DepthStencilView;
-	class ClearRenderTargets : public GraphicsCommand
+	class ClearRenderTarget : public GraphicsCommand
 	{
 	public:
-		ClearRenderTargets();
-		virtual ~ClearRenderTargets();
+		ClearRenderTarget();
+		virtual ~ClearRenderTarget();
 	public:
 		void	setRenderTargetView(std::shared_ptr<RenderTargetView> renderTargetView);
 		void	setDepthStencilView(std::shared_ptr<DepthStencilView> depthStencilView);

@@ -24,7 +24,7 @@ namespace Destiny
 	public:
 		virtual void execute(ID3D11DeviceContext* deviceContext) override;
 	private:
-		void mapRenderTargetViews(std::vector<ID3D11RenderTargetView**>& out, const std::vector<std::shared_ptr<RenderTargetView>>& in);
+		void mapRenderTargetViews(std::vector<ID3D11RenderTargetView*>& out, const std::vector<std::shared_ptr<RenderTargetView>>& in);
 		void mapDepthStencilViews(std::vector<ID3D11DepthStencilView*>& out, const std::vector<std::shared_ptr<DepthStencilView>>& in);
 		void mapViewPorts(std::vector<D3D11_VIEWPORT*>& out, const std::vector<std::shared_ptr<D3D11_VIEWPORT>>& in);
 		

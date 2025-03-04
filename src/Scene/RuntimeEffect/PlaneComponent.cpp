@@ -12,7 +12,7 @@ namespace Destiny
 {
 	PlaneComponent::PlaneComponent()
 	{
-		auto renderer = std::make_shared<Renderer>("builtin://renderer/pbr.hlsl");
+		auto renderer = std::make_shared<Renderer>("builtin://renderer/deferred_pbr.hlsl");
 		renderer->load(0);
 
 		std::shared_ptr<RenderStates> renderStates = std::make_shared<RenderStates>();
@@ -20,7 +20,7 @@ namespace Destiny
 		renderStates->load();
 
 		std::shared_ptr<RenderPass> renderPass = std::make_shared<RenderPass>();
-		renderPass->setRendererCategory(RendererCategory::ForwardOpaque);
+		renderPass->setRendererCategory(RendererCategory::DeferredOpaque);
 		renderPass->setRenderer(renderer);
 		renderPass->setRenderStates(renderStates);
 		

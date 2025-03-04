@@ -7,6 +7,7 @@ namespace Destiny
 	enum class RendererCategory
 	{
 		None,
+		DeferredOpaque,
 		ForwardOpaque,
 		Transparent,
 		Gui

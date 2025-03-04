@@ -55,7 +55,7 @@ namespace Destiny
 			return;
 		}
 
-		std::vector<ID3D11RenderTargetView**> renderTargetViews;
+		std::vector<ID3D11RenderTargetView*> renderTargetViews;
 		std::vector<ID3D11DepthStencilView*> depthStencilViews;
 		std::vector<D3D11_VIEWPORT*> viewPorts;
 
@@ -63,21 +63,21 @@ namespace Destiny
 		mapDepthStencilViews(depthStencilViews, m_depthStencilViews);
 		mapViewPorts(viewPorts, m_viewPorts);
 
-		deviceContext->RSSetViewports(viewPorts.size(), viewPorts[0]);
+		deviceContext->RSSetViewports((unsigned int)viewPorts.size(), viewPorts[0]);
 		if (renderTargetViews.size() == depthStencilViews.size())
 		{
-			deviceContext->OMSetRenderTargets(renderTargetViews.size(), renderTargetViews[0], depthStencilViews[0]);
+			deviceContext->OMSetRenderTargets((unsigned int)renderTargetViews.size(), renderTargetViews.data(), depthStencilViews[0]);
 		}
 	}
 
-	void BindRenderTargets::mapRenderTargetViews(std::vector<ID3D11RenderTargetView**>& out, const std::vector<std::shared_ptr<RenderTargetView>>& in)
+	void BindRenderTargets::mapRenderTargetViews(std::vector<ID3D11RenderTargetView*>& out, const std::vector<std::shared_ptr<RenderTargetView>>& in)
 	{
 		out.clear();
 		for (const auto& renderTargetView : in)
 		{
 			if (renderTargetView)
 			{
-				out.push_back(renderTargetView->getRenderTargetView());
+				out.push_back(*renderTargetView->getRenderTargetView());
 			}
 		}
 	}

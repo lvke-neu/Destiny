@@ -20,6 +20,6 @@ Texture2D t_texture : register(t0);
 SamplerState s_sampler : register(s0);
 float4 PS(VertexOut pIn) : SV_Target
 {
-	return t_texture.Sample(s_sampler, pIn.texcoord);
+	return float4(1,0,0,1);
 }
 

@@ -6,7 +6,7 @@ namespace Destiny
 {
 	class RenderTargetView;
 	class BindRenderTargets;
-	class ClearRenderTargets;
+	class ClearRenderTarget;
 	class Visual;
 	class RenderSystem : public GraphicsSystem, public std::enable_shared_from_this<RenderSystem>
 	{
@@ -24,10 +24,11 @@ namespace Destiny
 		void onResize(void* data);
 	private:
 		std::shared_ptr<GraphicsPipeline>		m_forwardOpaquePipeline;
+		std::shared_ptr<GraphicsPipeline>		m_deferredOpaquePipeline;
 		std::shared_ptr<GraphicsPipeline>		m_transparentPipeline;
 		std::shared_ptr<GraphicsPipeline>		m_guiPipeline;
 
 		std::shared_ptr<GraphicsCommandList>	m_beforePipelineCommand;
-		std::shared_ptr<ClearRenderTargets>		m_clearRenderTargets;
+		std::shared_ptr<ClearRenderTarget>		m_clearRenderTarget;
 	};
 }

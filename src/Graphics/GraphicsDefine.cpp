@@ -9,6 +9,7 @@ namespace Destiny
 	rttr::registration::enumeration<RendererCategory>("RendererCategory")
 		(
 			rttr::value("None", RendererCategory::None),
+			rttr::value("DeferredOpaque", RendererCategory::DeferredOpaque),
 			rttr::value("ForwardOpaque", RendererCategory::ForwardOpaque),
 			rttr::value("Transparent", RendererCategory::Transparent),
 			rttr::value("Gui", RendererCategory::Gui)

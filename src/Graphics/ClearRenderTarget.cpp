@@ -1,4 +1,4 @@
-#include "ClearRenderTargets.h"
+#include "ClearRenderTarget.h"
 #include "RenderTargetView.h"
 #include "DepthStencilView.h"
 #include "Math/Color.h"
@@ -6,29 +6,29 @@
 
 namespace Destiny
 {
-	ClearRenderTargets::ClearRenderTargets() :
+	ClearRenderTarget::ClearRenderTarget() :
 		m_renderTargetView(nullptr),
 		m_depthStencilView(nullptr)
 	{
 
 	}
 
-	ClearRenderTargets::~ClearRenderTargets()
+	ClearRenderTarget::~ClearRenderTarget()
 	{
 		
 	}
 
-	void ClearRenderTargets::setRenderTargetView(std::shared_ptr<RenderTargetView> renderTargetView)
+	void ClearRenderTarget::setRenderTargetView(std::shared_ptr<RenderTargetView> renderTargetView)
 	{
 		m_renderTargetView = renderTargetView;
 	}
 
-	void ClearRenderTargets::setDepthStencilView(std::shared_ptr<DepthStencilView> depthStencilView)
+	void ClearRenderTarget::setDepthStencilView(std::shared_ptr<DepthStencilView> depthStencilView)
 	{
 		m_depthStencilView = depthStencilView;
 	}
 
-	void ClearRenderTargets::execute(ID3D11DeviceContext* deviceContext)
+	void ClearRenderTarget::execute(ID3D11DeviceContext* deviceContext)
 	{
 		if (!deviceContext)
 		{

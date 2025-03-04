@@ -4,6 +4,7 @@
 
 namespace Destiny
 {
+	class RenderTargetView;
 	class BindRenderTargets;
 	class ClearRenderTargets;
 	class Visual;

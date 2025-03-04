@@ -7,6 +7,8 @@
 #include "GuiPipeline.h"
 #include "BindRenderTargets.h"
 #include "ClearRenderTargets.h"
+#include "RenderTargetView.h"
+#include "DepthStencilView.h"
 #include "Engine/EventSystem.h"
 
 namespace Destiny
@@ -118,11 +120,32 @@ namespace Destiny
 			return;
 		}
 
-		m_bindRenderTargets->setRenderTargetView(wrd.width, wrd.height);
-		m_bindRenderTargets->setDepthStencilView(wrd.width, wrd.height);
-		m_bindRenderTargets->setViewport(0.0f, 0.0f, (float)wrd.width, (float)wrd.height, 0.0f, 1.0f);
+		auto renderTargetView = std::make_shared<RenderTargetView>(wrd.width, wrd.height);
+		renderTargetView->load(0);
 
-		m_clearRenderTargets->setRenderTargetView(m_bindRenderTargets->getRenderTargetView());
-		m_clearRenderTargets->setDepthStencilView(m_bindRenderTargets->getDepthStencilView());
+		auto depthStencilView = std::make_shared<DepthStencilView>(wrd.width, wrd.height);
+		depthStencilView->load(0);
+
+		auto viewPort = std::make_shared<D3D11_VIEWPORT>();
+		viewPort->TopLeftX = 0.0f;
+		viewPort->TopLeftY = 0.0f;
+		viewPort->Width = (float)wrd.width;
+		viewPort->Height = (float)wrd.height;
+		viewPort->MinDepth = 0.0f;
+		viewPort->MaxDepth = 1.0f;
+
+		std::vector<std::shared_ptr<RenderTargetView>>	renderTargetViews;
+		std::vector<std::shared_ptr<DepthStencilView>>	depthStencilViews;
+		std::vector<std::shared_ptr<D3D11_VIEWPORT>>	viewPorts;
+		renderTargetViews.push_back(renderTargetView);
+		depthStencilViews.push_back(depthStencilView);
+		viewPorts.push_back(viewPort);
+
+		m_bindRenderTargets->setRenderTargetViews(renderTargetViews);
+		m_bindRenderTargets->setDepthStencilViews(depthStencilViews);
+		m_bindRenderTargets->setViewports(viewPorts);
+
+		m_clearRenderTargets->setRenderTargetView(m_bindRenderTargets->getRenderTargetViews(0));
+		m_clearRenderTargets->setDepthStencilView(m_bindRenderTargets->getDepthStencilViews(0));
 	}
 }

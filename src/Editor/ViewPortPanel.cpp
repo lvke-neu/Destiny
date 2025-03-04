@@ -59,7 +59,7 @@ void ViewPortPanel::update()
 
 	onViewPortResize();
 
-	auto rtv = std::static_pointer_cast<Destiny::RenderSystem>(Destiny::Engine::GetInstance()->getGraphicsSystem())->m_bindRenderTargets->getRenderTargetView();
+	auto rtv = std::static_pointer_cast<Destiny::RenderSystem>(Destiny::Engine::GetInstance()->getGraphicsSystem())->m_bindRenderTargets->getRenderTargetViews(0);
 	if (rtv && rtv->isLoadingSucceed())
 	{
 		ImGui::Image(*(rtv->getShaderResourceView()), { (float)rtv->getWidth(), (float)rtv->getHeight() });

@@ -164,10 +164,10 @@ namespace Destiny
 	void GraphicsSystem::bindEditorRenderTarget()
 	{
 		m_pD3D11ImmediateDeviceContext->RSSetViewports(1, m_viewPort.get());
+		m_pD3D11ImmediateDeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
 		static Color color{ 0, 0, 0, 255 };
 		m_pD3D11ImmediateDeviceContext->ClearRenderTargetView(m_pRenderTargetView, (float*)&color);
 		m_pD3D11ImmediateDeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-		m_pD3D11ImmediateDeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
 	}
 
 	void GraphicsSystem::present()

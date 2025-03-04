@@ -19,6 +19,7 @@ namespace Destiny
 		m_bindRenderTargets(std::make_shared<BindRenderTargets>()),
 		m_clearRenderTargets(std::make_shared<ClearRenderTargets>())
 	{
+		m_beforePipelineCommand->addGraphicsCommand(m_bindRenderTargets);
 		m_beforePipelineCommand->addGraphicsCommand(m_clearRenderTargets);
 	}
 
@@ -119,7 +120,7 @@ namespace Destiny
 
 		m_bindRenderTargets->setRenderTargetView(wrd.width, wrd.height);
 		m_bindRenderTargets->setDepthStencilView(wrd.width, wrd.height);
-		m_bindRenderTargets->setViewport(0.0f, 0.0f, (float)wrd.width, (float)wrd.height, 0.0f, 0.0f);
+		m_bindRenderTargets->setViewport(0.0f, 0.0f, (float)wrd.width, (float)wrd.height, 0.0f, 1.0f);
 
 		m_clearRenderTargets->setRenderTargetView(m_bindRenderTargets->getRenderTargetView());
 		m_clearRenderTargets->setDepthStencilView(m_bindRenderTargets->getDepthStencilView());

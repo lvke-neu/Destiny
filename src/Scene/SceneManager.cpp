@@ -167,93 +167,93 @@ namespace Destiny
 		}
 		//sphere
 		{
-			auto sphereNode = std::make_shared<Node>();
-			sphereNode->set_name("SphereNode");
-			sphereNode->addToParent(m_scene);
+			//auto sphereNode = std::make_shared<Node>();
+			//sphereNode->set_name("SphereNode");
+			//sphereNode->addToParent(m_scene);
 
-			{
-				auto sphereComponent = std::make_shared<SphereComponent>();
-				sphereComponent->set_material(PbrMaterial::Create_Default());
+			//{
+			//	auto sphereComponent = std::make_shared<SphereComponent>();
+			//	sphereComponent->set_material(PbrMaterial::Create_Default());
 
-				auto node = std::make_shared<Node>();
-				node->set_name("SphereNode1");
-				node->addComponent(sphereComponent);
-				node->addToParent(sphereNode);
+			//	auto node = std::make_shared<Node>();
+			//	node->set_name("SphereNode1");
+			//	node->addComponent(sphereComponent);
+			//	node->addToParent(sphereNode);
 
-				Transform transform;
-				transform.set_translation({ -4.0f, 3.0f, 0.0f });
-				node->set_transform(transform);
-			}
+			//	Transform transform;
+			//	transform.set_translation({ -4.0f, 3.0f, 0.0f });
+			//	node->set_transform(transform);
+			//}
 
-			{
-				auto sphereComponent = std::make_shared<SphereComponent>();
-				sphereComponent->set_material(PbrMaterial::Create_Gold());
+			//{
+			//	auto sphereComponent = std::make_shared<SphereComponent>();
+			//	sphereComponent->set_material(PbrMaterial::Create_Gold());
 
-				auto node = std::make_shared<Node>();
-				node->set_name("SphereNode2");
-				node->addComponent(sphereComponent);
-				node->addToParent(sphereNode);
+			//	auto node = std::make_shared<Node>();
+			//	node->set_name("SphereNode2");
+			//	node->addComponent(sphereComponent);
+			//	node->addToParent(sphereNode);
 
-				Transform transform;
-				transform.set_translation({ -2.0f, 3.0f, 0.0f });
-				node->set_transform(transform);
-			}
+			//	Transform transform;
+			//	transform.set_translation({ -2.0f, 3.0f, 0.0f });
+			//	node->set_transform(transform);
+			//}
 
-			{
-				auto sphereComponent = std::make_shared<SphereComponent>();
-				sphereComponent->set_material(PbrMaterial::Create_Grass());
+			//{
+			//	auto sphereComponent = std::make_shared<SphereComponent>();
+			//	sphereComponent->set_material(PbrMaterial::Create_Grass());
 
-				auto node = std::make_shared<Node>();
-				node->set_name("SphereNode3");
-				node->addComponent(sphereComponent);
-				node->addToParent(sphereNode);
+			//	auto node = std::make_shared<Node>();
+			//	node->set_name("SphereNode3");
+			//	node->addComponent(sphereComponent);
+			//	node->addToParent(sphereNode);
 
-				Transform transform;
-				transform.set_translation({ 0.0f, 3.0f, 0.0f });
-				node->set_transform(transform);
-			}
+			//	Transform transform;
+			//	transform.set_translation({ 0.0f, 3.0f, 0.0f });
+			//	node->set_transform(transform);
+			//}
 
-			{
-				auto sphereComponent = std::make_shared<SphereComponent>();
-				sphereComponent->set_material(PbrMaterial::Create_Plastic());
+			//{
+			//	auto sphereComponent = std::make_shared<SphereComponent>();
+			//	sphereComponent->set_material(PbrMaterial::Create_Plastic());
 
-				auto node = std::make_shared<Node>();
-				node->set_name("SphereNode4");
-				node->addComponent(sphereComponent);
-				node->addToParent(sphereNode);
+			//	auto node = std::make_shared<Node>();
+			//	node->set_name("SphereNode4");
+			//	node->addComponent(sphereComponent);
+			//	node->addToParent(sphereNode);
 
-				Transform transform;
-				transform.set_translation({ 2.0f, 3.0f, 0.0f });
-				node->set_transform(transform);
-			}
+			//	Transform transform;
+			//	transform.set_translation({ 2.0f, 3.0f, 0.0f });
+			//	node->set_transform(transform);
+			//}
 
-			{
-				auto sphereComponent = std::make_shared<SphereComponent>();
-				sphereComponent->set_material(PbrMaterial::Create_Rusted_Iron());
+			//{
+			//	auto sphereComponent = std::make_shared<SphereComponent>();
+			//	sphereComponent->set_material(PbrMaterial::Create_Rusted_Iron());
 
-				auto node = std::make_shared<Node>();
-				node->set_name("SphereNode5");
-				node->addComponent(sphereComponent);
-				node->addToParent(sphereNode);
+			//	auto node = std::make_shared<Node>();
+			//	node->set_name("SphereNode5");
+			//	node->addComponent(sphereComponent);
+			//	node->addToParent(sphereNode);
 
-				Transform transform;
-				transform.set_translation({ 4.0f, 3.0f, 0.0f });
-				node->set_transform(transform);
-			}
+			//	Transform transform;
+			//	transform.set_translation({ 4.0f, 3.0f, 0.0f });
+			//	node->set_transform(transform);
+			//}
 
-			{
-				auto sphereComponent = std::make_shared<SphereComponent>();
-				sphereComponent->set_material(PbrMaterial::Create_Wall());
+			//{
+			//	auto sphereComponent = std::make_shared<SphereComponent>();
+			//	sphereComponent->set_material(PbrMaterial::Create_Wall());
 
-				auto node = std::make_shared<Node>();
-				node->set_name("SphereNode6");
-				node->addComponent(sphereComponent);
-				node->addToParent(sphereNode);
+			//	auto node = std::make_shared<Node>();
+			//	node->set_name("SphereNode6");
+			//	node->addComponent(sphereComponent);
+			//	node->addToParent(sphereNode);
 
-				Transform transform;
-				transform.set_translation({ 6.0f, 3.0f, 0.0f });
-				node->set_transform(transform);
-			}
+			//	Transform transform;
+			//	transform.set_translation({ 6.0f, 3.0f, 0.0f });
+			//	node->set_transform(transform);
+			//}
 		}
 		////model
 		//{

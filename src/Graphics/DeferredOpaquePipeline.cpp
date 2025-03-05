@@ -12,6 +12,7 @@
 #include "Mesh.h"
 #include "MeshProvider.h"
 #include "RenderSystem.h"
+#include "Visual.h"
 #include "Engine/EventSystem.h"
 #include "Engine/Engine.h"
 #include <d3d11.h>
@@ -24,10 +25,8 @@ namespace Destiny
 		m_clearRenderTarget0(std::make_shared<ClearRenderTarget>()),
 		m_clearRenderTarget1(std::make_shared<ClearRenderTarget>()),
 		m_clearRenderTarget2(std::make_shared<ClearRenderTarget>()),
-		m_fullScreenTriangle(std::make_shared<DrawCommand>())
+		m_fullScreenTriangle(std::make_shared<Visual>())
 	{
-		auto drawParameters = std::make_shared<DrawParameters>();
-
 		auto renderer = std::make_shared<Renderer>("builtin://renderer/full_screen_triangle.hlsl");
 		renderer->load(0);
 
@@ -37,11 +36,13 @@ namespace Destiny
 		auto mesh = MeshProvider::Create_FullScreenTriangle();
 		mesh->load(0);
 
-		renderer->fillDrawParameters(drawParameters);
-		renderStates->fillDrawParameters(drawParameters);
-		mesh->fillDrawParameters(drawParameters, renderer->getInputSignatureBlob());
+		auto renderPass = std::make_shared<RenderPass>();
+		renderPass->setRenderer(renderer);
+		renderPass->setRenderStates(renderStates);
 
-		m_fullScreenTriangle->addDrawParameter(drawParameters);
+		m_fullScreenTriangle->setMesh(mesh);
+		m_fullScreenTriangle->setRenderPass(renderPass);
+
 
 		Engine::GetInstance()->getEventSystem()->registerEvent(EventType::WindowResize, std::bind(&DeferredOpaquePipeline::onResize, this, std::placeholders::_1));
 	}
@@ -67,6 +68,7 @@ namespace Destiny
 		{
 			m_renderSystem->m_bindRenderTargets->execute(deviceContext);
 		}
+		m_fullScreenTriangle->updateDrawParameters();
 		m_fullScreenTriangle->execute(deviceContext);
 	}
 

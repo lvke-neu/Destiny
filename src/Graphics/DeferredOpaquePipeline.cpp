@@ -5,6 +5,8 @@
 #include "DepthStencilView.h"
 #include "DrawCommand.h"
 #include "DrawParameters.h"
+#include "SamplerState.h"
+#include "Texture.h"
 #include "Renderer.h"
 #include "RenderStates.h"
 #include "RenderPass.h"
@@ -27,10 +29,20 @@ namespace Destiny
 		m_clearRenderTarget2(std::make_shared<ClearRenderTarget>()),
 		m_fullScreenTriangle(std::make_shared<Visual>())
 	{
+
+		auto texture = Texture::Create("builtin://texture/box_diffuse.png");
+		texture->load(0);
+
+		auto samplerState = std::make_shared<SamplerState>();
+		samplerState->load(0);
+
 		auto renderer = std::make_shared<Renderer>("builtin://renderer/full_screen_triangle.hlsl");
 		renderer->load(0);
+		renderer->setSamplerSate("s_sampler", samplerState);
+		renderer->setShaderResource("t_texture", texture);
 
 		std::shared_ptr<RenderStates> renderStates = std::make_shared<RenderStates>();
+		renderStates->getDepthStencilStateDesc()->DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
 		renderStates->load(0);
 
 		auto mesh = MeshProvider::Create_FullScreenTriangle();

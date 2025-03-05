@@ -404,42 +404,14 @@ namespace Destiny
 			return m_cache["FullScreenTriangle"];
 		}
 
-		std::shared_ptr<Blob> data = nullptr;
-		std::vector<PositionTexcoord> vertices;
-		vertices.resize(4);
-
-		vertices[0].position = DirectX::XMFLOAT3(-1.0f, 1.0f, 0.0f);
-		vertices[0].texcoord = DirectX::XMFLOAT2(0.0f, 0.0f);
-
-		vertices[1].position = DirectX::XMFLOAT3(1.0f, 1.0f, 0.0f);
-		vertices[1].texcoord = DirectX::XMFLOAT2(0.0f, 1.0f);
-
-		vertices[2].position = DirectX::XMFLOAT3(1.0f, -1.0f, 0.0f);
-		vertices[2].texcoord = DirectX::XMFLOAT2(1.0f, 1.0f);
-
-		vertices[3].position = DirectX::XMFLOAT3(-1.0f, -1.0f, 0.0f);
-		vertices[3].texcoord = DirectX::XMFLOAT2(1.0f, 0.0f);
-
-		data.reset(new Blob(vertices.size() * sizeof(PositionTexcoord)));
-		data->copyfrom(vertices.data(), vertices.size() * sizeof(PositionTexcoord));
-		std::shared_ptr<VertexBuffer> vertexBuffer = std::make_shared<VertexBuffer>(InputLayout::Create_PositionTexcoord(), (unsigned int)sizeof(PositionTexcoord), 0, data);
-
-		std::vector<unsigned short> indices =
-		{
-			0, 1, 2, 0, 2, 3
-		};
-		data.reset(new Blob(indices.size() * sizeof(unsigned short)));
-		data->copyfrom(indices.data(), indices.size() * sizeof(unsigned short));
-		std::shared_ptr<IndexBuffer> indexBuffer = std::make_shared<IndexBuffer>(IndexBuffer::IndexType::Index16, data);
-
 		DirectX::BoundingBox aabb{ { 0.0f, 0.0f, 0.0f },{ FLT_MAX, FLT_MAX, FLT_MAX } };
 		Mesh::DrawCall drawCall;
-		drawCall.drawMethod = Mesh::DrawMethod::DrawIndexed;
+		drawCall.drawMethod = Mesh::DrawMethod::Draw;
 		drawCall.primitiveTopology = Mesh::PrimitiveTopology::TriangleList;
-		drawCall.indexCount = (unsigned int)indices.size();
+		drawCall.indexCount = 0;
+		drawCall.vertexCount = 3;
 
-		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(aabb, drawCall, vertexBuffer, indexBuffer);
-
+		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(aabb, drawCall, nullptr, nullptr);
 
 		m_cache["FullScreenTriangle"] = mesh;
 

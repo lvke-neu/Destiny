@@ -146,7 +146,6 @@ namespace Destiny
 			//	transform.set_translation({ (float)i, 1.0f, 0.0f });
 			//	node->set_transform(transform);
 			//}
-
 		}
 
 		//plane
@@ -167,23 +166,25 @@ namespace Destiny
 		}
 		//sphere
 		{
-			//auto sphereNode = std::make_shared<Node>();
-			//sphereNode->set_name("SphereNode");
-			//sphereNode->addToParent(m_scene);
+			auto sphereNode = std::make_shared<Node>();
+			sphereNode->set_name("SphereNode");
+			sphereNode->addToParent(m_scene);
 
-			//{
-			//	auto sphereComponent = std::make_shared<SphereComponent>();
-			//	sphereComponent->set_material(PbrMaterial::Create_Default());
+			{
+				auto sphereComponent = std::make_shared<SphereComponent>();
+				sphereComponent->set_material(PbrMaterial::Create_Default());
+				sphereComponent->set_renderer("builtin://renderer/deferred_pbr.hlsl");
+				sphereComponent->set_rendererCategory(RendererCategory::DeferredOpaque);
 
-			//	auto node = std::make_shared<Node>();
-			//	node->set_name("SphereNode1");
-			//	node->addComponent(sphereComponent);
-			//	node->addToParent(sphereNode);
+				auto node = std::make_shared<Node>();
+				node->set_name("SphereNode1");
+				node->addComponent(sphereComponent);
+				node->addToParent(sphereNode);
 
-			//	Transform transform;
-			//	transform.set_translation({ -4.0f, 3.0f, 0.0f });
-			//	node->set_transform(transform);
-			//}
+				Transform transform;
+				transform.set_translation({ -4.0f, 3.0f, 0.0f });
+				node->set_transform(transform);
+			}
 
 			//{
 			//	auto sphereComponent = std::make_shared<SphereComponent>();
@@ -257,19 +258,19 @@ namespace Destiny
 		}
 		////model
 		//{
-		//	{
-		//		auto modelComponent = std::make_shared<ModelComponent>();
-		//		modelComponent->set_path("builtin://model/nanosuit/nanosuit.obj");
-		//		auto node = std::make_shared<Node>();
-		//		Transform transform;
-		//		transform.set_scale({ 0.11f, 0.11f, 0.11f });
-		//		transform.set_rotation({ 0.0f, 0.0f, 0.0f });
-		//		transform.set_translation({ 2.0f, 0.0f, 0.0f });
-		//		node->set_name("nanosuit");
-		//		node->addComponent(modelComponent);
-		//		node->addToParent(m_scene);
-		//		node->set_transform(transform);
-		//	}
+			//{
+			//	auto modelComponent = std::make_shared<ModelComponent>();
+			//	modelComponent->set_path("builtin://model/nanosuit/nanosuit.obj");
+			//	auto node = std::make_shared<Node>();
+			//	Transform transform;
+			//	transform.set_scale({ 0.11f, 0.11f, 0.11f });
+			//	transform.set_rotation({ 0.0f, 0.0f, 0.0f });
+			//	transform.set_translation({ 2.0f, 0.0f, 0.0f });
+			//	node->set_name("nanosuit");
+			//	node->addComponent(modelComponent);
+			//	node->addToParent(m_scene);
+			//	node->set_transform(transform);
+			//}
 		//	{
 		//		auto modelComponent = std::make_shared<ModelComponent>();
 		//		modelComponent->set_path("builtin://model/walk/Standard Walk.dae");
@@ -302,18 +303,18 @@ namespace Destiny
 		//		node->set_transform(transform);
 		//	}
 
-		//	{
-		//		auto modelComponent = std::make_shared<ModelComponent>();
-		//		modelComponent->set_path("builtin://model/chinese_tea_table_2k/chinese_tea_table_2k.gltf");
-		//		auto node = std::make_shared<Node>();
-		//		Transform transform;
-		//		transform.set_translation({ -10.0f, 0.0f, 10.0f });
-		//		transform.set_scale({ 5.0f, 5.0f, 5.0f });
-		//		node->set_name("tea_table");
-		//		node->addComponent(modelComponent);
-		//		node->addToParent(m_scene);
-		//		node->set_transform(transform);
-		//	}
+			//{
+			//	auto modelComponent = std::make_shared<ModelComponent>();
+			//	modelComponent->set_path("builtin://model/chinese_tea_table_2k/chinese_tea_table_2k.gltf");
+			//	auto node = std::make_shared<Node>();
+			//	Transform transform;
+			//	transform.set_translation({ -10.0f, 0.0f, 10.0f });
+			//	transform.set_scale({ 5.0f, 5.0f, 5.0f });
+			//	node->set_name("tea_table");
+			//	node->addComponent(modelComponent);
+			//	node->addToParent(m_scene);
+			//	node->set_transform(transform);
+			//}
 
 		//	{
 		//		auto modelComponent = std::make_shared<ModelComponent>();
@@ -328,31 +329,31 @@ namespace Destiny
 		//		node->set_transform(transform);
 		//	}
 
-		//	{
-		//		auto modelComponent = std::make_shared<ModelComponent>();
-		//		modelComponent->set_path("builtin://model/CoffeeCart_01_2k/CoffeeCart_01_2k.gltf");
-		//		auto node = std::make_shared<Node>();
-		//		Transform transform;
-		//		transform.set_translation({ 0.0f, 0.0f, 10.0f });
-		//		transform.set_scale({ 5.0f, 5.0f, 5.0f });
-		//		node->set_name("CoffeeCart");
-		//		node->addComponent(modelComponent);
-		//		node->addToParent(m_scene);
-		//		node->set_transform(transform);
-		//	}
+			//{
+			//	auto modelComponent = std::make_shared<ModelComponent>();
+			//	modelComponent->set_path("builtin://model/CoffeeCart_01_2k/CoffeeCart_01_2k.gltf");
+			//	auto node = std::make_shared<Node>();
+			//	Transform transform;
+			//	transform.set_translation({ 0.0f, 0.0f, 10.0f });
+			//	transform.set_scale({ 5.0f, 5.0f, 5.0f });
+			//	node->set_name("CoffeeCart");
+			//	node->addComponent(modelComponent);
+			//	node->addToParent(m_scene);
+			//	node->set_transform(transform);
+			//}
 
-		//	{
-		//		auto modelComponent = std::make_shared<ModelComponent>();
-		//		modelComponent->set_path("builtin://model/korean_fire_extinguisher_01_2k/korean_fire_extinguisher_01_2k.gltf");
-		//		auto node = std::make_shared<Node>();
-		//		Transform transform;
-		//		transform.set_translation({ 0.0f, 0.0f, 5.0f });
-		//		transform.set_scale({ 5.0f, 5.0f, 5.0f });
-		//		node->set_name("fire_extinguisher");
-		//		node->addComponent(modelComponent);
-		//		node->addToParent(m_scene);
-		//		node->set_transform(transform);
-		//	}
+			//{
+			//	auto modelComponent = std::make_shared<ModelComponent>();
+			//	modelComponent->set_path("builtin://model/korean_fire_extinguisher_01_2k/korean_fire_extinguisher_01_2k.gltf");
+			//	auto node = std::make_shared<Node>();
+			//	Transform transform;
+			//	transform.set_translation({ 0.0f, 0.0f, 5.0f });
+			//	transform.set_scale({ 5.0f, 5.0f, 5.0f });
+			//	node->set_name("fire_extinguisher");
+			//	node->addComponent(modelComponent);
+			//	node->addToParent(m_scene);
+			//	node->set_transform(transform);
+			//}
 
 		//	{
 		//		auto modelComponent = std::make_shared<ModelComponent>();

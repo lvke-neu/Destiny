@@ -6,6 +6,12 @@ struct VertexOut
 	float2 texcoord	 : TEXCOORD;
 };
 
+struct PixelOut
+{
+	float4 color : SV_TARGET;
+	float depth : SV_Depth;
+};
+
 VertexOut VS(uint vertexID : SV_VertexID)
 {
 	VertexOut vOut;
@@ -25,7 +31,7 @@ Texture2D t_normalW :  register(t4);
 Texture2D t_texcoord :  register(t5);
 SamplerState s_sampler : register(s0);
 
-float4 PS(VertexOut pIn) : SV_Target
+PixelOut PS(VertexOut pIn)
 {
 	float3 albedo = pow(t_albedo.Sample(s_sampler, pIn.texcoord).xyz, float3(2.2f, 2.2f, 2.2f));
 	float4 mra = t_mra.Sample(s_sampler, pIn.texcoord);
@@ -36,7 +42,9 @@ float4 PS(VertexOut pIn) : SV_Target
 	//getNormalFromMap---------
 	float4 positionW = t_positionW.Sample(s_sampler, pIn.texcoord);
 	float3 normalW = t_normalW.Sample(s_sampler, pIn.texcoord).xyz;
-	float2 texcoord = t_texcoord.Sample(s_sampler, pIn.texcoord).xy;
+	float4 texcoordSample = t_texcoord.Sample(s_sampler, pIn.texcoord);
+	float2 texcoord = texcoordSample.xy;
+	float depth = texcoordSample.z;
 
 	float3 tangentNormal = t_normal.Sample(s_sampler, pIn.texcoord).xyz * 2.0f - 1.0f;
 	float3 Q1 = ddx(positionW.xyz);
@@ -117,6 +125,10 @@ float4 PS(VertexOut pIn) : SV_Target
 	color = color / (color + float3(1.0f, 1.0f, 1.0f));
 	color = pow(color, float3(1.0f / 2.2f, 1.0f / 2.2f, 1.0f / 2.2f));
 
-	return float4(color, 1.0f);
+	PixelOut pOut;
+	pOut.color = float4(color, 1.0f);
+	pOut.depth = depth;
+
+	return pOut;
 }
 

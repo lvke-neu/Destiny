@@ -32,6 +32,9 @@ namespace Destiny
 		m_clearRenderTarget5(std::make_shared<ClearRenderTarget>()),
 		m_fullScreenTriangle(std::make_shared<Visual>())
 	{
+		m_clearRenderTarget5->setClearColor({ 0,0,255,255 });
+
+
 		auto samplerState = std::make_shared<SamplerState>();
 		samplerState->load(0);
 

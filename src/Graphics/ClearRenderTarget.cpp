@@ -10,7 +10,7 @@ namespace Destiny
 		m_renderTargetView(nullptr),
 		m_depthStencilView(nullptr)
 	{
-
+		m_clearColor = { 0, 0, 0, 255 };
 	}
 
 	ClearRenderTarget::~ClearRenderTarget()
@@ -28,6 +28,11 @@ namespace Destiny
 		m_depthStencilView = depthStencilView;
 	}
 
+	void ClearRenderTarget::setClearColor(const Color& color)
+	{
+		m_clearColor = color;
+	}
+
 	void ClearRenderTarget::execute(ID3D11DeviceContext* deviceContext)
 	{
 		if (!deviceContext)
@@ -37,8 +42,7 @@ namespace Destiny
 
 		if (m_renderTargetView && m_depthStencilView)
 		{
-			static Color color{ 0, 0, 0, 255 };
-			deviceContext->ClearRenderTargetView(*m_renderTargetView->getRenderTargetView(), (float*)&color);
+			deviceContext->ClearRenderTargetView(*m_renderTargetView->getRenderTargetView(), (float*)&m_clearColor);
 			deviceContext->ClearDepthStencilView(m_depthStencilView->getDepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 		}
 	}

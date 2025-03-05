@@ -58,6 +58,7 @@ namespace Destiny
 		friend class TextureLoader;
 	public:
 		Texture();
+		Texture(ID3D11Texture2D* resource, ID3D11ShaderResourceView* shaderResourceView);
 		virtual ~Texture();
 	public:
 		static std::shared_ptr<TextureLoader> s_textureLoader;

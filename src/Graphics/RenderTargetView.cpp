@@ -2,6 +2,7 @@
 #include "GraphicsSystem.h"
 #include "Engine/Utility.h"
 #include "Engine/Engine.h"
+#include "Texture.h"
 #include <d3d11.h>
 
 namespace Destiny 
@@ -67,6 +68,12 @@ namespace Destiny
 		}
 		
 		loadSucceeded__();
+	}
+
+	std::shared_ptr<Texture> RenderTargetView::getTexture()
+	{
+		auto texture = std::make_shared<Texture>(m_texture, m_shaderResourceView);
+		return texture;
 	}
 }
 

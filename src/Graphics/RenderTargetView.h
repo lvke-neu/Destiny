@@ -6,6 +6,7 @@ struct ID3D11RenderTargetView;
 struct ID3D11ShaderResourceView;
 namespace Destiny
 {
+	class Texture;
 	class RenderTargetView : public Asset
 	{
 	public:
@@ -13,6 +14,7 @@ namespace Destiny
 		virtual ~RenderTargetView();
 	public:
 		virtual void					doLoad() override;
+		std::shared_ptr<Texture>		getTexture();
 		ID3D11Texture2D*				getTexture2D();
 		ID3D11RenderTargetView**		getRenderTargetView();
 		ID3D11ShaderResourceView**		getShaderResourceView();

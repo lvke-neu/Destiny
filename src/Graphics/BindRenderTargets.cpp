@@ -17,19 +17,31 @@ namespace Destiny
 
 	std::shared_ptr<RenderTargetView> BindRenderTargets::getRenderTargetViews(unsigned int index)
 	{
-		if (index < 0 || index>m_renderTargetViews.size() - 1)
+		if (m_renderTargetViews.empty())
 		{
 			return nullptr;
 		}
+
+		if (index < 0 || index > m_renderTargetViews.size() - 1)
+		{
+			return nullptr;
+		}
+
 		return m_renderTargetViews[index];
 	}
 
 	std::shared_ptr<DepthStencilView> BindRenderTargets::getDepthStencilViews(unsigned int index)
 	{
+		if (m_renderTargetViews.empty())
+		{
+			return nullptr;
+		}
+
 		if (index < 0 || index>m_renderTargetViews.size() - 1)
 		{
 			return nullptr;
 		}
+
 		return m_depthStencilViews[index];
 	}
 

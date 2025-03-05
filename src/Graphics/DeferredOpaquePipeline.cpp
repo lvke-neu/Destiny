@@ -29,18 +29,13 @@ namespace Destiny
 		m_clearRenderTarget2(std::make_shared<ClearRenderTarget>()),
 		m_fullScreenTriangle(std::make_shared<Visual>())
 	{
-
-		auto texture = Texture::Create("builtin://texture/box_diffuse.png");
-		texture->load(0);
-
 		auto samplerState = std::make_shared<SamplerState>();
 		samplerState->load(0);
 
 		auto renderer = std::make_shared<Renderer>("builtin://renderer/full_screen_triangle.hlsl");
 		renderer->load(0);
 		renderer->setSamplerSate("s_sampler", samplerState);
-		renderer->setShaderResource("t_texture", texture);
-
+	
 		std::shared_ptr<RenderStates> renderStates = std::make_shared<RenderStates>();
 		renderStates->getDepthStencilStateDesc()->DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
 		renderStates->load(0);
@@ -66,20 +61,25 @@ namespace Destiny
 
 	void DeferredOpaquePipeline::execute(ID3D11DeviceContext* deviceContext)
 	{
-		////GBuffer
-		//m_bindRenderTargets->execute(deviceContext);
-		//m_clearRenderTarget0->execute(deviceContext);
-		//m_clearRenderTarget1->execute(deviceContext);
-		//m_clearRenderTarget2->execute(deviceContext);
+		//GBuffer
+		m_bindRenderTargets->execute(deviceContext);
+		m_clearRenderTarget0->execute(deviceContext);
+		m_clearRenderTarget1->execute(deviceContext);
+		m_clearRenderTarget2->execute(deviceContext);
 
-		////Draw DeferredOpaquePipeline Object 
-		//GraphicsCommandList::execute(deviceContext);
+		//Draw DeferredOpaquePipeline Object 
+		GraphicsCommandList::execute(deviceContext);
 
 		//full screen triangle
 		if (m_renderSystem && m_renderSystem->m_bindRenderTargets)
 		{
 			m_renderSystem->m_bindRenderTargets->execute(deviceContext);
 		}
+		if (m_bindRenderTargets->getRenderTargetViews(2))
+		{
+			m_fullScreenTriangle->setShaderResource("t_texture", m_bindRenderTargets->getRenderTargetViews(2)->getTexture());
+		}
+		
 		m_fullScreenTriangle->updateDrawParameters();
 		m_fullScreenTriangle->execute(deviceContext);
 	}

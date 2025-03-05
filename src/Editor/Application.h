@@ -6,6 +6,7 @@ class ViewPortPanel;
 class ScenePanel;
 class PropertyPanel;
 class AssetPanel;
+class DeferredRenderDebugPanel;
 class Application
 {
 public:
@@ -18,13 +19,14 @@ private:
 	void initImGui();
 	void drawDock();
 private:
-	HWND								m_hwnd;
-	HINSTANCE							m_hInstance;
+	HWND										m_hwnd;
+	HINSTANCE									m_hInstance;
 public:
-	std::shared_ptr<ViewPortPanel>		m_viewPortPanel;
-	std::shared_ptr<ScenePanel>			m_scenePanel;
-	std::shared_ptr<PropertyPanel>		m_propertyPanel;
-	std::shared_ptr<AssetPanel>			m_assetPanel;
+	std::shared_ptr<ViewPortPanel>					m_viewPortPanel;
+	std::shared_ptr<ScenePanel>						m_scenePanel;
+	std::shared_ptr<PropertyPanel>					m_propertyPanel;
+	std::shared_ptr<AssetPanel>						m_assetPanel;
+	std::shared_ptr<DeferredRenderDebugPanel>		m_deferredRenderDebugPanel;
 };
 
 	

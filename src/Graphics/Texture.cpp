@@ -18,6 +18,14 @@ namespace Destiny
 
 	}
 
+	Texture::Texture(ID3D11Texture2D* resource, ID3D11ShaderResourceView* shaderResourceView) :
+		m_resource(resource),
+		m_shaderResourceView(shaderResourceView)
+	{
+		SAFE_ADDREF(m_resource);
+		SAFE_ADDREF(m_shaderResourceView);
+	}
+
 	Texture::~Texture()
 	{
 		SAFE_RELEASE(m_resource);

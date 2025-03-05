@@ -39,18 +39,18 @@ Texture2D t_roughness : register(t3);
 Texture2D t_ao : register(t4);
 SamplerState s_sampler : register(s0);
 
-struct GBuffer
-{
-	float4 albedo : SV_Target0;
-	float4 normal : SV_Target1;
-	float4 mra	  : SV_Target2;
-};
-
 GBuffer PS(VertexOut pIn)
 {
 	GBuffer gBuffer;
-	gBuffer.albedo = float4(1, 0, 0, 1);
-	gBuffer.normal = float4(0, 1, 0, 1);
-	gBuffer.mra = float4(0, 0, 1, 1);
+	gBuffer.albedo = t_albedo.Sample(s_sampler, pIn.texcoord);
+	gBuffer.normal = t_normal.Sample(s_sampler, pIn.texcoord);
+	float metallic = t_metallic.Sample(s_sampler, pIn.texcoord).x;
+	float roughness = t_roughness.Sample(s_sampler, pIn.texcoord).x;
+	float ao = t_ao.Sample(s_sampler, pIn.texcoord).x;
+	gBuffer.mra = float4(metallic, roughness, ao, 1.0f);
+	gBuffer.positionW = pIn.positionW;
+	gBuffer.normalW = float4(pIn.normalW, 1.0f);
+	gBuffer.texcoord = float4(pIn.texcoord, 1.0f, 1.0f);
+
 	return gBuffer;
 }

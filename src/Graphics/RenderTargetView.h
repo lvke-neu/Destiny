@@ -10,7 +10,7 @@ namespace Destiny
 	class RenderTargetView : public Asset
 	{
 	public:
-		RenderTargetView(unsigned int width, unsigned int height);
+		RenderTargetView(unsigned int width, unsigned int height, unsigned int format = 28);
 		virtual ~RenderTargetView();
 	public:
 		virtual void					doLoad() override;
@@ -26,6 +26,7 @@ namespace Destiny
 		ID3D11ShaderResourceView*		m_shaderResourceView;
 		unsigned int					m_width;
 		unsigned int					m_height;
+		unsigned int					m_format;
 	};
 
 	inline ID3D11Texture2D* RenderTargetView::getTexture2D()

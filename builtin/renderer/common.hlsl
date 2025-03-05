@@ -37,3 +37,14 @@ cbuffer cbLight : register(b3)
     int g_pointLightCount;
     PointLight g_pointLights[1000];
 }
+
+
+struct GBuffer
+{
+    float4 albedo    : SV_Target0;
+    float4 normal    : SV_Target1;
+    float4 mra	     : SV_Target2;
+    float4 positionW : SV_Target3;
+    float4 normalW   : SV_Target4;
+    float4 texcoord  : SV_Target5;
+};

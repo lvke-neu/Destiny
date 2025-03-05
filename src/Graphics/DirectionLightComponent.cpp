@@ -1,6 +1,8 @@
 #include "DirectionLightComponent.h"
 #include "VisualComponent.h"
 #include "Graphics/VisualScene.h"
+#include "RenderSystem.h"
+#include "DeferredOpaquePipeline.h"
 
 namespace Destiny
 {
@@ -15,6 +17,9 @@ namespace Destiny
     {
 		std::vector<DirectionLight> directionLights;
 		traversal(m_scene, directionLights);
+		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
+		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
+		deferredOpaquePipeline->onDirectionLightChanged(directionLights);
 		traversalDirectionLightChanged(m_scene, directionLights);
     }
 
@@ -22,6 +27,9 @@ namespace Destiny
 	{
 		std::vector<DirectionLight> directionLights;
 		traversal(m_scene, directionLights, true);
+		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
+		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
+		deferredOpaquePipeline->onDirectionLightChanged(directionLights);
 		traversalDirectionLightChanged(m_scene, directionLights);
 	}
 
@@ -29,6 +37,9 @@ namespace Destiny
     {
 		std::vector<DirectionLight> directionLights;
 		traversal(m_scene, directionLights);
+		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
+		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
+		deferredOpaquePipeline->onDirectionLightChanged(directionLights);
 		traversalDirectionLightChanged(m_scene, directionLights);
     }
 
@@ -45,6 +56,9 @@ namespace Destiny
 		m_color = color;
 		std::vector<DirectionLight> directionLights;
 		traversal(m_scene, directionLights);
+		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
+		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
+		deferredOpaquePipeline->onDirectionLightChanged(directionLights);
 		traversalDirectionLightChanged(m_scene, directionLights);
 	}
 
@@ -53,6 +67,9 @@ namespace Destiny
 		m_intensity = intensity;
 		std::vector<DirectionLight> directionLights;
 		traversal(m_scene, directionLights);
+		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
+		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
+		deferredOpaquePipeline->onDirectionLightChanged(directionLights);
 		traversalDirectionLightChanged(m_scene, directionLights);
 	}
 

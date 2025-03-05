@@ -46,4 +46,28 @@ void DeferredRenderDebugPanel::update()
 		ImGui::Image(*(rtv->getShaderResourceView()), { (float)rtv->getWidth(), (float)rtv->getHeight() });
 	}
 	ImGui::End();
+
+	ImGui::Begin("positionW");
+	rtv = deferredOpaquePipeline->m_bindRenderTargets->getRenderTargetViews(3);
+	if (rtv && rtv->isLoadingSucceed())
+	{
+		ImGui::Image(*(rtv->getShaderResourceView()), { (float)rtv->getWidth(), (float)rtv->getHeight() });
+	}
+	ImGui::End();
+
+	ImGui::Begin("normalW");
+	rtv = deferredOpaquePipeline->m_bindRenderTargets->getRenderTargetViews(4);
+	if (rtv && rtv->isLoadingSucceed())
+	{
+		ImGui::Image(*(rtv->getShaderResourceView()), { (float)rtv->getWidth(), (float)rtv->getHeight() });
+	}
+	ImGui::End();
+
+	ImGui::Begin("texcoord");
+	rtv = deferredOpaquePipeline->m_bindRenderTargets->getRenderTargetViews(5);
+	if (rtv && rtv->isLoadingSucceed())
+	{
+		ImGui::Image(*(rtv->getShaderResourceView()), { (float)rtv->getWidth(), (float)rtv->getHeight() });
+	}
+	ImGui::End();
 }

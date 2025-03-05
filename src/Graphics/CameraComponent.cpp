@@ -2,6 +2,8 @@
 #include "VisualComponent.h"
 #include "Graphics/VisualScene.h"
 #include "Engine/EventSystem.h"
+#include "RenderSystem.h"
+#include "DeferredOpaquePipeline.h"
 #include "Math/Math.h"
 
 namespace Destiny
@@ -29,6 +31,9 @@ namespace Destiny
 		{
 			m_fovy = 45.0f;
 		}
+		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
+		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
+		deferredOpaquePipeline->onCameraProjChanged(DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(m_fovy * Math::DEG2RAD, m_aspect, m_nearz, m_farz)), m_viewportWidth, m_viewportHeight);
 		traversalProjChanged(m_scene);
 	}
 
@@ -39,6 +44,9 @@ namespace Destiny
 		{
 			m_aspect = 1.0f;
 		}
+		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
+		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
+		deferredOpaquePipeline->onCameraProjChanged(DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(m_fovy * Math::DEG2RAD, m_aspect, m_nearz, m_farz)), m_viewportWidth, m_viewportHeight);
 		traversalProjChanged(m_scene);
 	}
 
@@ -49,6 +57,9 @@ namespace Destiny
 		{
 			m_nearz = 0.1f;
 		}
+		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
+		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
+		deferredOpaquePipeline->onCameraProjChanged(DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(m_fovy * Math::DEG2RAD, m_aspect, m_nearz, m_farz)), m_viewportWidth, m_viewportHeight);
 		traversalProjChanged(m_scene);
 	}
 
@@ -59,16 +70,25 @@ namespace Destiny
 		{
 			m_farz = 1000.0f;
 		}
+		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
+		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
+		deferredOpaquePipeline->onCameraProjChanged(DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(m_fovy * Math::DEG2RAD, m_aspect, m_nearz, m_farz)), m_viewportWidth, m_viewportHeight);
 		traversalProjChanged(m_scene);
 	}
 
 	void CameraComponent::onEnterScene()
 	{
+		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
+		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
+		deferredOpaquePipeline->onCameraViewChanged(m_node->get_transform().getInvTransposeWorldMatrix(), m_node->get_transform().get_translation());
 		traversalViewChanged(m_scene);
 	}
 
 	void CameraComponent::onNodeTransformChanged()
 	{
+		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
+		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
+		deferredOpaquePipeline->onCameraViewChanged(m_node->get_transform().getInvTransposeWorldMatrix(), m_node->get_transform().get_translation());
 		traversalViewChanged(m_scene);
 	}
 
@@ -87,6 +107,9 @@ namespace Destiny
 		{
 			m_aspect = 1.0f;
 		}
+		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
+		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
+		deferredOpaquePipeline->onCameraProjChanged(DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(m_fovy * Math::DEG2RAD, m_aspect, m_nearz, m_farz)), m_viewportWidth, m_viewportHeight);
 		traversalProjChanged(m_scene);
 	}
 

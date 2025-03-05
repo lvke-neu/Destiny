@@ -7,12 +7,13 @@
 
 namespace Destiny 
 {
-	RenderTargetView::RenderTargetView(unsigned int width, unsigned int height) :
+	RenderTargetView::RenderTargetView(unsigned int width, unsigned int height, unsigned int format) :
 		m_width(width), 
 		m_height(height),
 		m_texture(nullptr),
 		m_renderTargetView(nullptr),
-		m_shaderResourceView(nullptr)
+		m_shaderResourceView(nullptr),
+		m_format(format)
 	{
 		
 	}
@@ -26,7 +27,7 @@ namespace Destiny
 
 	void RenderTargetView::doLoad()
 	{
-		CD3D11_TEXTURE2D_DESC texDesc(DXGI_FORMAT_R8G8B8A8_UNORM, m_width, m_height, 1,
+		CD3D11_TEXTURE2D_DESC texDesc((DXGI_FORMAT)m_format, m_width, m_height, 1,
 			1, D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE,
 			D3D11_USAGE_DEFAULT, 0, 1, 0, 0);
 

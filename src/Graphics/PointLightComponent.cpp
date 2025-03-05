@@ -1,6 +1,8 @@
 #include "PointLightComponent.h"
 #include "VisualComponent.h"
 #include "Graphics/VisualScene.h"
+#include "RenderSystem.h"
+#include "DeferredOpaquePipeline.h"
 
 namespace Destiny
 {
@@ -15,6 +17,9 @@ namespace Destiny
     {
 		std::vector<PointLight> pointLights;
 		traversal(m_scene, pointLights);
+		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
+		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
+		deferredOpaquePipeline->onPointLightChanged(pointLights);
 		traversalPointLightChanged(m_scene, pointLights);
     }
 
@@ -22,6 +27,9 @@ namespace Destiny
 	{
 		std::vector<PointLight> pointLights;
 		traversal(m_scene, pointLights, true);
+		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
+		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
+		deferredOpaquePipeline->onPointLightChanged(pointLights);
 		traversalPointLightChanged(m_scene, pointLights);
 	}
 
@@ -31,6 +39,9 @@ namespace Destiny
 		{
 			std::vector<PointLight> pointLights;
 			traversal(m_scene, pointLights);
+			auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
+			auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
+			deferredOpaquePipeline->onPointLightChanged(pointLights);
 			traversalPointLightChanged(m_scene, pointLights);
 		}
     }
@@ -48,6 +59,9 @@ namespace Destiny
 		m_color = color;
 		std::vector<PointLight> pointLights;
 		traversal(m_scene, pointLights);
+		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
+		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
+		deferredOpaquePipeline->onPointLightChanged(pointLights);
 		traversalPointLightChanged(m_scene, pointLights);
 	}
 
@@ -56,6 +70,9 @@ namespace Destiny
 		m_intensity = intensity;
 		std::vector<PointLight> pointLights;
 		traversal(m_scene, pointLights);
+		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
+		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
+		deferredOpaquePipeline->onPointLightChanged(pointLights);
 		traversalPointLightChanged(m_scene, pointLights);
 	}
 

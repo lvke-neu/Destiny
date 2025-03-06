@@ -242,7 +242,7 @@ namespace Destiny
 		m_fullScreenTriangle->setConstant("g_eyePosition", eyePosition);
 	}
 
-	void DeferredOpaquePipeline::onCameraProjChanged(const DirectX::XMMATRIX& cameraProj, float viewportWidth, float viewportHeight)
+	void DeferredOpaquePipeline::onCameraProjChanged(const DirectX::XMMATRIX& cameraProj, float viewportWidth, float viewportHeight, float nearPlane, float farPlane)
 	{
 		if (!m_fullScreenTriangle)
 		{
@@ -254,6 +254,8 @@ namespace Destiny
 		m_fullScreenTriangle->setConstant("g_rcpViewportWidth", 1.0f / viewportWidth);
 		m_fullScreenTriangle->setConstant("g_viewportHeight", viewportHeight);
 		m_fullScreenTriangle->setConstant("g_rcpViewportHeight", 1.0f / viewportHeight);
+		m_fullScreenTriangle->setConstant("nearPlane", nearPlane);
+		m_fullScreenTriangle->setConstant("farPlane", farPlane);
 	}
 
 	void DeferredOpaquePipeline::onDirectionLightChanged(const std::vector<DirectionLight>& directionLights)

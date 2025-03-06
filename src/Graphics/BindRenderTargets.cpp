@@ -75,7 +75,17 @@ namespace Destiny
 		mapDepthStencilViews(depthStencilViews, m_depthStencilViews);
 		mapViewPorts(viewPorts, m_viewPorts);
 
-		deviceContext->RSSetViewports((unsigned int)viewPorts.size(), viewPorts[0]);
+		std::vector<D3D11_VIEWPORT> tmpViewPort;
+		for (const auto& viewPort : m_viewPorts)
+		{
+			if (viewPort)
+			{
+				tmpViewPort.push_back(*viewPort);
+			}	
+		}
+
+
+		deviceContext->RSSetViewports((unsigned int)tmpViewPort.size(), tmpViewPort.data());
 		if (renderTargetViews.size() == depthStencilViews.size())
 		{
 			deviceContext->OMSetRenderTargets((unsigned int)renderTargetViews.size(), renderTargetViews.data(), depthStencilViews[0]);

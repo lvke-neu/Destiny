@@ -162,7 +162,8 @@ namespace Destiny
 			(
 				DirectX::XMMatrixPerspectiveFovLH(visualScene->getCamera()->get_fovy() * Math::DEG2RAD, visualScene->getCamera()->get_aspect(), visualScene->getCamera()->get_nearz(), visualScene->getCamera()->get_farz())
 			),
-			visualScene->getCamera()->get_viewportWidth(), visualScene->getCamera()->get_viewportHeight()
+			visualScene->getCamera()->get_viewportWidth(), visualScene->getCamera()->get_viewportHeight(),
+			visualScene->getCamera()->get_nearz(), visualScene->getCamera()->get_farz()
 		);
 
 		std::vector<DirectionLight> directionLights;
@@ -184,7 +185,7 @@ namespace Destiny
 		m_visual->setConstant("g_eyePosition", eyePosition);
 	}
 
-	void VisualComponent::onCameraProjChanged(const DirectX::XMMATRIX& cameraProj, float viewportWidth, float viewportHeight)
+	void VisualComponent::onCameraProjChanged(const DirectX::XMMATRIX& cameraProj, float viewportWidth, float viewportHeight, float nearPlane, float farPlane)
 	{
 		if (!m_visual)
 		{
@@ -196,6 +197,8 @@ namespace Destiny
 		m_visual->setConstant("g_rcpViewportWidth", 1.0f / viewportWidth);
 		m_visual->setConstant("g_viewportHeight", viewportHeight);
 		m_visual->setConstant("g_rcpViewportHeight", 1.0f / viewportHeight);
+		m_visual->setConstant("nearPlane", nearPlane);
+		m_visual->setConstant("farPlane", farPlane);
 	}
 
 	void VisualComponent::onDirectionLightChanged(const std::vector<DirectionLight>& directionLights)

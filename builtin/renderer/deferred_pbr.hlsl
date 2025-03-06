@@ -50,7 +50,7 @@ GBuffer PS(VertexOut pIn)
 	gBuffer.mra = float4(metallic, roughness, ao, 1.0f);
 	gBuffer.positionW = pIn.positionW;
 	gBuffer.normalW = float4(pIn.normalW, 1.0f);
-	gBuffer.texcoord = float4(pIn.texcoord, (pIn.positionH.z + pIn.positionH.w) / (2.0f * pIn.positionH.w), 1.0f);
+	gBuffer.texcoord = float4(pIn.texcoord, pIn.positionH.z, 1.0f);
 
 	return gBuffer;
 }

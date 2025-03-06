@@ -33,7 +33,7 @@ namespace Destiny
 		}
 		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
-		deferredOpaquePipeline->onCameraProjChanged(DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(m_fovy * Math::DEG2RAD, m_aspect, m_nearz, m_farz)), m_viewportWidth, m_viewportHeight);
+		deferredOpaquePipeline->onCameraProjChanged(DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(m_fovy * Math::DEG2RAD, m_aspect, m_nearz, m_farz)), m_viewportWidth, m_viewportHeight, m_nearz, m_farz);
 		traversalProjChanged(m_scene);
 	}
 
@@ -46,7 +46,7 @@ namespace Destiny
 		}
 		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
-		deferredOpaquePipeline->onCameraProjChanged(DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(m_fovy * Math::DEG2RAD, m_aspect, m_nearz, m_farz)), m_viewportWidth, m_viewportHeight);
+		deferredOpaquePipeline->onCameraProjChanged(DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(m_fovy * Math::DEG2RAD, m_aspect, m_nearz, m_farz)), m_viewportWidth, m_viewportHeight, m_nearz, m_farz);
 		traversalProjChanged(m_scene);
 	}
 
@@ -59,7 +59,7 @@ namespace Destiny
 		}
 		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
-		deferredOpaquePipeline->onCameraProjChanged(DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(m_fovy * Math::DEG2RAD, m_aspect, m_nearz, m_farz)), m_viewportWidth, m_viewportHeight);
+		deferredOpaquePipeline->onCameraProjChanged(DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(m_fovy * Math::DEG2RAD, m_aspect, m_nearz, m_farz)), m_viewportWidth, m_viewportHeight, m_nearz, m_farz);
 		traversalProjChanged(m_scene);
 	}
 
@@ -72,7 +72,7 @@ namespace Destiny
 		}
 		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
-		deferredOpaquePipeline->onCameraProjChanged(DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(m_fovy * Math::DEG2RAD, m_aspect, m_nearz, m_farz)), m_viewportWidth, m_viewportHeight);
+		deferredOpaquePipeline->onCameraProjChanged(DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(m_fovy * Math::DEG2RAD, m_aspect, m_nearz, m_farz)), m_viewportWidth, m_viewportHeight, m_nearz, m_farz);
 		traversalProjChanged(m_scene);
 	}
 
@@ -109,7 +109,7 @@ namespace Destiny
 		}
 		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
-		deferredOpaquePipeline->onCameraProjChanged(DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(m_fovy * Math::DEG2RAD, m_aspect, m_nearz, m_farz)), m_viewportWidth, m_viewportHeight);
+		deferredOpaquePipeline->onCameraProjChanged(DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(m_fovy * Math::DEG2RAD, m_aspect, m_nearz, m_farz)), m_viewportWidth, m_viewportHeight, m_nearz, m_farz);
 		traversalProjChanged(m_scene);
 	}
 
@@ -150,7 +150,7 @@ namespace Destiny
 			auto visualComponent = std::dynamic_pointer_cast<VisualComponent>(component);
 			if (visualComponent)
 			{
-				visualComponent->onCameraProjChanged(DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(m_fovy * Math::DEG2RAD, m_aspect, m_nearz, m_farz)), m_viewportWidth, m_viewportHeight);
+				visualComponent->onCameraProjChanged(DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(m_fovy * Math::DEG2RAD, m_aspect, m_nearz, m_farz)), m_viewportWidth, m_viewportHeight, m_nearz, m_farz);
 			}
 		}
 

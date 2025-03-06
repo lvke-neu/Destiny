@@ -13,6 +13,8 @@ cbuffer cbProj : register(b2)
 	float g_rcpViewportWidth;
 	float g_viewportHeight;
 	float g_rcpViewportHeight;
+    float nearPlane;
+    float farPlane;
 }
 
 

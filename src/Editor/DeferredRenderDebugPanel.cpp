@@ -23,51 +23,51 @@ void DeferredRenderDebugPanel::update()
 
 	std::shared_ptr<Destiny::RenderTargetView> rtv = nullptr;
 
-	ImGui::Begin("Albedo");
-	rtv = deferredOpaquePipeline->m_bindRenderTargets->getRenderTargetViews(0);
-	if (rtv && rtv->isLoadingSucceed())
-	{
-		ImGui::Image(*(rtv->getShaderResourceView()), { (float)rtv->getWidth(), (float)rtv->getHeight() });
-	}
-	ImGui::End();
+	//ImGui::Begin("Albedo");
+	//rtv = deferredOpaquePipeline->m_bindRenderTargets->getRenderTargetViews(0);
+	//if (rtv && rtv->isLoadingSucceed())
+	//{
+	//	ImGui::Image(*(rtv->getShaderResourceView()), { (float)rtv->getWidth(), (float)rtv->getHeight() });
+	//}
+	//ImGui::End();
 
-	ImGui::Begin("Normal");
-	rtv = deferredOpaquePipeline->m_bindRenderTargets->getRenderTargetViews(1);
-	if (rtv && rtv->isLoadingSucceed())
-	{
-		ImGui::Image(*(rtv->getShaderResourceView()), { (float)rtv->getWidth(), (float)rtv->getHeight() });
-	}
-	ImGui::End();
+	//ImGui::Begin("Normal");
+	//rtv = deferredOpaquePipeline->m_bindRenderTargets->getRenderTargetViews(1);
+	//if (rtv && rtv->isLoadingSucceed())
+	//{
+	//	ImGui::Image(*(rtv->getShaderResourceView()), { (float)rtv->getWidth(), (float)rtv->getHeight() });
+	//}
+	//ImGui::End();
 
-	ImGui::Begin("MRA");
-	rtv = deferredOpaquePipeline->m_bindRenderTargets->getRenderTargetViews(2);
-	if (rtv && rtv->isLoadingSucceed())
-	{
-		ImGui::Image(*(rtv->getShaderResourceView()), { (float)rtv->getWidth(), (float)rtv->getHeight() });
-	}
-	ImGui::End();
+	//ImGui::Begin("MRA");
+	//rtv = deferredOpaquePipeline->m_bindRenderTargets->getRenderTargetViews(2);
+	//if (rtv && rtv->isLoadingSucceed())
+	//{
+	//	ImGui::Image(*(rtv->getShaderResourceView()), { (float)rtv->getWidth(), (float)rtv->getHeight() });
+	//}
+	//ImGui::End();
 
-	ImGui::Begin("positionW");
-	rtv = deferredOpaquePipeline->m_bindRenderTargets->getRenderTargetViews(3);
-	if (rtv && rtv->isLoadingSucceed())
-	{
-		ImGui::Image(*(rtv->getShaderResourceView()), { (float)rtv->getWidth(), (float)rtv->getHeight() });
-	}
-	ImGui::End();
+	//ImGui::Begin("positionW");
+	//rtv = deferredOpaquePipeline->m_bindRenderTargets->getRenderTargetViews(3);
+	//if (rtv && rtv->isLoadingSucceed())
+	//{
+	//	ImGui::Image(*(rtv->getShaderResourceView()), { (float)rtv->getWidth(), (float)rtv->getHeight() });
+	//}
+	//ImGui::End();
 
-	ImGui::Begin("normalW");
-	rtv = deferredOpaquePipeline->m_bindRenderTargets->getRenderTargetViews(4);
-	if (rtv && rtv->isLoadingSucceed())
-	{
-		ImGui::Image(*(rtv->getShaderResourceView()), { (float)rtv->getWidth(), (float)rtv->getHeight() });
-	}
-	ImGui::End();
+	//ImGui::Begin("normalW");
+	//rtv = deferredOpaquePipeline->m_bindRenderTargets->getRenderTargetViews(4);
+	//if (rtv && rtv->isLoadingSucceed())
+	//{
+	//	ImGui::Image(*(rtv->getShaderResourceView()), { (float)rtv->getWidth(), (float)rtv->getHeight() });
+	//}
+	//ImGui::End();
 
-	ImGui::Begin("texcoord");
-	rtv = deferredOpaquePipeline->m_bindRenderTargets->getRenderTargetViews(5);
-	if (rtv && rtv->isLoadingSucceed())
-	{
-		ImGui::Image(*(rtv->getShaderResourceView()), { (float)rtv->getWidth(), (float)rtv->getHeight() });
-	}
-	ImGui::End();
+	//ImGui::Begin("texcoord");
+	//rtv = deferredOpaquePipeline->m_bindRenderTargets->getRenderTargetViews(5);
+	//if (rtv && rtv->isLoadingSucceed())
+	//{
+	//	ImGui::Image(*(rtv->getShaderResourceView()), { (float)rtv->getWidth(), (float)rtv->getHeight() });
+	//}
+	//ImGui::End();
 }

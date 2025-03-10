@@ -45,6 +45,21 @@ namespace Destiny
 		return m_depthStencilViews[index];
 	}
 
+	std::shared_ptr<D3D11_VIEWPORT> BindRenderTargets::getViewPort(unsigned int index)
+	{
+		if (m_renderTargetViews.empty())
+		{
+			return nullptr;
+		}
+
+		if (index < 0 || index>m_viewPorts.size() - 1)
+		{
+			return nullptr;
+		}
+
+		return m_viewPorts[index];
+	}
+
 	void BindRenderTargets::setRenderTargetViews(const std::vector<std::shared_ptr<RenderTargetView>>& renderTargetViews)
 	{
 		m_renderTargetViews = renderTargetViews;

@@ -4,7 +4,7 @@
 
 namespace Destiny
 {
-	class VisualScene;
+	class Scene;
 	class SceneManager
 	{
 	public:
@@ -14,14 +14,15 @@ namespace Destiny
 		void							initialize();
 		void							uninitialize();
 		void							update(float deltaTime);
+		void							setCurrentScene(std::shared_ptr<Scene> currentScene);
 	public:
-		std::shared_ptr<VisualScene>	getScene();
+		std::shared_ptr<Scene>			getCurrentScene();
 	private:
-		std::shared_ptr<VisualScene>	m_scene;
+		std::shared_ptr<Scene>			m_currentScene;
 	};
 
-	inline std::shared_ptr<VisualScene> SceneManager::getScene()
+	inline std::shared_ptr<Scene> SceneManager::getCurrentScene()
 	{
-		return m_scene;
+		return m_currentScene;
 	}
 }

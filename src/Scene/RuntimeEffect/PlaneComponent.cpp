@@ -29,6 +29,7 @@ namespace Destiny
 
 		setRenderPass(renderPass);
 		setMesh(mesh);
+		set_material(PbrMaterial::Create_Default());
 	}
 
 	RTTR_REGISTRATION

@@ -5,6 +5,7 @@
 #include "RenderSystem.h"
 #include "DeferredOpaquePipeline.h"
 #include "Math/Math.h"
+#include "BindRenderTargets.h"
 
 namespace Destiny
 {
@@ -79,9 +80,21 @@ namespace Destiny
 	void CameraComponent::onEnterScene()
 	{
 		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
+		auto bindRenderTargets = renderSystem->m_bindRenderTargets;
+		if (bindRenderTargets)
+		{
+			auto viewPort = bindRenderTargets->getViewPort(0);
+			if (viewPort)
+			{
+				m_viewportWidth = viewPort->Width;
+				m_viewportHeight = viewPort->Height;
+				m_aspect = m_viewportWidth / m_viewportHeight;
+			}
+		}
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
 		deferredOpaquePipeline->onCameraViewChanged(m_node->get_transform().getInvTransposeWorldMatrix(), m_node->get_transform().get_translation());
 		traversalViewChanged(m_scene);
+		traversalProjChanged(m_scene);
 	}
 
 	void CameraComponent::onNodeTransformChanged()

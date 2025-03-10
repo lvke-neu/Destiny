@@ -9,6 +9,8 @@
 #include "Engine/BlobLoader.h"
 #include "Engine/EventSystem.h"
 #include "Graphics/GraphicsSystem.h"
+#include "Graphics/VisualScene.h"
+#include "Scene/SceneManager.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_win32.h"
 #include "ImGui/imgui_impl_dx11.h"
@@ -353,10 +355,21 @@ void Application::drawDock()
 	{
 		if (ImGui::BeginMenu("File"))
 		{
+			if (ImGui::MenuItem("New", "CTRL+N"))
+			{
+				auto scene = std::make_shared<Destiny::VisualScene>("New Scene");
+				scene->initialize();
+				Destiny::Engine::GetInstance()->getSceneManager()->setCurrentScene(scene);
+				m_propertyPanel->onChoosedNode(nullptr);
+			}
+
 			ImGui::EndMenu();
 		}
+
 		ImGui::EndMenuBar();
 	}
+
+
 
 	m_viewPortPanel->update();
 	m_scenePanel->update();

@@ -92,7 +92,7 @@ void ViewPortPanel::processGzimo()
 		return;
 	}
 
-	auto scene = Destiny::Engine::GetInstance()->getSceneManager()->getScene();
+	auto scene =std::dynamic_pointer_cast<Destiny::VisualScene>(Destiny::Engine::GetInstance()->getSceneManager()->getCurrentScene());
 	if (!scene)
 	{
 		return;
@@ -132,6 +132,11 @@ void ViewPortPanel::processGzimo()
 
 void ViewPortPanel::onChoosedNode(void* parameter)
 {
+	if (!parameter)
+	{
+		m_choosedNode = nullptr;
+		return;
+	}
 	m_choosedNode = *(std::shared_ptr<Destiny::Node>*) parameter;
 }
 

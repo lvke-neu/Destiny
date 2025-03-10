@@ -950,5 +950,10 @@ bool PropertyPanel::reflectInt(const rttr::property& property, int& value, float
 
 void PropertyPanel::onChoosedNode(void* parameter)
 {
+	if (!parameter)
+	{
+		m_choosedNode = nullptr;
+		return;
+	}
 	m_choosedNode = *(std::shared_ptr<Destiny::Node>*) parameter;
 }

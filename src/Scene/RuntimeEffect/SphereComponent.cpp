@@ -27,6 +27,7 @@ namespace Destiny
 
 		setRenderPass(renderPass);
 		setMesh(mesh);
+		set_material(PbrMaterial::Create_Rusted_Iron());
 	}
 
 	RTTR_REGISTRATION

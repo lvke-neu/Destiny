@@ -18,6 +18,7 @@ namespace Destiny
 	public:
 		std::shared_ptr<RenderTargetView> getRenderTargetViews(unsigned int index);
 		std::shared_ptr<DepthStencilView> getDepthStencilViews(unsigned int index);
+		std::shared_ptr<D3D11_VIEWPORT>   getViewPort(unsigned int index);
 		void	setRenderTargetViews(const std::vector<std::shared_ptr<RenderTargetView>>& renderTargetViews);
 		void	setDepthStencilViews(const std::vector<std::shared_ptr<DepthStencilView>>& depthStencilViews);
 		void	setViewports(const std::vector<std::shared_ptr<D3D11_VIEWPORT>>& viewPorts);

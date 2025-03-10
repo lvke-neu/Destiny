@@ -210,6 +210,29 @@ void PropertyPanel::reflectString(const rttr::property& property, std::shared_pt
 		value = buffer;
 		property.set_value(object, value);
 	}
+
+	if (property.get_name().to_string() == "renderer")
+	{
+		if (ImGui::Button("ReCompile Shader"))
+		{
+			std::static_pointer_cast<Destiny::VisualComponent>(object)->reCompileShader();
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Editor Shader"))
+		{
+			//ImGui::OpenPopup("EditorShader");
+
+			//if (ImGui::BeginPopup("EditorShader"))
+			//{
+			//	ImGui::Text("sdsadsads");
+			//	if (ImGui::Button("Close"))
+			//	{
+			//		ImGui::CloseCurrentPopup();
+			//	}
+			//	ImGui::EndPopup();
+			//}
+		}
+	}
 }
 
 void PropertyPanel::reflectFloat(const rttr::property& property, std::shared_ptr<Destiny::Object> object)

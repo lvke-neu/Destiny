@@ -37,7 +37,8 @@ namespace Destiny
 		void							setConstant(const char* name, T value);
 		void							setShaderResource(const char* name, std::shared_ptr<Texture> texture);
 		void							setSamplerSate(const char* name, std::shared_ptr<SamplerState> samplerState);
-		std::string						getPath() ;
+		std::string						getPath();
+		std::shared_ptr<BlobHolder>		getBlobHolder();
 	private:
 		bool							createVertexShader();
 		bool							createPixelShader();
@@ -64,6 +65,11 @@ namespace Destiny
 	inline std::shared_ptr<Blob> Renderer::getInputSignatureBlob()
 	{
 		return m_inputSignatureBlob;
+	}
+
+	inline std::shared_ptr<BlobHolder> Renderer::getBlobHolder()
+	{
+		return m_blobHolder;
 	}
 
 	inline std::shared_ptr<ConstantBuffer> Renderer::getConstant(const char* name)

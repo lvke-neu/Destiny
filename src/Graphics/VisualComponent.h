@@ -24,8 +24,7 @@ namespace Destiny
 		void							set_depthStencilDesc(D3D11_DEPTH_STENCIL_DESC desc);
 		D3D11_BLEND_DESC				get_blendDesc();
 		void							set_blendDesc(D3D11_BLEND_DESC desc);
-		void							set_reCompileShader(Button button);
-		Button							get_reCompileShader();
+		void							reCompileShader();
 		std::shared_ptr<Material>		get_material();
 		void							set_material(std::shared_ptr<Material> material);
 	public:

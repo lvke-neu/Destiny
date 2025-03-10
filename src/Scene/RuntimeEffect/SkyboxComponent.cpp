@@ -8,6 +8,7 @@
 #include "Graphics/PbrMaterial.h"
 #include "Graphics/SamplerState.h"
 #include "Graphics/Texture.h"
+#include "Engine/Node.h"
 
 namespace Destiny
 {
@@ -40,6 +41,14 @@ namespace Destiny
 
 		setRenderPass(renderPass);
 		setMesh(mesh);
+	}
+
+	void SkyboxComponent::onNodeTransformChanged()
+	{
+		if (getVisual())
+		{
+			getVisual()->setConstant("u_worldMatrix", DirectX::XMMatrixTranspose(DirectX::XMMatrixIdentity()));
+		}	
 	}
 
 	void SkyboxComponent::set_texture(std::string texture)

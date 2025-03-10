@@ -24,38 +24,38 @@ void ViewPortPanel::update()
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
 	ImGui::Begin("Viewport");
 
-	if (ImGui::Button("Translate"))
-	{
-		m_gzimoType = 0;
-	}
-	ImGui::SameLine();
-	if (ImGui::Button("Rotate"))
-	{
-		m_gzimoType = 1;
-	}
-	ImGui::SameLine();
-	if (ImGui::Button("Scale"))
-	{
-		m_gzimoType = 2;
-	}
-	ImGui::SameLine();
-	if (ImGui::Button("Local"))
-	{
-		m_gzimoMode = 0;
-	}
-	ImGui::SameLine();
-	if (ImGui::Button("World"))
-	{
-		m_gzimoMode = 1;
-	}
+	//if (ImGui::Button("Translate"))
+	//{
+	//	m_gzimoType = 0;
+	//}
+	//ImGui::SameLine();
+	//if (ImGui::Button("Rotate"))
+	//{
+	//	m_gzimoType = 1;
+	//}
+	//ImGui::SameLine();
+	//if (ImGui::Button("Scale"))
+	//{
+	//	m_gzimoType = 2;
+	//}
+	//ImGui::SameLine();
+	//if (ImGui::Button("Local"))
+	//{
+	//	m_gzimoMode = 0;
+	//}
+	//ImGui::SameLine();
+	//if (ImGui::Button("World"))
+	//{
+	//	m_gzimoMode = 1;
+	//}
 
-	ImGui::Text("%.3f ms/frame (%.1f FPS),", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-	ImGui::SameLine();
-	ImGui::Text("DrawCallCount:%ld,", Destiny::Engine::GetInstance()->getGraphicsSystem()->getGraphicsStat().DrawCallCount);
-	ImGui::SameLine();
-	ImGui::Text("TriangleCount:%ld,", Destiny::Engine::GetInstance()->getGraphicsSystem()->getGraphicsStat().TriangleCount);
-	ImGui::SameLine();
-	ImGui::Text("VisualCount:%ld", Destiny::Engine::GetInstance()->getGraphicsSystem()->getGraphicsStat().VisualCount);
+	//ImGui::Text("%.3f ms/frame (%.1f FPS),", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+	//ImGui::SameLine();
+	//ImGui::Text("DrawCallCount:%ld,", Destiny::Engine::GetInstance()->getGraphicsSystem()->getGraphicsStat().DrawCallCount);
+	//ImGui::SameLine();
+	//ImGui::Text("TriangleCount:%ld,", Destiny::Engine::GetInstance()->getGraphicsSystem()->getGraphicsStat().TriangleCount);
+	//ImGui::SameLine();
+	//ImGui::Text("VisualCount:%ld", Destiny::Engine::GetInstance()->getGraphicsSystem()->getGraphicsStat().VisualCount);
 
 	onViewPortResize();
 

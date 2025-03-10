@@ -8,6 +8,7 @@ namespace Destiny
 {
 	class Node;
 	class Object;
+	class Component;
 }
 
 class PropertyPanel : public Meta
@@ -19,6 +20,8 @@ public:
 public slots:
 	void onChoosedNode(void* parameter);
 private:
+	void popup(std::shared_ptr<Destiny::Component> component);
+
 	void reflect(std::shared_ptr<Destiny::Object> object);
 	void reflectProperty(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
 

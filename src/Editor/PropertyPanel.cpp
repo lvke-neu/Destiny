@@ -34,6 +34,29 @@ void PropertyPanel::update()
 	ImGui::PopStyleVar();
 }
 
+void PropertyPanel::popup(std::shared_ptr<Destiny::Component> component)
+{
+	if (!component)
+	{
+		return;
+	}
+
+	if (ImGui::IsItemClicked(ImGuiMouseButton_Right)) 
+	{
+		ImGui::OpenPopup("ComponentOperationPopup");
+	}
+
+	if (ImGui::BeginPopup("ComponentOperationPopup"))
+	{
+		if (ImGui::Button("RemoveComponent")) 
+		{
+			m_choosedNode->removeComponent(component);
+		}
+	
+		ImGui::EndPopup();
+	}
+}
+
 void PropertyPanel::reflect(std::shared_ptr<Destiny::Object> object)
 {
 	if (!object)
@@ -50,27 +73,12 @@ void PropertyPanel::reflect(std::shared_ptr<Destiny::Object> object)
 	ImGui::PushID(object->get_uuid().c_str());
 	if (ImGui::TreeNodeEx(type.get_name().data(), treeNodeFlags))
 	{	
+		popup(std::dynamic_pointer_cast<Destiny::Component>(object));
+
 		for (const auto& property : type.get_properties())
 		{
 			reflectProperty(property, object);
 			ImGui::Separator();
-		}
-
-		//if (std::dynamic_pointer_cast<Destiny::Node>(object))
-		//{
-		//	for (const auto& componet : std::dynamic_pointer_cast<Destiny::Node>(object)->getComponents())
-		//	{
-		//		reflect(componet);
-		//	}
-		//}
-
-		auto component = std::dynamic_pointer_cast<Destiny::Component>(object);
-		if (component)
-		{
-			if (ImGui::Button("Remove"))
-			{
-				component->get_node()->removeComponent(component);
-			}
 		}
 		
 		ImGui::TreePop();

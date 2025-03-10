@@ -49,7 +49,8 @@ void ScenePanel::popup()
 	if (ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
 		ImGui::OpenPopup("NodeOperationPopup");
 	}
-	if (ImGui::BeginPopup("NodeOperationPopup")) {
+	if (ImGui::BeginPopup("NodeOperationPopup")) 
+	{
 
 		//if (ImGui::Button("Rename"))
 		//{
@@ -76,13 +77,15 @@ void ScenePanel::popup()
 
 		//	ImGui::EndPopup();
 		//}
-		if (ImGui::Button("AddNode")) {
+		if (ImGui::Button("AddNode")) 
+		{
 
 			auto node = std::make_shared<Destiny::Node>("New Node");
 			node->addToParent(m_choosedNode);
 			ImGui::CloseCurrentPopup();
 		}
-		if (ImGui::Button("RemoveNode")) {
+		if (ImGui::Button("RemoveNode")) 
+		{
 			if (m_choosedNode)
 			{
 				m_choosedNode->removeFromParent();

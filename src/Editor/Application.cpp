@@ -4,6 +4,7 @@
 #include "PropertyPanel.h"
 #include "AssetPanel.h"
 #include "DeferredRenderDebugPanel.h"
+#include "GraphicsStatPanel.h"
 #include "Engine/Engine.h"
 #include "Engine/BlobLoaderManager.h"
 #include "Engine/BlobLoader.h"
@@ -115,7 +116,8 @@ Application::Application() :
 	m_scenePanel(std::make_shared<ScenePanel>()),
 	m_propertyPanel(std::make_shared<PropertyPanel>()),
 	m_assetPanel(std::make_shared<AssetPanel>()),
-	m_deferredRenderDebugPanel(std::make_shared<DeferredRenderDebugPanel>())
+	m_deferredRenderDebugPanel(std::make_shared<DeferredRenderDebugPanel>()),
+	m_graphicsStatPanel(std::make_shared<GraphicsStatPanel>())
 {
 	AllocConsole();
 	MetaConnect(m_scenePanel, ScenePanel::ChoosedNode, m_propertyPanel, &PropertyPanel::onChoosedNode);
@@ -376,6 +378,7 @@ void Application::drawDock()
 	m_propertyPanel->update();
 	m_assetPanel->update();
 	m_deferredRenderDebugPanel->update();
+	m_graphicsStatPanel->update();
 
 	ImGui::End();
 }

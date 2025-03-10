@@ -7,6 +7,7 @@ class ScenePanel;
 class PropertyPanel;
 class AssetPanel;
 class DeferredRenderDebugPanel;
+class GraphicsStatPanel;
 class Application
 {
 public:
@@ -27,6 +28,7 @@ public:
 	std::shared_ptr<PropertyPanel>					m_propertyPanel;
 	std::shared_ptr<AssetPanel>						m_assetPanel;
 	std::shared_ptr<DeferredRenderDebugPanel>		m_deferredRenderDebugPanel;
+	std::shared_ptr<GraphicsStatPanel>				m_graphicsStatPanel;
 };
 
 	

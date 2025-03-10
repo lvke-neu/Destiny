@@ -11,6 +11,8 @@ namespace Destiny
 		SkyboxComponent();
 		virtual ~SkyboxComponent() = default;
 	public:
+		virtual void				onNodeTransformChanged() override;
+	public:
 		GET(std::string, texture);
 		void set_texture(std::string texture);
 	private:

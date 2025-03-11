@@ -6,8 +6,8 @@
 
 namespace Destiny
 {
-	GraphicsSystem::GraphicsSystem() : 
-		m_pD3D11Device(nullptr), 
+	GraphicsSystem::GraphicsSystem() :
+		m_pD3D11Device(nullptr),
 		m_pD3D11ImmediateDeviceContext(nullptr),
 		m_pD3D11DeferredDeviceContext(nullptr),
 		m_pDXGISwapChain(nullptr),
@@ -15,7 +15,8 @@ namespace Destiny
 		m_pDepthStencilBuffer(nullptr),
 		m_pDepthStencilView(nullptr),
 		m_4xMsaaQuality(0),
-		m_viewPort(std::make_shared<D3D11_VIEWPORT>())
+		m_viewPort(std::make_shared<D3D11_VIEWPORT>()),
+		m_graphicsStat({ 0,0,0 })
 	{
 
 	}

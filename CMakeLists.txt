@@ -21,6 +21,7 @@ ENDIF()
 
 #spdlog
 include_directories("3rdparty/spdlog/include")
+include_directories("3rdparty/rapidjson/include")
 
 #assimp
 set(ASSIMP_BUILD_ZLIB ON)

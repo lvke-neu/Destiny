@@ -1,6 +1,8 @@
 #include "PropertyPanel.h"
 #include "Engine/Node.h"
 #include "Engine/Component.h"
+#include "Engine/Utility.h"
+#include "Engine/Serializer.h"
 #include "Math/Color.h"
 #include "Math/Transform.h"
 #include "Graphics/GraphicsDefine.h"
@@ -82,6 +84,15 @@ void PropertyPanel::reflect(std::shared_ptr<Destiny::Object> object)
 		}
 		
 		ImGui::TreePop();
+
+		if (ImGui::Button("Serialize"))
+		{
+			std::string jsonStr;
+			Destiny::Serializer::Serialize(jsonStr, object);
+
+			using namespace Destiny;
+			LOG_WARN(jsonStr);
+		}
 	}
 	ImGui::PopID();
 

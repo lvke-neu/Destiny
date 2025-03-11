@@ -144,62 +144,6 @@ void ScenePanel::update()
 
 	traversal(Destiny::Engine::GetInstance()->getSceneManager()->getCurrentScene());
 
-	//if (ImGui::BeginPopup("AddComponent"))
-	//{
-	//	//rttr::type base_type = rttr::type::get<Destiny::CameraComponent>();
-	//	//auto aa = base_type.create();
-	//	//auto cp = aa.get_value<Destiny::Component*>();
-
-	//	//auto cp = derived_type.create().get_value<Destiny::CameraComponent*>();
-	//	
-	//	rttr::type base_type = rttr::type::get<Destiny::Component>();
-	//	auto derived_types = base_type.get_derived_classes();
-	//	for (const auto& derived_type : derived_types)
-	//	{
-	//		if (ImGui::Button(derived_type.get_name().data()))
-	//		{
-	//			if (m_choosedNode)
-	//			{
-	//				auto variant = derived_type.create();
-	//				auto component = variant.get_value<std::shared_ptr<Destiny::Component>>();
-	//				m_choosedNode->addComponent(component);
-	//			}
-
-	//			ImGui::CloseCurrentPopup();
-	//		}
-	//	}
-	//	
-	//	if (ImGui::Button("Close"))
-	//	{
-	//		ImGui::CloseCurrentPopup();
-	//	}
-	//	ImGui::EndPopup();
-	//}
-
-	//if (ImGui::Button("AddComponent"))
-	//{
-	//	ImGui::OpenPopup("AddComponent");
-	//}
-
-	//if (ImGui::Button("AddNode"))
-	//{
-	//	auto node = std::make_shared<Destiny::Node>();
-	//	node->set_name("New Node");
-	//	node->addToParent(Destiny::Engine::GetInstance()->getSceneManager()->getCurrentScene());
-	//}
-
-	//if (ImGui::Button("RemoveNode"))
-	//{
-	//	auto childs = Destiny::Engine::GetInstance()->getSceneManager()->getCurrentScene()->getChilds();
-	//	if (!childs.empty())
-	//	{
-	//		if (childs.back() != Destiny::Engine::GetInstance()->getSceneManager()->getCurrentScene()->getCameraNode())
-	//		{
-	//			childs.back()->removeFromParent();
-	//		}
-	//	}
-	//}
-
 	ImGui::End();
 
 	ImGui::PopStyleVar();

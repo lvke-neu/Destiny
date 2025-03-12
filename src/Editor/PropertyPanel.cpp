@@ -3,6 +3,7 @@
 #include "Engine/Component.h"
 #include "Engine/Utility.h"
 #include "Engine/Serializer.h"
+#include "Engine/UnSerializer.h"
 #include "Math/Color.h"
 #include "Math/Transform.h"
 #include "Graphics/GraphicsDefine.h"
@@ -85,13 +86,15 @@ void PropertyPanel::reflect(std::shared_ptr<Destiny::Object> object)
 		
 		ImGui::TreePop();
 
-		if (ImGui::Button("Serialize"))
+		if (ImGui::Button("Serialize And UnSerialize"))
 		{
 			std::string jsonStr;
 			Destiny::Serializer::Serialize(jsonStr, object);
-
 			using namespace Destiny;
 			LOG_WARN(jsonStr);
+
+			std::shared_ptr<Destiny::Object> object;
+			Destiny::UnSerializer::UnSerialize(object, jsonStr);
 		}
 	}
 	ImGui::PopID();

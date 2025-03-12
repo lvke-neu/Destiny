@@ -9,79 +9,89 @@ namespace Destiny
 {
 	void UnSerializer::UnSerialize(std::shared_ptr<Object>& object, const std::string& jsonStr)
 	{
-		//if (!object)
-		//{
-		//	return;
-		//}
+		rapidjson::Document doc;
+		doc.Parse(jsonStr.c_str());
+		if (!doc.HasParseError())
+		{
+			if (doc.HasMember("type") && doc["type"].IsString())
+			{
+				rttr::type type = rttr::type::get_by_name(doc["type"].GetString());
+				if (type.is_valid())
+				{
+					rttr::variant variant = type.create();
+					if (variant.is_valid())
+					{
+						object = variant.get_value<std::shared_ptr<Object>>();
+					}
+				}
 
-		//rapidjson::StringBuffer buf;
-		//rapidjson::Writer<rapidjson::StringBuffer> writer(buf);
-		//writer.StartObject();
 
-		//auto type = rttr::type::get(*object.get());
-		//writer.Key("type");
-		//writer.String(type.get_name().data());
-		//for (const auto& property : type.get_properties())
-		//{
-		//	UnSerializeProperty(writer, property, object);
-		//}
-
-		//writer.EndObject();
-		//jsonStr = buf.GetString();
+				for (const auto& property : type.get_properties())
+				{
+					UnSerializeProperty(doc, property, object);
+				}
+			}
+		}
 	}
 	
-	void UnSerializer::UnSerializeProperty(rapidjson::Writer<rapidjson::StringBuffer>& writer, const rttr::property& property, std::shared_ptr<Destiny::Object> object)
+	void UnSerializer::UnSerializeProperty(const rapidjson::Document& doc, const rttr::property& property, std::shared_ptr<Destiny::Object> object)
 	{
 		if(property.get_type() == rttr::type::get<bool>())
 		{
-			UnSerializeBool(writer, property, object);
+			UnSerializeBool(doc, property, object);
 		}
 		else if(property.get_type() == rttr::type::get<std::string>())
 		{
-			UnSerializeString(writer, property, object);
+			UnSerializeString(doc, property, object);
 		}
 		else if (property.get_type() == rttr::type::get<float>())
 		{
-			UnSerializeFloat(writer, property, object);
+			UnSerializeFloat(doc, property, object);
 		}
 		else if (property.get_type() == rttr::type::get<DirectX::XMFLOAT2>())
 		{
-			UnSerializeFloat2(writer, property, object);
+			//UnSerializeFloat2(writer, property, object);
 		}
 		else if (property.get_type() == rttr::type::get<DirectX::XMFLOAT3>())
 		{
-			UnSerializeFloat3(writer, property, object);
+			//UnSerializeFloat3(writer, property, object);
 		}
 		else if (property.get_type() == rttr::type::get<Destiny::Color>())
 		{
-			UnSerializeColor(writer, property, object);
+			//UnSerializeColor(writer, property, object);
 		}
 		else if (property.get_type() == rttr::type::get<Destiny::Transform>())
 		{
-			UnSerializeTransform(writer, property, object);
+			UnSerializeTransform(doc, property, object);
 		}
 		else if (property.get_type().is_enumeration())
 		{
-			UnSerializeEnumeration(writer, property, object);
+			//UnSerializeEnumeration(writer, property, object);
 		}
 	}
 
-	void UnSerializer::UnSerializeBool(rapidjson::Writer<rapidjson::StringBuffer>& writer, const rttr::property& property, std::shared_ptr<Destiny::Object> object)
+	void UnSerializer::UnSerializeBool(const rapidjson::Document& doc, const rttr::property& property, std::shared_ptr<Destiny::Object> object)
 	{
-		writer.Key(property.get_name().to_string().c_str());
-		writer.Bool(property.get_value(object).to_bool());
+		if (doc.HasMember(property.get_name().to_string().c_str()) && doc[property.get_name().to_string().c_str()].IsBool())
+		{
+			property.set_value(object, doc[property.get_name().to_string().c_str()].GetBool());
+		}
 	}
 
-	void UnSerializer::UnSerializeString(rapidjson::Writer<rapidjson::StringBuffer>& writer, const rttr::property& property, std::shared_ptr<Destiny::Object> object)
+	void UnSerializer::UnSerializeString(const rapidjson::Document& doc, const rttr::property& property, std::shared_ptr<Destiny::Object> object)
 	{
-		writer.Key(property.get_name().to_string().c_str());
-		writer.String(property.get_value(object).to_string().c_str());
+		if (doc.HasMember(property.get_name().to_string().c_str()) && doc[property.get_name().to_string().c_str()].IsString())
+		{
+			property.set_value(object, std::string(doc[property.get_name().to_string().c_str()].GetString()));
+		}
 	}
 
-	void UnSerializer::UnSerializeFloat(rapidjson::Writer<rapidjson::StringBuffer>& writer, const rttr::property& property, std::shared_ptr<Destiny::Object> object)
+	void UnSerializer::UnSerializeFloat(const rapidjson::Document& doc, const rttr::property& property, std::shared_ptr<Destiny::Object> object)
 	{
-		writer.Key(property.get_name().to_string().c_str());
-		writer.Double(property.get_value(object).to_float());
+		if (doc.HasMember(property.get_name().to_string().c_str()) && doc[property.get_name().to_string().c_str()].IsFloat())
+		{
+			property.set_value(object, doc[property.get_name().to_string().c_str()].GetFloat());
+		}
 	}
 
 	void UnSerializer::UnSerializeFloat2(rapidjson::Writer<rapidjson::StringBuffer>& writer, const rttr::property& property, std::shared_ptr<Destiny::Object> object)
@@ -141,58 +151,41 @@ namespace Destiny
 		writer.EndObject();
 	}
 
-	void UnSerializer::UnSerializeTransform(rapidjson::Writer<rapidjson::StringBuffer>& writer, const rttr::property& property, std::shared_ptr<Destiny::Object> object)
+	void UnSerializer::UnSerializeTransform(const rapidjson::Document& doc, const rttr::property& property, std::shared_ptr<Destiny::Object> object)
 	{
-		Destiny::Transform value;
-		property.get_value(object).convert(value);
-
-		writer.Key(property.get_name().to_string().c_str());
-
-		writer.StartObject();
+		if (doc.HasMember(property.get_name().to_string().c_str()) && doc[property.get_name().to_string().c_str()].IsObject())
+		{
+			Destiny::Transform transform;
+			
+			transform.set_translation
+			(
+				{
+					doc[property.get_name().to_string().c_str()]["translation"]["x"].GetFloat(),
+					doc[property.get_name().to_string().c_str()]["translation"]["y"].GetFloat(),
+					doc[property.get_name().to_string().c_str()]["translation"]["z"].GetFloat()
+				}
+			);
 		
-		writer.Key("type");
-		writer.String("Destiny::Transform");
+			transform.set_scale
+			(
+				{
+					doc[property.get_name().to_string().c_str()]["scale"]["x"].GetFloat(),
+					doc[property.get_name().to_string().c_str()]["scale"]["y"].GetFloat(),
+					doc[property.get_name().to_string().c_str()]["scale"]["z"].GetFloat()
+				}
+			);
 
-		auto translation = value.get_translation();
-		writer.Key("translation");
-		writer.StartObject();
-		writer.Key("type");
-		writer.String("DirectX::XMFLOAT3");
-		writer.Key("x");
-		writer.Double(translation.x);
-		writer.Key("y");
-		writer.Double(translation.y);
-		writer.Key("z");
-		writer.Double(translation.z);
-		writer.EndObject();
+			transform.set_rotation
+			(
+				{
+					doc[property.get_name().to_string().c_str()]["rotation"]["x"].GetFloat(),
+					doc[property.get_name().to_string().c_str()]["rotation"]["y"].GetFloat(),
+					doc[property.get_name().to_string().c_str()]["rotation"]["z"].GetFloat()
+				}
+			);
 
-		auto scale = value.get_scale();
-		writer.Key("scale");
-		writer.StartObject();
-		writer.Key("type");
-		writer.String("DirectX::XMFLOAT3");
-		writer.Key("x");
-		writer.Double(scale.x);
-		writer.Key("y");
-		writer.Double(scale.y);
-		writer.Key("z");
-		writer.Double(scale.z);
-		writer.EndObject();
-
-		auto rotation = value.get_rotation();
-		writer.Key("rotation");
-		writer.StartObject();
-		writer.Key("type");
-		writer.String("DirectX::XMFLOAT3");
-		writer.Key("x");
-		writer.Double(rotation.x);
-		writer.Key("y");
-		writer.Double(rotation.y);
-		writer.Key("z");
-		writer.Double(rotation.z);
-		writer.EndObject();
-
-		writer.EndObject();
+			property.set_value(object, transform);
+		}
 	}
 
 	void UnSerializer::UnSerializeEnumeration(rapidjson::Writer<rapidjson::StringBuffer>& writer, const rttr::property& property, std::shared_ptr<Destiny::Object> object)

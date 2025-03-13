@@ -3,6 +3,7 @@
 #include "CameraController.h"
 #include "VisualComponent.h"
 #include "DirectionLightComponent.h"
+#include "PointLightComponent.h"
 #include "Mesh.h"
 #include "RenderSystem.h"
 #include "BindRenderTargets.h"
@@ -48,6 +49,11 @@ namespace Destiny
 						m_cameraController = std::dynamic_pointer_cast<CameraController>(component);
 						m_cameraNode = topNode;
 					}
+
+					if (std::dynamic_pointer_cast<DirectionLightComponent>(component) || std::dynamic_pointer_cast<PointLightComponent>(component))
+					{
+						component->onEnterScene();
+					}
 				}
 				for (const auto& node : topNode->getChilds())
 				{
@@ -58,6 +64,7 @@ namespace Destiny
 
 		if (m_camera && m_cameraController && m_camera->get_node() == m_cameraNode && m_cameraController->get_node() == m_cameraNode)
 		{
+			m_camera->onEnterScene();
 			return;
 		}
 
@@ -67,6 +74,8 @@ namespace Destiny
 		m_cameraNode->addComponent(m_camera);
 		m_cameraNode->addComponent(m_cameraController);
 		m_cameraNode->addToParent(shared_from_this());
+
+		m_camera->onEnterScene();
 	}
 
 	void VisualScene::uninitialize()

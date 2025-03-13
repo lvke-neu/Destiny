@@ -379,6 +379,12 @@ void Application::drawDock()
 		{
 			openScene();
 		}
+		if ((ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyDown(ImGuiKey_C)) ||
+			(ImGui::IsKeyDown(ImGuiKey_RightCtrl) && ImGui::IsKeyDown(ImGuiKey_C))
+			)
+		{
+			Destiny::Engine::GetInstance()->getSceneManager()->setCurrentScene(nullptr);
+		}
 		if (ImGui::BeginMenu("File"))
 		{
 			if (ImGui::MenuItem("Open", "CTRL+O"))
@@ -392,6 +398,10 @@ void Application::drawDock()
 			if (ImGui::MenuItem("Save", "CTRL+S"))
 			{
 				saveScene();
+			}
+			if (ImGui::MenuItem("Clear", "CTRL+C"))
+			{
+				Destiny::Engine::GetInstance()->getSceneManager()->setCurrentScene(nullptr);
 			}
 			ImGui::EndMenu();
 		}

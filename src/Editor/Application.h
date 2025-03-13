@@ -19,6 +19,9 @@ public:
 private:
 	void initImGui();
 	void drawDock();
+	void newScene();
+	void saveScene();
+	void openScene();
 private:
 	HWND										m_hwnd;
 	HINSTANCE									m_hInstance;

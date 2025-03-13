@@ -5,9 +5,11 @@
 #include "AssetPanel.h"
 #include "DeferredRenderDebugPanel.h"
 #include "GraphicsStatPanel.h"
+#include "FileDialog.h"
 #include "Engine/Engine.h"
 #include "Engine/BlobLoaderManager.h"
 #include "Engine/BlobLoader.h"
+#include "Engine/BlobHolder.h"
 #include "Engine/EventSystem.h"
 #include "Graphics/GraphicsSystem.h"
 #include "Graphics/VisualScene.h"
@@ -15,6 +17,10 @@
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_win32.h"
 #include "ImGui/imgui_impl_dx11.h"
+#include "Engine/Serializer.h"
+#include "Engine/UnSerializer.h"
+#include "Engine/FileSystem.h"
+#include "Engine/Blob.h"
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -355,16 +361,38 @@ void Application::drawDock()
 	//menu bar
 	if (ImGui::BeginMenuBar())
 	{
+		if ((ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyDown(ImGuiKey_N)) ||
+			(ImGui::IsKeyDown(ImGuiKey_RightCtrl) && ImGui::IsKeyDown(ImGuiKey_N))
+			)
+		{
+			newScene();
+		}
+		if ((ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyDown(ImGuiKey_S)) ||
+			(ImGui::IsKeyDown(ImGuiKey_RightCtrl) && ImGui::IsKeyDown(ImGuiKey_S))
+			)
+		{
+			saveScene();
+		}
+		if ((ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyDown(ImGuiKey_O)) ||
+			(ImGui::IsKeyDown(ImGuiKey_RightCtrl) && ImGui::IsKeyDown(ImGuiKey_O))
+			)
+		{
+			openScene();
+		}
 		if (ImGui::BeginMenu("File"))
 		{
+			if (ImGui::MenuItem("Open", "CTRL+O"))
+			{
+				openScene();
+			}
 			if (ImGui::MenuItem("New", "CTRL+N"))
 			{
-				auto scene = std::make_shared<Destiny::VisualScene>("New Scene");
-				scene->initialize();
-				Destiny::Engine::GetInstance()->getSceneManager()->setCurrentScene(scene);
-				m_propertyPanel->onChoosedNode(nullptr);
+				newScene();
 			}
-
+			if (ImGui::MenuItem("Save", "CTRL+S"))
+			{
+				saveScene();
+			}
 			ImGui::EndMenu();
 		}
 
@@ -381,4 +409,66 @@ void Application::drawDock()
 	m_graphicsStatPanel->update();
 
 	ImGui::End();
+}
+
+void Application::newScene()
+{
+	auto scene = std::make_shared<Destiny::VisualScene>("New Scene");
+	scene->initialize();
+	Destiny::Engine::GetInstance()->getSceneManager()->setCurrentScene(scene);
+	m_propertyPanel->onChoosedNode(nullptr);
+}
+
+void Application::saveScene()
+{
+	auto scene = Destiny::Engine::GetInstance()->getSceneManager()->getCurrentScene();
+	if (scene)
+	{
+		std::string scenePath = "builtin://scene";
+		auto blobLoader = Destiny::Engine::GetInstance()->getBlobLoaderManager()->getBlobLoader(scenePath.c_str());
+		scenePath = blobLoader->normalizedPath(blobLoader->createBlobHolder(scenePath));
+
+		scenePath = FileDialog::SaveFile(scenePath.c_str(), "Scene Files (*.scene)\0*.scene\0");
+		if (scenePath.empty())
+		{
+			return;
+		}
+
+		std::string sceneContent;
+		Destiny::Serializer::Serialize(sceneContent, scene);
+		std::shared_ptr<Destiny::Blob> blob = std::make_shared<Destiny::Blob>(sceneContent.size());
+		blob->copyfrom((void*)sceneContent.data(), sceneContent.length());
+
+		Destiny::FileSystem::WriteBlob(scenePath.c_str(), blob);
+	}
+}
+
+void Application::openScene()
+{
+	std::string scenePath = "builtin://scene";
+	auto blobLoader = Destiny::Engine::GetInstance()->getBlobLoaderManager()->getBlobLoader(scenePath.c_str());
+	scenePath = blobLoader->normalizedPath(blobLoader->createBlobHolder(scenePath));
+
+	scenePath = FileDialog::OpenFile(scenePath.c_str(), "Scene Files (*.scene)\0*.scene\0");
+	if (scenePath.empty())
+	{
+		return;
+	}
+
+	
+	auto blob = Destiny::FileSystem::ReadBlob(scenePath.c_str());
+	if (!blob)
+	{
+		return;
+	}
+	std::string sceneContent((char*)blob->getData(), blob->getLength());
+	std::shared_ptr<Destiny::Object> object = nullptr;
+	Destiny::UnSerializer::UnSerialize(object, sceneContent);
+
+	auto scene = std::dynamic_pointer_cast<Destiny::Scene>(object);
+	if (scene)
+	{
+		scene->initialize();
+		Destiny::Engine::GetInstance()->getSceneManager()->setCurrentScene(scene);
+	}
 }

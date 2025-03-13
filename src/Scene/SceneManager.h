@@ -14,9 +14,9 @@ namespace Destiny
 		void							initialize();
 		void							uninitialize();
 		void							update(float deltaTime);
-		void							setCurrentScene(std::shared_ptr<Scene> currentScene);
 	public:
 		std::shared_ptr<Scene>			getCurrentScene();
+		void							setCurrentScene(std::shared_ptr<Scene> currentScene);
 	private:
 		std::shared_ptr<Scene>			m_currentScene;
 	};

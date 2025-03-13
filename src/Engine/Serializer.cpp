@@ -142,8 +142,6 @@ namespace Destiny
 		writer.Key(property.get_name().to_string().c_str());
 
 		writer.StartObject();
-		writer.Key("type");
-		writer.String("DirectX::XMFLOAT2");
 		writer.Key("x");
 		writer.Double(value.x);
 		writer.Key("y");
@@ -159,8 +157,6 @@ namespace Destiny
 		writer.Key(property.get_name().to_string().c_str());
 
 		writer.StartObject();
-		writer.Key("type");
-		writer.String("DirectX::XMFLOAT3");
 		writer.Key("x");
 		writer.Double(value.x);
 		writer.Key("y");
@@ -178,8 +174,6 @@ namespace Destiny
 		writer.Key(property.get_name().to_string().c_str());
 
 		writer.StartObject();
-		writer.Key("type");
-		writer.String("Destiny::Color");
 		writer.Key("r");
 		writer.Double(value.get_r());
 		writer.Key("g");
@@ -199,15 +193,10 @@ namespace Destiny
 		writer.Key(property.get_name().to_string().c_str());
 
 		writer.StartObject();
-		
-		writer.Key("type");
-		writer.String("Destiny::Transform");
 
 		auto translation = value.get_translation();
 		writer.Key("translation");
 		writer.StartObject();
-		writer.Key("type");
-		writer.String("DirectX::XMFLOAT3");
 		writer.Key("x");
 		writer.Double(translation.x);
 		writer.Key("y");
@@ -219,8 +208,6 @@ namespace Destiny
 		auto scale = value.get_scale();
 		writer.Key("scale");
 		writer.StartObject();
-		writer.Key("type");
-		writer.String("DirectX::XMFLOAT3");
 		writer.Key("x");
 		writer.Double(scale.x);
 		writer.Key("y");
@@ -232,8 +219,6 @@ namespace Destiny
 		auto rotation = value.get_rotation();
 		writer.Key("rotation");
 		writer.StartObject();
-		writer.Key("type");
-		writer.String("DirectX::XMFLOAT3");
 		writer.Key("x");
 		writer.Double(rotation.x);
 		writer.Key("y");
@@ -256,13 +241,6 @@ namespace Destiny
 		auto itemIndex = (int)std::distance(items.begin(), std::find(items.begin(), items.end(), property.get_value(object).to_string()));
 
 		writer.Key(property.get_name().to_string().c_str());
-
-		writer.StartObject();
-
-		writer.Key("type");
-		writer.String(property.get_type().get_name().to_string().c_str());
-		writer.Key("Value");
 		writer.String(items[itemIndex].c_str());
-		writer.EndObject();
 	}
 }

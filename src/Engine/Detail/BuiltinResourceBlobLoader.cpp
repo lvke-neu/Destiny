@@ -58,7 +58,9 @@ namespace Destiny
 			if (pos != path.npos)
 			{
 				path = path.substr(pos + 3);
-				return exePath + "builtin\\" + path;
+				std::string res = exePath + "builtin\\" + path;
+				std::replace(res.begin(), res.end(), '/', '\\');
+				return res;
 			}	
 		}
 

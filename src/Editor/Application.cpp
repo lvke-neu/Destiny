@@ -168,6 +168,18 @@ void Application::initialize(HINSTANCE hInstance)
 
 	Destiny::Engine::GetInstance()->initialize({ (long long)m_hwnd, 16 });
 
+	//logo
+	std::string scenePath = "builtin://texture/favicon.ico";
+	auto blobLoader = Destiny::Engine::GetInstance()->getBlobLoaderManager()->getBlobLoader(scenePath.c_str());
+	scenePath = blobLoader->normalizedPath(blobLoader->createBlobHolder(scenePath));
+	
+	HICON hIcon = (HICON)LoadImage(NULL, Destiny::Utility::MultiByte2WideChar(scenePath).c_str(), IMAGE_ICON, 0, 0, LR_LOADFROMFILE | LR_DEFAULTSIZE);
+	if (hIcon != NULL)
+	{
+		SetClassLongPtr(m_hwnd, GCLP_HICON, (LONG_PTR)hIcon);
+		SetClassLongPtr(m_hwnd, GCLP_HICONSM, (LONG_PTR)hIcon);
+	}
+
 	ShowWindow(m_hwnd, SW_SHOW);
 	UpdateWindow(m_hwnd);
 

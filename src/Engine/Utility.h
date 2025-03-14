@@ -59,3 +59,25 @@ namespace Destiny
 //**********************************************************************************************************
 
 #define MAX_BUFFER_SIZE 1024
+
+
+//************************************************* test execute time ************************************************
+#include <chrono>
+#define EXECUTION_TIME(FUNCTION_NAME, FUNCTION)\
+auto start = std::chrono::high_resolution_clock::now();\
+FUNCTION;\
+auto end = std::chrono::high_resolution_clock::now();\
+auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);\
+std::string logInfo = " execution time:{0}ms";\
+logInfo = #FUNCTION_NAME + logInfo;\
+LOG_WARN(logInfo, std::to_string(duration.count()));
+
+#define EXECUTION_TIME2(FUNCTION_NAME, FUNCTION)\
+auto start = std::chrono::high_resolution_clock::now();\
+FUNCTION;\
+auto end = std::chrono::high_resolution_clock::now();\
+auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);\
+std::string logInfo = " execution time:{0}ms";\
+logInfo = FUNCTION_NAME + logInfo;\
+LOG_WARN(logInfo, std::to_string(duration.count()));
+//**********************************************************************************************************

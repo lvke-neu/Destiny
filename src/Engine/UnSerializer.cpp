@@ -4,6 +4,7 @@
 #include "Engine/Component.h"
 #include "Math/Color.h"
 #include "Math/Transform.h"
+#include "Graphics/Material.h"
 #include <DirectXMath.h>
 #include <d3d11.h>
 
@@ -124,6 +125,10 @@ namespace Destiny
 		{
 			UnSerializeEnumeration(doc, property, object);
 		}
+		else if (property.get_type() == rttr::type::get<std::shared_ptr<Destiny::Material>>())
+		{
+			UnSerializeMaterial(doc, property, object);
+		}
 	}
 
 	void UnSerializer::UnSerializeBool(const rapidjson::Document& doc, const rttr::property& property, std::shared_ptr<Destiny::Object> object)
@@ -233,5 +238,23 @@ namespace Destiny
 			auto value = property.get_enumeration().name_to_value(doc[property.get_name().to_string().c_str()].GetString());
 			property.set_value(object, value);
 		}
+	}
+
+	void UnSerializer::UnSerializeMaterial(const rapidjson::Document& doc, const rttr::property& property, std::shared_ptr<Destiny::Object> object)
+	{
+		std::shared_ptr<Destiny::Object> material = nullptr;
+
+		if (doc.HasMember("material") && doc["material"].IsObject())
+		{
+			rapidjson::StringBuffer buffer;
+			rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+
+			const rapidjson::Value& rapidjsonValue = doc["material"].GetObject();
+			rapidjsonValue.Accept(writer);
+
+			UnSerialize(material, buffer.GetString());
+		}
+
+		property.set_value(object, std::dynamic_pointer_cast<Destiny::Material>(material));
 	}
 }

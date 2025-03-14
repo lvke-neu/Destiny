@@ -22,6 +22,7 @@ private:
 	void newScene();
 	void saveScene();
 	void openScene();
+	void clearScene();
 private:
 	HWND										m_hwnd;
 	HINSTANCE									m_hInstance;

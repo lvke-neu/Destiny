@@ -383,7 +383,7 @@ void Application::drawDock()
 			(ImGui::IsKeyDown(ImGuiKey_RightCtrl) && ImGui::IsKeyDown(ImGuiKey_C))
 			)
 		{
-			Destiny::Engine::GetInstance()->getSceneManager()->setCurrentScene(nullptr);
+			clearScene();
 		}
 		if (ImGui::BeginMenu("File"))
 		{
@@ -401,7 +401,7 @@ void Application::drawDock()
 			}
 			if (ImGui::MenuItem("Clear", "CTRL+C"))
 			{
-				Destiny::Engine::GetInstance()->getSceneManager()->setCurrentScene(nullptr);
+				clearScene();
 			}
 			ImGui::EndMenu();
 		}
@@ -481,4 +481,10 @@ void Application::openScene()
 		scene->initialize();
 		Destiny::Engine::GetInstance()->getSceneManager()->setCurrentScene(scene);
 	}
+}
+
+void Application::clearScene()
+{
+	Destiny::Engine::GetInstance()->getSceneManager()->setCurrentScene(nullptr);
+	m_propertyPanel->onChoosedNode(nullptr);
 }

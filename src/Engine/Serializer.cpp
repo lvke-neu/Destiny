@@ -3,6 +3,7 @@
 #include "Scene.h"
 #include "Node.h"
 #include "Component.h"
+#include "Graphics/Material.h"
 #include "Math/Color.h"
 #include "Math/Transform.h"
 #include <DirectXMath.h>
@@ -68,6 +69,14 @@ namespace Destiny
 		auto node = std::dynamic_pointer_cast<Destiny::Node>(object);
 		if (node)
 		{
+			writer.Key("nodes");
+			writer.StartArray();
+			for (const auto& node : node->getChilds())
+			{
+				Serialize(writer, node);
+			}
+			writer.EndArray();
+
 			writer.Key("components");
 			writer.StartArray();
 			for (const auto& component : node->getComponents())
@@ -113,6 +122,10 @@ namespace Destiny
 		else if (property.get_type().is_enumeration())
 		{
 			SerializeEnumeration(writer, property, object);
+		}
+		else if (property.get_type() == rttr::type::get<std::shared_ptr<Destiny::Material>>())
+		{
+			SerializeMaterial(writer, property, object);
 		}
 	}
 
@@ -242,5 +255,27 @@ namespace Destiny
 
 		writer.Key(property.get_name().to_string().c_str());
 		writer.String(items[itemIndex].c_str());
+	}
+
+	void Serializer::SerializeMaterial(rapidjson::Writer<rapidjson::StringBuffer>& writer, const rttr::property& property, std::shared_ptr<Destiny::Object> object)
+	{
+		std::shared_ptr<Destiny::Material> material;
+		property.get_value(object).convert(material);
+
+		writer.Key("material");
+		writer.StartObject();
+
+		if (material)
+		{
+			auto type = rttr::type::get(*material.get());
+			writer.Key("type");
+			writer.String(type.get_name().data());
+			for (const auto& _property : type.get_properties())
+			{
+				SerializeProperty(writer, _property, material);
+			}
+		}
+
+		writer.EndObject();
 	}
 }

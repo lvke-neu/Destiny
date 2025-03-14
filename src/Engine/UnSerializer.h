@@ -27,5 +27,6 @@ namespace Destiny
 		static void UnSerializeColor(const rapidjson::Document& doc, const rttr::property& property, std::shared_ptr<Destiny::Object> object);
 		static void UnSerializeTransform(const rapidjson::Document& doc, const rttr::property& property, std::shared_ptr<Destiny::Object> object);
 		static void UnSerializeEnumeration(const rapidjson::Document& doc, const rttr::property& property, std::shared_ptr<Destiny::Object> object);
+		static void UnSerializeMaterial(const rapidjson::Document& doc, const rttr::property& property, std::shared_ptr<Destiny::Object> object);
 	};
 }

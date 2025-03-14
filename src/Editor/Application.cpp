@@ -166,7 +166,7 @@ void Application::initialize(HINSTANCE hInstance)
 		return ;
 	}
 
-	Destiny::Engine::GetInstance()->initialize({ (long long)m_hwnd, 4 });
+	Destiny::Engine::GetInstance()->initialize({ (long long)m_hwnd, 16 });
 
 	ShowWindow(m_hwnd, SW_SHOW);
 	UpdateWindow(m_hwnd);

@@ -35,7 +35,7 @@ namespace Destiny
 		{
 			if (priority)
 			{
-				Engine::GetInstance()->getThreadPool()->commitTask(std::bind(&Asset::doLoad, this));
+				Engine::GetInstance()->getThreadPool()->commitTask(std::bind(&Asset::doLoad, shared_from_this()));
 			}
 			else
 			{
@@ -61,7 +61,7 @@ namespace Destiny
 		{
 			if (priority)
 			{
-				Engine::GetInstance()->getThreadPool()->commitTask(std::bind(&Asset::doReload, this));
+				Engine::GetInstance()->getThreadPool()->commitTask(std::bind(&Asset::doReload, shared_from_this()));
 			}
 			else
 			{

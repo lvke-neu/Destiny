@@ -101,11 +101,17 @@ LRESULT CALLBACK MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		keyCode = (Destiny::KeyCode)wParam;
 		if (msg == WM_KEYDOWN)
 		{
-			Destiny::Engine::GetInstance()->getEventSystem()->dispatchEvent(Destiny::EventType::KeyPressed, &keyCode);
+			if (!ImGui::IsAnyItemActive() && !ImGui::IsAnyItemFocused())
+			{
+				Destiny::Engine::GetInstance()->getEventSystem()->dispatchEvent(Destiny::EventType::KeyPressed, &keyCode);
+			}	
 		}
 		if (msg == WM_KEYUP)
 		{
-			Destiny::Engine::GetInstance()->getEventSystem()->dispatchEvent(Destiny::EventType::KeyReleased, &keyCode);
+			if (!ImGui::IsAnyItemActive() && !ImGui::IsAnyItemFocused())
+			{
+				Destiny::Engine::GetInstance()->getEventSystem()->dispatchEvent(Destiny::EventType::KeyReleased, &keyCode);
+			}
 		}
 		return 0;
 	}
@@ -377,25 +383,38 @@ void Application::drawDock()
 			(ImGui::IsKeyDown(ImGuiKey_RightCtrl) && ImGui::IsKeyDown(ImGuiKey_N))
 			)
 		{
-			newScene();
+			if (!ImGui::IsAnyItemActive() && !ImGui::IsAnyItemFocused())
+			{
+				newScene();
+			}
 		}
 		if ((ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyDown(ImGuiKey_S)) ||
 			(ImGui::IsKeyDown(ImGuiKey_RightCtrl) && ImGui::IsKeyDown(ImGuiKey_S))
 			)
 		{
-			saveScene();
+			if (!ImGui::IsAnyItemActive() && !ImGui::IsAnyItemFocused())
+			{
+				saveScene();
+
+			}
 		}
 		if ((ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyDown(ImGuiKey_O)) ||
 			(ImGui::IsKeyDown(ImGuiKey_RightCtrl) && ImGui::IsKeyDown(ImGuiKey_O))
 			)
 		{
-			openScene();
+			if (!ImGui::IsAnyItemActive() && !ImGui::IsAnyItemFocused())
+			{
+				openScene();
+			}
 		}
 		if ((ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyDown(ImGuiKey_C)) ||
 			(ImGui::IsKeyDown(ImGuiKey_RightCtrl) && ImGui::IsKeyDown(ImGuiKey_C))
 			)
 		{
-			clearScene();
+			if (!ImGui::IsAnyItemActive() && !ImGui::IsAnyItemFocused())
+			{
+				clearScene();
+			}	
 		}
 		if (ImGui::BeginMenu("File"))
 		{

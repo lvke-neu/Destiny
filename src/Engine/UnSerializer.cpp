@@ -30,22 +30,17 @@ namespace Destiny
 					}
 				}
 
-				EXECUTION_TIME2(doc["type"].GetString(),
-					for (const auto& property : type.get_properties())
-					{
-						UnSerializeProperty(doc, property, object);
-					}
+				for (const auto& property : type.get_properties())
+				{
+					UnSerializeProperty(doc, property, object);
+				}
 
-					auto node = std::dynamic_pointer_cast<Destiny::Node>(object);
-					if (node)
-					{
-						UnSerializeNode(node, doc);
-						UnSerializeComponent(node, doc);
-						LOG_INFO("-----nodeName:{0}", node->get_name());
-					}
-				);
-		
-
+				auto node = std::dynamic_pointer_cast<Destiny::Node>(object);
+				if (node)
+				{
+					UnSerializeNode(node, doc);
+					UnSerializeComponent(node, doc);
+				}
 			}
 		}
 	}

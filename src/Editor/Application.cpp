@@ -487,9 +487,9 @@ void Application::openScene()
 	std::shared_ptr<Destiny::Object> object = nullptr;
 
 	
-	using namespace Destiny;
-
-	EXECUTION_TIME(UnSerialize, Destiny::UnSerializer::UnSerialize(object, sceneContent));
+	Destiny::UnSerializer::UnSerialize(object, sceneContent);
+	//using namespace Destiny;
+	//EXECUTION_TIME(UnSerialize, Destiny::UnSerializer::UnSerialize(object, sceneContent));
 
 	auto scene = std::dynamic_pointer_cast<Destiny::Scene>(object);
 	if (scene)

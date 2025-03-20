@@ -26,4 +26,5 @@ private:
 	std::shared_ptr<Destiny::Texture> m_sceneIcon;
 	std::shared_ptr<Destiny::Texture> m_hlslIcon;
 	std::shared_ptr<Destiny::Texture> m_typefaceIcon;
+	std::shared_ptr<Destiny::Texture> m_modelIcon;
 };

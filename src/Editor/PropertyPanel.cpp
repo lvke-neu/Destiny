@@ -86,16 +86,16 @@ void PropertyPanel::reflect(std::shared_ptr<Destiny::Object> object)
 		
 		ImGui::TreePop();
 
-		if (ImGui::Button("Serialize And UnSerialize"))
-		{
-			std::string jsonStr;
-			Destiny::Serializer::Serialize(jsonStr, object);
-			using namespace Destiny;
-			LOG_WARN(jsonStr);
+		//if (ImGui::Button("Serialize And UnSerialize"))
+		//{
+		//	std::string jsonStr;
+		//	Destiny::Serializer::Serialize(jsonStr, object);
+		//	using namespace Destiny;
+		//	LOG_WARN(jsonStr);
 
-			std::shared_ptr<Destiny::Object> object;
-			Destiny::UnSerializer::UnSerialize(object, jsonStr);
-		}
+		//	std::shared_ptr<Destiny::Object> object;
+		//	Destiny::UnSerializer::UnSerialize(object, jsonStr);
+		//}
 	}
 	ImGui::PopID();
 
@@ -225,6 +225,16 @@ void PropertyPanel::reflectString(const rttr::property& property, std::shared_pt
 		property.set_value(object, value);
 	}
 
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_BROWSER_ITEM"))
+		{
+			value = (char*)payload->Data;
+			property.set_value(object, value);
+		}
+		ImGui::EndDragDropTarget();
+	}
+
 	if (property.get_name().to_string() == "renderer")
 	{
 		if (ImGui::Button("ReCompile Shader"))
@@ -232,20 +242,20 @@ void PropertyPanel::reflectString(const rttr::property& property, std::shared_pt
 			std::static_pointer_cast<Destiny::VisualComponent>(object)->reCompileShader();
 		}
 		ImGui::SameLine();
-		if (ImGui::Button("Editor Shader"))
-		{
-			//ImGui::OpenPopup("EditorShader");
+		//if (ImGui::Button("Editor Shader"))
+		//{
+		//	//ImGui::OpenPopup("EditorShader");
 
-			//if (ImGui::BeginPopup("EditorShader"))
-			//{
-			//	ImGui::Text("sdsadsads");
-			//	if (ImGui::Button("Close"))
-			//	{
-			//		ImGui::CloseCurrentPopup();
-			//	}
-			//	ImGui::EndPopup();
-			//}
-		}
+		//	//if (ImGui::BeginPopup("EditorShader"))
+		//	//{
+		//	//	ImGui::Text("sdsadsads");
+		//	//	if (ImGui::Button("Close"))
+		//	//	{
+		//	//		ImGui::CloseCurrentPopup();
+		//	//	}
+		//	//	ImGui::EndPopup();
+		//	//}
+		//}
 	}
 }
 

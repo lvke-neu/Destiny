@@ -18,6 +18,7 @@ AssetPanel::AssetPanel()
 	m_sceneIcon = Destiny::Texture::Create("builtin://texture/editor/scene.png");
 	m_hlslIcon = Destiny::Texture::Create("builtin://texture/editor/hlsl.png");
 	m_typefaceIcon = Destiny::Texture::Create("builtin://texture/editor/typeface.png");
+	m_modelIcon = Destiny::Texture::Create("builtin://texture/editor/model.png");
 }
 
 AssetPanel::~AssetPanel()
@@ -74,7 +75,7 @@ void AssetPanel::drawContentBrowser()
 		else
 		{
 			auto extension = dir.path().extension();
-			if (extension == ".png" || extension == ".dds")
+			if (extension == ".png" || extension == ".dds" || extension == ".jpg")
 			{
 				std::string imagePath = dir.path().u8string();
 				auto pos = imagePath.find("builtin");
@@ -96,6 +97,10 @@ void AssetPanel::drawContentBrowser()
 			else if (extension == ".ttf")
 			{
 				texture = m_typefaceIcon;
+			}
+			else if (extension == ".obj" || extension == ".dae" || extension == ".gltf")
+			{
+				texture = m_modelIcon;
 			}
 			else
 			{

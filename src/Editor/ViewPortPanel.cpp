@@ -15,7 +15,10 @@
 #include "Graphics/BindRenderTargets.h"
 #include "Graphics/VisualScene.h"
 #include "Graphics/CameraComponent.h"
+#include "Scene/Model/ModelComponent.h"
 #include "Scene/SceneManager.h"
+#define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
+#include <experimental/filesystem>
 
 ViewPortPanel::ViewPortPanel() :
 	m_choosedNode(nullptr),
@@ -74,43 +77,65 @@ void ViewPortPanel::update()
 		{
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_BROWSER_ITEM"))
 			{
-				std::string scenePath = (char*)payload->Data;
+				std::string dropPath = (char*)payload->Data;
 				std::shared_ptr<Destiny::Blob> blob = nullptr;
 
-				LOG_INFO("Open Scene:{0}", scenePath);
-
-				auto blobLoader = Destiny::Engine::GetInstance()->getBlobLoaderManager()->getBlobLoader(scenePath.c_str());
-				if (blobLoader)
+				if (dropPath.find(".scene") != std::string::npos)
 				{
-					auto blobHolder = blobLoader->createBlobHolder(scenePath);
-					if (blobHolder)
+					auto blobLoader = Destiny::Engine::GetInstance()->getBlobLoaderManager()->getBlobLoader(dropPath.c_str());
+					if (blobLoader)
 					{
-						blobHolder->load(0);
-						blob = blobHolder->getBlob();
+						auto blobHolder = blobLoader->createBlobHolder(dropPath);
+						if (blobHolder)
+						{
+							blobHolder->load(0);
+							blob = blobHolder->getBlob();
+						}
 					}
-				}
-				
-				if (blob)
-				{
-					std::string sceneContent((char*)blob->getData(), blob->getLength());
-					std::shared_ptr<Destiny::Object> object = nullptr;
-					Destiny::UnSerializer::UnSerialize(object, sceneContent);
-					auto scene = std::dynamic_pointer_cast<Destiny::Scene>(object);
-					if (scene)
+
+					if (blob)
 					{
-						scene->initialize();
-						Destiny::Engine::GetInstance()->getSceneManager()->setCurrentScene(scene);
-						send(ChoosedNode, nullptr);
-						LOG_INFO("Open Scene:{0} Successfully", scenePath);
+						std::string sceneContent((char*)blob->getData(), blob->getLength());
+						std::shared_ptr<Destiny::Object> object = nullptr;
+						Destiny::UnSerializer::UnSerialize(object, sceneContent);
+						auto scene = std::dynamic_pointer_cast<Destiny::Scene>(object);
+						if (scene)
+						{
+							scene->initialize();
+							Destiny::Engine::GetInstance()->getSceneManager()->setCurrentScene(scene);
+							send(ChoosedNode, nullptr);
+							LOG_INFO("Open Scene:{0} Successfully", dropPath);
+						}
+						else
+						{
+							LOG_ERROR("Open Scene:{0} Failure", dropPath);
+						}
 					}
 					else
 					{
-						LOG_ERROR("Open Scene:{0} Failure", scenePath);
+						LOG_ERROR("Open Scene:{0} Failure", dropPath);
 					}
 				}
-				else
+				else if (dropPath.find(".obj") != std::string::npos || dropPath.find(".dae") != std::string::npos || dropPath.find(".gltf") != std::string::npos)
 				{
-					LOG_ERROR("Open Scene:{0} Failure", scenePath);
+					if (Destiny::Engine::GetInstance()->getSceneManager()->getCurrentScene())
+					{
+						LOG_INFO("Open Model:{0}", dropPath);
+
+						auto node = std::make_shared<Destiny::Node>();
+						auto blobLoader = Destiny::Engine::GetInstance()->getBlobLoaderManager()->getBlobLoader(dropPath.c_str());
+						if (blobLoader)
+						{
+							auto blobHolder = blobLoader->createBlobHolder(dropPath);
+							node->set_name(std::experimental::filesystem::path(blobLoader->normalizedPath(blobHolder)).filename().u8string());
+						}
+
+						auto modelComponent = std::make_shared<Destiny::ModelComponent>();
+						modelComponent->set_path(dropPath);
+						node->addComponent(modelComponent);
+
+						node->addToParent(Destiny::Engine::GetInstance()->getSceneManager()->getCurrentScene());
+					}
 				}
 			}
 			ImGui::EndDragDropTarget();

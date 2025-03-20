@@ -10,7 +10,7 @@ namespace Destiny
 		m_renderTargetView(nullptr),
 		m_depthStencilView(nullptr)
 	{
-		m_clearColor = { 0, 0, 0, 255 };
+		m_clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
 	}
 
 	ClearRenderTarget::~ClearRenderTarget()

@@ -3,6 +3,12 @@
 #include "ImGui/ImGuizmo.h"
 #include "Engine/Engine.h"
 #include "Engine/EventSystem.h"
+#include "Engine/FileSystem.h"
+#include "Engine/UnSerializer.h"
+#include "Engine/Blob.h"
+#include "Engine/BlobLoaderManager.h"
+#include "Engine/BlobLoader.h"
+#include "Engine/BlobHolder.h"
 #include "Graphics/GraphicsSystem.h"
 #include "Graphics/RenderSystem.h"
 #include "Graphics/RenderTargetView.h"
@@ -22,7 +28,7 @@ ViewPortPanel::ViewPortPanel() :
 void ViewPortPanel::update()
 {
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
-	ImGui::Begin("Viewport");
+	ImGui::Begin("Viewport"); 
 
 	//if (ImGui::Button("Translate"))
 	//{
@@ -63,6 +69,52 @@ void ViewPortPanel::update()
 	if (rtv && rtv->isLoadingSucceed())
 	{
 		ImGui::Image(*(rtv->getShaderResourceView()), { (float)rtv->getWidth(), (float)rtv->getHeight() });
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_BROWSER_ITEM"))
+			{
+				std::string scenePath = (char*)payload->Data;
+				std::shared_ptr<Destiny::Blob> blob = nullptr;
+
+				LOG_INFO("Open Scene:{0}", scenePath);
+
+				auto blobLoader = Destiny::Engine::GetInstance()->getBlobLoaderManager()->getBlobLoader(scenePath.c_str());
+				if (blobLoader)
+				{
+					auto blobHolder = blobLoader->createBlobHolder(scenePath);
+					if (blobHolder)
+					{
+						blobHolder->load(0);
+						blob = blobHolder->getBlob();
+					}
+				}
+				
+				if (blob)
+				{
+					std::string sceneContent((char*)blob->getData(), blob->getLength());
+					std::shared_ptr<Destiny::Object> object = nullptr;
+					Destiny::UnSerializer::UnSerialize(object, sceneContent);
+					auto scene = std::dynamic_pointer_cast<Destiny::Scene>(object);
+					if (scene)
+					{
+						scene->initialize();
+						Destiny::Engine::GetInstance()->getSceneManager()->setCurrentScene(scene);
+						send(ChoosedNode, nullptr);
+						LOG_INFO("Open Scene:{0} Successfully", scenePath);
+					}
+					else
+					{
+						LOG_ERROR("Open Scene:{0} Failure", scenePath);
+					}
+				}
+				else
+				{
+					LOG_ERROR("Open Scene:{0} Failure", scenePath);
+				}
+			}
+			ImGui::EndDragDropTarget();
+		}
 	}
 	
 	processGzimo();

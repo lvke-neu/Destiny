@@ -134,6 +134,7 @@ Application::Application() :
 	AllocConsole();
 	MetaConnect(m_scenePanel, ScenePanel::ChoosedNode, m_propertyPanel, &PropertyPanel::onChoosedNode);
 	MetaConnect(m_scenePanel, ScenePanel::ChoosedNode, m_viewPortPanel, &ViewPortPanel::onChoosedNode);
+	MetaConnect(m_viewPortPanel, ViewPortPanel::ChoosedNode, m_propertyPanel, &PropertyPanel::onChoosedNode);
 }
 
 void Application::initialize(HINSTANCE hInstance)
@@ -515,7 +516,13 @@ void Application::openScene()
 	{
 		scene->initialize();
 		Destiny::Engine::GetInstance()->getSceneManager()->setCurrentScene(scene);
+		m_propertyPanel->onChoosedNode(nullptr);
 	}
+}
+
+void Application::openScene(const char* scenePath)
+{
+
 }
 
 void Application::clearScene()

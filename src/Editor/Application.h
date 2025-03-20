@@ -22,6 +22,7 @@ private:
 	void newScene();
 	void saveScene();
 	void openScene();
+	void openScene(const char* scenePath);
 	void clearScene();
 private:
 	HWND										m_hwnd;

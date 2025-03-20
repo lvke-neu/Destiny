@@ -9,6 +9,11 @@ namespace Destiny
 class ViewPortPanel : public Meta
 {
 public:
+	enum Signal
+	{
+		ChoosedNode
+	};
+public:
 	ViewPortPanel();
 public:
 	void update();

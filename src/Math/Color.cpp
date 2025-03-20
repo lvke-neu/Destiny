@@ -3,7 +3,7 @@
 
 namespace Destiny
 {
-	Color::Color() : m_r(0.0f), m_g(0.0f), m_b(0.0f), m_a(255.0f)
+	Color::Color() : m_r(0.0f), m_g(0.0f), m_b(0.0f), m_a(1.0f)
 	{
 
 	}

@@ -12,7 +12,6 @@ namespace Destiny
 		unsigned char a;
 	};
 
-	// 0 - 255
 	class Color
 	{
 	public:

@@ -2,6 +2,7 @@
 #include "Engine/Engine.h"
 #include "Engine/BlobLoaderManager.h"
 #include "Engine/BlobLoader.h"
+#include "Engine/BlobHolder.h"
 #include "Graphics/Texture.h"
 #include "Imgui/imgui.h"
 
@@ -109,6 +110,27 @@ void AssetPanel::drawContentBrowser()
 				texture->load();
 			}
 			ImGui::ImageButton(texture->getShaderResourceView(), { buttonSize, buttonSize });
+
+			if (!std::experimental::filesystem::is_directory(dir))
+			{
+				if (ImGui::BeginDragDropSource())
+				{
+					std::string dragDropPath = dir.path().u8string();
+					auto pos = dragDropPath.find("builtin");
+					if (pos != std::string::npos)
+					{
+						dragDropPath = dragDropPath.substr(pos + 8, dragDropPath.size() - pos - 8);
+						dragDropPath = "builtin://" + dragDropPath;
+						std::replace(dragDropPath.begin(), dragDropPath.end(), '\\', '/');
+					}
+
+					ImGui::SetDragDropPayload("ASSET_BROWSER_ITEM", dragDropPath.c_str(), dragDropPath.size() + 1, ImGuiCond_Once);
+					ImGui::Image(texture->getShaderResourceView(), { 30.0f, 30.0f });
+					ImGui::SameLine();
+					ImGui::Text("%s", dragDropPath.c_str());
+					ImGui::EndDragDropSource();
+				}
+			}
 		}
 		
 		ImGui::PopStyleColor();

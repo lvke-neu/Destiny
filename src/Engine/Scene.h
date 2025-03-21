@@ -14,6 +14,7 @@ namespace Destiny
 		virtual void initialize() = 0;
 		virtual void uninitialize() = 0;
 		virtual void update(float deltaTime) = 0;
+		virtual void lateUpdate(float deltaTime) = 0;
 		virtual void onCull() = 0;	
 	};
 }

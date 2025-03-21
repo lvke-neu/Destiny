@@ -19,6 +19,7 @@ namespace Destiny
 		virtual void								initialize() override;
 		virtual void								uninitialize() override;
 		virtual void								update(float deltaTime) override;
+		virtual void								lateUpdate(float deltaTime) override;
 		virtual void								onCull() override;
 	public:
 		std::shared_ptr<CameraComponent>			getCamera();

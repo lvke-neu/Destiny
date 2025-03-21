@@ -380,6 +380,44 @@ void Application::drawDock()
 	//menu bar
 	if (ImGui::BeginMenuBar())
 	{
+		if (ImGui::BeginMenu("File"))
+		{
+			if (ImGui::MenuItem("Open", "CTRL+O"))
+			{
+				openScene();
+			}
+			if (ImGui::MenuItem("New", "CTRL+N"))
+			{
+				newScene();
+			}
+			if (ImGui::MenuItem("Save", "CTRL+S"))
+			{
+				saveScene();
+			}
+			if (ImGui::MenuItem("Clear", "CTRL+C"))
+			{
+				clearScene();
+			}
+			ImGui::EndMenu();
+		}
+
+		static bool checkResDebugPanel = false;
+		static bool checkResStatisticsInfo = false;
+		if (ImGui::BeginMenu("View"))
+		{
+			
+			if (ImGui::Checkbox("Debug Panel", &checkResDebugPanel))
+			{
+				m_deferredRenderDebugPanel->setOpen(checkResDebugPanel);
+			}
+			
+			if (ImGui::Checkbox("StatisticsInfo", &checkResStatisticsInfo))
+			{
+				Destiny::Engine::GetInstance()->getSceneManager()->showStatisticsInfo(checkResStatisticsInfo);
+			}
+			ImGui::EndMenu();
+		}
+
 		if ((ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyDown(ImGuiKey_N)) ||
 			(ImGui::IsKeyDown(ImGuiKey_RightCtrl) && ImGui::IsKeyDown(ImGuiKey_N))
 			)
@@ -415,37 +453,16 @@ void Application::drawDock()
 			if (!ImGui::IsAnyItemActive() && !ImGui::IsAnyItemFocused())
 			{
 				clearScene();
-			}	
+			}
 		}
-		if (ImGui::BeginMenu("File"))
+		
+		if (ImGui::IsKeyReleased(ImGuiKey_F9))
 		{
-			if (ImGui::MenuItem("Open", "CTRL+O"))
+			if (!ImGui::IsAnyItemActive() && !ImGui::IsAnyItemFocused())
 			{
-				openScene();
+				checkResStatisticsInfo = !checkResStatisticsInfo;
+				Destiny::Engine::GetInstance()->getSceneManager()->showStatisticsInfo(checkResStatisticsInfo);
 			}
-			if (ImGui::MenuItem("New", "CTRL+N"))
-			{
-				newScene();
-			}
-			if (ImGui::MenuItem("Save", "CTRL+S"))
-			{
-				saveScene();
-			}
-			if (ImGui::MenuItem("Clear", "CTRL+C"))
-			{
-				clearScene();
-			}
-			ImGui::EndMenu();
-		}
-
-		if (ImGui::BeginMenu("View"))
-		{
-			bool checkRes = false;
-			if (ImGui::Checkbox("Debug Panel", &checkRes))
-			{
-				m_deferredRenderDebugPanel->setOpen(checkRes);
-			}
-			ImGui::EndMenu();
 		}
 
 		ImGui::EndMenuBar();

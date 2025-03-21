@@ -16,6 +16,7 @@
 #include "RuntimeEffect/ScriptComponent.h"
 #include "RuntimeEffect/SkyboxComponent.h"
 #include "RuntimeEffect/Particle/ParticleRainComponent.h"
+#include "RuntimeEffect/SceneStatisticsComponent.h"
 #include "Math/Math.h"
 
 namespace Destiny
@@ -33,6 +34,8 @@ namespace Destiny
 
 	void SceneManager::initialize()
 	{
+		m_sceneStatisticsComponent = std::make_shared<SceneStatisticsComponent>();
+
 		//m_scene->initialize();
 
 		////camera
@@ -432,6 +435,24 @@ namespace Destiny
 		{
 			m_currentScene->update(deltaTime);
 			m_currentScene->onCull();
+			m_currentScene->lateUpdate(deltaTime);
+		}
+	}
+
+	void SceneManager::showStatisticsInfo(bool show)
+	{
+		if (!m_currentScene)
+		{
+			return;
+		}
+
+		if (show)
+		{
+			m_currentScene->addComponent(m_sceneStatisticsComponent);
+		}
+		else
+		{
+			m_currentScene->removeComponent(m_sceneStatisticsComponent);
 		}
 	}
 

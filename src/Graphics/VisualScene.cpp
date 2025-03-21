@@ -95,7 +95,32 @@ namespace Destiny
 			{
 				for (const auto& component : topNode->getComponents())
 				{
-					if (component)
+					if (component && component->get_updateCategory() == Component::UpdateCategory::update)
+					{
+						component->onUpdate(deltaTime);
+					}
+				}
+				for (const auto& node : topNode->getChilds())
+				{
+					nodes.push(node);
+				}
+			}
+		}
+	}
+
+	void VisualScene::lateUpdate(float deltaTime)
+	{
+		std::queue<std::shared_ptr<Node>> nodes;
+		nodes.push(shared_from_this());
+		while (!nodes.empty())
+		{
+			auto topNode = nodes.front();
+			nodes.pop();
+			if (topNode)
+			{
+				for (const auto& component : topNode->getComponents())
+				{
+					if (component && component->get_updateCategory() == Component::UpdateCategory::late_update)
 					{
 						component->onUpdate(deltaTime);
 					}

@@ -112,14 +112,12 @@ namespace Destiny
 
 	std::shared_ptr<RenderPass> ModelLoader::getRenderPass()
 	{
-		auto renderer = std::make_shared<Renderer>("builtin://renderer/deferred_pbr.hlsl");
-		//renderer->load(0);
-
+		auto renderer = std::make_shared<Renderer>("builtin://renderer/forward_pbr.hlsl");
+		//auto renderer = std::make_shared<Renderer>("builtin://renderer/deferred_pbr.hlsl");
 		std::shared_ptr<RenderStates> renderStates = std::make_shared<RenderStates>();
-		//renderStates->load();
-
 		std::shared_ptr<RenderPass> renderPass = std::make_shared<RenderPass>();
-		renderPass->setRendererCategory(RendererCategory::DeferredOpaque);
+		renderPass->setRendererCategory(RendererCategory::ForwardOpaque);
+		//renderPass->setRendererCategory(RendererCategory::DeferredOpaque);
 		renderPass->setRenderer(renderer);
 		renderPass->setRenderStates(renderStates);
 

@@ -32,10 +32,11 @@ namespace Destiny
 		m_clearRenderTarget5(std::make_shared<ClearRenderTarget>()),
 		m_fullScreenTriangle(std::make_shared<Visual>())
 	{
-		m_clearRenderTarget5->setClearColor({ 0,0,255,255 });
+		m_clearRenderTarget5->setClearColor({ 0.0f, 0.0f, 1.0f, 1.0f });
 
 
 		auto samplerState = std::make_shared<SamplerState>();
+		samplerState->getSamplerDesc()->Filter = D3D11_FILTER_ANISOTROPIC;
 		samplerState->load(0);
 
 		auto renderer = std::make_shared<Renderer>("builtin://renderer/full_screen_triangle.hlsl");

@@ -19,6 +19,7 @@ namespace Destiny
 		virtual void							syncState() override;
 		void									commitVisual(std::shared_ptr<Visual> visual);
 		std::shared_ptr<GraphicsPipeline>       getDeferredOpaquePipeline();
+		std::shared_ptr<RenderTargetView>		getRenderTargetView();
 	public:
 		std::shared_ptr<BindRenderTargets>		m_bindRenderTargets;
 	private:
@@ -28,6 +29,7 @@ namespace Destiny
 		std::shared_ptr<GraphicsPipeline>		m_deferredOpaquePipeline;
 		std::shared_ptr<GraphicsPipeline>		m_transparentPipeline;
 		std::shared_ptr<GraphicsPipeline>		m_guiPipeline;
+		std::shared_ptr<GraphicsPipeline>		m_postProcessingPipeline;
 
 		std::shared_ptr<GraphicsCommandList>	m_beforePipelineCommand;
 		std::shared_ptr<ClearRenderTarget>		m_clearRenderTarget;

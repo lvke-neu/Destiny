@@ -438,6 +438,16 @@ void Application::drawDock()
 			ImGui::EndMenu();
 		}
 
+		if (ImGui::BeginMenu("View"))
+		{
+			bool checkRes = false;
+			if (ImGui::Checkbox("Debug Panel", &checkRes))
+			{
+				m_deferredRenderDebugPanel->setOpen(checkRes);
+			}
+			ImGui::EndMenu();
+		}
+
 		ImGui::EndMenuBar();
 	}
 

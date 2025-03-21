@@ -6,6 +6,7 @@
 #include "ForwardOpaquePipeline.h"
 #include "TransparentPipeline.h"
 #include "GuiPipeline.h"
+#include "PostProcessingPipeline.h"
 #include "BindRenderTargets.h"
 #include "ClearRenderTarget.h"
 #include "RenderTargetView.h"
@@ -19,6 +20,7 @@ namespace Destiny
 		m_forwardOpaquePipeline(nullptr),
 		m_transparentPipeline(nullptr),
 		m_guiPipeline(nullptr),
+		m_postProcessingPipeline(nullptr),
 		m_beforePipelineCommand(std::make_shared<GraphicsCommandList>()),
 		m_bindRenderTargets(std::make_shared<BindRenderTargets>()),
 		m_clearRenderTarget(std::make_shared<ClearRenderTarget>())
@@ -40,6 +42,7 @@ namespace Destiny
 		m_forwardOpaquePipeline = std::make_shared<ForwardOpaquePipeline>(shared_from_this());
 		m_transparentPipeline = std::make_shared<TransparentPipeline>(shared_from_this());
 		m_guiPipeline = std::make_shared<GuiPipeline>(shared_from_this());
+		m_postProcessingPipeline = std::make_shared<PostProcessingPipeline>(shared_from_this());
 	}
 
 	void RenderSystem::render()
@@ -49,6 +52,7 @@ namespace Destiny
 		m_forwardOpaquePipeline->execute(getImmediateContext());
 		m_transparentPipeline->execute(getImmediateContext());
 		m_guiPipeline->execute(getImmediateContext());
+		m_postProcessingPipeline->execute(getImmediateContext());
 	}
 
 	void RenderSystem::syncState()
@@ -61,6 +65,7 @@ namespace Destiny
 		m_forwardOpaquePipeline->syncState();
 		m_transparentPipeline->syncState();
 		m_guiPipeline->syncState();
+		m_postProcessingPipeline->syncState();
 	}
 
 	void RenderSystem::commitVisual(std::shared_ptr<Visual> visual)
@@ -127,6 +132,12 @@ namespace Destiny
 			return;
 		}
 		}
+	}
+
+	std::shared_ptr<RenderTargetView> RenderSystem::getRenderTargetView()
+	{
+		//return m_bindRenderTargets->getRenderTargetViews(0);
+		return std::static_pointer_cast<PostProcessingPipeline>(m_postProcessingPipeline)->m_bindRenderTargets->getRenderTargetViews(0);
 	}
 
 	void RenderSystem::onResize(void* data)

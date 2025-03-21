@@ -12,62 +12,71 @@
 #include "Graphics/DeferredOpaquePipeline.h"
 #include "Scene/SceneManager.h"
 
-DeferredRenderDebugPanel::DeferredRenderDebugPanel()
+DeferredRenderDebugPanel::DeferredRenderDebugPanel() :
+	m_open(false)
 {
 
 }
 
 void DeferredRenderDebugPanel::update()
 {
-	auto deferredOpaquePipeline = std::static_pointer_cast<Destiny::DeferredOpaquePipeline>(std::static_pointer_cast<Destiny::RenderSystem>(Destiny::Engine::GetInstance()->getGraphicsSystem())->getDeferredOpaquePipeline());
+	if (m_open)
+	{
+		const float width = 500.0f;
+		const float height = 200.0f;
 
-	std::shared_ptr<Destiny::RenderTargetView> rtv = nullptr;
+		ImGui::Begin("DeferredRenderDebugPanel");
 
-	//ImGui::Begin("Albedo");
-	//rtv = deferredOpaquePipeline->m_bindRenderTargets->getRenderTargetViews(0);
-	//if (rtv && rtv->isLoadingSucceed())
-	//{
-	//	ImGui::Image(*(rtv->getShaderResourceView()), { (float)rtv->getWidth(), (float)rtv->getHeight() });
-	//}
-	//ImGui::End();
+		auto deferredOpaquePipeline = std::static_pointer_cast<Destiny::DeferredOpaquePipeline>(std::static_pointer_cast<Destiny::RenderSystem>(Destiny::Engine::GetInstance()->getGraphicsSystem())->getDeferredOpaquePipeline());
+		std::shared_ptr<Destiny::RenderTargetView> rtv = nullptr;
 
-	//ImGui::Begin("Normal");
-	//rtv = deferredOpaquePipeline->m_bindRenderTargets->getRenderTargetViews(1);
-	//if (rtv && rtv->isLoadingSucceed())
-	//{
-	//	ImGui::Image(*(rtv->getShaderResourceView()), { (float)rtv->getWidth(), (float)rtv->getHeight() });
-	//}
-	//ImGui::End();
+		ImGui::Text("Albedo");
+		rtv = deferredOpaquePipeline->m_bindRenderTargets->getRenderTargetViews(0);
+		if (rtv && rtv->isLoadingSucceed())
+		{
+			ImGui::Image(*(rtv->getShaderResourceView()), { width, height });
+		}
 
-	//ImGui::Begin("MRA");
-	//rtv = deferredOpaquePipeline->m_bindRenderTargets->getRenderTargetViews(2);
-	//if (rtv && rtv->isLoadingSucceed())
-	//{
-	//	ImGui::Image(*(rtv->getShaderResourceView()), { (float)rtv->getWidth(), (float)rtv->getHeight() });
-	//}
-	//ImGui::End();
+		ImGui::Text("Normal");
+		rtv = deferredOpaquePipeline->m_bindRenderTargets->getRenderTargetViews(1);
+		if (rtv && rtv->isLoadingSucceed())
+		{
+			ImGui::Image(*(rtv->getShaderResourceView()), { width, height });
+		}
 
-	//ImGui::Begin("positionW");
-	//rtv = deferredOpaquePipeline->m_bindRenderTargets->getRenderTargetViews(3);
-	//if (rtv && rtv->isLoadingSucceed())
-	//{
-	//	ImGui::Image(*(rtv->getShaderResourceView()), { (float)rtv->getWidth(), (float)rtv->getHeight() });
-	//}
-	//ImGui::End();
+		ImGui::Text("MRA");
+		rtv = deferredOpaquePipeline->m_bindRenderTargets->getRenderTargetViews(2);
+		if (rtv && rtv->isLoadingSucceed())
+		{
+			ImGui::Image(*(rtv->getShaderResourceView()), { width, height });
+		}
 
-	//ImGui::Begin("normalW");
-	//rtv = deferredOpaquePipeline->m_bindRenderTargets->getRenderTargetViews(4);
-	//if (rtv && rtv->isLoadingSucceed())
-	//{
-	//	ImGui::Image(*(rtv->getShaderResourceView()), { (float)rtv->getWidth(), (float)rtv->getHeight() });
-	//}
-	//ImGui::End();
+		ImGui::Text("positionW");
+		rtv = deferredOpaquePipeline->m_bindRenderTargets->getRenderTargetViews(3);
+		if (rtv && rtv->isLoadingSucceed())
+		{
+			ImGui::Image(*(rtv->getShaderResourceView()), { width, height });
+		}
 
-	//ImGui::Begin("texcoord");
-	//rtv = deferredOpaquePipeline->m_bindRenderTargets->getRenderTargetViews(5);
-	//if (rtv && rtv->isLoadingSucceed())
-	//{
-	//	ImGui::Image(*(rtv->getShaderResourceView()), { (float)rtv->getWidth(), (float)rtv->getHeight() });
-	//}
-	//ImGui::End();
+		ImGui::Text("normalW");
+		rtv = deferredOpaquePipeline->m_bindRenderTargets->getRenderTargetViews(4);
+		if (rtv && rtv->isLoadingSucceed())
+		{
+			ImGui::Image(*(rtv->getShaderResourceView()), { width, height });
+		}
+
+		ImGui::Text("texcoord");
+		rtv = deferredOpaquePipeline->m_bindRenderTargets->getRenderTargetViews(5);
+		if (rtv && rtv->isLoadingSucceed())
+		{
+			ImGui::Image(*(rtv->getShaderResourceView()), { width, height });
+		}
+
+		ImGui::End();
+	}
+}
+
+void DeferredRenderDebugPanel::setOpen(bool open)
+{
+	m_open = open;
 }

@@ -20,7 +20,7 @@ public:
 public slots:
 	void onChoosedNode(void* parameter);
 private:
-	void onViewPortResize();
+	void processEvent();
 	void processGzimo();
 private:
 	unsigned int m_width  = 0;

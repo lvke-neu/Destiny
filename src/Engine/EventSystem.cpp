@@ -2,7 +2,8 @@
 
 namespace Destiny
 {
-	EventSystem::EventSystem()
+	EventSystem::EventSystem() :
+		m_viewportHovered(false)
 	{
 
 	}
@@ -47,6 +48,13 @@ namespace Destiny
 		else if (type == EventType::MouseReleased)
 		{
 			m_MouseTriggers[*(MouseCode*)data] = false;
+		}
+		if (type == EventType::MousePressed || type == EventType::MouseMoved || type == EventType::MouseReleased)
+		{
+			if (!m_viewportHovered)
+			{
+				return;
+			}
 		}
 		for (const auto& event : m_events[type])
 		{

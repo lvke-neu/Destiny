@@ -27,17 +27,29 @@ void ScenePanel::traversal(std::shared_ptr<Destiny::Node> node)
 	ImGui::Separator();
 
 	ImGui::PushID(node->get_uuid().c_str());
-	if (ImGui::TreeNodeEx(node->get_name().c_str(), treeNodeFlags))
+
+	if (ImGui::TreeNodeEx("##TreeNode", treeNodeFlags))
 	{
 		m_choosedNode = node;
 		send(ChoosedNode, &node);
 		popup();
+
+		ImGui::SameLine();
+		ImGui::Text(node->get_name().c_str());
+
 		for (const auto& child : node->getChilds())
 		{
 			traversal(child);
 		}
 
 		ImGui::TreePop();
+	}
+	else
+	{
+		m_choosedNode = node;
+		popup();
+		ImGui::SameLine();
+		ImGui::Text(node->get_name().c_str());
 	}
 	ImGui::PopID();
 
@@ -77,6 +89,7 @@ void ScenePanel::popup()
 
 		//	ImGui::EndPopup();
 		//}
+		ImGui::Text((m_choosedNode->get_name() + ":").c_str());
 		if (ImGui::Button("AddNode")) 
 		{
 

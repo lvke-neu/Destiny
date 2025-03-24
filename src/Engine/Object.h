@@ -13,7 +13,7 @@ namespace Destiny
 		Object();
 		virtual ~Object() = default;
 	public:
-		GET_SET(std::string, uuid);
+		GET(std::string, uuid);
 	private:
 		std::string		m_uuid;
 	};

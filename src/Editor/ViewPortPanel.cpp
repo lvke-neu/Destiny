@@ -66,8 +66,8 @@ void ViewPortPanel::update()
 	//ImGui::SameLine();
 	//ImGui::Text("VisualCount:%ld", Destiny::Engine::GetInstance()->getGraphicsSystem()->getGraphicsStat().VisualCount);
 
-	onViewPortResize();
-
+	processEvent();
+	
 	auto rtv = std::static_pointer_cast<Destiny::RenderSystem>(Destiny::Engine::GetInstance()->getGraphicsSystem())->getRenderTargetView();
 	if (rtv && rtv->isLoadingSucceed())
 	{
@@ -148,7 +148,7 @@ void ViewPortPanel::update()
 	ImGui::PopStyleVar();
 }
 
-void ViewPortPanel::onViewPortResize()
+void ViewPortPanel::processEvent()
 {
 	auto viewport = ImGui::GetContentRegionAvail();
 	if (m_width != viewport.x || m_height != viewport.y)
@@ -160,6 +160,8 @@ void ViewPortPanel::onViewPortResize()
 		windowResizeData.height = m_height;
 		Destiny::Engine::GetInstance()->getEventSystem()->dispatchEvent(Destiny::EventType::WindowResize, &windowResizeData);
 	}
+
+	Destiny::Engine::GetInstance()->getEventSystem()->setViewportHovered(ImGui::IsWindowHovered());
 }
 
 void ViewPortPanel::processGzimo()

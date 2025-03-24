@@ -51,7 +51,7 @@ void PropertyPanel::popup(std::shared_ptr<Destiny::Component> component)
 
 	if (ImGui::BeginPopup("ComponentOperationPopup"))
 	{
-		if (ImGui::Button("RemoveComponent")) 
+		if (ImGui::Button(("Remove " + rttr::type::get(*component.get()).get_name().to_string()).c_str()))
 		{
 			m_choosedNode->removeComponent(component);
 		}
@@ -96,6 +96,10 @@ void PropertyPanel::reflect(std::shared_ptr<Destiny::Object> object)
 		//	std::shared_ptr<Destiny::Object> object;
 		//	Destiny::UnSerializer::UnSerialize(object, jsonStr);
 		//}
+	}
+	else
+	{
+		popup(std::dynamic_pointer_cast<Destiny::Component>(object));
 	}
 	ImGui::PopID();
 

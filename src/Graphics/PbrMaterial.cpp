@@ -18,7 +18,7 @@ namespace Destiny
 		m_sampler->getSamplerDesc()->AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
 		m_sampler->getSamplerDesc()->AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 		m_sampler->getSamplerDesc()->AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-		m_sampler->getSamplerDesc()->Filter = D3D11_FILTER_ANISOTROPIC;
+		//m_sampler->getSamplerDesc()->Filter = D3D11_FILTER_ANISOTROPIC;
 		m_sampler->load(0);
 	}
 

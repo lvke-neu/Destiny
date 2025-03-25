@@ -36,7 +36,7 @@ namespace Destiny
 
 
 		auto samplerState = std::make_shared<SamplerState>();
-		samplerState->getSamplerDesc()->Filter = D3D11_FILTER_ANISOTROPIC;
+		//samplerState->getSamplerDesc()->Filter = D3D11_FILTER_ANISOTROPIC;
 		samplerState->load(0);
 
 		auto renderer = std::make_shared<Renderer>("builtin://renderer/full_screen_triangle.hlsl");

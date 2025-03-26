@@ -18,7 +18,7 @@ namespace Destiny
 
 	void RenderPass::set_renderer(std::string renderer)
 	{
-		auto rdr = std::make_shared<Renderer>(renderer.c_str());
+		auto rdr = Renderer::Create(renderer.c_str());
 		rdr->load(0);
 		if (rdr->isLoadingSucceed())
 		{
@@ -104,20 +104,6 @@ namespace Destiny
 		//renderer->copy_constant_texture_sampler(m_renderer);
 		m_renderer.reset();
 		m_renderer = renderer;
-
-		if (m_material && m_renderer)
-		{
-			m_material->bind(m_renderer);
-		}
-	}
-
-	void RenderPass::setMaterial(std::shared_ptr<Material> material)
-	{
-		m_material = material;
-		if (m_material && m_renderer)
-		{
-			m_material->bind(m_renderer);
-		}
 	}
 
 	void RenderPass::setRenderStates(std::shared_ptr<RenderStates> renderStates)
@@ -154,15 +140,35 @@ namespace Destiny
 		}
 	}
 
+	void RenderPass::fillConstantBuffers(std::unordered_map<std::string, std::string>& variableLinkConstant, std::unordered_map<std::string, std::shared_ptr<ConstantBuffer>>& constantBuffers)
+	{
+		if (m_renderer)
+		{
+			m_renderer->fillConstantBuffers(variableLinkConstant, constantBuffers);
+		}
+	}
+
+	void RenderPass::fillTextures(std::unordered_map<std::string, std::pair<std::shared_ptr<TextureDesc>, std::shared_ptr<Texture>>>& textures)
+	{
+		if (m_renderer)
+		{
+			m_renderer->fillTextures(textures);
+		}
+	}
+
+	void RenderPass::fillSamplerStates(std::unordered_map<std::string, std::pair<std::shared_ptr<SamplerStateDesc>, std::shared_ptr<SamplerState>>>& samplerStates)
+	{
+		if (m_renderer)
+		{
+			m_renderer->fillSamplerStates(samplerStates);
+		}
+	}
+
 	void RenderPass::load(int priority)
 	{
 		if (m_renderer)
 		{
 			m_renderer->load(priority);
-			if (m_material && m_renderer)
-			{
-				m_material->bind(m_renderer);
-			}
 		}
 		if (m_renderStates)
 		{

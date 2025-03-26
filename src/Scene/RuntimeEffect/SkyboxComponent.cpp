@@ -15,16 +15,13 @@ namespace Destiny
 	SkyboxComponent::SkyboxComponent() :
 		m_texture("builtin://texture/skybox/daylight.dds")
 	{
-		auto renderer = std::make_shared<Renderer>("builtin://renderer/skybox.hlsl");
+		auto renderer = Renderer::Create("builtin://renderer/skybox.hlsl");
 		renderer->load(0);
 
 		auto sampler = std::make_shared<SamplerState>();
 		sampler->load();
 		auto texture = Texture::Create(m_texture.c_str());
 		texture->load();
-
-		renderer->setShaderResource("t_cube", texture);
-		renderer->setSamplerSate("s_sampler", sampler);
 
 		std::shared_ptr<RenderStates> renderStates = std::make_shared<RenderStates>();
 		renderStates->getRasterizerStateDesc()->CullMode = D3D11_CULL_NONE;
@@ -41,6 +38,9 @@ namespace Destiny
 
 		setRenderPass(renderPass);
 		setMesh(mesh);
+
+		setShaderResource("t_cube", texture);
+		setSamplerSate("s_sampler", sampler);
 	}
 
 	void SkyboxComponent::onNodeTransformChanged()

@@ -39,9 +39,8 @@ namespace Destiny
 		//samplerState->getSamplerDesc()->Filter = D3D11_FILTER_ANISOTROPIC;
 		samplerState->load(0);
 
-		auto renderer = std::make_shared<Renderer>("builtin://renderer/full_screen_triangle.hlsl");
+		auto renderer = Renderer::Create("builtin://renderer/full_screen_triangle.hlsl");
 		renderer->load(0);
-		renderer->setSamplerSate("s_sampler", samplerState);
 	
 		std::shared_ptr<RenderStates> renderStates = std::make_shared<RenderStates>();
 		renderStates->getDepthStencilStateDesc()->DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
@@ -56,7 +55,7 @@ namespace Destiny
 
 		m_fullScreenTriangle->setMesh(mesh);
 		m_fullScreenTriangle->setRenderPass(renderPass);
-
+		m_fullScreenTriangle->setSamplerSate("s_sampler", samplerState);
 
 		Engine::GetInstance()->getEventSystem()->registerEvent(EventType::WindowResize, std::bind(&DeferredOpaquePipeline::onResize, this, std::placeholders::_1));
 	}
@@ -265,15 +264,11 @@ namespace Destiny
 		{
 			return;
 		}
-		m_fullScreenTriangle->setConstant("g_directionLightCount", (int)directionLights.size());
-		auto constantBuffer = m_fullScreenTriangle->getConstant("g_directionLights");
-		if (!constantBuffer)
-		{
-			return;
-		}
 		std::shared_ptr<Blob> blob = std::make_shared<Blob>(directionLights.size() * sizeof(DirectionLight));
 		blob->copyfrom((void*)directionLights.data(), blob->getLength());
-		constantBuffer->setVariable("g_directionLights", blob);
+
+		m_fullScreenTriangle->setConstant("g_directionLightCount", (int)directionLights.size());
+		m_fullScreenTriangle->setConstant("g_directionLights", blob);
 	}
 
 	void DeferredOpaquePipeline::onPointLightChanged(const std::vector<PointLight>& pointLights)
@@ -282,14 +277,9 @@ namespace Destiny
 		{
 			return;
 		}
-		m_fullScreenTriangle->setConstant("g_pointLightCount", (int)pointLights.size());
-		auto constantBuffer = m_fullScreenTriangle->getConstant("g_pointLights");
-		if (!constantBuffer)
-		{
-			return;
-		}
 		std::shared_ptr<Blob> blob = std::make_shared<Blob>(pointLights.size() * sizeof(PointLight));
 		blob->copyfrom((void*)pointLights.data(), blob->getLength());
-		constantBuffer->setVariable("g_pointLights", blob);
+		m_fullScreenTriangle->setConstant("g_pointLightCount", (int)pointLights.size());
+		m_fullScreenTriangle->setConstant("g_pointLights", blob);
 	}
 }

@@ -7,7 +7,7 @@ namespace Destiny
 {
 	Asset::Asset() : 
 		m_assetLoader(nullptr),
-		m_state(loading_state_pending)
+		m_state(LoadingState::loading_state_pending)
 	{
 
 	}

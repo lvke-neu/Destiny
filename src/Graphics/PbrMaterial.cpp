@@ -2,6 +2,7 @@
 #include "Graphics/Renderer.h"
 #include "Graphics/Texture.h"
 #include "Graphics/SamplerState.h"
+#include "Graphics/Visual.h"
 #include "Engine/BlobHolder.h"
 #include <d3d11.h>
 
@@ -193,16 +194,16 @@ namespace Destiny
 
 	void PbrMaterial::update()
 	{
-		if (!m_renderer)
+		if (!m_visual)
 		{
 			return;
 		}
-		m_renderer->setShaderResource("t_albedo", m_albedo);
-		m_renderer->setShaderResource("t_normal", m_normal);
-		m_renderer->setShaderResource("t_metallic", m_metallic);
-		m_renderer->setShaderResource("t_roughness", m_roughness);
-		m_renderer->setShaderResource("t_ao", m_ao);
-		m_renderer->setSamplerSate("s_sampler", m_sampler);
+		m_visual->setShaderResource("t_albedo", m_albedo);
+		m_visual->setShaderResource("t_normal", m_normal);
+		m_visual->setShaderResource("t_metallic", m_metallic);
+		m_visual->setShaderResource("t_roughness", m_roughness);
+		m_visual->setShaderResource("t_ao", m_ao);
+		m_visual->setSamplerSate("s_sampler", m_sampler);
 	}
 
 	RTTR_REGISTRATION

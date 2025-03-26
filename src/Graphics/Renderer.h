@@ -4,6 +4,7 @@
 #include "Engine/Blob.h"
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <DirectXMath.h>
 
 struct ID3D11VertexShader;
@@ -16,8 +17,8 @@ namespace Destiny
 	class  BlobHolder;
 	class  DrawParameters;
 	class  Texture;
-	struct TextureDesc;
 	class  SamplerState;
+	struct TextureDesc;
 	struct SamplerStateDesc;
 	class Renderer : public Asset
 	{
@@ -28,15 +29,15 @@ namespace Destiny
 		virtual void doLoad() override;
 		virtual void doReload() override;
 	public:
+		static std::shared_ptr<Renderer> Create(const char* path);
+		static std::unordered_map<std::string, std::shared_ptr<Renderer>> s_cache;
+	public:
 		std::shared_ptr<Blob>			getInputSignatureBlob();
 		void							fillDrawParameters(std::shared_ptr<DrawParameters> drawParameters);
-		void							copy_constant_texture_sampler(std::shared_ptr<Renderer> other);
+		void							fillConstantBuffers(std::unordered_map<std::string, std::string>& variableLinkConstant, std::unordered_map<std::string, std::shared_ptr<ConstantBuffer>>& constantBuffers);
+		void							fillTextures(std::unordered_map<std::string, std::pair<std::shared_ptr<TextureDesc>, std::shared_ptr<Texture>>>& textures);
+		void							fillSamplerStates(std::unordered_map<std::string, std::pair<std::shared_ptr<SamplerStateDesc>, std::shared_ptr<SamplerState>>>& samplerStates);
 	public:
-		std::shared_ptr<ConstantBuffer> getConstant(const char* name);
-		template<typename T>
-		void							setConstant(const char* name, T value);
-		void							setShaderResource(const char* name, std::shared_ptr<Texture> texture);
-		void							setSamplerSate(const char* name, std::shared_ptr<SamplerState> samplerState);
 		std::string						getPath();
 		std::shared_ptr<BlobHolder>		getBlobHolder();
 	private:
@@ -58,8 +59,8 @@ namespace Destiny
 		ID3D10Blob*						m_gsCompiledBlob;
 		std::unordered_map<std::string, std::shared_ptr<ConstantBuffer>> m_constantBuffers;
 		std::unordered_map<std::string, std::string> m_variableLinkConstant;
-		std::unordered_map<std::string, std::pair<std::shared_ptr<TextureDesc>, std::shared_ptr<Texture>>> m_textures;
-		std::unordered_map<std::string, std::pair<std::shared_ptr<SamplerStateDesc>, std::shared_ptr<SamplerState>>> m_samplerStates;
+		std::unordered_map<std::string, std::shared_ptr<TextureDesc>> m_textures;
+		std::unordered_map<std::string, std::shared_ptr<SamplerStateDesc>> m_samplerStates;
 	};
 
 	inline std::shared_ptr<Blob> Renderer::getInputSignatureBlob()
@@ -70,32 +71,5 @@ namespace Destiny
 	inline std::shared_ptr<BlobHolder> Renderer::getBlobHolder()
 	{
 		return m_blobHolder;
-	}
-
-	inline std::shared_ptr<ConstantBuffer> Renderer::getConstant(const char* name)
-	{
-		auto iter = m_variableLinkConstant.find(name);
-		if (iter == m_variableLinkConstant.end())
-		{
-			return nullptr;
-		}
-		return m_constantBuffers[iter->second];
-	}
-
-	template<typename T>
-	void Renderer::setConstant(const char* name, T value)
-	{
-		auto iter = m_variableLinkConstant.find(name);
-		if (iter == m_variableLinkConstant.end())
-		{
-			return;
-		}
-
-		if (m_constantBuffers[iter->second])
-		{
-			std::shared_ptr<Blob> blob = std::make_shared<Blob>(sizeof(value));
-			blob->copyfrom(&value, sizeof(value));
-			m_constantBuffers[iter->second]->setVariable(name, blob);
-		}
 	}
 }

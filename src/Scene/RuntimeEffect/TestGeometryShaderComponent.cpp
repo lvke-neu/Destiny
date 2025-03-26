@@ -10,7 +10,7 @@ namespace Destiny
 {
 	TestGeometryShaderComponent::TestGeometryShaderComponent()
 	{
-		auto renderer = std::make_shared<Renderer>("builtin://renderer/test_geometryshader.hlsl");
+		auto renderer = Renderer::Create("builtin://renderer/test_geometryshader.hlsl");
 		renderer->load(0);
 		
 

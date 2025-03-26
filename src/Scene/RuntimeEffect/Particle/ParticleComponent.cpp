@@ -13,7 +13,7 @@ namespace Destiny
 {
 	ParticleComponent::ParticleComponent()
 	{
-		auto renderer = std::make_shared<Renderer>("builtin://renderer/particle_rain.hlsl");
+		auto renderer = Renderer::Create("builtin://renderer/particle_rain.hlsl");
 		renderer->load(0);
 
 		std::shared_ptr<RenderStates> renderStates = std::make_shared<RenderStates>();

@@ -28,8 +28,6 @@ namespace Destiny
 	public:
 		std::shared_ptr<Renderer>		getRenderer();
 		void							setRenderer(std::shared_ptr<Renderer> renderer);
-		std::shared_ptr<Material>		getMaterial();
-		void							setMaterial(std::shared_ptr<Material> material);
 
 		std::shared_ptr<RenderStates>	getRenderStates();
 		void							setRenderStates(std::shared_ptr<RenderStates> renderStates);
@@ -38,30 +36,22 @@ namespace Destiny
 		void							setRendererCategory(RendererCategory rendererCategory);
 
 		void							fillDrawParameters(std::shared_ptr<DrawParameters> drawParameters);
+		void							fillConstantBuffers(std::unordered_map<std::string, std::string>& variableLinkConstant, std::unordered_map<std::string, std::shared_ptr<ConstantBuffer>>& constantBuffers);
+		void							fillTextures(std::unordered_map<std::string, std::pair<std::shared_ptr<TextureDesc>, std::shared_ptr<Texture>>>& textures);
+		void							fillSamplerStates(std::unordered_map<std::string, std::pair<std::shared_ptr<SamplerStateDesc>, std::shared_ptr<SamplerState>>>& samplerStates);
+
 		void							load(int priority = 1);
-		
-		std::shared_ptr<ConstantBuffer> getConstant(const char* name);
-		template<typename T>
-		void							setConstant(const char* name, T value);
-		void							setShaderResource(const char* name, std::shared_ptr<Texture> texture);
-		void							setSamplerSate(const char* name, std::shared_ptr<SamplerState> samplerState);
 
 		void							reCompileShader();
 	private:
 		std::shared_ptr<Renderer>		m_renderer;
 		std::shared_ptr<RenderStates>	m_renderStates;
-		std::shared_ptr<Material>		m_material;
 		RendererCategory m_rendererCategory;
 	};
 
 	inline std::shared_ptr<Renderer> RenderPass::getRenderer()
 	{
 		return m_renderer;
-	}
-
-	inline std::shared_ptr<Material> RenderPass::getMaterial()
-	{
-		return m_material;
 	}
 
 	inline std::shared_ptr<RenderStates> RenderPass::getRenderStates()
@@ -77,40 +67,6 @@ namespace Destiny
 	inline void RenderPass::setRendererCategory(RendererCategory rendererCategory)
 	{
 		m_rendererCategory = rendererCategory;
-	}
-
-	inline std::shared_ptr<ConstantBuffer> RenderPass::getConstant(const char* name)
-	{
-		if (m_renderer)
-		{
-			return m_renderer->getConstant(name);
-		}
-		return nullptr;
-	}
-
-	template<typename T>
-	inline void RenderPass::setConstant(const char* name, T value)
-	{
-		if (m_renderer)
-		{
-			m_renderer->setConstant(name, value);
-		}
-	}
-
-	inline void RenderPass::setShaderResource(const char* name, std::shared_ptr<Texture> texture)
-	{
-		if (m_renderer)
-		{
-			m_renderer->setShaderResource(name, texture);
-		}
-	}
-
-	inline void RenderPass::setSamplerSate(const char* name, std::shared_ptr<SamplerState> samplerState)
-	{
-		if (m_renderer)
-		{
-			m_renderer->setSamplerSate(name, samplerState);
-		}
 	}
 
 	inline void RenderPass::reCompileShader()

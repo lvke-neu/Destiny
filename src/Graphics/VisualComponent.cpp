@@ -202,15 +202,11 @@ namespace Destiny
 		{
 			return;
 		}
-		m_visual->setConstant("g_directionLightCount", (int)directionLights.size());
-		auto constantBuffer = m_visual->getConstant("g_directionLights");
-		if (!constantBuffer)
-		{
-			return;
-		}
 		std::shared_ptr<Blob> blob = std::make_shared<Blob>(directionLights.size() * sizeof(DirectionLight));
 		blob->copyfrom((void*)directionLights.data(), blob->getLength());
-		constantBuffer->setVariable("g_directionLights", blob);
+
+		m_visual->setConstant("g_directionLightCount", (int)directionLights.size());
+		m_visual->setConstant("g_directionLights", blob);
 	}
 
 	void VisualComponent::traversalDirectionLight(std::shared_ptr<Node> node, std::vector<DirectionLight>& directionLights)
@@ -241,15 +237,11 @@ namespace Destiny
 		{
 			return;
 		}
-		m_visual->setConstant("g_pointLightCount", (int)pointLights.size());
-		auto constantBuffer = m_visual->getConstant("g_pointLights");
-		if (!constantBuffer)
-		{
-			return;
-		}
 		std::shared_ptr<Blob> blob = std::make_shared<Blob>(pointLights.size() * sizeof(PointLight));
 		blob->copyfrom((void*)pointLights.data(), blob->getLength());
-		constantBuffer->setVariable("g_pointLights", blob);
+
+		m_visual->setConstant("g_pointLightCount", (int)pointLights.size());
+		m_visual->setConstant("g_pointLights", blob);
 	}
 
 	void VisualComponent::traversalPointLight(std::shared_ptr<Node> node, std::vector<PointLight>& pointLights)

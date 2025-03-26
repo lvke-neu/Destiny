@@ -11,7 +11,7 @@ namespace Destiny
 {
 	BoxComponent::BoxComponent()
 	{
-		auto renderer = std::make_shared<Renderer>("builtin://renderer/forward_pbr.hlsl");
+		auto renderer = Renderer::Create("builtin://renderer/forward_pbr.hlsl");
 		renderer->load(0);
 
 		std::shared_ptr<RenderStates> renderStates = std::make_shared<RenderStates>();

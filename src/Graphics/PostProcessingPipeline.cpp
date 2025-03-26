@@ -30,9 +30,8 @@ namespace Destiny
 		auto samplerState = std::make_shared<SamplerState>();
 		samplerState->load(0);
 
-		auto renderer = std::make_shared<Renderer>("builtin://renderer/post_processing.hlsl");
+		auto renderer = Renderer::Create("builtin://renderer/post_processing.hlsl");
 		renderer->load(0);
-		renderer->setSamplerSate("s_sampler", samplerState);
 	
 		std::shared_ptr<RenderStates> renderStates = std::make_shared<RenderStates>();
 		renderStates->getDepthStencilStateDesc()->DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
@@ -47,7 +46,7 @@ namespace Destiny
 
 		m_fullScreenTriangle->setMesh(mesh);
 		m_fullScreenTriangle->setRenderPass(renderPass);
-
+		m_fullScreenTriangle->setSamplerSate("s_sampler", samplerState);
 
 		Engine::GetInstance()->getEventSystem()->registerEvent(EventType::WindowResize, std::bind(&PostProcessingPipeline::onResize, this, std::placeholders::_1));
 	}

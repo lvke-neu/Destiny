@@ -4,7 +4,7 @@
 
 namespace Destiny
 {
-	class Renderer;
+	class Visual;
 	class Material : public Object
 	{
 		RTTR_ENABLE(Object);
@@ -12,10 +12,10 @@ namespace Destiny
 		Material();
 		virtual ~Material() = default;
 	public:
-		void bind(std::shared_ptr<Renderer> renderer);
+		void bind(std::shared_ptr<Visual> visual);
 	private:
 		virtual void update(){};
 	protected:
-		std::shared_ptr<Renderer> m_renderer;
+		std::shared_ptr<Visual> m_visual;
 	};
 }

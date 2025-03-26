@@ -32,6 +32,8 @@ namespace Destiny
 		void														setConstantBufferBindFlag(ConstantBufferBindFlag bindFlag, bool value);
 		void														bind();
 		void														unBind();
+		//copy m_startSlot, m_byteWidth,m_variables,m_constantBufferBindFlag
+		std::shared_ptr<ConstantBuffer>								shallowClone();
 	private:
 		unsigned int												m_startSlot;
 		unsigned int												m_byteWidth;

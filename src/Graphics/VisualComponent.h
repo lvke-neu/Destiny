@@ -43,6 +43,10 @@ namespace Destiny
 		void						setMesh(std::shared_ptr<Mesh> mesh);
 		std::shared_ptr<Mesh>		getMesh();
 		std::shared_ptr<Visual>		getVisual();
+		template<typename T>
+		void						setConstant(const char* name, T value);
+		void						setShaderResource(const char* name, std::shared_ptr<Texture> texture);
+		void						setSamplerSate(const char* name, std::shared_ptr<SamplerState> samplerState);
 	private:
 		std::shared_ptr<Visual> m_visual;
 	};
@@ -75,5 +79,30 @@ namespace Destiny
 	inline std::shared_ptr<Visual> VisualComponent::getVisual()
 	{
 		return m_visual;
+	}
+
+	template<typename T>
+	inline void VisualComponent::setConstant(const char* name, T value)
+	{
+		if (m_visual)
+		{
+			m_visual->setConstant(name, value);
+		}
+	}
+
+	inline void VisualComponent::setShaderResource(const char* name, std::shared_ptr<Texture> texture)
+	{
+		if (m_visual)
+		{
+			m_visual->setShaderResource(name, texture);
+		}
+	}
+
+	inline void VisualComponent::setSamplerSate(const char* name, std::shared_ptr<SamplerState> samplerState)
+	{
+		if (m_visual)
+		{
+			m_visual->setSamplerSate(name, samplerState);
+		}
 	}
 }

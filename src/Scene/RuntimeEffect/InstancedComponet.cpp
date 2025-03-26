@@ -129,7 +129,7 @@ namespace Destiny
 		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(aabb, drawCall, vertexBuffer, indexBuffer, instanceBuffer);
 		mesh->load(0);
 
-		auto renderer = std::make_shared<Renderer>("builtin://renderer/basic_instance.hlsl");
+		auto renderer = Renderer::Create("builtin://renderer/basic_instance.hlsl");
 		renderer->load(0);
 
 		std::shared_ptr<RenderStates> renderStates = std::make_shared<RenderStates>();

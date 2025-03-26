@@ -16,14 +16,11 @@ namespace Destiny
 		m_texturePath(""),
 		m_color({ 1.0f, 1.0f, 1.0f, 1.0f })
 	{
-		auto renderer = std::make_shared<Renderer>("builtin://renderer/pixel_billboard.hlsl");
-		renderer->load(0);
-		renderer->setConstant("c_size", m_size);
-		renderer->setConstant("c_color", m_color);
+		auto renderer = Renderer::Create("builtin://renderer/pixel_billboard.hlsl");
+		renderer->load();
 
 		auto samplerState = std::make_shared<SamplerState>();
 		samplerState->load();
-		renderer->setSamplerSate("s_sampler", samplerState);
 
 		auto renderStates = RenderStates::CreateBlendState();
 		renderStates->load();
@@ -38,38 +35,30 @@ namespace Destiny
 
 		setRenderPass(renderPass);
 		setMesh(mesh);
+
+		setConstant("c_size", m_size);
+		setConstant("c_color", m_color);
+		setSamplerSate("s_sampler", samplerState);
 	}
 
 	void PixelBillboardComponent::set_size(DirectX::XMFLOAT2 size)
 	{
-		auto visual = getVisual();
-		if (visual)
-		{
-			m_size = size;
-			visual->setConstant("c_size", size);
-		}
+		m_size = size;
+		setConstant("c_size", size);
 	}
 
 	void PixelBillboardComponent::set_texturePath(std::string texturePath)
 	{
-		auto visual = getVisual();
-		if (visual)
-		{
-			m_texturePath = texturePath;
-			auto texture = Texture::Create(m_texturePath.c_str());
-			texture->load();
-			visual->setShaderResource("t_texture", texture);
-		}
+		m_texturePath = texturePath;
+		auto texture = Texture::Create(m_texturePath.c_str());
+		texture->load();
+		setShaderResource("t_texture", texture);
 	}
 
 	void PixelBillboardComponent::set_color(Color color)
 	{
-		auto visual = getVisual();
-		if (visual)
-		{
-			m_color = color;
-			visual->setConstant("c_color", m_color);
-		}
+		m_color = color;
+		setConstant("c_color", m_color);
 	}
 
 	RTTR_REGISTRATION

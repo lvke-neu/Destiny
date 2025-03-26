@@ -3,14 +3,14 @@
 namespace Destiny
 {
 	Material::Material() :
-		m_renderer(nullptr)
+		m_visual(nullptr)
 	{
 
 	}
 
-	void Material::bind(std::shared_ptr<Renderer> renderer)
+	void Material::bind(std::shared_ptr<Visual> visual)
 	{
-		m_renderer = renderer;
+		m_visual = visual;
 		update();
 	}
 

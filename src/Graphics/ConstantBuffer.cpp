@@ -116,6 +116,15 @@ namespace Destiny
 		}
 	}
 
+	std::shared_ptr<ConstantBuffer> ConstantBuffer::shallowClone()
+	{
+		auto constantBuffer = std::make_shared<ConstantBuffer>(m_startSlot, m_byteWidth);
+		constantBuffer->m_variables = m_variables;
+		constantBuffer->m_constantBufferBindFlag = m_constantBufferBindFlag;
+
+		return constantBuffer;
+	}
+
 	void ConstantBuffer::addVariable(const std::string& name, ConstantBufferVariable variable)
 	{
 		m_variables[name] = variable;

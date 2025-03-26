@@ -18,17 +18,15 @@ namespace Destiny
 		m_screenPosition({ 0.0f, 0.0f }),
 		m_color({1.0f, 1.0f, 1.0f, 1.0f})
 	{
-		auto renderer = std::make_shared<Renderer>("builtin://renderer/text.hlsl");
-		renderer->load(0);
-		renderer->setConstant("c_size", m_size);
-		renderer->setConstant("c_screenPosition", m_screenPosition);
-		renderer->setConstant("c_color", m_color);
+		auto renderer = Renderer::Create("builtin://renderer/text.hlsl");
+		renderer->load();
+
 
 		//renderer->setShaderResource("t_texture", FontManager::GetInstance()->getFontTexture('A', 5000, 5000));
 
 		auto samplerState = std::make_shared<SamplerState>();
 		samplerState->load();
-		renderer->setSamplerSate("s_sampler", samplerState);
+		
 
 		auto renderStates = RenderStates::CreateBlendState();
 		renderStates->load();
@@ -49,6 +47,11 @@ namespace Destiny
 
 		setRenderPass(renderPass);
 		setMesh(mesh);
+
+		setConstant("c_size", m_size);
+		setConstant("c_screenPosition", m_screenPosition);
+		setConstant("c_color", m_color);
+		setSamplerSate("s_sampler", samplerState);
 	}
 
 	void TextComponent::set_text(std::string text)
@@ -62,29 +65,20 @@ namespace Destiny
 
 	void TextComponent::set_size(DirectX::XMFLOAT2 size)
 	{
-		if (getVisual())
-		{
-			m_size = size;
-			getVisual()->setConstant("c_size", m_size);
-		}
+		m_size = size;
+		setConstant("c_size", m_size);
 	}
 
 	void TextComponent::set_screenPosition(DirectX::XMFLOAT2 screenPosition)
 	{
-		if (getVisual())
-		{
-			m_screenPosition = screenPosition;
-			getVisual()->setConstant("c_screenPosition", m_screenPosition);
-		}
+		m_screenPosition = screenPosition;
+		setConstant("c_screenPosition", m_screenPosition);
 	}
 
 	void TextComponent::set_color(Color color)
 	{
-		if (getVisual())
-		{
-			m_color = color;
-			getVisual()->setConstant("c_color", m_color);
-		}
+		m_color = color;
+		setConstant("c_color", m_color);
 	}
 
 	RTTR_REGISTRATION

@@ -6,7 +6,7 @@ namespace Destiny
 {
 	class Component;
 	class Mesh;
-	class Visual : public DrawCommand
+	class Visual : public DrawCommand, public std::enable_shared_from_this<Visual>
 	{
 	public:
 		Visual();
@@ -35,9 +35,9 @@ namespace Destiny
 		void								updateDrawParameters();
 		void								load(int priority = 1);
 
-		std::shared_ptr<ConstantBuffer>		getConstant(const char* name);
 		template<typename T>
 		void								setConstant(const char* name, T value);
+		void								setConstant(const char* name, std::shared_ptr<Blob> blob);
 		void								setShaderResource(const char* name, std::shared_ptr<Texture> texture);
 		void								setSamplerSate(const char* name, std::shared_ptr<SamplerState> samplerState);
 		void							    reCompileShader();
@@ -46,6 +46,17 @@ namespace Destiny
 		std::shared_ptr<Mesh>				m_mesh;
 		std::shared_ptr<DrawParameters>		m_drawParameters;
 		std::shared_ptr<Component>			m_component;
+		std::shared_ptr<Material>			m_material;
+
+		std::unordered_map<std::string, std::shared_ptr<Blob>> m_constants;
+		std::unordered_map<std::string, std::string> m_variableLinkConstant;
+		std::unordered_map<std::string, std::shared_ptr<ConstantBuffer>> m_constantBuffers;
+
+		std::unordered_map<std::string, std::shared_ptr<Texture>> m_visualTextures;
+		std::unordered_map<std::string, std::pair<std::shared_ptr<TextureDesc>, std::shared_ptr<Texture>>>	m_textures;
+
+		std::unordered_map<std::string, std::shared_ptr<SamplerState>> m_visualSamplerStates;
+		std::unordered_map<std::string, std::pair<std::shared_ptr<SamplerStateDesc>, std::shared_ptr<SamplerState>>> m_samplerStates;
 	};
 	
 	inline std::shared_ptr<RenderPass> Visual::getRenderPass()
@@ -68,38 +79,17 @@ namespace Destiny
 		m_component = component;
 	}
 
-	inline std::shared_ptr<ConstantBuffer> Visual::getConstant(const char* name)
-	{
-		if (m_renderPass)
-		{
-			return m_renderPass->getConstant(name);
-		}
-		return nullptr;
-	}
-
 	template<typename T>
 	inline void Visual::setConstant(const char* name, T value)
 	{
-		if (m_renderPass)
-		{
-			m_renderPass->setConstant(name, value);
-		}
+		std::shared_ptr<Blob> blob = std::make_shared<Blob>(sizeof(value));
+		blob->copyfrom(&value, sizeof(value));
+		m_constants[name] = blob;
 	}
 
-	inline void Visual::setShaderResource(const char* name, std::shared_ptr<Texture> texture)
+	inline void Visual::setConstant(const char* name, std::shared_ptr<Blob> blob)
 	{
-		if (m_renderPass)
-		{
-			m_renderPass->setShaderResource(name, texture);
-		}
-	}
-
-	inline void Visual::setSamplerSate(const char* name, std::shared_ptr<SamplerState> samplerState)
-	{
-		if (m_renderPass)
-		{
-			m_renderPass->setSamplerSate(name, samplerState);
-		}
+		m_constants[name] = blob;
 	}
 
 	inline void Visual::reCompileShader()

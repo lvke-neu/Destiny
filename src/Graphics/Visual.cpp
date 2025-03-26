@@ -99,18 +99,15 @@ namespace Destiny
 
 	std::shared_ptr<Material> Visual::get_material()
 	{
-		if (m_renderPass)
-		{
-			return m_renderPass->getMaterial();
-		}
-		return nullptr;
+		return m_material;
 	}
 
 	void Visual::set_material(std::shared_ptr<Material> material)
 	{
-		if (m_renderPass)
+		m_material = material;
+		if (m_material)
 		{
-			m_renderPass->setMaterial(material);
+			m_material->bind(shared_from_this());
 		}
 	}
 
@@ -140,22 +137,70 @@ namespace Destiny
 	{
 		if (m_renderPass)
 		{
+			if (m_constantBuffers.empty())
+			{
+				m_renderPass->fillConstantBuffers(m_variableLinkConstant, m_constantBuffers);
+			}
+
+			for (const auto& constant : m_constants)
+			{
+				auto iter1 = m_variableLinkConstant.find(constant.first);
+				if (iter1 == m_variableLinkConstant.end())
+				{
+					continue;
+				}
+
+				auto iter2 = m_constantBuffers.find(iter1->second);
+				if (iter2 == m_constantBuffers.end() || iter2->second == nullptr)
+				{
+					continue;
+				}
+
+				iter2->second->setVariable(constant.first, constant.second);
+			}
+
+			if (m_textures.empty())
+			{
+				m_renderPass->fillTextures(m_textures);
+			}
+
+			for (const auto& texture : m_visualTextures)
+			{
+				auto iter = m_textures.find(texture.first);
+				if (iter == m_textures.end())
+				{
+					continue;
+				}
+
+				iter->second.second = texture.second;
+			}
+
+			if (m_samplerStates.empty())
+			{
+				m_renderPass->fillSamplerStates(m_samplerStates);
+			}
+
+			for (const auto& samplerState : m_visualSamplerStates)
+			{
+				auto iter = m_samplerStates.find(samplerState.first);
+				if (iter == m_samplerStates.end())
+				{
+					continue;
+				}
+
+				iter->second.second = samplerState.second;
+			}
+
+			m_drawParameters->constantBuffers = m_constantBuffers;
+			m_drawParameters->textures = m_textures;
+			m_drawParameters->samplerStates = m_samplerStates;
+
 			m_renderPass->fillDrawParameters(m_drawParameters);
 			if (m_mesh && m_renderPass->getRenderer())
 			{
 				m_mesh->fillDrawParameters(m_drawParameters, m_renderPass->getRenderer()->getInputSignatureBlob());
 			}
 		}
-
-		//if (!m_drawParameters->beforeDrawCommandList)
-		//{
-		//	m_drawParameters->beforeDrawCommandList = std::make_shared<GraphicsCommandList>();
-		//	auto scene = std::dynamic_pointer_cast<VisualScene>(m_component->get_scene());
-		//	if (scene)
-		//	{
-		//		m_drawParameters->beforeDrawCommandList->addGraphicsCommand(scene->m_bindRenderTargets);
-		//	}
-		//}
 
 		clearDrawParameter();
 		addDrawParameter(m_drawParameters);
@@ -171,5 +216,15 @@ namespace Destiny
 		{
 			m_mesh->load(priority);
 		}
+	}
+
+	void Visual::setShaderResource(const char* name, std::shared_ptr<Texture> texture)
+	{
+		m_visualTextures[name] = texture;
+	}
+
+	void Visual::setSamplerSate(const char* name, std::shared_ptr<SamplerState> samplerState)
+	{
+		m_visualSamplerStates[name] = samplerState;
 	}
 }

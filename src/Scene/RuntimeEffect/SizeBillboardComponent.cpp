@@ -13,18 +13,15 @@ namespace Destiny
 {
 	SizeBillboardComponent::SizeBillboardComponent()
 	{
-		auto renderer = std::make_shared<Renderer>("builtin://renderer/size_billboard.hlsl");
-		renderer->load(0);
-		renderer->setConstant("c_size", DirectX::XMFLOAT2{ 1.0f, 1.0f });
-		
+		auto renderer = Renderer::Create("builtin://renderer/size_billboard.hlsl");
+		renderer->load();
+
 		auto texture = Texture::Create("builtin://texture/wind.png");
 		texture->load();
-		renderer->setShaderResource("t_texture", texture);
-
+		
 		auto samplerState = std::make_shared<SamplerState>();
 		samplerState->load();
-		renderer->setSamplerSate("s_sampler", samplerState);
-
+		
 		auto renderStates = RenderStates::CreateBlendState();
 		renderStates->load();
 
@@ -38,15 +35,15 @@ namespace Destiny
 
 		setRenderPass(renderPass);
 		setMesh(mesh);
+
+		setConstant("c_size", DirectX::XMFLOAT2{ 1.0f, 1.0f });
+		setShaderResource("t_texture", texture);
+		setSamplerSate("s_sampler", samplerState);
 	}
 
 	void SizeBillboardComponent::set_size(const DirectX::XMFLOAT2& size)
 	{
-		auto visual = getVisual();
-		if (visual)
-		{
-			visual->setConstant("c_size", size);
-		}
+		setConstant("c_size", size);
 	}
 
 	RTTR_REGISTRATION

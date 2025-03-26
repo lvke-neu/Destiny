@@ -23,7 +23,8 @@ namespace Destiny
 		void set_intensity(float intensity);
 	private:
 		void				traversal(std::shared_ptr<Node> node, std::vector<PointLight>& pointLights, bool ignoreSelf = false);
-		void				traversalPointLightChanged(std::shared_ptr<Node> node, const std::vector<PointLight>& pointLights);
+		void                notifyVisualRendererConstantChanged(std::shared_ptr<Node> node);
+		void				setPointLightRendererConstant(const std::vector<PointLight>& pointLights);
 	private:
 		Color				m_color;
 		float				m_intensity;

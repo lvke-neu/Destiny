@@ -426,7 +426,7 @@ namespace Destiny
 
 	void SceneManager::uninitialize()
 	{
-		//m_scene->uninitialize();
+
 	}
 
 	void SceneManager::update(float deltaTime)
@@ -458,6 +458,14 @@ namespace Destiny
 
 	void SceneManager::setCurrentScene(std::shared_ptr<Scene> currentScene)
 	{
+		if (m_currentScene)
+		{
+			m_currentScene->uninitialize();
+		}
 		m_currentScene = currentScene;
+		if (m_currentScene)
+		{
+			m_currentScene->initialize();
+		}
 	}
 }

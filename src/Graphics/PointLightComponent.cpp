@@ -19,18 +19,19 @@ namespace Destiny
 		traversal(m_scene, pointLights);
 		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
-		deferredOpaquePipeline->onPointLightChanged(pointLights);
-		traversalPointLightChanged(m_scene, pointLights);
+		deferredOpaquePipeline->onRendererConstantChanged();
+		notifyVisualRendererConstantChanged(m_scene);
+		setPointLightRendererConstant(pointLights);
     }
 
 	void PointLightComponent::onLeaveScene()
 	{
 		std::vector<PointLight> pointLights;
-		traversal(m_scene, pointLights, true);
 		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
-		deferredOpaquePipeline->onPointLightChanged(pointLights);
-		traversalPointLightChanged(m_scene, pointLights);
+		deferredOpaquePipeline->onRendererConstantChanged();
+		notifyVisualRendererConstantChanged(m_scene);
+		setPointLightRendererConstant(pointLights);
 	}
 
     void PointLightComponent::onNodeTransformChanged()
@@ -41,8 +42,9 @@ namespace Destiny
 			traversal(m_scene, pointLights);
 			auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
 			auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
-			deferredOpaquePipeline->onPointLightChanged(pointLights);
-			traversalPointLightChanged(m_scene, pointLights);
+			deferredOpaquePipeline->onRendererConstantChanged();
+			notifyVisualRendererConstantChanged(m_scene);
+			setPointLightRendererConstant(pointLights);
 		}
     }
 
@@ -61,8 +63,9 @@ namespace Destiny
 		traversal(m_scene, pointLights);
 		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
-		deferredOpaquePipeline->onPointLightChanged(pointLights);
-		traversalPointLightChanged(m_scene, pointLights);
+		deferredOpaquePipeline->onRendererConstantChanged();
+		notifyVisualRendererConstantChanged(m_scene);
+		setPointLightRendererConstant(pointLights);
 	}
 
 	void PointLightComponent::set_intensity(float intensity)
@@ -72,8 +75,9 @@ namespace Destiny
 		traversal(m_scene, pointLights);
 		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
-		deferredOpaquePipeline->onPointLightChanged(pointLights);
-		traversalPointLightChanged(m_scene, pointLights);
+		deferredOpaquePipeline->onRendererConstantChanged();
+		notifyVisualRendererConstantChanged(m_scene);
+		setPointLightRendererConstant(pointLights);
 	}
 
 	void PointLightComponent::traversal(std::shared_ptr<Node> node, std::vector<PointLight>& pointLights, bool ignoreSelf)
@@ -102,7 +106,7 @@ namespace Destiny
 		}
 	}
 
-	void PointLightComponent::traversalPointLightChanged(std::shared_ptr<Node> node, const std::vector<PointLight>& pointLights)
+	void PointLightComponent::notifyVisualRendererConstantChanged(std::shared_ptr<Node> node)
 	{
 		if (!node)
 		{
@@ -116,14 +120,26 @@ namespace Destiny
 			{
 				if (m_node)
 				{
-					visualComponent->onPointLightChanged(pointLights);
+					visualComponent->onRendererConstantChanged();
 				}
 			}
 		}
 
 		for (const auto& childNode : node->getChilds())
 		{
-			traversalPointLightChanged(childNode, pointLights);
+			notifyVisualRendererConstantChanged(childNode);
+		}
+	}
+
+	void PointLightComponent::setPointLightRendererConstant(const std::vector<PointLight>& pointLights)
+	{
+		std::shared_ptr<Blob> blob = std::make_shared<Blob>(pointLights.size() * sizeof(PointLight));
+		blob->copyfrom((void*)pointLights.data(), blob->getLength());
+
+		for (const auto& renderer : Renderer::s_cache)
+		{
+			renderer.second->setConstant("g_pointLightCount", (int)pointLights.size());
+			renderer.second->setConstant("g_pointLights", blob);
 		}
 	}
 

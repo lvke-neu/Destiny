@@ -29,8 +29,8 @@ namespace Destiny
 	private:
 		void					onWindowResize(void* data);
 	private:
-		void					traversalViewChanged(std::shared_ptr<Node> node);
-		void					traversalProjChanged(std::shared_ptr<Node> node);
+		void					notifyVisualRendererConstantChanged(std::shared_ptr<Node> node);
+		void					setRendererConstant();
 	private:
 		float					m_fovy;
 		float					m_aspect;

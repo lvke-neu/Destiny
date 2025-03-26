@@ -38,9 +38,7 @@ namespace Destiny
 		template<typename T>
 		void								setConstant(const char* name, T value);
 		void								setConstant(const char* name, std::shared_ptr<Blob> blob);
-		template<typename T>
-		void setRendererConstant(const char* name, T value);
-		void setRendererConstant(const char* name, std::shared_ptr<Blob> blob);
+		void								setRendererConstantChanged();
 		void								setShaderResource(const char* name, std::shared_ptr<Texture> texture);
 		void								setSamplerSate(const char* name, std::shared_ptr<SamplerState> samplerState);
 		void							    reCompileShader();
@@ -104,23 +102,10 @@ namespace Destiny
 		m_constantsChanged = true;
 	}
 
-    template<typename T>
-	inline void Visual::setRendererConstant(const char* name, T value)
-	{
-		if (m_renderPass && m_renderPass->getRenderer())
-		{
-			m_renderPass->getRenderer()->setConstant(name, value);
-			m_rendererConstantsChanged = true;
-		}
-	}
 
-	inline void Visual::setRendererConstant(const char* name, std::shared_ptr<Blob> blob)
+	inline void Visual::setRendererConstantChanged()
 	{
-		if (m_renderPass && m_renderPass->getRenderer())
-		{
-			m_renderPass->getRenderer()->setConstant(name, blob);
-			m_rendererConstantsChanged = true;
-		}
+		m_rendererConstantsChanged = true;
 	}
 
 	inline void Visual::reCompileShader()

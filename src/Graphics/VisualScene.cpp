@@ -80,7 +80,11 @@ namespace Destiny
 
 	void VisualScene::uninitialize()
 	{
-
+		for (const auto& renderer : Renderer::s_cache)
+		{
+			renderer.second->setConstant("g_directionLightCount", 0);
+			renderer.second->setConstant("g_pointLightCount", 0);
+		}
 	}
 
 	void VisualScene::update(float deltaTime)

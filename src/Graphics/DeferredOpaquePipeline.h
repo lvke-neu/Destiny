@@ -16,10 +16,7 @@ namespace Destiny
 	public:
 		virtual void execute(ID3D11DeviceContext* deviceContext) override;
 	public:
-		void		onCameraViewChanged(const DirectX::XMMATRIX& cameraView, const DirectX::XMFLOAT3& eyePosition);
-		void		onCameraProjChanged(const DirectX::XMMATRIX& cameraProj, float viewportWidth, float viewportHeight, float nearPlane, float farPlane);
-		void		onDirectionLightChanged(const std::vector<DirectionLight>& directionLights);
-		void		onPointLightChanged(const std::vector<PointLight>& pointLights);
+		void						onRendererConstantChanged();
 	public:
 		std::shared_ptr<BindRenderTargets>		m_bindRenderTargets;
 	private:

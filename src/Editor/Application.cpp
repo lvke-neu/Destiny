@@ -483,7 +483,6 @@ void Application::drawDock()
 void Application::newScene()
 {
 	auto scene = std::make_shared<Destiny::VisualScene>("New Scene");
-	scene->initialize();
 	Destiny::Engine::GetInstance()->getSceneManager()->setCurrentScene(scene);
 	m_propertyPanel->onChoosedNode(nullptr);
 }
@@ -541,7 +540,6 @@ void Application::openScene()
 	auto scene = std::dynamic_pointer_cast<Destiny::Scene>(object);
 	if (scene)
 	{
-		scene->initialize();
 		Destiny::Engine::GetInstance()->getSceneManager()->setCurrentScene(scene);
 		m_propertyPanel->onChoosedNode(nullptr);
 	}

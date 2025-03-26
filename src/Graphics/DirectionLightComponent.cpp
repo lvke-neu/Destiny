@@ -24,18 +24,19 @@ namespace Destiny
 		traversal(m_scene, directionLights);
 		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
-		deferredOpaquePipeline->onDirectionLightChanged(directionLights);
-		traversalDirectionLightChanged(m_scene, directionLights);
+		deferredOpaquePipeline->onRendererConstantChanged();
+		notifyVisualRendererConstantChanged(m_scene);
+		setDirectionLightRendererConstant(directionLights);
     }
 
 	void DirectionLightComponent::onLeaveScene()
 	{
 		std::vector<DirectionLight> directionLights;
-		traversal(m_scene, directionLights, true);
 		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
-		deferredOpaquePipeline->onDirectionLightChanged(directionLights);
-		traversalDirectionLightChanged(m_scene, directionLights);
+		deferredOpaquePipeline->onRendererConstantChanged();
+		notifyVisualRendererConstantChanged(m_scene);
+		setDirectionLightRendererConstant(directionLights);
 	}
 
     void DirectionLightComponent::onNodeTransformChanged()
@@ -44,8 +45,9 @@ namespace Destiny
 		traversal(m_scene, directionLights);
 		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
-		deferredOpaquePipeline->onDirectionLightChanged(directionLights);
-		traversalDirectionLightChanged(m_scene, directionLights);
+		deferredOpaquePipeline->onRendererConstantChanged();
+		notifyVisualRendererConstantChanged(m_scene);
+		setDirectionLightRendererConstant(directionLights);
     }
 
 	void DirectionLightComponent::onPropertyChanged(const std::string& property)
@@ -63,8 +65,9 @@ namespace Destiny
 		traversal(m_scene, directionLights);
 		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
-		deferredOpaquePipeline->onDirectionLightChanged(directionLights);
-		traversalDirectionLightChanged(m_scene, directionLights);
+		deferredOpaquePipeline->onRendererConstantChanged();
+		notifyVisualRendererConstantChanged(m_scene);
+		setDirectionLightRendererConstant(directionLights);
 	}
 
 	void DirectionLightComponent::set_intensity(float intensity)
@@ -74,8 +77,9 @@ namespace Destiny
 		traversal(m_scene, directionLights);
 		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
-		deferredOpaquePipeline->onDirectionLightChanged(directionLights);
-		traversalDirectionLightChanged(m_scene, directionLights);
+		deferredOpaquePipeline->onRendererConstantChanged();
+		notifyVisualRendererConstantChanged(m_scene);
+		setDirectionLightRendererConstant(directionLights);
 	}
 
 	void DirectionLightComponent::traversal(std::shared_ptr<Node> node, std::vector<DirectionLight>& directionLights, bool ignoreSelf)
@@ -104,7 +108,7 @@ namespace Destiny
 		}
 	}
 
-	void DirectionLightComponent::traversalDirectionLightChanged(std::shared_ptr<Node> node, const std::vector<DirectionLight>& directionLights)
+	void DirectionLightComponent::notifyVisualRendererConstantChanged(std::shared_ptr<Node> node)
 	{
 		if (!node)
 		{
@@ -118,14 +122,26 @@ namespace Destiny
 			{
 				if (m_node)
 				{
-					visualComponent->onDirectionLightChanged(directionLights);
+					visualComponent->onRendererConstantChanged();
 				}
 			}
 		}
 
 		for (const auto& childNode : node->getChilds())
 		{
-			traversalDirectionLightChanged(childNode, directionLights);
+			notifyVisualRendererConstantChanged(childNode);
+		}
+	}
+
+	void DirectionLightComponent::setDirectionLightRendererConstant(const std::vector<DirectionLight>& directionLights)
+	{
+		std::shared_ptr<Blob> blob = std::make_shared<Blob>(directionLights.size() * sizeof(DirectionLight));
+		blob->copyfrom((void*)directionLights.data(), blob->getLength());
+
+		for (const auto& renderer : Renderer::s_cache)
+		{
+			renderer.second->setConstant("g_directionLightCount", (int)directionLights.size());
+			renderer.second->setConstant("g_directionLights", blob);
 		}
 	}
 

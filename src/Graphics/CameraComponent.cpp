@@ -6,6 +6,7 @@
 #include "DeferredOpaquePipeline.h"
 #include "Math/Math.h"
 #include "BindRenderTargets.h"
+#include "Graphics/Renderer.h"
 
 namespace Destiny
 {
@@ -34,8 +35,9 @@ namespace Destiny
 		}
 		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
-		deferredOpaquePipeline->onCameraProjChanged(DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(m_fovy * Math::DEG2RAD, m_aspect, m_nearz, m_farz)), m_viewportWidth, m_viewportHeight, m_nearz, m_farz);
-		traversalProjChanged(m_scene);
+		deferredOpaquePipeline->onRendererConstantChanged();
+		notifyVisualRendererConstantChanged(m_scene);
+		setRendererConstant();
 	}
 
 	void CameraComponent::set_aspect(float aspect)
@@ -47,8 +49,9 @@ namespace Destiny
 		}
 		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
-		deferredOpaquePipeline->onCameraProjChanged(DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(m_fovy * Math::DEG2RAD, m_aspect, m_nearz, m_farz)), m_viewportWidth, m_viewportHeight, m_nearz, m_farz);
-		traversalProjChanged(m_scene);
+		deferredOpaquePipeline->onRendererConstantChanged();
+		notifyVisualRendererConstantChanged(m_scene);
+		setRendererConstant();
 	}
 
 	void CameraComponent::set_nearz(float nearz)
@@ -60,8 +63,9 @@ namespace Destiny
 		}
 		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
-		deferredOpaquePipeline->onCameraProjChanged(DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(m_fovy * Math::DEG2RAD, m_aspect, m_nearz, m_farz)), m_viewportWidth, m_viewportHeight, m_nearz, m_farz);
-		traversalProjChanged(m_scene);
+		deferredOpaquePipeline->onRendererConstantChanged();
+		notifyVisualRendererConstantChanged(m_scene);
+		setRendererConstant();
 	}
 
 	void CameraComponent::set_farz(float farz)
@@ -73,8 +77,9 @@ namespace Destiny
 		}
 		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
-		deferredOpaquePipeline->onCameraProjChanged(DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(m_fovy * Math::DEG2RAD, m_aspect, m_nearz, m_farz)), m_viewportWidth, m_viewportHeight, m_nearz, m_farz);
-		traversalProjChanged(m_scene);
+		deferredOpaquePipeline->onRendererConstantChanged();
+		notifyVisualRendererConstantChanged(m_scene);
+		setRendererConstant();
 	}
 
 	void CameraComponent::onEnterScene()
@@ -92,17 +97,18 @@ namespace Destiny
 			}
 		}
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
-		deferredOpaquePipeline->onCameraViewChanged(m_node->getInvTransposeWorldMatrix(), m_node->get_translation());
-		traversalViewChanged(m_scene);
-		traversalProjChanged(m_scene);
+		deferredOpaquePipeline->onRendererConstantChanged();
+		notifyVisualRendererConstantChanged(m_scene);
+		setRendererConstant();
 	}
 
 	void CameraComponent::onNodeTransformChanged()
 	{
 		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
-		deferredOpaquePipeline->onCameraViewChanged(m_node->getInvTransposeWorldMatrix(), m_node->get_translation());
-		traversalViewChanged(m_scene);
+		deferredOpaquePipeline->onRendererConstantChanged();
+		notifyVisualRendererConstantChanged(m_scene);
+		setRendererConstant();
 	}
 
 	DirectX::XMMATRIX CameraComponent::getProjectionMatrix()
@@ -122,57 +128,56 @@ namespace Destiny
 		}
 		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
-		deferredOpaquePipeline->onCameraProjChanged(DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(m_fovy * Math::DEG2RAD, m_aspect, m_nearz, m_farz)), m_viewportWidth, m_viewportHeight, m_nearz, m_farz);
-		traversalProjChanged(m_scene);
+		deferredOpaquePipeline->onRendererConstantChanged();
+		notifyVisualRendererConstantChanged(m_scene);
+		setRendererConstant();
 	}
 
-	void CameraComponent::traversalViewChanged(std::shared_ptr<Node> node)
-	{
-		if (!node || !m_node)
-		{
-			return;
-		}
 
-		const auto& cameraViewMatrix = m_node->getInvTransposeWorldMatrix();
-		const auto& cameraPos = m_node->get_translation();
-		for (const auto& component : node->getComponents())
-		{
-			auto visualComponent = std::dynamic_pointer_cast<VisualComponent>(component);
-			if (visualComponent)
-			{
-				if (m_node)
-				{
-					visualComponent->onCameraViewChanged(cameraViewMatrix, cameraPos);
-				}	
-			}
-		}
-
-		for (const auto& childNode : node->getChilds())
-		{
-			traversalViewChanged(childNode);
-		}
-	}
-
-	void CameraComponent::traversalProjChanged(std::shared_ptr<Node> node)
+	void CameraComponent::notifyVisualRendererConstantChanged(std::shared_ptr<Node> node)
 	{
 		if (!node)
 		{
 			return;
 		}
 
-		const auto& cameraProjMaTrix = DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(m_fovy * Math::DEG2RAD, m_aspect, m_nearz, m_farz));
 		for (const auto& component : node->getComponents())
 		{
 			auto visualComponent = std::dynamic_pointer_cast<VisualComponent>(component);
 			if (visualComponent)
 			{
-				visualComponent->onCameraProjChanged(cameraProjMaTrix, m_viewportWidth, m_viewportHeight, m_nearz, m_farz);
+				visualComponent->onRendererConstantChanged();
 			}
 		}
 
 		for (const auto& childNode : node->getChilds())
 		{
-			traversalProjChanged(childNode);
+			notifyVisualRendererConstantChanged(childNode);
+		}
+	}
+
+	void CameraComponent::setRendererConstant()
+	{
+		if (!m_node)
+		{
+			return;
+		}
+
+		const auto& cameraViewMatrix = m_node->getInvTransposeWorldMatrix();
+		const auto& cameraPos = m_node->get_translation();
+		const auto& cameraProjMaTrix = DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(m_fovy * Math::DEG2RAD, m_aspect, m_nearz, m_farz));
+		for (const auto& renderer : Renderer::s_cache)
+		{
+			renderer.second->setConstant("g_view", cameraViewMatrix);
+			renderer.second->setConstant("g_eyePosition", cameraPos);
+
+			renderer.second->setConstant("g_proj", cameraProjMaTrix);
+			renderer.second->setConstant("g_viewportWidth", m_viewportWidth);
+			renderer.second->setConstant("g_rcpViewportWidth", 1.0f / m_viewportWidth);
+			renderer.second->setConstant("g_viewportHeight", m_viewportHeight);
+			renderer.second->setConstant("g_rcpViewportHeight", 1.0f / m_viewportHeight);
+			renderer.second->setConstant("g_nearPlane", m_nearz);
+			renderer.second->setConstant("g_farPlane", m_farz);
 		}
 	}
 

@@ -101,7 +101,6 @@ void ViewPortPanel::update()
 						auto scene = std::dynamic_pointer_cast<Destiny::Scene>(object);
 						if (scene)
 						{
-							scene->initialize();
 							Destiny::Engine::GetInstance()->getSceneManager()->setCurrentScene(scene);
 							send(ChoosedNode, nullptr);
 							LOG_INFO("Open Scene:{0} Successfully", dropPath);

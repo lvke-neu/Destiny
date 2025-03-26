@@ -15,9 +15,15 @@ namespace Destiny
 		m_renderPass(std::make_shared<RenderPass>()),
 		m_mesh(nullptr),
 		m_drawParameters(std::make_shared<DrawParameters>()),
-		m_component(nullptr)
+		m_component(nullptr),
+		m_constantsChanged(false),
+		m_texturesChanged(false),
+		m_samplerStatesrChanged(false),
+		m_renderPassChanged(false),
+		m_meshChanged(false),
+		m_rendererConstantsChanged(false)
 	{
-
+		addDrawParameter(m_drawParameters);
 	}
 
 	std::string Visual::get_renderer()
@@ -120,6 +126,7 @@ namespace Destiny
 
 		m_renderPass.reset();
 		m_renderPass = renderPass;
+		m_renderPassChanged = true;
 	}
 
 	void Visual::setMesh(std::shared_ptr<Mesh> mesh)
@@ -131,6 +138,7 @@ namespace Destiny
 
 		m_mesh.reset();
 		m_mesh = mesh;
+		m_meshChanged = true;
 	}
 
 	void Visual::updateDrawParameters()
@@ -152,48 +160,76 @@ namespace Destiny
 				m_renderPass->fillSamplerStates(m_samplerStates);
 			}
 
-			for (const auto& constant : m_constants)
+			if (m_rendererConstantsChanged)
 			{
-				auto iter1 = m_variableLinkConstant.find(constant.first);
-				if (iter1 == m_variableLinkConstant.end())
-				{
-					continue;
-				}
-
-				auto iter2 = m_constantBuffers.find(iter1->second);
-				if (iter2 == m_constantBuffers.end() || iter2->second == nullptr)
-				{
-					continue;
-				}
-
-				iter2->second->setVariable(constant.first, constant.second);
+				m_renderPass->modifyConstantBuffersByDifference(m_constantBuffers);
+				m_rendererConstantsChanged = false;
 			}
 
-			for (const auto& texture : m_visualTextures)
+			if (m_constantsChanged)
 			{
-				auto iter = m_textures.find(texture.first);
-				if (iter == m_textures.end())
+				for (const auto& constant : m_constants)
 				{
-					continue;
-				}
+					auto iter1 = m_variableLinkConstant.find(constant.first);
+					if (iter1 == m_variableLinkConstant.end())
+					{
+						continue;
+					}
 
-				iter->second.second = texture.second;
+					auto iter2 = m_constantBuffers.find(iter1->second);
+					if (iter2 == m_constantBuffers.end() || iter2->second == nullptr)
+					{
+						continue;
+					}
+
+					iter2->second->setVariable(constant.first, constant.second);
+				}
+				m_drawParameters->constantBuffers = m_constantBuffers;
+				m_constantsChanged = false;
 			}
 
-			for (const auto& samplerState : m_visualSamplerStates)
+			if (m_texturesChanged)
 			{
-				auto iter = m_samplerStates.find(samplerState.first);
-				if (iter == m_samplerStates.end())
+				for (const auto& texture : m_visualTextures)
 				{
-					continue;
-				}
+					auto iter = m_textures.find(texture.first);
+					if (iter == m_textures.end())
+					{
+						continue;
+					}
 
-				iter->second.second = samplerState.second;
+					iter->second.second = texture.second;
+				}
+				m_drawParameters->textures = m_textures;
+				m_texturesChanged = false;
 			}
 
-			m_drawParameters->constantBuffers = m_constantBuffers;
-			m_drawParameters->textures = m_textures;
-			m_drawParameters->samplerStates = m_samplerStates;
+			if (m_samplerStatesrChanged)
+			{
+				for (const auto& samplerState : m_visualSamplerStates)
+				{
+					auto iter = m_samplerStates.find(samplerState.first);
+					if (iter == m_samplerStates.end())
+					{
+						continue;
+					}
+
+					iter->second.second = samplerState.second;
+				}
+				m_drawParameters->samplerStates = m_samplerStates;
+				m_samplerStatesrChanged = false;
+			}
+
+			//if (m_renderPassChanged || m_meshChanged)
+			//{
+			//	m_renderPass->fillDrawParameters(m_drawParameters);
+			//	m_renderPassChanged = false;
+			//	if (m_mesh && m_renderPass->getRenderer())
+			//	{
+			//		m_mesh->fillDrawParameters(m_drawParameters, m_renderPass->getRenderer()->getInputSignatureBlob());
+			//		m_meshChanged = false;
+			//	}
+			//}
 
 			m_renderPass->fillDrawParameters(m_drawParameters);
 			if (m_mesh && m_renderPass->getRenderer())
@@ -202,8 +238,7 @@ namespace Destiny
 			}
 		}
 
-		clearDrawParameter();
-		addDrawParameter(m_drawParameters);
+		//clearDrawParameter();
 	}
 
 	void Visual::load(int priority)
@@ -221,10 +256,12 @@ namespace Destiny
 	void Visual::setShaderResource(const char* name, std::shared_ptr<Texture> texture)
 	{
 		m_visualTextures[name] = texture;
+		m_texturesChanged = true;
 	}
 
 	void Visual::setSamplerSate(const char* name, std::shared_ptr<SamplerState> samplerState)
 	{
 		m_visualSamplerStates[name] = samplerState;
+		m_samplerStatesrChanged = true;
 	}
 }

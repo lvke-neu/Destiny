@@ -123,11 +123,11 @@ namespace Destiny
 
 	DirectX::XMMATRIX Node::getRootToThisWorldMatrix()
 	{
-		auto worldMatrix = get_transform().getWorldMatrix();
+		auto worldMatrix = m_transform.getWorldMatrix();
 		auto tmpNode = m_parent;
 		while (tmpNode)
 		{
-			worldMatrix *= tmpNode->get_transform().getWorldMatrix();
+			worldMatrix *= tmpNode->m_transform.getWorldMatrix();
 			tmpNode = tmpNode->getParent();
 		}
 

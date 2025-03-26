@@ -92,7 +92,7 @@ namespace Destiny
 			}
 			if (plComponent && plComponent->get_enable() && plComponent->get_node())
 			{
-				pointLights.push_back({ {plComponent->get_color()}, {plComponent->get_node()->get_transform().get_translation()}, plComponent->get_intensity() });
+				pointLights.push_back({ {plComponent->get_color()}, {plComponent->get_node()->get_translation()}, plComponent->get_intensity() });
 			}
 		}
 

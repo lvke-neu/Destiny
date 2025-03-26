@@ -92,7 +92,7 @@ namespace Destiny
 			}
 		}
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
-		deferredOpaquePipeline->onCameraViewChanged(m_node->get_transform().getInvTransposeWorldMatrix(), m_node->get_transform().get_translation());
+		deferredOpaquePipeline->onCameraViewChanged(m_node->getInvTransposeWorldMatrix(), m_node->get_translation());
 		traversalViewChanged(m_scene);
 		traversalProjChanged(m_scene);
 	}
@@ -101,7 +101,7 @@ namespace Destiny
 	{
 		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
-		deferredOpaquePipeline->onCameraViewChanged(m_node->get_transform().getInvTransposeWorldMatrix(), m_node->get_transform().get_translation());
+		deferredOpaquePipeline->onCameraViewChanged(m_node->getInvTransposeWorldMatrix(), m_node->get_translation());
 		traversalViewChanged(m_scene);
 	}
 
@@ -128,11 +128,13 @@ namespace Destiny
 
 	void CameraComponent::traversalViewChanged(std::shared_ptr<Node> node)
 	{
-		if (!node)
+		if (!node || !m_node)
 		{
 			return;
 		}
 
+		const auto& cameraViewMatrix = m_node->getInvTransposeWorldMatrix();
+		const auto& cameraPos = m_node->get_translation();
 		for (const auto& component : node->getComponents())
 		{
 			auto visualComponent = std::dynamic_pointer_cast<VisualComponent>(component);
@@ -140,7 +142,7 @@ namespace Destiny
 			{
 				if (m_node)
 				{
-					visualComponent->onCameraViewChanged(m_node->get_transform().getInvTransposeWorldMatrix(), m_node->get_transform().get_translation());
+					visualComponent->onCameraViewChanged(cameraViewMatrix, cameraPos);
 				}	
 			}
 		}
@@ -158,12 +160,13 @@ namespace Destiny
 			return;
 		}
 
+		const auto& cameraProjMaTrix = DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(m_fovy * Math::DEG2RAD, m_aspect, m_nearz, m_farz));
 		for (const auto& component : node->getComponents())
 		{
 			auto visualComponent = std::dynamic_pointer_cast<VisualComponent>(component);
 			if (visualComponent)
 			{
-				visualComponent->onCameraProjChanged(DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(m_fovy * Math::DEG2RAD, m_aspect, m_nearz, m_farz)), m_viewportWidth, m_viewportHeight, m_nearz, m_farz);
+				visualComponent->onCameraProjChanged(cameraProjMaTrix, m_viewportWidth, m_viewportHeight, m_nearz, m_farz);
 			}
 		}
 

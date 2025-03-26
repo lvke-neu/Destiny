@@ -184,7 +184,7 @@ void ViewPortPanel::processGzimo()
 		return;
 	}
 
-	auto viewMatrix = cameraNode->get_transform().getInverseWorldMatrix();
+	auto viewMatrix = cameraNode->getInverseWorldMatrix();
 	auto projMatrix = camera->getProjectionMatrix();
 
 
@@ -197,7 +197,7 @@ void ViewPortPanel::processGzimo()
 	ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
 
 	auto fullWorldMatrix = m_choosedNode->getRootToThisWorldMatrix();
-	auto ancestorsWorldMatrix = fullWorldMatrix * m_choosedNode->get_transform().getInverseWorldMatrix();
+	auto ancestorsWorldMatrix = fullWorldMatrix * m_choosedNode->getInverseWorldMatrix();
 	ImGuizmo::Manipulate((float*)&viewMatrix, (float*)&projMatrix, (ImGuizmo::OPERATION)m_gzimoType, (ImGuizmo::MODE)m_gzimoMode, (float*)&fullWorldMatrix);
 
 	if (ImGuizmo::IsUsing())

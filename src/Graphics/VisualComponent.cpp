@@ -151,7 +151,7 @@ namespace Destiny
 			return;
 		}
 		onNodeTransformChanged();
-		onCameraViewChanged(visualScene->getCameraNode()->get_transform().getInvTransposeWorldMatrix(), visualScene->getCameraNode()->get_transform().get_translation());
+		onCameraViewChanged(visualScene->getCameraNode()->getInvTransposeWorldMatrix(), visualScene->getCameraNode()->get_translation());
 		onCameraProjChanged(
 			DirectX::XMMatrixTranspose
 			(
@@ -176,8 +176,10 @@ namespace Destiny
 			return;
 		}
 		
-		m_visual->setConstant("g_view", cameraView);
-		m_visual->setConstant("g_eyePosition", eyePosition);
+		//m_visual->setConstant("g_view", cameraView);
+		//m_visual->setConstant("g_eyePosition", eyePosition);
+		m_visual->setRendererConstant("g_view", cameraView);
+		m_visual->setRendererConstant("g_eyePosition", eyePosition);
 	}
 
 	void VisualComponent::onCameraProjChanged(const DirectX::XMMATRIX& cameraProj, float viewportWidth, float viewportHeight, float nearPlane, float farPlane)
@@ -187,13 +189,21 @@ namespace Destiny
 			return;
 		}
 
-		m_visual->setConstant("g_proj", cameraProj);
-		m_visual->setConstant("g_viewportWidth", viewportWidth);
-		m_visual->setConstant("g_rcpViewportWidth", 1.0f / viewportWidth);
-		m_visual->setConstant("g_viewportHeight", viewportHeight);
-		m_visual->setConstant("g_rcpViewportHeight", 1.0f / viewportHeight);
-		m_visual->setConstant("nearPlane", nearPlane);
-		m_visual->setConstant("farPlane", farPlane);
+		//m_visual->setConstant("g_proj", cameraProj);
+		//m_visual->setConstant("g_viewportWidth", viewportWidth);
+		//m_visual->setConstant("g_rcpViewportWidth", 1.0f / viewportWidth);
+		//m_visual->setConstant("g_viewportHeight", viewportHeight);
+		//m_visual->setConstant("g_rcpViewportHeight", 1.0f / viewportHeight);
+		//m_visual->setConstant("g_nearPlane", nearPlane);
+		//m_visual->setConstant("g_farPlane", farPlane);
+
+		m_visual->setRendererConstant("g_proj", cameraProj);
+		m_visual->setRendererConstant("g_viewportWidth", viewportWidth);
+		m_visual->setRendererConstant("g_rcpViewportWidth", 1.0f / viewportWidth);
+		m_visual->setRendererConstant("g_viewportHeight", viewportHeight);
+		m_visual->setRendererConstant("g_rcpViewportHeight", 1.0f / viewportHeight);
+		m_visual->setRendererConstant("g_nearPlane", nearPlane);
+		m_visual->setRendererConstant("g_farPlane", farPlane);
 	}
 
 	void VisualComponent::onDirectionLightChanged(const std::vector<DirectionLight>& directionLights)
@@ -205,8 +215,10 @@ namespace Destiny
 		std::shared_ptr<Blob> blob = std::make_shared<Blob>(directionLights.size() * sizeof(DirectionLight));
 		blob->copyfrom((void*)directionLights.data(), blob->getLength());
 
-		m_visual->setConstant("g_directionLightCount", (int)directionLights.size());
-		m_visual->setConstant("g_directionLights", blob);
+		//m_visual->setConstant("g_directionLightCount", (int)directionLights.size());
+		//m_visual->setConstant("g_directionLights", blob);
+		m_visual->setRendererConstant("g_directionLightCount", (int)directionLights.size());
+		m_visual->setRendererConstant("g_directionLights", blob);
 	}
 
 	void VisualComponent::traversalDirectionLight(std::shared_ptr<Node> node, std::vector<DirectionLight>& directionLights)
@@ -219,9 +231,9 @@ namespace Destiny
 		for (const auto& component : node->getComponents())
 		{
 			auto dlComponent = std::dynamic_pointer_cast<DirectionLightComponent>(component);
-			if (dlComponent && dlComponent->get_node() && dlComponent->get_enable())
+			if (dlComponent && dlComponent->get_enable())
 			{
-				directionLights.push_back({{dlComponent->get_color()}, {dlComponent->get_node()->get_transform().get_rotation()}, dlComponent->get_intensity()});
+				directionLights.push_back({ {dlComponent->get_color()}, {node->get_rotation()}, dlComponent->get_intensity() });
 			}
 		}
 
@@ -240,8 +252,11 @@ namespace Destiny
 		std::shared_ptr<Blob> blob = std::make_shared<Blob>(pointLights.size() * sizeof(PointLight));
 		blob->copyfrom((void*)pointLights.data(), blob->getLength());
 
-		m_visual->setConstant("g_pointLightCount", (int)pointLights.size());
-		m_visual->setConstant("g_pointLights", blob);
+		//m_visual->setConstant("g_pointLightCount", (int)pointLights.size());
+		//m_visual->setConstant("g_pointLights", blob);
+
+		m_visual->setRendererConstant("g_pointLightCount", (int)pointLights.size());
+		m_visual->setRendererConstant("g_pointLights", blob);
 	}
 
 	void VisualComponent::traversalPointLight(std::shared_ptr<Node> node, std::vector<PointLight>& pointLights)
@@ -256,7 +271,7 @@ namespace Destiny
 			auto plComponent = std::dynamic_pointer_cast<PointLightComponent>(component);
 			if (plComponent && plComponent->get_node() && plComponent->get_enable())
 			{
-				pointLights.push_back({ {plComponent->get_color()}, {plComponent->get_node()->get_transform().get_translation()}, plComponent->get_intensity() });
+				pointLights.push_back({ {plComponent->get_color()}, { node->get_translation()}, plComponent->get_intensity() });
 			}
 		}
 

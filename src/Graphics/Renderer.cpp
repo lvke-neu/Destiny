@@ -439,9 +439,19 @@ namespace Destiny
 			return;
 		}
 
-		drawParameters->vertexShader = m_vertexShader;
-		drawParameters->pixelShader = m_pixelShader;
-		drawParameters->geometryShader = m_geometryShader;
+		if (isLoadingSucceed())
+		{
+			drawParameters->vertexShader = m_vertexShader;
+			drawParameters->pixelShader = m_pixelShader;
+			drawParameters->geometryShader = m_geometryShader;
+		}
+		else
+		{
+			drawParameters->vertexShader = nullptr;
+			drawParameters->pixelShader = nullptr;
+			drawParameters->geometryShader = nullptr;
+		}
+
 		//drawParameters->constantBuffers = m_constantBuffers;
 		//drawParameters->textures = m_textures;
 		//drawParameters->samplerStates = m_samplerStates;
@@ -460,6 +470,24 @@ namespace Destiny
 		}
 
 		variableLinkConstant = m_variableLinkConstant;
+	}
+
+	void Renderer::modifyConstantBuffersByDifference(std::unordered_map<std::string, std::shared_ptr<ConstantBuffer>>& constantBuffers)
+	{
+		for (const auto& changedConstantBufferName : m_changedConstantBufferNames)
+		{
+			auto iter1 = m_variableLinkConstant.find(changedConstantBufferName);
+			if (iter1 != m_variableLinkConstant.end())
+			{
+				auto iter2 = constantBuffers.find(iter1->second);
+				if (iter2 != constantBuffers.end())
+				{
+					iter2->second = m_constantBuffers[iter1->second];
+				}
+			}
+		}
+
+		//m_changedConstantBufferNames.clear();
 	}
 
 	void Renderer::fillTextures(std::unordered_map<std::string, std::pair<std::shared_ptr<TextureDesc>, std::shared_ptr<Texture>>>& textures)

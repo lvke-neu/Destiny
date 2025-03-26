@@ -26,10 +26,16 @@ namespace Destiny
 		void												rotateXAxis(float angle);
 		void												rotateYAxis(float angle);
 		DirectX::XMMATRIX									getRootToThisWorldMatrix();
+		DirectX::XMMATRIX									getInvTransposeWorldMatrix();
+		DirectX::XMMATRIX									getWorldMatrix();
 	public:
 		GET_SET(std::string, name);
 		GET(Transform, transform);
 		void												set_transform(Transform transform);
+		DirectX::XMFLOAT3									get_translation();
+		DirectX::XMFLOAT3									get_rotation();
+		DirectX::XMFLOAT3									get_scale();
+		DirectX::XMMATRIX									getInverseWorldMatrix();
 	private:
 		void												onEnterScene();
 		void												onLeaveScene();
@@ -55,5 +61,35 @@ namespace Destiny
 	inline const std::vector<std::shared_ptr<Node>>& Node::getChilds()
 	{
 		return m_childs;
+	}
+
+	inline DirectX::XMFLOAT3 Node::get_translation()
+	{
+		return m_transform.get_translation();
+	}
+
+	inline DirectX::XMFLOAT3 Node::get_rotation()
+	{
+		return m_transform.get_rotation();
+	}
+
+	inline DirectX::XMFLOAT3 Node::get_scale()
+	{
+		return m_transform.get_scale();
+	}
+
+	inline DirectX::XMMATRIX Node::getInverseWorldMatrix()
+	{
+		return m_transform.getInverseWorldMatrix();
+	}
+
+	inline DirectX::XMMATRIX Node::getInvTransposeWorldMatrix()
+	{
+		return m_transform.getInvTransposeWorldMatrix();
+	}
+
+	inline DirectX::XMMATRIX Node::getWorldMatrix()
+	{
+		return m_transform.getWorldMatrix();
 	}
 }

@@ -238,8 +238,11 @@ namespace Destiny
 			return;
 		}
 
-		m_fullScreenTriangle->setConstant("g_view", cameraView);
-		m_fullScreenTriangle->setConstant("g_eyePosition", eyePosition);
+		//m_fullScreenTriangle->setConstant("g_view", cameraView);
+		//m_fullScreenTriangle->setConstant("g_eyePosition", eyePosition);
+
+		m_fullScreenTriangle->setRendererConstant("g_view", cameraView);
+		m_fullScreenTriangle->setRendererConstant("g_eyePosition", eyePosition);
 	}
 
 	void DeferredOpaquePipeline::onCameraProjChanged(const DirectX::XMMATRIX& cameraProj, float viewportWidth, float viewportHeight, float nearPlane, float farPlane)
@@ -249,13 +252,21 @@ namespace Destiny
 			return;
 		}
 
-		m_fullScreenTriangle->setConstant("g_proj", cameraProj);
-		m_fullScreenTriangle->setConstant("g_viewportWidth", viewportWidth);
-		m_fullScreenTriangle->setConstant("g_rcpViewportWidth", 1.0f / viewportWidth);
-		m_fullScreenTriangle->setConstant("g_viewportHeight", viewportHeight);
-		m_fullScreenTriangle->setConstant("g_rcpViewportHeight", 1.0f / viewportHeight);
-		m_fullScreenTriangle->setConstant("nearPlane", nearPlane);
-		m_fullScreenTriangle->setConstant("farPlane", farPlane);
+		//m_fullScreenTriangle->setConstant("g_proj", cameraProj);
+		//m_fullScreenTriangle->setConstant("g_viewportWidth", viewportWidth);
+		//m_fullScreenTriangle->setConstant("g_rcpViewportWidth", 1.0f / viewportWidth);
+		//m_fullScreenTriangle->setConstant("g_viewportHeight", viewportHeight);
+		//m_fullScreenTriangle->setConstant("g_rcpViewportHeight", 1.0f / viewportHeight);
+		//m_fullScreenTriangle->setConstant("g_nearPlane", nearPlane);
+		//m_fullScreenTriangle->setConstant("g_farPlane", farPlane);
+
+		m_fullScreenTriangle->setRendererConstant("g_proj", cameraProj);
+		m_fullScreenTriangle->setRendererConstant("g_viewportWidth", viewportWidth);
+		m_fullScreenTriangle->setRendererConstant("g_rcpViewportWidth", 1.0f / viewportWidth);
+		m_fullScreenTriangle->setRendererConstant("g_viewportHeight", viewportHeight);
+		m_fullScreenTriangle->setRendererConstant("g_rcpViewportHeight", 1.0f / viewportHeight);
+		m_fullScreenTriangle->setRendererConstant("g_nearPlane", nearPlane);
+		m_fullScreenTriangle->setRendererConstant("g_farPlane", farPlane);
 	}
 
 	void DeferredOpaquePipeline::onDirectionLightChanged(const std::vector<DirectionLight>& directionLights)
@@ -267,8 +278,11 @@ namespace Destiny
 		std::shared_ptr<Blob> blob = std::make_shared<Blob>(directionLights.size() * sizeof(DirectionLight));
 		blob->copyfrom((void*)directionLights.data(), blob->getLength());
 
-		m_fullScreenTriangle->setConstant("g_directionLightCount", (int)directionLights.size());
-		m_fullScreenTriangle->setConstant("g_directionLights", blob);
+		//m_fullScreenTriangle->setConstant("g_directionLightCount", (int)directionLights.size());
+		//m_fullScreenTriangle->setConstant("g_directionLights", blob);
+
+		m_fullScreenTriangle->setRendererConstant("g_directionLightCount", (int)directionLights.size());
+		m_fullScreenTriangle->setRendererConstant("g_directionLights", blob);
 	}
 
 	void DeferredOpaquePipeline::onPointLightChanged(const std::vector<PointLight>& pointLights)
@@ -279,7 +293,11 @@ namespace Destiny
 		}
 		std::shared_ptr<Blob> blob = std::make_shared<Blob>(pointLights.size() * sizeof(PointLight));
 		blob->copyfrom((void*)pointLights.data(), blob->getLength());
-		m_fullScreenTriangle->setConstant("g_pointLightCount", (int)pointLights.size());
-		m_fullScreenTriangle->setConstant("g_pointLights", blob);
+
+		//m_fullScreenTriangle->setConstant("g_pointLightCount", (int)pointLights.size());
+		//m_fullScreenTriangle->setConstant("g_pointLights", blob);
+
+		m_fullScreenTriangle->setRendererConstant("g_pointLightCount", (int)pointLights.size());
+		m_fullScreenTriangle->setRendererConstant("g_pointLights", blob);
 	}
 }

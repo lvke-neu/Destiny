@@ -38,6 +38,9 @@ namespace Destiny
 		template<typename T>
 		void								setConstant(const char* name, T value);
 		void								setConstant(const char* name, std::shared_ptr<Blob> blob);
+		template<typename T>
+		void setRendererConstant(const char* name, T value);
+		void setRendererConstant(const char* name, std::shared_ptr<Blob> blob);
 		void								setShaderResource(const char* name, std::shared_ptr<Texture> texture);
 		void								setSamplerSate(const char* name, std::shared_ptr<SamplerState> samplerState);
 		void							    reCompileShader();
@@ -57,6 +60,13 @@ namespace Destiny
 
 		std::unordered_map<std::string, std::shared_ptr<SamplerState>> m_visualSamplerStates;
 		std::unordered_map<std::string, std::pair<std::shared_ptr<SamplerStateDesc>, std::shared_ptr<SamplerState>>> m_samplerStates;
+
+		bool m_constantsChanged;
+		bool m_rendererConstantsChanged;
+		bool m_texturesChanged;
+		bool m_samplerStatesrChanged;
+		bool m_renderPassChanged;
+		bool m_meshChanged;
 	};
 	
 	inline std::shared_ptr<RenderPass> Visual::getRenderPass()
@@ -85,11 +95,32 @@ namespace Destiny
 		std::shared_ptr<Blob> blob = std::make_shared<Blob>(sizeof(value));
 		blob->copyfrom(&value, sizeof(value));
 		m_constants[name] = blob;
+		m_constantsChanged = true;
 	}
 
 	inline void Visual::setConstant(const char* name, std::shared_ptr<Blob> blob)
 	{
 		m_constants[name] = blob;
+		m_constantsChanged = true;
+	}
+
+    template<typename T>
+	inline void Visual::setRendererConstant(const char* name, T value)
+	{
+		if (m_renderPass && m_renderPass->getRenderer())
+		{
+			m_renderPass->getRenderer()->setConstant(name, value);
+			m_rendererConstantsChanged = true;
+		}
+	}
+
+	inline void Visual::setRendererConstant(const char* name, std::shared_ptr<Blob> blob)
+	{
+		if (m_renderPass && m_renderPass->getRenderer())
+		{
+			m_renderPass->getRenderer()->setConstant(name, blob);
+			m_rendererConstantsChanged = true;
+		}
 	}
 
 	inline void Visual::reCompileShader()

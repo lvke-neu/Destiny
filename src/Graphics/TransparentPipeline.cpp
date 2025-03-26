@@ -59,8 +59,8 @@ namespace Destiny
 				auto aabb_a = mesh_a->getBoundingBox();
 				auto aabb_b = mesh_b->getBoundingBox();
 
-				aabb_a.Transform(aabb_a, node_a->get_transform().getWorldMatrix());
-				aabb_b.Transform(aabb_b, node_b->get_transform().getWorldMatrix());
+				aabb_a.Transform(aabb_a, node_a->getWorldMatrix());
+				aabb_b.Transform(aabb_b, node_b->getWorldMatrix());
 
 				auto scene_a = std::dynamic_pointer_cast<VisualScene>(visual_a->getComponent()->get_scene());
 				auto scene_b = std::dynamic_pointer_cast<VisualScene>(visual_b->getComponent()->get_scene());
@@ -69,7 +69,7 @@ namespace Destiny
 					return false;
 				}
 
-				auto cameraPosition = scene_a->getCameraNode()->get_transform().get_translation();
+				auto cameraPosition = scene_a->getCameraNode()->get_translation();
 				auto distance_square_a =
 					std::pow(cameraPosition.x - aabb_a.Center.x, 2) +
 					std::pow(cameraPosition.y - aabb_a.Center.y, 2) +

@@ -35,8 +35,12 @@ namespace Destiny
 		std::shared_ptr<Blob>			getInputSignatureBlob();
 		void							fillDrawParameters(std::shared_ptr<DrawParameters> drawParameters);
 		void							fillConstantBuffers(std::unordered_map<std::string, std::string>& variableLinkConstant, std::unordered_map<std::string, std::shared_ptr<ConstantBuffer>>& constantBuffers);
+		void							modifyConstantBuffersByDifference(std::unordered_map<std::string, std::shared_ptr<ConstantBuffer>>& constantBuffers);
 		void							fillTextures(std::unordered_map<std::string, std::pair<std::shared_ptr<TextureDesc>, std::shared_ptr<Texture>>>& textures);
 		void							fillSamplerStates(std::unordered_map<std::string, std::pair<std::shared_ptr<SamplerStateDesc>, std::shared_ptr<SamplerState>>>& samplerStates);
+		template<typename T>
+		void							setConstant(const char* name, T value);
+		void							setConstant(const char* name, std::shared_ptr<Blob> blob);
 	public:
 		std::string						getPath();
 		std::shared_ptr<BlobHolder>		getBlobHolder();
@@ -61,6 +65,7 @@ namespace Destiny
 		std::unordered_map<std::string, std::string> m_variableLinkConstant;
 		std::unordered_map<std::string, std::shared_ptr<TextureDesc>> m_textures;
 		std::unordered_map<std::string, std::shared_ptr<SamplerStateDesc>> m_samplerStates;
+		std::unordered_set<std::string>	m_changedConstantBufferNames;
 	};
 
 	inline std::shared_ptr<Blob> Renderer::getInputSignatureBlob()
@@ -71,5 +76,38 @@ namespace Destiny
 	inline std::shared_ptr<BlobHolder> Renderer::getBlobHolder()
 	{
 		return m_blobHolder;
+	}
+
+	template<typename T>
+	inline void Renderer::setConstant(const char* name, T value)
+	{
+		auto iter = m_variableLinkConstant.find(name);
+		if (iter == m_variableLinkConstant.end())
+		{
+			return;
+		}
+
+		if (m_constantBuffers[iter->second])
+		{
+			std::shared_ptr<Blob> blob = std::make_shared<Blob>(sizeof(value));
+			blob->copyfrom(&value, sizeof(value));
+			m_constantBuffers[iter->second]->setVariable(name, blob);
+			m_changedConstantBufferNames.insert(name);
+		}
+	}
+
+	inline void Renderer::setConstant(const char* name, std::shared_ptr<Blob> blob)
+	{
+		auto iter = m_variableLinkConstant.find(name);
+		if (iter == m_variableLinkConstant.end())
+		{
+			return;
+		}
+
+		if (m_constantBuffers[iter->second])
+		{
+			m_constantBuffers[iter->second]->setVariable(name, blob);
+			m_changedConstantBufferNames.insert(name);
+		}
 	}
 }

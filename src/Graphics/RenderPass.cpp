@@ -148,6 +148,14 @@ namespace Destiny
 		}
 	}
 
+	void RenderPass::modifyConstantBuffersByDifference(std::unordered_map<std::string, std::shared_ptr<ConstantBuffer>>& constantBuffers)
+	{
+		if (m_renderer)
+		{
+			m_renderer->modifyConstantBuffersByDifference(constantBuffers);
+		}
+	}
+
 	void RenderPass::fillTextures(std::unordered_map<std::string, std::pair<std::shared_ptr<TextureDesc>, std::shared_ptr<Texture>>>& textures)
 	{
 		if (m_renderer)

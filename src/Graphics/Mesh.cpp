@@ -34,10 +34,12 @@ namespace Destiny
 
 	void Mesh::doLoad()
 	{
-		if (isLoadingSucceed())
+		if (isLoadingSucceed() || isLoadingStart())
 		{
 			return;
 		}
+
+		loadStart__();
 
 		if (m_vertexBuffer && m_vertexBuffer->isLoadingPending())
 		{

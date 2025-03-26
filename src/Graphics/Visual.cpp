@@ -142,6 +142,16 @@ namespace Destiny
 				m_renderPass->fillConstantBuffers(m_variableLinkConstant, m_constantBuffers);
 			}
 
+			if (m_textures.empty())
+			{
+				m_renderPass->fillTextures(m_textures);
+			}
+
+			if (m_samplerStates.empty())
+			{
+				m_renderPass->fillSamplerStates(m_samplerStates);
+			}
+
 			for (const auto& constant : m_constants)
 			{
 				auto iter1 = m_variableLinkConstant.find(constant.first);
@@ -159,11 +169,6 @@ namespace Destiny
 				iter2->second->setVariable(constant.first, constant.second);
 			}
 
-			if (m_textures.empty())
-			{
-				m_renderPass->fillTextures(m_textures);
-			}
-
 			for (const auto& texture : m_visualTextures)
 			{
 				auto iter = m_textures.find(texture.first);
@@ -173,11 +178,6 @@ namespace Destiny
 				}
 
 				iter->second.second = texture.second;
-			}
-
-			if (m_samplerStates.empty())
-			{
-				m_renderPass->fillSamplerStates(m_samplerStates);
 			}
 
 			for (const auto& samplerState : m_visualSamplerStates)

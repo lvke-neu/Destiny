@@ -15,6 +15,11 @@ namespace Destiny
 
 	void DirectionLightComponent::onEnterScene()
     {
+		if (!m_enable)
+		{
+			return;
+		}
+
 		std::vector<DirectionLight> directionLights;
 		traversal(m_scene, directionLights);
 		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());

@@ -219,7 +219,7 @@ namespace Destiny
 		for (const auto& component : node->getComponents())
 		{
 			auto dlComponent = std::dynamic_pointer_cast<DirectionLightComponent>(component);
-			if (dlComponent && dlComponent->get_node())
+			if (dlComponent && dlComponent->get_node() && dlComponent->get_enable())
 			{
 				directionLights.push_back({{dlComponent->get_color()}, {dlComponent->get_node()->get_transform().get_rotation()}, dlComponent->get_intensity()});
 			}
@@ -254,7 +254,7 @@ namespace Destiny
 		for (const auto& component : node->getComponents())
 		{
 			auto plComponent = std::dynamic_pointer_cast<PointLightComponent>(component);
-			if (plComponent && plComponent->get_node())
+			if (plComponent && plComponent->get_node() && plComponent->get_enable())
 			{
 				pointLights.push_back({ {plComponent->get_color()}, {plComponent->get_node()->get_transform().get_translation()}, plComponent->get_intensity() });
 			}

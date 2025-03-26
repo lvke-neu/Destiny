@@ -163,6 +163,7 @@ namespace Destiny
 			if (m_rendererConstantsChanged)
 			{
 				m_renderPass->modifyConstantBuffersByDifference(m_constantBuffers);
+				m_drawParameters->constantBuffers = m_constantBuffers;
 				m_rendererConstantsChanged = false;
 			}
 

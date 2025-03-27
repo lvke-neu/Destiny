@@ -66,6 +66,8 @@ namespace Destiny
 		static std::shared_ptr<Texture> Create2D(int format, unsigned int width, unsigned int height, std::shared_ptr<Blob> data, unsigned int pitch, unsigned int slicePitch);
 		static std::unordered_map<std::string, std::shared_ptr<Texture>> s_cache;
 	public:
+		std::string getPath();
+	public:
 		void bind(std::shared_ptr<TextureDesc> desc);
 		void unBind(std::shared_ptr<TextureDesc> desc);
 		ID3D11ShaderResourceView* getShaderResourceView();

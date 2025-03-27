@@ -23,6 +23,7 @@ namespace Destiny
 	public: 
 		std::string get_albedo();
 		void set_albedo(std::string albedo);
+		void setAlbedo(std::shared_ptr<Texture> texture);
 		std::string get_normal();
 		void set_normal(std::string normal);
 		std::string get_metallic();

@@ -109,9 +109,9 @@ namespace Destiny
 
 	std::string PbrMaterial::get_albedo()
 	{
-		if (m_albedo && std::dynamic_pointer_cast<BlobHolder>(m_albedo->getCreationParam()))
+		if (m_albedo)
 		{
-			return std::dynamic_pointer_cast<BlobHolder>(m_albedo->getCreationParam())->getPath();
+			return m_albedo->getPath();
 		}
 		return "";
 	}
@@ -124,11 +124,19 @@ namespace Destiny
 		update();
 	}
 
+	void PbrMaterial::setAlbedo(std::shared_ptr<Texture> texture)
+	{
+		m_albedo.reset();
+		m_albedo = texture;
+		m_albedo->load();
+		update();
+	}
+
 	std::string PbrMaterial::get_normal()
 	{
-		if (m_normal && std::dynamic_pointer_cast<BlobHolder>(m_normal->getCreationParam()))
+		if (m_normal)
 		{
-			return std::dynamic_pointer_cast<BlobHolder>(m_normal->getCreationParam())->getPath();
+			return m_normal->getPath();
 		}
 		return "";
 	}
@@ -143,9 +151,9 @@ namespace Destiny
 
 	std::string PbrMaterial::get_metallic()
 	{
-		if (m_metallic && std::dynamic_pointer_cast<BlobHolder>(m_metallic->getCreationParam()))
+		if (m_metallic)
 		{
-			return std::dynamic_pointer_cast<BlobHolder>(m_metallic->getCreationParam())->getPath();
+			return m_metallic->getPath();
 		}
 		return "";
 	}
@@ -160,9 +168,9 @@ namespace Destiny
 
 	std::string PbrMaterial::get_roughness()
 	{
-		if (m_roughness && std::dynamic_pointer_cast<BlobHolder>(m_roughness->getCreationParam()))
+		if (m_roughness)
 		{
-			return std::dynamic_pointer_cast<BlobHolder>(m_roughness->getCreationParam())->getPath();
+			return m_roughness->getPath();
 		}
 		return "";
 	}
@@ -177,9 +185,9 @@ namespace Destiny
 
 	std::string PbrMaterial::get_ao()
 	{
-		if (m_ao && std::dynamic_pointer_cast<BlobHolder>(m_ao->getCreationParam()))
+		if (m_ao)
 		{
-			return std::dynamic_pointer_cast<BlobHolder>(m_ao->getCreationParam())->getPath();
+			return m_ao->getPath();
 		}
 		return "";
 	}

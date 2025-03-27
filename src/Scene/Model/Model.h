@@ -1,7 +1,9 @@
 #pragma once
 #include "Engine/Asset.h"
+#include "Graphics/GraphicsDefine.h"
 #include <unordered_set>
 #include <DirectXCollision.h>
+#include <d3d11.h>
 
 namespace Destiny
 {
@@ -18,6 +20,9 @@ namespace Destiny
 		std::shared_ptr<Node>	getNode();
 		void					onDataLoaded();
 		void					setEnable(bool enable);
+		void					setRenderer(std::string renderer);
+		void					setRendererCategory(RendererCategory rendererCategory);
+		void					setRasterizerDesc(D3D11_RASTERIZER_DESC desc);
 	public:
 		static std::shared_ptr<ModelLoader> s_modelLoader;
 		static std::shared_ptr<Model> Create(const char* path);

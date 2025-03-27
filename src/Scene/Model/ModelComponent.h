@@ -1,5 +1,7 @@
 #pragma once
 #include "Engine/Component.h"
+#include "Graphics/GraphicsDefine.h"
+#include <d3d11.h>
 
 namespace Destiny
 {
@@ -13,6 +15,12 @@ namespace Destiny
 	public:
 		GET(std::string, path);
 		void set_path(std::string path);
+		GET(std::string, renderer);
+		void set_renderer(std::string renderer);
+		GET(RendererCategory, rendererCategory);
+		void set_rendererCategory(RendererCategory rendererCategory);
+		GET(D3D11_RASTERIZER_DESC, rasterizerDesc);
+		void set_rasterizerDesc(D3D11_RASTERIZER_DESC rasterizerDesc);
 	private:
 		virtual void onUpdate(float deltaTime) override;
 		virtual void onPropertyChanged(const std::string& property) override;
@@ -20,5 +28,8 @@ namespace Destiny
 		std::string				m_path;
 		std::shared_ptr<Model>	m_model;
 		bool					m_modelChanged;
+		std::string				m_renderer;
+		RendererCategory		m_rendererCategory;
+		D3D11_RASTERIZER_DESC   m_rasterizerDesc;
 	};
 }

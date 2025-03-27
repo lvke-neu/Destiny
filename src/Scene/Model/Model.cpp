@@ -56,7 +56,6 @@ namespace Destiny
 					visualComponent->getVisual()->getMesh()->setBoundingBox(m_mergedAABB);
 				}
 			}	
-			
 		}
 	}
 
@@ -67,6 +66,39 @@ namespace Destiny
 			if (visualComponent)
 			{
 				visualComponent->set_enable(enable);
+			}
+		}
+	}
+
+	void Model::setRenderer(std::string renderer)
+	{
+		for (const auto& visualComponent : m_visualComponents)
+		{
+			if (visualComponent)
+			{
+				visualComponent->set_renderer(renderer);
+			}
+		}
+	}
+
+	void Model::setRendererCategory(RendererCategory rendererCategory)
+	{
+		for (const auto& visualComponent : m_visualComponents)
+		{
+			if (visualComponent)
+			{
+				visualComponent->set_rendererCategory(rendererCategory);
+			}
+		}
+	}
+
+	void Model::setRasterizerDesc(D3D11_RASTERIZER_DESC desc)
+	{
+		for (const auto& visualComponent : m_visualComponents)
+		{
+			if (visualComponent)
+			{
+				visualComponent->set_rasterizerDesc(desc);
 			}
 		}
 	}

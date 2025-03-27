@@ -113,16 +113,16 @@ namespace Destiny
 
 	std::shared_ptr<RenderPass> ModelLoader::getRenderPass()
 	{
-		auto renderer = Renderer::Create("builtin://renderer/forward_pbr.hlsl");
-		//auto renderer = Renderer::Create("builtin://renderer/deferred_pbr.hlsl");
-		std::shared_ptr<RenderStates> renderStates = std::make_shared<RenderStates>();
-		std::shared_ptr<RenderPass> renderPass = std::make_shared<RenderPass>();
-		renderPass->setRendererCategory(RendererCategory::ForwardOpaque);
-		//renderPass->setRendererCategory(RendererCategory::DeferredOpaque);
-		renderPass->setRenderer(renderer);
-		renderPass->setRenderStates(renderStates);
+		//auto renderer = Renderer::Create("builtin://renderer/forward_pbr.hlsl");
+		////auto renderer = Renderer::Create("builtin://renderer/deferred_pbr.hlsl");
+		//std::shared_ptr<RenderStates> renderStates = std::make_shared<RenderStates>();
+		//std::shared_ptr<RenderPass> renderPass = std::make_shared<RenderPass>();
+		//renderPass->setRendererCategory(RendererCategory::ForwardOpaque);
+		////renderPass->setRendererCategory(RendererCategory::DeferredOpaque);
+		//renderPass->setRenderer(renderer);
+		//renderPass->setRenderStates(renderStates);
 
-		return renderPass;
+		return std::make_shared<RenderPass>();
 	}
 
 	std::shared_ptr<Mesh> ModelLoader::getMesh(aiMesh* otherMesh, std::shared_ptr<Model> model)
@@ -156,6 +156,11 @@ namespace Destiny
 				{
 					vertices[i].texcoord.x = otherMesh->mTextureCoords[0][i].x;
 					vertices[i].texcoord.y = otherMesh->mTextureCoords[0][i].y;
+				}
+				else
+				{
+					vertices[i].texcoord.x = vertices[i].position.x;
+					vertices[i].texcoord.y = vertices[i].position.z;
 				}
 			}
 		}
@@ -220,12 +225,17 @@ namespace Destiny
 		}
 		else
 		{
-			//aiColor4D otherColor;
-			//if (otherMaterial->Get(AI_MATKEY_COLOR_AMBIENT, otherColor) == aiReturn_SUCCESS)
-			//{
-			//	material->c_has_c_ambient = true;
-			//	material->c_ambient = { otherColor.r, otherColor.g, otherColor.b, otherColor.a };
-			//}
+			aiColor4D otherColor;
+			if (otherMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, otherColor) == aiReturn_SUCCESS)
+			{
+				Pixel pixel{ (unsigned char)(otherColor.r * 255), (unsigned char)(otherColor.g * 255), (unsigned char)(otherColor.b * 255), (unsigned char)(otherColor.a * 255) };
+				
+				auto blob = std::make_shared<Blob>(sizeof(Pixel));
+				blob->copyfrom(&pixel, sizeof(Pixel));
+
+				auto texture = Texture::Create2D(DXGI_FORMAT_R8G8B8A8_UNORM, 1, 1, blob, sizeof(Pixel), sizeof(Pixel));
+				pbrMaterial->setAlbedo(texture);		
+			}
 		}
 
 		if (otherMaterial->GetTexture(aiTextureType_NORMALS, 0, &otherStr) == aiReturn_SUCCESS)

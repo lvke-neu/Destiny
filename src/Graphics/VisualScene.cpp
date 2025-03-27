@@ -155,40 +155,7 @@ namespace Destiny
 				continue;
 			}
 
-			//auto rootToThisWorldMatrix = topNode->getRootToThisWorldMatrix();
-			//for (const auto& component : topNode->getComponents())
-			//{
-			//	auto visualComponent = std::dynamic_pointer_cast<VisualComponent>(component);
-			//	if (!visualComponent || !visualComponent->get_enable())
-			//	{
-			//		continue;
-			//	}
-
-			//	if (!m_enableCull)
-			//	{
-			//		std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->commitVisual(visualComponent->getVisual());
-			//		continue;
-			//	}
-
-			//	if (visualComponent->getVisual() && visualComponent->getVisual()->getMesh())
-			//	{
-			//		if (visualComponent->getVisual()->getMesh()->getDrawCall().drawMethod == Mesh::DrawMethod::DrawIndexedInstanced)
-			//		{
-			//			std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->commitVisual(visualComponent->getVisual());
-			//			continue;
-			//		}
-
-			//		auto visualAABB = visualComponent->getVisual()->getMesh()->getBoundingBox();
-			//		visualAABB.Transform(visualAABB, rootToThisWorldMatrix);
-			//		if (cameraFrustum.Intersects(visualAABB))
-			//		{
-			//			std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->commitVisual(visualComponent->getVisual());
-			//		}
-			//	}
-			//}
-
-
-
+			auto rootToThisWorldMatrix = topNode->getRootToThisWorldMatrix();
 			for (const auto& component : topNode->getComponents())
 			{
 				auto visualComponent = std::dynamic_pointer_cast<VisualComponent>(component);
@@ -196,8 +163,41 @@ namespace Destiny
 				{
 					continue;
 				}
-				std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->commitVisual(visualComponent->getVisual());
+
+				if (!m_enableCull)
+				{
+					std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->commitVisual(visualComponent->getVisual());
+					continue;
+				}
+
+				if (visualComponent->getVisual() && visualComponent->getVisual()->getMesh())
+				{
+					if (visualComponent->getVisual()->getMesh()->getDrawCall().drawMethod == Mesh::DrawMethod::DrawIndexedInstanced)
+					{
+						std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->commitVisual(visualComponent->getVisual());
+						continue;
+					}
+
+					auto visualAABB = visualComponent->getVisual()->getMesh()->getBoundingBox();
+					visualAABB.Transform(visualAABB, rootToThisWorldMatrix);
+					if (cameraFrustum.Intersects(visualAABB))
+					{
+						std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->commitVisual(visualComponent->getVisual());
+					}
+				}
 			}
+
+
+
+			//for (const auto& component : topNode->getComponents())
+			//{
+			//	auto visualComponent = std::dynamic_pointer_cast<VisualComponent>(component);
+			//	if (!visualComponent || !visualComponent->get_enable())
+			//	{
+			//		continue;
+			//	}
+			//	std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->commitVisual(visualComponent->getVisual());
+			//}
 			for (const auto& node : topNode->getChilds())
 			{
 				nodes.push(node);

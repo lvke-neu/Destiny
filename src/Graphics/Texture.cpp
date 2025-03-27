@@ -69,6 +69,28 @@ namespace Destiny
 		return texture;
 	}
 
+	std::string Texture::getPath()
+	{
+		std::string path;
+
+		if (std::dynamic_pointer_cast<BlobHolder>(m_creationParam))
+		{
+			return std::static_pointer_cast<BlobHolder>(m_creationParam)->getPath();
+		}
+		else if (std::dynamic_pointer_cast<TextureCreationParam>(m_creationParam))
+		{
+			auto creationParam = std::static_pointer_cast<TextureCreationParam>(m_creationParam);
+			if (creationParam->m_type == TextureCreationParam::Create2D)
+			{
+				path += "Type:Create2D,";
+			}
+			path += "width:" + std::to_string(creationParam->width) + "height:" + std::to_string(creationParam->height);
+
+		}
+
+		return path;
+	}
+
 	void Texture::bind(std::shared_ptr<TextureDesc> desc)
 	{
 		if (!desc)

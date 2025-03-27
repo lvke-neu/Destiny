@@ -83,6 +83,7 @@ namespace Destiny
 		std::shared_ptr<Node> myNode = std::make_shared<Node>();
 		myNode->set_name(otherNode->mName.C_Str());
 		myNode->addToParent(myNodeParent);
+		myNode->set_serializable(false);
 
 		for (unsigned int i = 0; i < otherNode->mNumMeshes; i++)
 		{
@@ -213,10 +214,18 @@ namespace Destiny
 		auto pbrMaterial = PbrMaterial::Create_Default();
 		aiString otherStr;
 		
-
 		if (otherMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &otherStr) == aiReturn_SUCCESS)
 		{
 			pbrMaterial->set_albedo(reassembleStr(otherStr, path));
+		}
+		else
+		{
+			//aiColor4D otherColor;
+			//if (otherMaterial->Get(AI_MATKEY_COLOR_AMBIENT, otherColor) == aiReturn_SUCCESS)
+			//{
+			//	material->c_has_c_ambient = true;
+			//	material->c_ambient = { otherColor.r, otherColor.g, otherColor.b, otherColor.a };
+			//}
 		}
 
 		if (otherMaterial->GetTexture(aiTextureType_NORMALS, 0, &otherStr) == aiReturn_SUCCESS)

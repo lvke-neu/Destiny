@@ -14,7 +14,9 @@ namespace Destiny
 		virtual ~Object() = default;
 	public:
 		GET(std::string, uuid);
+		GET_SET(bool, serializable);
 	private:
 		std::string		m_uuid;
+		bool			m_serializable;
 	};
 }

@@ -13,7 +13,7 @@ namespace Destiny
 {
 	void Serializer::Serialize(std::string& jsonStr, std::shared_ptr<Object> object)
 	{
-		if (!object)
+		if (!object || !object->get_serializable())
 		{
 			return;
 		}
@@ -37,7 +37,10 @@ namespace Destiny
 			writer.StartArray();
 			for (const auto& node : node->getChilds())
 			{
-				Serialize(writer, node);
+				if (node->get_serializable())
+				{
+					Serialize(writer, node);
+				}
 			}
 			writer.EndArray();
 
@@ -45,7 +48,10 @@ namespace Destiny
 			writer.StartArray();
 			for (const auto& component : node->getComponents())
 			{
-				Serialize(writer, component);
+				if (component->get_serializable())
+				{
+					Serialize(writer, component);
+				}	
 			}
 			writer.EndArray();
 		}
@@ -73,7 +79,10 @@ namespace Destiny
 			writer.StartArray();
 			for (const auto& node : node->getChilds())
 			{
-				Serialize(writer, node);
+				if (node->get_serializable())
+				{
+					Serialize(writer, node);
+				}
 			}
 			writer.EndArray();
 
@@ -81,7 +90,10 @@ namespace Destiny
 			writer.StartArray();
 			for (const auto& component : node->getComponents())
 			{
-				Serialize(writer, component);
+				if (component->get_serializable())
+				{
+					Serialize(writer, component);
+				}	
 			}
 			writer.EndArray();
 		}
@@ -186,7 +198,7 @@ namespace Destiny
 
 		writer.Key(property.get_name().to_string().c_str());
 
-		writer.StartObject();
+		writer.StartObject(); 
 		writer.Key("r");
 		writer.Double(value.get_r());
 		writer.Key("g");

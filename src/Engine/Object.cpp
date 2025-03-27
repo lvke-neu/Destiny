@@ -3,7 +3,8 @@
 namespace Destiny
 {
 	Object::Object() :
-		m_uuid(Utility::GenerateUUID())
+		m_uuid(Utility::GenerateUUID()),
+		m_serializable(true)
 	{
 
 	}
@@ -11,6 +12,7 @@ namespace Destiny
 	RTTR_REGISTRATION
 	{
 		rttr::registration::class_<Object>("Object")
-			.constructor<>();
+			.constructor<>()
+			.property("serializable", &Object::get_serializable, &Object::set_serializable);
 	}
 }

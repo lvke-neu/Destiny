@@ -29,6 +29,14 @@ void GraphicsStatPanel::update()
 	//ImGui::SameLine();
 	ImGui::Text("VisualCount:%ld", Destiny::Engine::GetInstance()->getGraphicsSystem()->getGraphicsStat().VisualCount);
 
+	ImGui::Text("DeferredVisualCount:%ld", Destiny::Engine::GetInstance()->getGraphicsSystem()->getGraphicsStat().DeferredVisualCount);
+
+	ImGui::Text("ForwardVisualCount:%ld", Destiny::Engine::GetInstance()->getGraphicsSystem()->getGraphicsStat().ForwardVisualCount);
+
+	ImGui::Text("TransparentVisualCount:%ld", Destiny::Engine::GetInstance()->getGraphicsSystem()->getGraphicsStat().TransparentVisualCount);
+
+	ImGui::Text("GuiVisualCount:%ld", Destiny::Engine::GetInstance()->getGraphicsSystem()->getGraphicsStat().GuiVisualCount);
+
 	ImGui::End();
 	ImGui::PopStyleVar();
 }

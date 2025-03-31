@@ -60,6 +60,10 @@ namespace Destiny
 		m_graphicsStat.DrawCallCount = 0;
 		m_graphicsStat.TriangleCount = 0;
 		m_graphicsStat.VisualCount = 0;
+		m_graphicsStat.DeferredVisualCount = 0;
+		m_graphicsStat.ForwardVisualCount = 0;
+		m_graphicsStat.TransparentVisualCount = 0;
+		m_graphicsStat.GuiVisualCount = 0;
 
 		m_deferredOpaquePipeline->syncState();
 		m_forwardOpaquePipeline->syncState();
@@ -85,6 +89,7 @@ namespace Destiny
 			{
 				++m_graphicsStat.DrawCallCount;
 				++m_graphicsStat.VisualCount;
+				++m_graphicsStat.DeferredVisualCount;
 				if (visual->getMesh() && visual->getMesh()->getDrawCall().primitiveTopology == Mesh::PrimitiveTopology::TriangleList)
 				{
 					m_graphicsStat.TriangleCount += visual->getMesh()->getDrawCall().indexCount / 3;
@@ -98,6 +103,7 @@ namespace Destiny
 			{
 				++m_graphicsStat.DrawCallCount;
 				++m_graphicsStat.VisualCount;
+				++m_graphicsStat.ForwardVisualCount;
 				if (visual->getMesh() && visual->getMesh()->getDrawCall().primitiveTopology == Mesh::PrimitiveTopology::TriangleList)
 				{
 					m_graphicsStat.TriangleCount += visual->getMesh()->getDrawCall().indexCount / 3;
@@ -111,6 +117,7 @@ namespace Destiny
 			{
 				++m_graphicsStat.DrawCallCount;
 				++m_graphicsStat.VisualCount;
+				++m_graphicsStat.TransparentVisualCount;
 				if (visual->getMesh() && visual->getMesh()->getDrawCall().primitiveTopology == Mesh::PrimitiveTopology::TriangleList)
 				{
 					m_graphicsStat.TriangleCount += visual->getMesh()->getDrawCall().indexCount / 3;
@@ -124,6 +131,7 @@ namespace Destiny
 			{
 				++m_graphicsStat.DrawCallCount;
 				++m_graphicsStat.VisualCount;
+				++m_graphicsStat.GuiVisualCount;
 				if (visual->getMesh() && visual->getMesh()->getDrawCall().primitiveTopology == Mesh::PrimitiveTopology::TriangleList)
 				{
 					m_graphicsStat.TriangleCount += visual->getMesh()->getDrawCall().indexCount / 3;

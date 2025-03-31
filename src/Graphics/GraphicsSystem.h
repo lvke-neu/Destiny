@@ -19,6 +19,10 @@ namespace Destiny
 			unsigned long long DrawCallCount;
 			unsigned long long TriangleCount;
 			unsigned long long VisualCount;
+			unsigned long long DeferredVisualCount;
+			unsigned long long ForwardVisualCount;
+			unsigned long long TransparentVisualCount;
+			unsigned long long GuiVisualCount;
 		};
 	public:
 		GraphicsSystem();

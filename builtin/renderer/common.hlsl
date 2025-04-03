@@ -2,13 +2,15 @@
 
 cbuffer cbView : register(b1)
 {
-	matrix g_view;  
+	matrix g_view; 
+    matrix g_shadowView;
     float3 g_eyePosition;
 }
 
 cbuffer cbProj : register(b2)
 {
 	matrix g_proj;
+    matrix g_shadowProj;
 	float g_viewportWidth;
 	float g_rcpViewportWidth;
 	float g_viewportHeight;
@@ -39,7 +41,6 @@ cbuffer cbLight : register(b3)
     int g_pointLightCount;
     PointLight g_pointLights[1000];
 }
-
 
 struct GBuffer
 {

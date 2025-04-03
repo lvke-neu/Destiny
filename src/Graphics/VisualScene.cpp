@@ -164,6 +164,8 @@ namespace Destiny
 					continue;
 				}
 
+				std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->commitVisual(visualComponent->getShadowVisual());
+
 				if (!m_enableCull)
 				{
 					std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->commitVisual(visualComponent->getVisual());

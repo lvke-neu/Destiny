@@ -6,7 +6,8 @@ class ViewPortPanel;
 class ScenePanel;
 class PropertyPanel;
 class AssetPanel;
-class DeferredRenderDebugPanel;
+class DebugDeferredRenderPanel;
+class DebugShadowMapPanel;
 class GraphicsStatPanel;
 class Application
 {
@@ -32,7 +33,8 @@ public:
 	std::shared_ptr<ScenePanel>						m_scenePanel;
 	std::shared_ptr<PropertyPanel>					m_propertyPanel;
 	std::shared_ptr<AssetPanel>						m_assetPanel;
-	std::shared_ptr<DeferredRenderDebugPanel>		m_deferredRenderDebugPanel;
+	std::shared_ptr<DebugDeferredRenderPanel>		m_debugDeferredRenderPanel;
+	std::shared_ptr<DebugShadowMapPanel>			m_debugShadowMapPanel;
 	std::shared_ptr<GraphicsStatPanel>				m_graphicsStatPanel;
 };
 

@@ -3,12 +3,18 @@
 #include "Graphics/VisualScene.h"
 #include "RenderSystem.h"
 #include "DeferredOpaquePipeline.h"
+#include "ShadowMapPipeline.h"
 
 namespace Destiny
 {
 	DirectionLightComponent::DirectionLightComponent() :
 		m_color({ 1.0f, 1.0f, 1.0f, 1.0f }),
-		m_intensity(1.0f)
+		m_intensity(1.0f),
+		m_viewPortWidth(50.0f),
+		m_viewPortHeight(50.0f),
+		m_nearz(0.1f),
+		m_farz(1000.0f),
+		m_lightDiscoefficient(-400.0f)
 	{
 
 	}
@@ -26,7 +32,9 @@ namespace Destiny
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
 		deferredOpaquePipeline->onRendererConstantChanged();
 		notifyVisualRendererConstantChanged(m_scene);
-		setDirectionLightRendererConstant(directionLights);
+		updateDirectionLightRendererConstant(directionLights);
+		updateShadowMapRendererConstant();
+		notifyShadoMapPipiline();
     }
 
 	void DirectionLightComponent::onLeaveScene()
@@ -36,7 +44,7 @@ namespace Destiny
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
 		deferredOpaquePipeline->onRendererConstantChanged();
 		notifyVisualRendererConstantChanged(m_scene);
-		setDirectionLightRendererConstant(directionLights);
+		updateDirectionLightRendererConstant(directionLights);
 	}
 
     void DirectionLightComponent::onNodeTransformChanged()
@@ -47,7 +55,9 @@ namespace Destiny
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
 		deferredOpaquePipeline->onRendererConstantChanged();
 		notifyVisualRendererConstantChanged(m_scene);
-		setDirectionLightRendererConstant(directionLights);
+		updateDirectionLightRendererConstant(directionLights);
+		updateShadowMapRendererConstant();
+		notifyShadoMapPipiline();
     }
 
 	void DirectionLightComponent::onPropertyChanged(const std::string& property)
@@ -67,7 +77,7 @@ namespace Destiny
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
 		deferredOpaquePipeline->onRendererConstantChanged();
 		notifyVisualRendererConstantChanged(m_scene);
-		setDirectionLightRendererConstant(directionLights);
+		updateDirectionLightRendererConstant(directionLights);
 	}
 
 	void DirectionLightComponent::set_intensity(float intensity)
@@ -79,7 +89,55 @@ namespace Destiny
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
 		deferredOpaquePipeline->onRendererConstantChanged();
 		notifyVisualRendererConstantChanged(m_scene);
-		setDirectionLightRendererConstant(directionLights);
+		updateDirectionLightRendererConstant(directionLights);
+	}
+
+	void DirectionLightComponent::set_viewPortWidth(float viewPortWidth)
+	{
+		if (viewPortWidth <= 0)
+		{
+			return;
+		}
+		m_viewPortWidth = viewPortWidth;
+		notifyVisualRendererConstantChanged(m_scene);
+		updateShadowMapRendererConstant();
+		notifyShadoMapPipiline();
+	}
+
+	void DirectionLightComponent::set_viewPortHeight(float viewPortHeight)
+	{
+		if (viewPortHeight <= 0)
+		{
+			return;
+		}
+		m_viewPortHeight = viewPortHeight;
+		notifyVisualRendererConstantChanged(m_scene);
+		updateShadowMapRendererConstant();
+		notifyShadoMapPipiline();
+	}
+
+	void DirectionLightComponent::set_nearz(float nearz)
+	{
+		m_nearz = nearz;
+		notifyVisualRendererConstantChanged(m_scene);
+		updateShadowMapRendererConstant();
+		notifyShadoMapPipiline();
+	}
+
+	void DirectionLightComponent::set_farz(float farz)
+	{
+		m_farz = farz;
+		notifyVisualRendererConstantChanged(m_scene);
+		updateShadowMapRendererConstant();
+		notifyShadoMapPipiline();
+	}
+
+	void DirectionLightComponent::set_lightDiscoefficient(float lightDiscoefficient)
+	{
+		m_lightDiscoefficient = lightDiscoefficient;
+		notifyVisualRendererConstantChanged(m_scene);
+		updateShadowMapRendererConstant();
+		notifyShadoMapPipiline();
 	}
 
 	void DirectionLightComponent::traversal(std::shared_ptr<Node> node, std::vector<DirectionLight>& directionLights, bool ignoreSelf)
@@ -133,16 +191,48 @@ namespace Destiny
 		}
 	}
 
-	void DirectionLightComponent::setDirectionLightRendererConstant(const std::vector<DirectionLight>& directionLights)
+	void DirectionLightComponent::updateDirectionLightRendererConstant(const std::vector<DirectionLight>& directionLights)
 	{
 		std::shared_ptr<Blob> blob = std::make_shared<Blob>(directionLights.size() * sizeof(DirectionLight));
 		blob->copyfrom((void*)directionLights.data(), blob->getLength());
+
 
 		for (const auto& renderer : Renderer::s_cache)
 		{
 			renderer.second->setConstant("g_directionLightCount", (int)directionLights.size());
 			renderer.second->setConstant("g_directionLights", blob);
 		}
+
+	}
+
+	void DirectionLightComponent::updateShadowMapRendererConstant()
+	{
+		if (!m_node)
+		{
+			return;
+		}
+
+		using namespace DirectX;
+
+		XMFLOAT3 rotation = m_node->get_rotation();
+		XMVECTOR normalizedLightDir = XMLoadFloat3(&rotation);
+		normalizedLightDir = XMVector3Normalize(normalizedLightDir);
+
+		XMMATRIX shadowView = XMMatrixLookAtLH(normalizedLightDir * m_lightDiscoefficient, g_XMZero, g_XMIdentityR1);
+
+
+		for (const auto& renderer : Renderer::s_cache)
+		{
+			renderer.second->setConstant("g_shadowView", XMMatrixTranspose(shadowView));
+			renderer.second->setConstant("g_shadowProj", XMMatrixTranspose(XMMatrixOrthographicLH((float)m_viewPortWidth, (float)m_viewPortHeight, m_nearz, m_farz)));
+		}
+	}
+
+	void DirectionLightComponent::notifyShadoMapPipiline()
+	{
+		auto renderSystem =std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
+		auto shadowMapPipeline = std::static_pointer_cast<ShadowMapPipeline>(renderSystem->getShadowMapPipeline());
+		shadowMapPipeline->onResize(m_viewPortWidth, m_viewPortHeight);
 	}
 
 	RTTR_REGISTRATION
@@ -150,6 +240,11 @@ namespace Destiny
 		rttr::registration::class_<DirectionLightComponent>("DirectionLightComponent")
 			.constructor<>()
 			.property("color", &DirectionLightComponent::get_color, &DirectionLightComponent::set_color)
-			.property("intensity", &DirectionLightComponent::get_intensity, &DirectionLightComponent::set_intensity);
+			.property("intensity", &DirectionLightComponent::get_intensity, &DirectionLightComponent::set_intensity)
+			.property("shadow_viewPortWidth", &DirectionLightComponent::get_viewPortWidth, &DirectionLightComponent::set_viewPortWidth)
+			.property("shadow_viewPortHeight", &DirectionLightComponent::get_viewPortHeight, &DirectionLightComponent::set_viewPortHeight)
+			.property("shadow_nearz", &DirectionLightComponent::get_nearz, &DirectionLightComponent::set_nearz)
+			.property("shadow_farz", &DirectionLightComponent::get_farz, &DirectionLightComponent::set_farz)
+			.property("shadow_lightDiscoefficient", &DirectionLightComponent::get_lightDiscoefficient, &DirectionLightComponent::set_lightDiscoefficient);
 	}
 }

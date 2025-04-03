@@ -2,6 +2,7 @@
 #include "Visual.h"
 #include "Mesh.h"
 #include "RenderPass.h"
+#include "ShadowMapPipeline.h"
 #include "DeferredOpaquePipeline.h"
 #include "ForwardOpaquePipeline.h"
 #include "TransparentPipeline.h"
@@ -16,6 +17,7 @@
 namespace Destiny
 {
 	RenderSystem::RenderSystem() :
+		m_shadowMapPipeline(nullptr),
 		m_deferredOpaquePipeline(nullptr),
 		m_forwardOpaquePipeline(nullptr),
 		m_transparentPipeline(nullptr),
@@ -38,6 +40,7 @@ namespace Destiny
 	{
 		Engine::GetInstance()->getEventSystem()->registerEvent(EventType::WindowResize, std::bind(&RenderSystem::onResize, this, std::placeholders::_1));
 
+		m_shadowMapPipeline = std::make_shared<ShadowMapPipeline>(shared_from_this());
 		m_deferredOpaquePipeline = std::make_shared<DeferredOpaquePipeline>(shared_from_this());
 		m_forwardOpaquePipeline = std::make_shared<ForwardOpaquePipeline>(shared_from_this());
 		m_transparentPipeline = std::make_shared<TransparentPipeline>(shared_from_this());
@@ -48,6 +51,7 @@ namespace Destiny
 	void RenderSystem::render()
 	{
 		m_beforePipelineCommand->execute(getImmediateContext());
+		m_shadowMapPipeline->execute(getImmediateContext());
 		m_deferredOpaquePipeline->execute(getImmediateContext());
 		m_forwardOpaquePipeline->execute(getImmediateContext());
 		m_transparentPipeline->execute(getImmediateContext());
@@ -65,6 +69,7 @@ namespace Destiny
 		m_graphicsStat.TransparentVisualCount = 0;
 		m_graphicsStat.GuiVisualCount = 0;
 
+		m_shadowMapPipeline->syncState();
 		m_deferredOpaquePipeline->syncState();
 		m_forwardOpaquePipeline->syncState();
 		m_transparentPipeline->syncState();
@@ -79,66 +84,74 @@ namespace Destiny
 			return;
 		}
 
-		visual->updateDrawParameters();
-		auto renderPass = visual->getRenderPass();
-		switch (renderPass->getRendererCategory())
+		if (visual->get_visualCategory() == VisualCategory::RenderToShadowMap)
 		{
-		case RendererCategory::DeferredOpaque :
-		{
-			if (m_deferredOpaquePipeline->addGraphicsCommand(visual))
-			{
-				++m_graphicsStat.DrawCallCount;
-				++m_graphicsStat.VisualCount;
-				++m_graphicsStat.DeferredVisualCount;
-				if (visual->getMesh() && visual->getMesh()->getDrawCall().primitiveTopology == Mesh::PrimitiveTopology::TriangleList)
-				{
-					m_graphicsStat.TriangleCount += visual->getMesh()->getDrawCall().indexCount / 3;
-				}
-			}
-			return;
+			visual->updateDrawParameters();
+			m_shadowMapPipeline->addGraphicsCommand(visual);
 		}
-		case RendererCategory::ForwardOpaque:
+		else if (visual->get_visualCategory() == VisualCategory::RenderToScene)
 		{
-			if (m_forwardOpaquePipeline->addGraphicsCommand(visual))
+			visual->updateDrawParameters();
+			auto renderPass = visual->getRenderPass();
+			switch (renderPass->getRendererCategory())
 			{
-				++m_graphicsStat.DrawCallCount;
-				++m_graphicsStat.VisualCount;
-				++m_graphicsStat.ForwardVisualCount;
-				if (visual->getMesh() && visual->getMesh()->getDrawCall().primitiveTopology == Mesh::PrimitiveTopology::TriangleList)
-				{
-					m_graphicsStat.TriangleCount += visual->getMesh()->getDrawCall().indexCount / 3;
-				}
-			}
-			return;
-		}
-		case RendererCategory::Transparent:
-		{
-			if (m_transparentPipeline->addGraphicsCommand(visual))
+			case RendererCategory::DeferredOpaque:
 			{
-				++m_graphicsStat.DrawCallCount;
-				++m_graphicsStat.VisualCount;
-				++m_graphicsStat.TransparentVisualCount;
-				if (visual->getMesh() && visual->getMesh()->getDrawCall().primitiveTopology == Mesh::PrimitiveTopology::TriangleList)
+				if (m_deferredOpaquePipeline->addGraphicsCommand(visual))
 				{
-					m_graphicsStat.TriangleCount += visual->getMesh()->getDrawCall().indexCount / 3;
+					++m_graphicsStat.DrawCallCount;
+					++m_graphicsStat.VisualCount;
+					++m_graphicsStat.DeferredVisualCount;
+					if (visual->getMesh() && visual->getMesh()->getDrawCall().primitiveTopology == Mesh::PrimitiveTopology::TriangleList)
+					{
+						m_graphicsStat.TriangleCount += visual->getMesh()->getDrawCall().indexCount / 3;
+					}
 				}
+				return;
 			}
-			return;
-		}
-		case RendererCategory::Gui :
-		{
-			if (m_guiPipeline->addGraphicsCommand(visual))
+			case RendererCategory::ForwardOpaque:
 			{
-				++m_graphicsStat.DrawCallCount;
-				++m_graphicsStat.VisualCount;
-				++m_graphicsStat.GuiVisualCount;
-				if (visual->getMesh() && visual->getMesh()->getDrawCall().primitiveTopology == Mesh::PrimitiveTopology::TriangleList)
+				if (m_forwardOpaquePipeline->addGraphicsCommand(visual))
 				{
-					m_graphicsStat.TriangleCount += visual->getMesh()->getDrawCall().indexCount / 3;
+					++m_graphicsStat.DrawCallCount;
+					++m_graphicsStat.VisualCount;
+					++m_graphicsStat.ForwardVisualCount;
+					if (visual->getMesh() && visual->getMesh()->getDrawCall().primitiveTopology == Mesh::PrimitiveTopology::TriangleList)
+					{
+						m_graphicsStat.TriangleCount += visual->getMesh()->getDrawCall().indexCount / 3;
+					}
 				}
+				return;
 			}
-			return;
-		}
+			case RendererCategory::Transparent:
+			{
+				if (m_transparentPipeline->addGraphicsCommand(visual))
+				{
+					++m_graphicsStat.DrawCallCount;
+					++m_graphicsStat.VisualCount;
+					++m_graphicsStat.TransparentVisualCount;
+					if (visual->getMesh() && visual->getMesh()->getDrawCall().primitiveTopology == Mesh::PrimitiveTopology::TriangleList)
+					{
+						m_graphicsStat.TriangleCount += visual->getMesh()->getDrawCall().indexCount / 3;
+					}
+				}
+				return;
+			}
+			case RendererCategory::Gui:
+			{
+				if (m_guiPipeline->addGraphicsCommand(visual))
+				{
+					++m_graphicsStat.DrawCallCount;
+					++m_graphicsStat.VisualCount;
+					++m_graphicsStat.GuiVisualCount;
+					if (visual->getMesh() && visual->getMesh()->getDrawCall().primitiveTopology == Mesh::PrimitiveTopology::TriangleList)
+					{
+						m_graphicsStat.TriangleCount += visual->getMesh()->getDrawCall().indexCount / 3;
+					}
+				}
+				return;
+			}
+			}
 		}
 	}
 

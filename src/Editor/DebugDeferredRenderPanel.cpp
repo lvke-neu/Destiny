@@ -1,4 +1,4 @@
-#include "DeferredRenderDebugPanel.h"
+#include "DebugDeferredRenderPanel.h"
 #include "Imgui/imgui.h"
 #include "ImGui/ImGuizmo.h"
 #include "Engine/Engine.h"
@@ -12,20 +12,20 @@
 #include "Graphics/DeferredOpaquePipeline.h"
 #include "Scene/SceneManager.h"
 
-DeferredRenderDebugPanel::DeferredRenderDebugPanel() :
+DebugDeferredRenderPanel::DebugDeferredRenderPanel() :
 	m_open(false)
 {
 
 }
 
-void DeferredRenderDebugPanel::update()
+void DebugDeferredRenderPanel::update()
 {
 	if (m_open)
 	{
 		const float width = 500.0f;
 		const float height = 200.0f;
 
-		ImGui::Begin("DeferredRenderDebugPanel");
+		ImGui::Begin("DebugDeferredRenderPanel");
 
 		auto deferredOpaquePipeline = std::static_pointer_cast<Destiny::DeferredOpaquePipeline>(std::static_pointer_cast<Destiny::RenderSystem>(Destiny::Engine::GetInstance()->getGraphicsSystem())->getDeferredOpaquePipeline());
 		std::shared_ptr<Destiny::RenderTargetView> rtv = nullptr;
@@ -76,7 +76,7 @@ void DeferredRenderDebugPanel::update()
 	}
 }
 
-void DeferredRenderDebugPanel::setOpen(bool open)
+void DebugDeferredRenderPanel::setOpen(bool open)
 {
 	m_open = open;
 }

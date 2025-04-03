@@ -3,7 +3,8 @@
 #include "ScenePanel.h"
 #include "PropertyPanel.h"
 #include "AssetPanel.h"
-#include "DeferredRenderDebugPanel.h"
+#include "DebugDeferredRenderPanel.h"
+#include "DebugShadowMapPanel.h"
 #include "GraphicsStatPanel.h"
 #include "FileDialog.h"
 #include "Engine/Engine.h"
@@ -128,7 +129,8 @@ Application::Application() :
 	m_scenePanel(std::make_shared<ScenePanel>()),
 	m_propertyPanel(std::make_shared<PropertyPanel>()),
 	m_assetPanel(std::make_shared<AssetPanel>()),
-	m_deferredRenderDebugPanel(std::make_shared<DeferredRenderDebugPanel>()),
+	m_debugDeferredRenderPanel(std::make_shared<DebugDeferredRenderPanel>()),
+	m_debugShadowMapPanel(std::make_shared<DebugShadowMapPanel>()),
 	m_graphicsStatPanel(std::make_shared<GraphicsStatPanel>())
 {
 	AllocConsole();
@@ -408,7 +410,8 @@ void Application::drawDock()
 			
 			if (ImGui::Checkbox("Debug Panel", &checkResDebugPanel))
 			{
-				m_deferredRenderDebugPanel->setOpen(checkResDebugPanel);
+				m_debugDeferredRenderPanel->setOpen(checkResDebugPanel);
+				m_debugShadowMapPanel->setOpen(checkResDebugPanel);
 			}
 			
 			if (ImGui::Checkbox("StatisticsInfo", &checkResStatisticsInfo))
@@ -474,7 +477,8 @@ void Application::drawDock()
 	m_scenePanel->update();
 	m_propertyPanel->update();
 	m_assetPanel->update();
-	m_deferredRenderDebugPanel->update();
+	m_debugDeferredRenderPanel->update();
+	m_debugShadowMapPanel->update();
 	m_graphicsStatPanel->update();
 
 	ImGui::End();

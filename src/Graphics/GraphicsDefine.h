@@ -13,6 +13,13 @@ namespace Destiny
 		Gui
 	};
 
+	enum class VisualCategory
+	{
+		None,
+		RenderToShadowMap,
+		RenderToScene
+	};
+
 	class Button
 	{
 

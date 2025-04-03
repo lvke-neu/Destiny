@@ -1,0 +1,78 @@
+#include "ShadowMapPipeline.h"
+#include "BindRenderTargets.h"
+#include "ClearRenderTarget.h"
+#include "RenderTargetView.h"
+#include "DepthStencilView.h"
+#include "DrawCommand.h"
+#include "DrawParameters.h"
+#include "SamplerState.h"
+#include "Texture.h"
+#include "Renderer.h"
+#include "RenderStates.h"
+#include "RenderPass.h"
+#include "InputLayout.h"
+#include "Mesh.h"
+#include "MeshProvider.h"
+#include "RenderSystem.h"
+#include "Visual.h"
+#include "Engine/EventSystem.h"
+#include "Engine/Engine.h"
+#include <d3d11.h>
+
+namespace Destiny
+{
+	ShadowMapPipeline::ShadowMapPipeline(std::shared_ptr<RenderSystem> renderSystem) :
+		GraphicsPipeline(renderSystem),
+		m_bindRenderTargets(std::make_shared<BindRenderTargets>()),
+		m_clearRenderTarget(std::make_shared<ClearRenderTarget>())
+	{
+	
+	}
+
+	ShadowMapPipeline::~ShadowMapPipeline()
+	{
+		
+	}
+
+	void ShadowMapPipeline::execute(ID3D11DeviceContext* deviceContext)
+	{
+		m_bindRenderTargets->execute(deviceContext);
+		m_clearRenderTarget->execute(deviceContext);
+
+		GraphicsCommandList::execute(deviceContext);
+	}
+
+	void ShadowMapPipeline::onResize(float viewPortWidth, float viewPortHeight)
+	{
+		auto renderTargetView = std::make_shared<RenderTargetView>((unsigned int)viewPortWidth, (unsigned int)viewPortHeight);
+		renderTargetView->load(0);
+		renderTargetView->setDebugObjectName("ShadowMapPipelineRTV");
+
+		auto depthStencilView = std::make_shared<DepthStencilView>((unsigned int)viewPortWidth, (unsigned int)viewPortHeight);
+		depthStencilView->load(0);
+
+		auto viewPort = std::make_shared<D3D11_VIEWPORT>();
+		viewPort->TopLeftX = 0.0f;
+		viewPort->TopLeftY = 0.0f;
+		viewPort->Width = viewPortWidth;
+		viewPort->Height = viewPortHeight;
+		viewPort->MinDepth = 0.0f;
+		viewPort->MaxDepth = 1.0f;
+
+		std::vector<std::shared_ptr<RenderTargetView>>	renderTargetViews;
+		renderTargetViews.push_back(renderTargetView);
+
+		std::vector<std::shared_ptr<DepthStencilView>>	depthStencilViews;
+		depthStencilViews.push_back(depthStencilView);
+
+		std::vector<std::shared_ptr<D3D11_VIEWPORT>>	viewPorts;
+		viewPorts.push_back(viewPort);
+
+		m_bindRenderTargets->setRenderTargetViews(renderTargetViews);
+		m_bindRenderTargets->setDepthStencilViews(depthStencilViews);
+		m_bindRenderTargets->setViewports(viewPorts);
+
+		m_clearRenderTarget->setRenderTargetView(m_bindRenderTargets->getRenderTargetViews(0));
+		m_clearRenderTarget->setDepthStencilView(m_bindRenderTargets->getDepthStencilViews(0));
+	}
+}

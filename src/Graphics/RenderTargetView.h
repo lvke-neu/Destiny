@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/Asset.h"
+#include <string>
 
 struct ID3D11Texture2D;
 struct ID3D11RenderTargetView;
@@ -20,6 +21,7 @@ namespace Destiny
 		ID3D11ShaderResourceView**		getShaderResourceView();
 		unsigned int					getWidth();
 		unsigned int					getHeight();
+		void setDebugObjectName(const std::string& name);
 	private:
 		ID3D11Texture2D*				m_texture;
 		ID3D11RenderTargetView*			m_renderTargetView;

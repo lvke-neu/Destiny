@@ -1,10 +1,10 @@
 #pragma once
 #include "Meta.h"
 
-class DeferredRenderDebugPanel : public Meta
+class DebugDeferredRenderPanel : public Meta
 {
 public:
-	DeferredRenderDebugPanel();
+	DebugDeferredRenderPanel();
 public:
 	void update();
 	void setOpen(bool open);

@@ -48,6 +48,7 @@ namespace Destiny
 		auto iter = std::find(m_parent->m_childs.begin(), m_parent->m_childs.end(), shared_from_this());
 		if (iter != m_parent->m_childs.end())
 		{
+			onLeaveScene();
 			m_parent->m_childs.erase(iter);
 		}
 
@@ -182,7 +183,7 @@ namespace Destiny
 				{
 					if (childNode)
 					{
-						childNode->onEnterScene();
+						childNode->onLeaveScene();
 					}
 				}
 				break;

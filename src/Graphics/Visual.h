@@ -24,6 +24,7 @@ namespace Destiny
 		void							set_blendDesc(D3D11_BLEND_DESC desc);
 		std::shared_ptr<Material>		get_material();
 		void							set_material(std::shared_ptr<Material> material);
+		GET_SET(VisualCategory, visualCategory);
 	public:
 		std::shared_ptr<RenderPass>			getRenderPass();
 		void								setRenderPass(std::shared_ptr<RenderPass> renderPass);
@@ -43,6 +44,7 @@ namespace Destiny
 		void								setSamplerSate(const char* name, std::shared_ptr<SamplerState> samplerState);
 		void							    reCompileShader();
 	private:
+		VisualCategory						m_visualCategory;
 		std::shared_ptr<RenderPass>			m_renderPass;
 		std::shared_ptr<Mesh>				m_mesh;
 		std::shared_ptr<DrawParameters>		m_drawParameters;

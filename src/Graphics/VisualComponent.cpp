@@ -12,9 +12,10 @@
 namespace Destiny
 {
 	VisualComponent::VisualComponent() : 
-		m_visual(std::make_shared<Visual>())
+		m_visual(std::make_shared<Visual>()),
+		m_shadowVisual(std::make_shared<Visual>())
 	{
-
+		m_shadowVisual->set_visualCategory(VisualCategory::RenderToShadowMap);
 	}
 
 	std::string VisualComponent::get_renderer()
@@ -138,9 +139,11 @@ namespace Destiny
 
 		auto worldMatrix = m_node->getRootToThisWorldMatrix();
 		m_visual->setConstant("u_worldMatrix", XMMatrixTranspose(worldMatrix));
+		m_shadowVisual->setConstant("u_worldMatrix", XMMatrixTranspose(worldMatrix));
 		worldMatrix.r[3] = DirectX::g_XMIdentityR3;
 		worldMatrix = XMMatrixTranspose(XMMatrixInverse(nullptr, worldMatrix));
 		m_visual->setConstant("u_worldInvTransposeMatrix", XMMatrixTranspose(worldMatrix));
+		m_shadowVisual->setConstant("u_worldInvTransposeMatrix", XMMatrixTranspose(worldMatrix));
 	}
 
 	void VisualComponent::onEnterScene()
@@ -156,12 +159,14 @@ namespace Destiny
 
 	void VisualComponent::onRendererConstantChanged()
 	{
-		if (!m_visual)
+		if (m_visual)
 		{
-			return;
+			m_visual->setRendererConstantChanged();
 		}
-		
-		m_visual->setRendererConstantChanged();
+		if (m_shadowVisual)
+		{
+			m_shadowVisual->setRendererConstantChanged();
+		}
 	}
 
 	RTTR_REGISTRATION

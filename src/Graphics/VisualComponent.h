@@ -38,12 +38,18 @@ namespace Destiny
 		void						setMesh(std::shared_ptr<Mesh> mesh);
 		std::shared_ptr<Mesh>		getMesh();
 		std::shared_ptr<Visual>		getVisual();
+
+		void						setShadowRenderPass(std::shared_ptr<RenderPass> renderPass);
+		void						setShadowMesh(std::shared_ptr<Mesh> mesh);
+		std::shared_ptr<Visual>		getShadowVisual();
+
 		template<typename T>
 		void						setConstant(const char* name, T value);
 		void						setShaderResource(const char* name, std::shared_ptr<Texture> texture);
 		void						setSamplerSate(const char* name, std::shared_ptr<SamplerState> samplerState);
 	private:
 		std::shared_ptr<Visual> m_visual;
+		std::shared_ptr<Visual> m_shadowVisual;
 	};
 
 	inline void VisualComponent::setRenderPass(std::shared_ptr<RenderPass> renderPass)
@@ -74,6 +80,27 @@ namespace Destiny
 	inline std::shared_ptr<Visual> VisualComponent::getVisual()
 	{
 		return m_visual;
+	}
+
+	inline void VisualComponent::setShadowRenderPass(std::shared_ptr<RenderPass> renderPass)
+	{
+		if (m_shadowVisual)
+		{
+			m_shadowVisual->setRenderPass(renderPass);
+		}
+	}
+
+	inline void VisualComponent::setShadowMesh(std::shared_ptr<Mesh> mesh)
+	{
+		if (m_shadowVisual)
+		{
+			m_shadowVisual->setMesh(mesh);
+		}
+	}
+
+	inline std::shared_ptr<Visual> VisualComponent::getShadowVisual()
+	{
+		return m_shadowVisual;
 	}
 
 	template<typename T>

@@ -19,12 +19,14 @@ namespace Destiny
 		virtual void							syncState() override;
 		void									commitVisual(std::shared_ptr<Visual> visual);
 		std::shared_ptr<GraphicsPipeline>       getDeferredOpaquePipeline();
+		std::shared_ptr<GraphicsPipeline>		getShadowMapPipeline();
 		std::shared_ptr<RenderTargetView>		getRenderTargetView();
 	public:
 		std::shared_ptr<BindRenderTargets>		m_bindRenderTargets;
 	private:
 		void onResize(void* data);
 	private:
+		std::shared_ptr<GraphicsPipeline>		m_shadowMapPipeline;
 		std::shared_ptr<GraphicsPipeline>		m_forwardOpaquePipeline;
 		std::shared_ptr<GraphicsPipeline>		m_deferredOpaquePipeline;
 		std::shared_ptr<GraphicsPipeline>		m_transparentPipeline;
@@ -38,5 +40,10 @@ namespace Destiny
 	inline std::shared_ptr<GraphicsPipeline> RenderSystem::getDeferredOpaquePipeline()
 	{
 		return m_deferredOpaquePipeline;
+	}
+
+	inline std::shared_ptr<GraphicsPipeline> RenderSystem::getShadowMapPipeline()
+	{
+		return m_shadowMapPipeline;
 	}
 }

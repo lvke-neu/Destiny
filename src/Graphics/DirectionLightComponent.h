@@ -21,12 +21,31 @@ namespace Destiny
 		void set_color(Color color);
 		GET(float, intensity);
 		void set_intensity(float intensity);
+		GET(float, viewPortWidth);
+		void set_viewPortWidth(float viewPortWidth);
+		GET(float, viewPortHeight);
+		void set_viewPortHeight(float viewPortHeight);
+		GET(float, nearz);
+		void set_nearz(float nearz);
+		GET(float, farz);
+		void set_farz(float farz);
+		GET(float, lightDiscoefficient);
+		void set_lightDiscoefficient(float lightDiscoefficient);
 	private:
 		void				traversal(std::shared_ptr<Node> node, std::vector<DirectionLight>& directionLights, bool ignoreSelf = false);
 		void				notifyVisualRendererConstantChanged(std::shared_ptr<Node> node);
-		void				setDirectionLightRendererConstant(const std::vector<DirectionLight>& directionLights);
+		void				updateDirectionLightRendererConstant(const std::vector<DirectionLight>& directionLights);
+		void				updateShadowMapRendererConstant();
+		void				notifyShadoMapPipiline();
 	private:
 		Color				m_color;
 		float				m_intensity;
+
+		//shadow
+		float m_viewPortWidth;
+		float m_viewPortHeight;
+		float m_nearz;
+		float m_farz;
+		float m_lightDiscoefficient;
 	};
 }

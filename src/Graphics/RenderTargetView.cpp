@@ -76,6 +76,13 @@ namespace Destiny
 		auto texture = std::make_shared<Texture>(m_texture, m_shaderResourceView);
 		return texture;
 	}
+
+	void RenderTargetView::setDebugObjectName(const std::string& name)
+	{
+#ifdef _DEBUG
+		m_renderTargetView->SetPrivateData(WKPDID_D3DDebugObjectName, name.size(), name.c_str());
+#endif // 
+	}
 }
 
 

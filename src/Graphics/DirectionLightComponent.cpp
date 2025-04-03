@@ -14,7 +14,9 @@ namespace Destiny
 		m_viewPortHeight(50.0f),
 		m_nearz(0.1f),
 		m_farz(1000.0f),
-		m_lightDiscoefficient(-400.0f)
+		m_lightDiscoefficient(-400.0f),
+		m_resolutionWidth(2048.0f),
+		m_resolutionHeight(2048.0f)
 	{
 
 	}
@@ -140,6 +142,22 @@ namespace Destiny
 		notifyShadoMapPipiline();
 	}
 
+	void DirectionLightComponent::set_resolutionWidth(float resolutionWidth)
+	{
+		m_resolutionWidth = resolutionWidth;
+		notifyVisualRendererConstantChanged(m_scene);
+		updateShadowMapRendererConstant();
+		notifyShadoMapPipiline();
+	}
+
+	void DirectionLightComponent::set_resolutionHeight(float resolutionHeight)
+	{
+		m_resolutionHeight = resolutionHeight;
+		notifyVisualRendererConstantChanged(m_scene);
+		updateShadowMapRendererConstant();
+		notifyShadoMapPipiline();
+	}
+
 	void DirectionLightComponent::traversal(std::shared_ptr<Node> node, std::vector<DirectionLight>& directionLights, bool ignoreSelf)
 	{
 		if (!node)
@@ -232,7 +250,7 @@ namespace Destiny
 	{
 		auto renderSystem =std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
 		auto shadowMapPipeline = std::static_pointer_cast<ShadowMapPipeline>(renderSystem->getShadowMapPipeline());
-		shadowMapPipeline->onResize(m_viewPortWidth, m_viewPortHeight);
+		shadowMapPipeline->onResize(m_resolutionWidth, m_resolutionHeight);
 	}
 
 	RTTR_REGISTRATION
@@ -245,6 +263,8 @@ namespace Destiny
 			.property("shadow_viewPortHeight", &DirectionLightComponent::get_viewPortHeight, &DirectionLightComponent::set_viewPortHeight)
 			.property("shadow_nearz", &DirectionLightComponent::get_nearz, &DirectionLightComponent::set_nearz)
 			.property("shadow_farz", &DirectionLightComponent::get_farz, &DirectionLightComponent::set_farz)
-			.property("shadow_lightDiscoefficient", &DirectionLightComponent::get_lightDiscoefficient, &DirectionLightComponent::set_lightDiscoefficient);
+			.property("shadow_lightDiscoefficient", &DirectionLightComponent::get_lightDiscoefficient, &DirectionLightComponent::set_lightDiscoefficient)
+			.property("shadow_resolutionWidth", &DirectionLightComponent::get_resolutionWidth, &DirectionLightComponent::set_resolutionWidth)
+			.property("shadow_resolutionHeight", &DirectionLightComponent::get_resolutionHeight, &DirectionLightComponent::set_resolutionHeight);
 	}
 }

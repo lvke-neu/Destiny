@@ -31,6 +31,10 @@ namespace Destiny
 		void set_farz(float farz);
 		GET(float, lightDiscoefficient);
 		void set_lightDiscoefficient(float lightDiscoefficient);
+		GET(float, resolutionWidth);
+		void set_resolutionWidth(float resolutionWidth);
+		GET(float, resolutionHeight);
+		void set_resolutionHeight(float resolutionHeight);
 	private:
 		void				traversal(std::shared_ptr<Node> node, std::vector<DirectionLight>& directionLights, bool ignoreSelf = false);
 		void				notifyVisualRendererConstantChanged(std::shared_ptr<Node> node);
@@ -47,5 +51,7 @@ namespace Destiny
 		float m_nearz;
 		float m_farz;
 		float m_lightDiscoefficient;
+		float m_resolutionWidth;
+		float m_resolutionHeight;
 	};
 }

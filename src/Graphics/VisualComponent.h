@@ -16,6 +16,7 @@ namespace Destiny
 		//for ui 
 		std::string get_renderer();
 		void set_renderer(std::string renderer);
+		void set_shadowRenderer(std::string renderer);
 		RendererCategory				get_rendererCategory();
 		void							set_rendererCategory(RendererCategory rendererCategory);
 		D3D11_RASTERIZER_DESC			get_rasterizerDesc();
@@ -27,6 +28,8 @@ namespace Destiny
 		void							reCompileShader();
 		std::shared_ptr<Material>		get_material();
 		void							set_material(std::shared_ptr<Material> material);
+		bool get_enableShadow();
+		void set_enableShadow(bool enableShadow);
 	public:
 		virtual void				onAddToNode() override;
 		virtual void				onNodeTransformChanged() override;

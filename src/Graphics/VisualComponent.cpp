@@ -32,6 +32,14 @@ namespace Destiny
 		}
 	}
 
+	void VisualComponent::set_shadowRenderer(std::string renderer)
+	{
+		if (m_shadowVisual)
+		{
+			m_shadowVisual->set_renderer(renderer);
+		}
+	}
+
 	RendererCategory VisualComponent::get_rendererCategory()
 	{
 		return m_visual ? m_visual->get_rendererCategory() : RendererCategory::None;
@@ -121,6 +129,23 @@ namespace Destiny
 		}
 	}
 
+	bool VisualComponent::get_enableShadow()
+	{
+		if (m_shadowVisual)
+		{
+			return m_shadowVisual->get_enableShadow();
+		}
+		return false;
+	}
+
+	void VisualComponent::set_enableShadow(bool enableShadow)
+	{
+		if (m_shadowVisual)
+		{
+			m_shadowVisual->set_enableShadow(enableShadow);
+		}
+	}
+
 	void VisualComponent::onAddToNode()
 	{
 		if (m_visual)
@@ -173,6 +198,7 @@ namespace Destiny
 	{
 		rttr::registration::class_<VisualComponent>("VisualComponent")
 			.constructor<>()
+			.property("enableShadow", &VisualComponent::get_enableShadow, &VisualComponent::set_enableShadow)
 			.property("renderer", &VisualComponent::get_renderer, &VisualComponent::set_renderer)
 			.property("rendererCategory", &VisualComponent::get_rendererCategory, &VisualComponent::set_rendererCategory)
 			.property("rasterizerDesc", &VisualComponent::get_rasterizerDesc, &VisualComponent::set_rasterizerDesc)

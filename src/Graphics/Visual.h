@@ -25,6 +25,7 @@ namespace Destiny
 		std::shared_ptr<Material>		get_material();
 		void							set_material(std::shared_ptr<Material> material);
 		GET_SET(VisualCategory, visualCategory);
+		GET_SET(bool, enableShadow);
 	public:
 		std::shared_ptr<RenderPass>			getRenderPass();
 		void								setRenderPass(std::shared_ptr<RenderPass> renderPass);
@@ -67,6 +68,8 @@ namespace Destiny
 		bool m_samplerStatesrChanged;
 		bool m_renderPassChanged;
 		bool m_meshChanged;
+
+		bool m_enableShadow;
 	};
 	
 	inline std::shared_ptr<RenderPass> Visual::getRenderPass()

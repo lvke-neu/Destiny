@@ -70,6 +70,17 @@ namespace Destiny
 		}
 	}
 
+	void Model::setEnableShadow(bool enableShadow)
+	{
+		for (const auto& visualComponent : m_visualComponents)
+		{
+			if (visualComponent)
+			{
+				visualComponent->set_enableShadow(enableShadow);
+			}
+		}
+	}
+
 	void Model::setRenderer(std::string renderer)
 	{
 		for (const auto& visualComponent : m_visualComponents)
@@ -77,6 +88,17 @@ namespace Destiny
 			if (visualComponent)
 			{
 				visualComponent->set_renderer(renderer);
+			}
+		}
+	}
+
+	void Model::setShadowRenderer(std::string renderer)
+	{
+		for (const auto& visualComponent : m_visualComponents)
+		{
+			if (visualComponent)
+			{
+				visualComponent->set_shadowRenderer(renderer);
 			}
 		}
 	}

@@ -30,17 +30,6 @@ namespace Destiny
 		setRenderPass(renderPass);
 		setMesh(mesh);
 		set_material(PbrMaterial::Create_Default());
-
-		auto shadowRenderer = Renderer::Create("builtin://renderer/forward_pbr_shadow.hlsl");
-		shadowRenderer->load(0);
-		auto shadowRenderStates = std::make_shared<RenderStates>();
-		shadowRenderStates->load();
-		auto shadowRenderPass = std::make_shared<RenderPass>();
-		shadowRenderPass->setRenderer(shadowRenderer);
-		shadowRenderPass->setRenderStates(shadowRenderStates);
-
-		setShadowRenderPass(shadowRenderPass);
-		setShadowMesh(mesh);
 	}
 
 	RTTR_REGISTRATION

@@ -84,10 +84,18 @@ namespace Destiny
 			return;
 		}
 
-		if (visual->get_visualCategory() == VisualCategory::RenderToShadowMap)
+		if (visual->get_visualCategory() == VisualCategory::RenderToShadowMap && visual->get_enableShadow())
 		{
 			visual->updateDrawParameters();
-			m_shadowMapPipeline->addGraphicsCommand(visual);
+			if (m_shadowMapPipeline->addGraphicsCommand(visual))
+			{
+				++m_graphicsStat.DrawCallCount;
+				++m_graphicsStat.VisualCount;
+				if (visual->getMesh() && visual->getMesh()->getDrawCall().primitiveTopology == Mesh::PrimitiveTopology::TriangleList)
+				{
+					m_graphicsStat.TriangleCount += visual->getMesh()->getDrawCall().indexCount / 3;
+				}
+			}
 		}
 		else if (visual->get_visualCategory() == VisualCategory::RenderToScene)
 		{

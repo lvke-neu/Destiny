@@ -92,6 +92,8 @@ namespace Destiny
 			visualComponent->setRenderPass(getRenderPass());
 			visualComponent->setMesh(getMesh(otherScene->mMeshes[otherNode->mMeshes[i]], model));
 			visualComponent->set_material(getMaterial(otherScene->mMaterials[otherScene->mMeshes[otherNode->mMeshes[i]]->mMaterialIndex], path));
+			visualComponent->setShadowMesh(visualComponent->getMesh());
+			visualComponent->setShadowRenderPass(getRenderPass());
 			myNode->addComponent(visualComponent);
 			
 			model->m_visualComponents.insert(visualComponent);

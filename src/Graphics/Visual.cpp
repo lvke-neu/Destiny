@@ -22,7 +22,8 @@ namespace Destiny
 		m_renderPassChanged(false),
 		m_meshChanged(false),
 		m_rendererConstantsChanged(false),
-		m_visualCategory(VisualCategory::RenderToScene)
+		m_visualCategory(VisualCategory::RenderToScene),
+		m_enableShadow(true)
 	{
 		addDrawParameter(m_drawParameters);
 	}

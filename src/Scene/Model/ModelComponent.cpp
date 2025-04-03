@@ -11,8 +11,10 @@ namespace Destiny
 		m_model(nullptr),
 		m_modelChanged(false),
 		m_renderer("builtin://renderer/forward_pbr.hlsl"),
-		m_rendererCategory(RendererCategory::ForwardOpaque),\
-		m_rasterizerDesc(CD3D11_RASTERIZER_DESC(CD3D11_DEFAULT()))
+		m_shadowRenderer("builtin://renderer/forward_pbr_shadow.hlsl"),
+		m_rendererCategory(RendererCategory::ForwardOpaque),
+		m_rasterizerDesc(CD3D11_RASTERIZER_DESC(CD3D11_DEFAULT())),
+		m_enableShadow(true)
 	{
 
 	}
@@ -52,6 +54,18 @@ namespace Destiny
 		}
 	}
 
+	void ModelComponent::set_shadowRenderer(std::string shadowRenderer)
+	{
+		if (m_shadowRenderer != shadowRenderer)
+		{
+			m_shadowRenderer = shadowRenderer;
+			if (m_model)
+			{
+				m_model->setShadowRenderer(m_shadowRenderer);
+			}
+		}
+	}
+
 	void ModelComponent::set_rendererCategory(RendererCategory rendererCategory)
 	{
 		if (m_rendererCategory != rendererCategory)
@@ -69,7 +83,16 @@ namespace Destiny
 		m_rasterizerDesc = rasterizerDesc;
 		if (m_model)
 		{
-			m_model->setRasterizerDesc(rasterizerDesc);
+			m_model->setRasterizerDesc(m_rasterizerDesc);
+		}
+	}
+
+	void ModelComponent::set_enableShadow(bool enableShadow)
+	{
+		m_enableShadow = enableShadow;
+		if (m_model)
+		{
+			m_model->setEnableShadow(m_enableShadow);
 		}
 	}
 
@@ -80,7 +103,9 @@ namespace Destiny
 			m_model->onDataLoaded();
 			m_model->getNode()->addToParent(m_node);
 			m_model->setEnable(m_enable);
+			m_model->setEnableShadow(m_enableShadow);
 			m_model->setRenderer(m_renderer);
+			m_model->setShadowRenderer(m_shadowRenderer);
 			m_model->setRendererCategory(m_rendererCategory);
 			//m_model.reset();
 			m_modelChanged = false;
@@ -103,8 +128,10 @@ namespace Destiny
 	{
 		rttr::registration::class_<ModelComponent>("ModelComponent")
 			.constructor<>()
+			.property("enableShadow", &ModelComponent::get_enableShadow, &ModelComponent::set_enableShadow)
 			.property("path", &ModelComponent::get_path, &ModelComponent::set_path)
 			.property("renderer", &ModelComponent::get_renderer, &ModelComponent::set_renderer)
+			.property("shadowRenderer", &ModelComponent::get_shadowRenderer, &ModelComponent::set_shadowRenderer)
 			.property("rendererCategory", &ModelComponent::get_rendererCategory, &ModelComponent::set_rendererCategory)
 			.property("rasterizerDesc", &ModelComponent::get_rasterizerDesc, &ModelComponent::set_rasterizerDesc);
 	}

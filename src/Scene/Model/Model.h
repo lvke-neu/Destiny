@@ -20,7 +20,9 @@ namespace Destiny
 		std::shared_ptr<Node>	getNode();
 		void					onDataLoaded();
 		void					setEnable(bool enable);
+		void					setEnableShadow(bool enableShadow);
 		void					setRenderer(std::string renderer);
+		void					setShadowRenderer(std::string renderer);
 		void					setRendererCategory(RendererCategory rendererCategory);
 		void					setRasterizerDesc(D3D11_RASTERIZER_DESC desc);
 	public:

@@ -51,3 +51,7 @@ struct GBuffer
     float4 normalW   : SV_Target4;
     float4 texcoord  : SV_Target5;
 };
+
+Texture2D t_shadowMap : register(t10);
+SamplerState s_shadowMapSampler : register(s10);
+

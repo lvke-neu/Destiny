@@ -101,43 +101,29 @@ namespace Destiny
 		return renderer;
 	}
 
-	//void Renderer::setConstant_(const char* name, std::shared_ptr<Blob> blob)
-	//{
-	//	auto iter = m_variableLinkConstant.find(name);
-	//	if (iter == m_variableLinkConstant.end())
-	//	{
-	//		return;
-	//	}
+	void Renderer::setShaderResource(const char* name, std::shared_ptr<Texture> texture)
+	{
+		auto iter = m_textures.find(name);
+		if (iter == m_textures.end())
+		{
+			return;
+		}
 
-	//	if (m_constantBuffers[iter->second])
-	//	{
-	//		m_constantBuffers[iter->second]->setVariable(name, blob);
-	//	}
-	//}
+		m_textures[name].second.reset();
+		m_textures[name].second = texture;
+	}
 
-	//void Renderer::setShaderResource_(const char* name, std::shared_ptr<Texture> texture)
-	//{
-	//	auto iter = m_textures.find(name);
-	//	if (iter == m_textures.end())
-	//	{
-	//		return;
-	//	}
+	void Renderer::setSamplerSate(const char* name, std::shared_ptr<SamplerState> samplerState)
+	{
+		auto iter = m_samplerStates.find(name);
+		if (iter == m_samplerStates.end())
+		{
+			return;
+		}
 
-	//	m_textures[name].second.reset();
-	//	m_textures[name].second = texture;
-	//}
-
-	//void Renderer::setSamplerSate_(const char* name, std::shared_ptr<SamplerState> samplerState)
-	//{
-	//	auto iter = m_samplerStates.find(name);
-	//	if (iter == m_samplerStates.end())
-	//	{
-	//		return;
-	//	}
-
-	//	m_samplerStates[name].second.reset();
-	//	m_samplerStates[name].second = samplerState;
-	//}
+		m_samplerStates[name].second.reset();
+		m_samplerStates[name].second = samplerState;
+	}
 
 	std::string Renderer::getPath() 
 	{
@@ -388,10 +374,11 @@ namespace Destiny
 					auto iter = m_textures.find(shaderInputBindDesc.Name);
 					if (iter == m_textures.end())
 					{
-						m_textures[shaderInputBindDesc.Name] = std::make_shared<TextureDesc>();
+						m_textures[shaderInputBindDesc.Name].first = std::make_shared<TextureDesc>();
 					}
-					m_textures[shaderInputBindDesc.Name]->startSlot = shaderInputBindDesc.BindPoint;
-					m_textures[shaderInputBindDesc.Name]->textureBindFlag[(TextureBindFlag)flag] = true;
+					m_textures[shaderInputBindDesc.Name].first->startSlot = shaderInputBindDesc.BindPoint;
+					m_textures[shaderInputBindDesc.Name].first->textureBindFlag[(TextureBindFlag)flag] = true;
+					m_textures[shaderInputBindDesc.Name].second = nullptr;
 				}
 			}
 		}
@@ -423,10 +410,11 @@ namespace Destiny
 					auto iter = m_samplerStates.find(shaderInputBindDesc.Name);
 					if (iter == m_samplerStates.end())
 					{
-						m_samplerStates[shaderInputBindDesc.Name] = std::make_shared<SamplerStateDesc>();
+						m_samplerStates[shaderInputBindDesc.Name].first = std::make_shared<SamplerStateDesc>();
 					}
-					m_samplerStates[shaderInputBindDesc.Name]->startSlot = shaderInputBindDesc.BindPoint;
-					m_samplerStates[shaderInputBindDesc.Name]->samplerStateBindFlag[(SamplerStateBindFlag)flag] = true;
+					m_samplerStates[shaderInputBindDesc.Name].first->startSlot = shaderInputBindDesc.BindPoint;
+					m_samplerStates[shaderInputBindDesc.Name].first->samplerStateBindFlag[(SamplerStateBindFlag)flag] = true;
+					m_samplerStates[shaderInputBindDesc.Name].second = nullptr;
 				}
 			}
 		}
@@ -492,17 +480,11 @@ namespace Destiny
 
 	void Renderer::fillTextures(std::unordered_map<std::string, std::pair<std::shared_ptr<TextureDesc>, std::shared_ptr<Texture>>>& textures)
 	{
-		for (const auto& texture : m_textures)
-		{
-			textures.insert({ texture.first, { texture.second, nullptr } });
-		}
+		textures = m_textures;
 	}
 
 	void Renderer::fillSamplerStates(std::unordered_map<std::string, std::pair<std::shared_ptr<SamplerStateDesc>, std::shared_ptr<SamplerState>>>& samplerStates)
 	{
-		for (const auto& samplerState : m_samplerStates)
-		{
-			samplerStates.insert({ samplerState.first, { samplerState.second, nullptr } });
-		}
+		samplerStates = m_samplerStates;
 	}
 }

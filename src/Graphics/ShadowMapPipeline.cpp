@@ -26,7 +26,8 @@ namespace Destiny
 		m_bindRenderTargets(std::make_shared<BindRenderTargets>()),
 		m_clearRenderTarget(std::make_shared<ClearRenderTarget>())
 	{
-	
+		m_shadowMapSampler = std::make_shared<SamplerState>();
+		m_shadowMapSampler->load(0);
 	}
 
 	ShadowMapPipeline::~ShadowMapPipeline()
@@ -74,5 +75,12 @@ namespace Destiny
 
 		m_clearRenderTarget->setRenderTargetView(m_bindRenderTargets->getRenderTargetViews(0));
 		m_clearRenderTarget->setDepthStencilView(m_bindRenderTargets->getDepthStencilViews(0));
+	
+
+		for (const auto& renderer : Renderer::s_cache)
+		{
+			renderer.second->setShaderResource("t_shadowMap", m_bindRenderTargets->getDepthStencilViews(0)->getTexture());
+			renderer.second->setSamplerSate("s_shadowMapSampler", m_shadowMapSampler);
+		}
 	}
 }

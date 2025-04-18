@@ -6,6 +6,7 @@ struct ID3D11DepthStencilView;
 struct ID3D11ShaderResourceView;
 namespace Destiny
 {
+	class Texture;
 	class DepthStencilView : public Asset
 	{
 	public:
@@ -13,6 +14,7 @@ namespace Destiny
 		virtual ~DepthStencilView();
 	public:
 		virtual void					doLoad() override;
+		std::shared_ptr<Texture>		getTexture();
 		ID3D11Texture2D*				getTexture2D();
 		ID3D11DepthStencilView*			getDepthStencilView();
 		ID3D11ShaderResourceView**		getShaderResourceView();

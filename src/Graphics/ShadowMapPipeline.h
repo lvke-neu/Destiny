@@ -5,6 +5,7 @@ namespace Destiny
 {
 	class BindRenderTargets;
 	class ClearRenderTarget;
+	class SamplerState;
 	class ShadowMapPipeline : public GraphicsPipeline
 	{
 	public:
@@ -18,5 +19,6 @@ namespace Destiny
 		std::shared_ptr<BindRenderTargets>		m_bindRenderTargets;
 	private:
 		std::shared_ptr<ClearRenderTarget>		m_clearRenderTarget;
+		std::shared_ptr<SamplerState>			m_shadowMapSampler;
 	};
 }

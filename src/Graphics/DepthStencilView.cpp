@@ -1,4 +1,5 @@
 #include "DepthStencilView.h"
+#include "Texture.h"
 #include "Engine/Utility.h"
 #include "Engine/Engine.h"
 #include "GraphicsSystem.h"
@@ -62,6 +63,12 @@ namespace Destiny
 		}
 
 		loadSucceeded__();
+	}
+
+	std::shared_ptr<Texture> DepthStencilView::getTexture()
+	{
+		auto texture = std::make_shared<Texture>(m_texture, m_shaderResourceView);
+		return texture;
 	}
 }
 

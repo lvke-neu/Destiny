@@ -41,6 +41,8 @@ namespace Destiny
 		template<typename T>
 		void							setConstant(const char* name, T value);
 		void							setConstant(const char* name, std::shared_ptr<Blob> blob);
+		void							setShaderResource(const char* name, std::shared_ptr<Texture> texture);
+		void							setSamplerSate(const char* name, std::shared_ptr<SamplerState> samplerState);
 	public:
 		std::string						getPath();
 		std::shared_ptr<BlobHolder>		getBlobHolder();
@@ -63,8 +65,8 @@ namespace Destiny
 		ID3D10Blob*						m_gsCompiledBlob;
 		std::unordered_map<std::string, std::shared_ptr<ConstantBuffer>> m_constantBuffers;
 		std::unordered_map<std::string, std::string> m_variableLinkConstant;
-		std::unordered_map<std::string, std::shared_ptr<TextureDesc>> m_textures;
-		std::unordered_map<std::string, std::shared_ptr<SamplerStateDesc>> m_samplerStates;
+		std::unordered_map<std::string, std::pair<std::shared_ptr<TextureDesc>, std::shared_ptr<Texture>>> m_textures;
+		std::unordered_map<std::string, std::pair<std::shared_ptr<SamplerStateDesc>, std::shared_ptr<SamplerState>>> m_samplerStates;
 		std::unordered_set<std::string>	m_changedConstantBufferNames;
 	};
 

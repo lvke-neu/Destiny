@@ -80,7 +80,7 @@ namespace Destiny
 	void RenderTargetView::setDebugObjectName(const std::string& name)
 	{
 #ifdef _DEBUG
-		m_renderTargetView->SetPrivateData(WKPDID_D3DDebugObjectName, name.size(), name.c_str());
+		m_renderTargetView->SetPrivateData(WKPDID_D3DDebugObjectName, (unsigned int)name.size(), name.c_str());
 #endif // 
 	}
 }

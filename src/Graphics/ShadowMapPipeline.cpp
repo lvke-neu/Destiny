@@ -36,6 +36,7 @@ namespace Destiny
 		m_shadowMapSampler->getSamplerDesc()->BorderColor[0] = { 1.0f };
 		m_shadowMapSampler->getSamplerDesc()->MinLOD = 0;
 		m_shadowMapSampler->getSamplerDesc()->MaxLOD = D3D11_FLOAT32_MAX;
+		m_shadowMapSampler->getSamplerDesc()->MaxAnisotropy = 1;
 		m_shadowMapSampler->load(0);
 	}
 

@@ -3,6 +3,7 @@
 
 struct ID3D11Device;
 struct ID3D11DeviceContext;
+struct ID3DUserDefinedAnnotation;
 struct ID3D11RenderTargetView;
 struct ID3D11DepthStencilView;
 struct ID3D11Device;
@@ -37,14 +38,15 @@ namespace Destiny
 		ID3D11Device*				getDevice();
 		ID3D11DeviceContext*		getImmediateContext();
 		ID3D11DeviceContext*		getDeferredContext();
-		//swapchain
 		ID3D11RenderTargetView**	getRenderTargetView();
-		//swapchain
 		ID3D11DepthStencilView*		getDepthStencilView();
 	public:
 		//for window resize
 		void						onResize_(unsigned int width, unsigned int height);
 		virtual void				syncState() = 0;
+	public:
+		void beginEvent(const wchar_t* name);
+		void endEvent();
 	private:
 		void						createDeviceAndContext();
 		void						createSwapChain(long long hwnd);
@@ -58,6 +60,7 @@ namespace Destiny
 		ID3D11DeviceContext*		m_pD3D11ImmediateDeviceContext;
 		ID3D11DeviceContext*		m_pD3D11DeferredDeviceContext;
 		IDXGISwapChain*				m_pDXGISwapChain;
+		ID3DUserDefinedAnnotation*  m_pD3DUserDefinedAnnotation;
 		ID3D11RenderTargetView*		m_pRenderTargetView;
 		ID3D11Texture2D*			m_pDepthStencilBuffer;
 		ID3D11DepthStencilView*		m_pDepthStencilView;

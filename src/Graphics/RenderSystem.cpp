@@ -50,13 +50,37 @@ namespace Destiny
 
 	void RenderSystem::render()
 	{
+		beginEvent(L"Standard Scene");
+
+		beginEvent(L"Before Pipeline");
 		m_beforePipelineCommand->execute(getImmediateContext());
+		endEvent();
+
+		beginEvent(L"Shadow Pass");
 		m_shadowMapPipeline->execute(getImmediateContext());
+		endEvent();
+
+		beginEvent(L"DeferredOpaque Pass");
 		m_deferredOpaquePipeline->execute(getImmediateContext());
+		endEvent();
+ 
+		beginEvent(L"ForwardOpaque Pass");
 		m_forwardOpaquePipeline->execute(getImmediateContext());
+		endEvent();
+
+		beginEvent(L"Transparent Pass");
 		m_transparentPipeline->execute(getImmediateContext());
+		endEvent();
+
+		beginEvent(L"Gui Pass");
 		m_guiPipeline->execute(getImmediateContext());
+		endEvent();
+
+		beginEvent(L"Postprocess Pass");
 		m_postProcessingPipeline->execute(getImmediateContext());
+		endEvent();
+
+		endEvent();
 	}
 
 	void RenderSystem::syncState()

@@ -2,7 +2,7 @@
 #include "GraphicsSystem.h"
 #include "Engine/Utility.h"
 #include "Math/Color.h"
-#include <d3d11.h>
+#include <d3d11_1.h>
 
 namespace Destiny
 {
@@ -10,6 +10,7 @@ namespace Destiny
 		m_pD3D11Device(nullptr),
 		m_pD3D11ImmediateDeviceContext(nullptr),
 		m_pD3D11DeferredDeviceContext(nullptr),
+		m_pD3DUserDefinedAnnotation(nullptr),
 		m_pDXGISwapChain(nullptr),
 		m_pRenderTargetView(nullptr),
 		m_pDepthStencilBuffer(nullptr),
@@ -27,6 +28,7 @@ namespace Destiny
 		SAFE_RELEASE(m_pD3D11Device);
 		SAFE_RELEASE(m_pD3D11ImmediateDeviceContext);
 		SAFE_RELEASE(m_pD3D11DeferredDeviceContext);
+		SAFE_RELEASE(m_pD3DUserDefinedAnnotation);
 		SAFE_RELEASE(m_pDXGISwapChain);
 		SAFE_RELEASE(m_pRenderTargetView);
 		SAFE_RELEASE(m_pDepthStencilBuffer);
@@ -98,16 +100,41 @@ namespace Destiny
 		m_viewPort->MaxDepth = 1.0f;
 	}
 
+	void GraphicsSystem::beginEvent(const wchar_t* name)
+	{
+#ifdef _DEBUG
+		if (m_pD3DUserDefinedAnnotation)
+		{
+			m_pD3DUserDefinedAnnotation->BeginEvent(name);
+		}
+#endif 
+	}
+
+	void GraphicsSystem::endEvent()
+	{
+#ifdef _DEBUG
+		if (m_pD3DUserDefinedAnnotation)
+		{
+			m_pD3DUserDefinedAnnotation->EndEvent();
+		}
+#endif
+	}
+
 	void GraphicsSystem::createDeviceAndContext()
 	{
 		HRESULT hr = S_OK;
+
+		UINT createDeviceFlags = 0;
+#ifdef _DEBUG
+		createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+#endif
 
 		D3D_FEATURE_LEVEL featureLevels[] =
 		{
 			D3D_FEATURE_LEVEL_11_0
 		};
 		D3D_FEATURE_LEVEL featureLevel;
-		hr = D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, 0, featureLevels, ARRAYSIZE(featureLevels),
+		hr = D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, createDeviceFlags, featureLevels, ARRAYSIZE(featureLevels),
 			D3D11_SDK_VERSION, &m_pD3D11Device, &featureLevel, &m_pD3D11ImmediateDeviceContext);
 
 		if (FAILED(hr))
@@ -121,7 +148,10 @@ namespace Destiny
 			LOG_ERROR("Direct3D Feature Level 11_0 unsupported.");
 			return;
 		}
+		
 		m_pD3D11Device->CreateDeferredContext(0, &m_pD3D11DeferredDeviceContext);
+		m_pD3D11ImmediateDeviceContext->QueryInterface(__uuidof(ID3DUserDefinedAnnotation), (void**)&m_pD3DUserDefinedAnnotation);
+
 	}
 
 	void GraphicsSystem::createSwapChain(long long hwnd)
@@ -164,6 +194,8 @@ namespace Destiny
 
 	void GraphicsSystem::bindEditorRenderTarget()
 	{
+		Destiny::Engine::GetInstance()->getGraphicsSystem()->beginEvent(L"Imgui Pass");
+
 		m_pD3D11ImmediateDeviceContext->RSSetViewports(1, m_viewPort.get());
 		m_pD3D11ImmediateDeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
 		static Color color{ 0.0f, 0.0f, 0.0f, 1.0f };

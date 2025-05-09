@@ -211,6 +211,8 @@ void Application::run()
 			//engine render
 			Destiny::Engine::GetInstance()->update();
 
+			
+
 			//imgui render
 			ImGui_ImplDX11_NewFrame();
 			ImGui_ImplWin32_NewFrame();
@@ -224,6 +226,8 @@ void Application::run()
 
 			ImGui::Render();
 			ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
+			Destiny::Engine::GetInstance()->getGraphicsSystem()->endEvent();
 
 			//present
 			Destiny::Engine::GetInstance()->getGraphicsSystem()->present();

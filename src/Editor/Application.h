@@ -23,8 +23,11 @@ private:
 	void newScene();
 	void saveScene();
 	void openScene();
-	void openScene(const char* scenePath);
 	void clearScene();
+
+	void fileMenu();
+	void viewMenu();
+	void settingMenu();
 private:
 	HWND										m_hwnd;
 	HINSTANCE									m_hInstance;

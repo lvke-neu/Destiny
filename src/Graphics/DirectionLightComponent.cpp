@@ -4,6 +4,7 @@
 #include "RenderSystem.h"
 #include "DeferredOpaquePipeline.h"
 #include "ShadowMapPipeline.h"
+#include "Math/Math.h"
 
 namespace Destiny
 {
@@ -16,7 +17,8 @@ namespace Destiny
 		m_farz(1000.0f),
 		m_lightDiscoefficient(-400.0f),
 		m_resolutionWidth(2048.0f),
-		m_resolutionHeight(2048.0f)
+		m_resolutionHeight(2048.0f),
+		m_shadowBias(0.0f)
 	{
 
 	}
@@ -158,6 +160,14 @@ namespace Destiny
 		notifyShadoMapPipiline();
 	}
 
+	void DirectionLightComponent::set_shadowBias(float shadowBias)
+	{
+		m_shadowBias = shadowBias;
+		notifyVisualRendererConstantChanged(m_scene);
+		updateShadowMapRendererConstant();
+		notifyShadoMapPipiline();
+	}
+
 	void DirectionLightComponent::traversal(std::shared_ptr<Node> node, std::vector<DirectionLight>& directionLights, bool ignoreSelf)
 	{
 		if (!node)
@@ -220,7 +230,6 @@ namespace Destiny
 			renderer.second->setConstant("g_directionLightCount", (int)directionLights.size());
 			renderer.second->setConstant("g_directionLights", blob);
 		}
-
 	}
 
 	void DirectionLightComponent::updateShadowMapRendererConstant()
@@ -233,16 +242,29 @@ namespace Destiny
 		using namespace DirectX;
 
 		XMFLOAT3 rotation = m_node->get_rotation();
+
 		XMVECTOR normalizedLightDir = XMLoadFloat3(&rotation);
 		normalizedLightDir = XMVector3Normalize(normalizedLightDir);
 
 		XMMATRIX shadowView = XMMatrixLookAtLH(normalizedLightDir * m_lightDiscoefficient, g_XMZero, g_XMIdentityR1);
+
+		DirectX::XMMATRIX T
+		(
+			0.5f, 0.0f, 0.0f, 0.0f,
+			0.0f, -0.5f, 0.0f, 0.0f,
+			0.0f, 0.0f, 1.0f, 0.0f,
+			0.5f, 0.5f, 0.0f, 1.0f
+		);
 
 
 		for (const auto& renderer : Renderer::s_cache)
 		{
 			renderer.second->setConstant("g_shadowView", XMMatrixTranspose(shadowView));
 			renderer.second->setConstant("g_shadowProj", XMMatrixTranspose(XMMatrixOrthographicLH((float)m_viewPortWidth, (float)m_viewPortHeight, m_nearz, m_farz)));
+			renderer.second->setConstant("T", XMMatrixTranspose(T));
+			renderer.second->setConstant("g_shadowBias", m_shadowBias);
+			renderer.second->setConstant("g_dx", 1.0f / m_resolutionWidth);
+			renderer.second->setConstant("g_dy", 1.0f / m_resolutionHeight);
 		}
 	}
 
@@ -265,6 +287,7 @@ namespace Destiny
 			.property("shadow_farz", &DirectionLightComponent::get_farz, &DirectionLightComponent::set_farz)
 			.property("shadow_lightDiscoefficient", &DirectionLightComponent::get_lightDiscoefficient, &DirectionLightComponent::set_lightDiscoefficient)
 			.property("shadow_resolutionWidth", &DirectionLightComponent::get_resolutionWidth, &DirectionLightComponent::set_resolutionWidth)
-			.property("shadow_resolutionHeight", &DirectionLightComponent::get_resolutionHeight, &DirectionLightComponent::set_resolutionHeight);
+			.property("shadow_resolutionHeight", &DirectionLightComponent::get_resolutionHeight, &DirectionLightComponent::set_resolutionHeight)
+			.property("shadow_bias", &DirectionLightComponent::get_shadowBias, &DirectionLightComponent::set_shadowBias);
 	}
 }

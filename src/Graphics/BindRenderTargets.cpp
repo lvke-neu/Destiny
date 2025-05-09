@@ -32,12 +32,12 @@ namespace Destiny
 
 	std::shared_ptr<DepthStencilView> BindRenderTargets::getDepthStencilViews(unsigned int index)
 	{
-		if (m_renderTargetViews.empty())
+		if (m_depthStencilViews.empty())
 		{
 			return nullptr;
 		}
 
-		if (index < 0 || index>m_renderTargetViews.size() - 1)
+		if (index < 0 || index>m_depthStencilViews.size() - 1)
 		{
 			return nullptr;
 		}
@@ -47,7 +47,7 @@ namespace Destiny
 
 	std::shared_ptr<D3D11_VIEWPORT> BindRenderTargets::getViewPort(unsigned int index)
 	{
-		if (m_renderTargetViews.empty())
+		if (m_viewPorts.empty())
 		{
 			return nullptr;
 		}
@@ -77,7 +77,7 @@ namespace Destiny
 
 	void BindRenderTargets::execute(ID3D11DeviceContext* deviceContext)
 	{
-		if (!deviceContext || m_renderTargetViews.empty() || m_depthStencilViews.empty() || m_viewPorts.empty())
+		if (!deviceContext)
 		{
 			return;
 		}
@@ -99,12 +99,25 @@ namespace Destiny
 			}	
 		}
 
+		if (tmpViewPort.empty())
+		{
+			deviceContext->RSSetViewports(0, nullptr);
+		}
+		else
+		{
+			deviceContext->RSSetViewports((unsigned int)tmpViewPort.size(), tmpViewPort.data());
+		}
+		
+		if (renderTargetViews.empty() && !depthStencilViews.empty())
+		{
+			deviceContext->OMSetRenderTargets(0, nullptr, depthStencilViews[0]);
+			return;
+		}
 
-		deviceContext->RSSetViewports((unsigned int)tmpViewPort.size(), tmpViewPort.data());
-		if (renderTargetViews.size() == depthStencilViews.size())
+		if (!renderTargetViews.empty() && (renderTargetViews.size() == depthStencilViews.size()))
 		{
 			deviceContext->OMSetRenderTargets((unsigned int)renderTargetViews.size(), renderTargetViews.data(), depthStencilViews[0]);
-		}
+		}	
 	}
 
 	void BindRenderTargets::mapRenderTargetViews(std::vector<ID3D11RenderTargetView*>& out, const std::vector<std::shared_ptr<RenderTargetView>>& in)

@@ -19,6 +19,7 @@ struct VertexOut
 	float4 positionW : POSITION;
     float3 normalW   : NORMAL;
 	float2 texcoord  : TEXCOORD;
+    float4 shadowPosH : TEXCOORD1;
 };
 
 VertexOut VS(VertexIn vIn)
@@ -28,7 +29,8 @@ VertexOut VS(VertexIn vIn)
     vOut.positionW = mul(float4(vIn.positionL, 1.0f), u_worldMatrix);
     vOut.normalW = mul(vIn.normalL, (float3x3) u_worldInvTransposeMatrix);
 	vOut.texcoord = vIn.texcoord;
-   
+    vOut.shadowPosH = mul(mul(mul(vOut.positionW, g_shadowView), g_shadowProj), T);
+
 	return vOut;
 }
 
@@ -69,6 +71,9 @@ float4 PS(VertexOut pIn) : SV_Target
 
 	float3 Lo = float3(0.0f, 0.0f, 0.0f);
 
+    //shadow
+    float shadow = calculateShadow(pIn.shadowPosH);
+
 	//radiance
     for (int i = 0; i < g_directionLightCount; i++)
     {
@@ -91,7 +96,8 @@ float4 PS(VertexOut pIn) : SV_Target
         kD *= 1.0f - metallic;
 
         float NdotL = max(dot(N, L), 0.0f);
-        Lo += (kD * albedo / PI + specular /*+ t_environment.Sample(s_sampler, reflect(-V, N_)).xyz * kS*/) * radiance * NdotL;
+        
+        Lo += (kD * albedo / PI + specular /*+ t_environment.Sample(s_sampler, reflect(-V, N_)).xyz * kS*/) * radiance * NdotL * shadow;
 
     }
     for (int j = 0; j < g_pointLightCount; j++)
@@ -128,5 +134,4 @@ float4 PS(VertexOut pIn) : SV_Target
 	color = pow(color, float3(1.0f / 2.2f, 1.0f / 2.2f, 1.0f / 2.2f));
 
 	return float4(color, 1.0f);
-
 }

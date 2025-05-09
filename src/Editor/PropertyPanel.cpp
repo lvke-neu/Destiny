@@ -14,7 +14,8 @@
 #include <d3d11.h>
 
 PropertyPanel::PropertyPanel() :
-	m_choosedNode(nullptr)
+	m_choosedNode(nullptr),
+	m_dragFloatStep(1.0f)
 {
 }
 
@@ -35,6 +36,11 @@ void PropertyPanel::update()
 
 	ImGui::End();
 	ImGui::PopStyleVar();
+}
+
+void PropertyPanel::setDragFloatStep(float dragFloatStep)
+{
+	m_dragFloatStep = dragFloatStep;
 }
 
 void PropertyPanel::popup(std::shared_ptr<Destiny::Component> component)
@@ -271,7 +277,7 @@ void PropertyPanel::reflectFloat(const rttr::property& property, std::shared_ptr
 	ImGui::Columns(2);
 	ImGui::Text(property.get_name().data());
 	ImGui::NextColumn();
-	if (ImGui::DragFloat(("##" + property.get_name().to_string()).c_str(), &value))
+	if (ImGui::DragFloat(("##" + property.get_name().to_string()).c_str(), &value, m_dragFloatStep, 0.0f, 0.0f, "%.6f"))
 	{
 		property.set_value(object, value);
 	}
@@ -313,7 +319,7 @@ void PropertyPanel::reflectFloat2(const rttr::property& property, std::shared_pt
 	ImGui::PopFont();
 	ImGui::PopStyleColor(3);
 	ImGui::SameLine();
-	if (ImGui::DragFloat("##X", &value.x))
+	if (ImGui::DragFloat("##X", &value.x, m_dragFloatStep, 0.0f, 0.0f, "%.6f"))
 	{
 		changed = true;
 	}
@@ -332,7 +338,7 @@ void PropertyPanel::reflectFloat2(const rttr::property& property, std::shared_pt
 	ImGui::PopFont();
 	ImGui::PopStyleColor(3);
 	ImGui::SameLine();
-	if (ImGui::DragFloat("##Y", &value.y))
+	if (ImGui::DragFloat("##Y", &value.y, m_dragFloatStep, 0.0f, 0.0f, "%.6f"))
 	{
 		changed = true;
 	}
@@ -382,7 +388,7 @@ void PropertyPanel::reflectFloat3(const rttr::property& property, std::shared_pt
 	ImGui::PopFont();
 	ImGui::PopStyleColor(3);
 	ImGui::SameLine();
-	if (ImGui::DragFloat("##X", &value.x))
+	if (ImGui::DragFloat("##X", &value.x, m_dragFloatStep, 0.0f, 0.0f, "%.6f"))
 	{
 		changed = true;
 	}
@@ -401,7 +407,7 @@ void PropertyPanel::reflectFloat3(const rttr::property& property, std::shared_pt
 	ImGui::PopFont();
 	ImGui::PopStyleColor(3);
 	ImGui::SameLine();
-	if (ImGui::DragFloat("##Y", &value.y))
+	if (ImGui::DragFloat("##Y", &value.y, m_dragFloatStep, 0.0f, 0.0f, "%.6f"))
 	{
 		changed = true;
 	}
@@ -420,7 +426,7 @@ void PropertyPanel::reflectFloat3(const rttr::property& property, std::shared_pt
 	ImGui::PopFont();
 	ImGui::PopStyleColor(3);
 	ImGui::SameLine();
-	if (ImGui::DragFloat("##Z", &value.z))
+	if (ImGui::DragFloat("##Z", &value.z, m_dragFloatStep, 0.0f, 0.0f, "%.6f"))
 	{
 		changed = true;
 	}
@@ -846,7 +852,7 @@ bool PropertyPanel::reflectFloat(const rttr::property& property, float& value)
 	ImGui::Columns(2);
 	ImGui::Text(property.get_name().data());
 	ImGui::NextColumn();
-	if (ImGui::DragFloat(("##" + property.get_name().to_string()).c_str(), &value))
+	if (ImGui::DragFloat(("##" + property.get_name().to_string()).c_str(), &value, m_dragFloatStep, 0.0f, 0.0f, "%.6f"))
 	{
 		changed = true;
 	}
@@ -887,7 +893,7 @@ bool PropertyPanel::reflectFloat3(const rttr::property& property, DirectX::XMFLO
 	ImGui::PopFont();
 	ImGui::PopStyleColor(3);
 	ImGui::SameLine();
-	if (ImGui::DragFloat("##X", &value.x))
+	if (ImGui::DragFloat("##X", &value.x, m_dragFloatStep, 0.0f, 0.0f, "%.6f"))
 	{
 		changed = true;
 	}
@@ -906,7 +912,7 @@ bool PropertyPanel::reflectFloat3(const rttr::property& property, DirectX::XMFLO
 	ImGui::PopFont();
 	ImGui::PopStyleColor(3);
 	ImGui::SameLine();
-	if (ImGui::DragFloat("##Y", &value.y))
+	if (ImGui::DragFloat("##Y", &value.y, m_dragFloatStep, 0.0f, 0.0f, "%.6f"))
 	{
 		changed = true;
 	}
@@ -925,7 +931,7 @@ bool PropertyPanel::reflectFloat3(const rttr::property& property, DirectX::XMFLO
 	ImGui::PopFont();
 	ImGui::PopStyleColor(3);
 	ImGui::SameLine();
-	if (ImGui::DragFloat("##Z", &value.z))
+	if (ImGui::DragFloat("##Z", &value.z, m_dragFloatStep, 0.0f, 0.0f, "%.6f"))
 	{
 		changed = true;
 	}

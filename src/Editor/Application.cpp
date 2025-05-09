@@ -382,96 +382,12 @@ void Application::drawDock()
 	//menu bar
 	if (ImGui::BeginMenuBar())
 	{
-		if (ImGui::BeginMenu("File"))
-		{
-			if (ImGui::MenuItem("Open", "CTRL+O"))
-			{
-				openScene();
-			}
-			if (ImGui::MenuItem("New", "CTRL+N"))
-			{
-				newScene();
-			}
-			if (ImGui::MenuItem("Save", "CTRL+S"))
-			{
-				saveScene();
-			}
-			if (ImGui::MenuItem("Clear", "CTRL+C"))
-			{
-				clearScene();
-			}
-			ImGui::EndMenu();
-		}
-
-		static bool checkResDebugPanel = false;
-		static bool checkResStatisticsInfo = false;
-		if (ImGui::BeginMenu("View"))
-		{
-			
-			if (ImGui::Checkbox("Debug Panel", &checkResDebugPanel))
-			{
-				m_debugDeferredRenderPanel->setOpen(checkResDebugPanel);
-				m_debugShadowMapPanel->setOpen(checkResDebugPanel);
-			}
-			
-			if (ImGui::Checkbox("StatisticsInfo", &checkResStatisticsInfo))
-			{
-				Destiny::Engine::GetInstance()->getSceneManager()->showStatisticsInfo(checkResStatisticsInfo);
-			}
-			ImGui::EndMenu();
-		}
-
-		if ((ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyDown(ImGuiKey_N)) ||
-			(ImGui::IsKeyDown(ImGuiKey_RightCtrl) && ImGui::IsKeyDown(ImGuiKey_N))
-			)
-		{
-			if (!ImGui::IsAnyItemActive() && !ImGui::IsAnyItemFocused())
-			{
-				newScene();
-			}
-		}
-		if ((ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyDown(ImGuiKey_S)) ||
-			(ImGui::IsKeyDown(ImGuiKey_RightCtrl) && ImGui::IsKeyDown(ImGuiKey_S))
-			)
-		{
-			if (!ImGui::IsAnyItemActive() && !ImGui::IsAnyItemFocused())
-			{
-				saveScene();
-
-			}
-		}
-		if ((ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyDown(ImGuiKey_O)) ||
-			(ImGui::IsKeyDown(ImGuiKey_RightCtrl) && ImGui::IsKeyDown(ImGuiKey_O))
-			)
-		{
-			if (!ImGui::IsAnyItemActive() && !ImGui::IsAnyItemFocused())
-			{
-				openScene();
-			}
-		}
-		if ((ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyDown(ImGuiKey_C)) ||
-			(ImGui::IsKeyDown(ImGuiKey_RightCtrl) && ImGui::IsKeyDown(ImGuiKey_C))
-			)
-		{
-			if (!ImGui::IsAnyItemActive() && !ImGui::IsAnyItemFocused())
-			{
-				clearScene();
-			}
-		}
-		
-		if (ImGui::IsKeyReleased(ImGuiKey_F9))
-		{
-			if (!ImGui::IsAnyItemActive() && !ImGui::IsAnyItemFocused())
-			{
-				checkResStatisticsInfo = !checkResStatisticsInfo;
-				Destiny::Engine::GetInstance()->getSceneManager()->showStatisticsInfo(checkResStatisticsInfo);
-			}
-		}
+		fileMenu();
+		viewMenu();
+		settingMenu();
 
 		ImGui::EndMenuBar();
 	}
-
-
 
 	m_viewPortPanel->update();
 	m_scenePanel->update();
@@ -549,13 +465,118 @@ void Application::openScene()
 	}
 }
 
-void Application::openScene(const char* scenePath)
-{
-
-}
-
 void Application::clearScene()
 {
 	Destiny::Engine::GetInstance()->getSceneManager()->setCurrentScene(nullptr);
 	m_propertyPanel->onChoosedNode(nullptr);
+}
+
+void Application::fileMenu()
+{
+	if (ImGui::BeginMenu("File"))
+	{
+		if (ImGui::MenuItem("Open", "CTRL+O"))
+		{
+			openScene();
+		}
+		if (ImGui::MenuItem("New", "CTRL+N"))
+		{
+			newScene();
+		}
+		if (ImGui::MenuItem("Save", "CTRL+S"))
+		{
+			saveScene();
+		}
+		if (ImGui::MenuItem("Clear", "CTRL+C"))
+		{
+			clearScene();
+		}
+		ImGui::EndMenu();
+	}
+
+	if ((ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyDown(ImGuiKey_N)) ||
+		(ImGui::IsKeyDown(ImGuiKey_RightCtrl) && ImGui::IsKeyDown(ImGuiKey_N))
+		)
+	{
+		if (!ImGui::IsAnyItemActive() && !ImGui::IsAnyItemFocused())
+		{
+			newScene();
+		}
+	}
+	if ((ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyDown(ImGuiKey_S)) ||
+		(ImGui::IsKeyDown(ImGuiKey_RightCtrl) && ImGui::IsKeyDown(ImGuiKey_S))
+		)
+	{
+		if (!ImGui::IsAnyItemActive() && !ImGui::IsAnyItemFocused())
+		{
+			saveScene();
+
+		}
+	}
+	if ((ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyDown(ImGuiKey_O)) ||
+		(ImGui::IsKeyDown(ImGuiKey_RightCtrl) && ImGui::IsKeyDown(ImGuiKey_O))
+		)
+	{
+		if (!ImGui::IsAnyItemActive() && !ImGui::IsAnyItemFocused())
+		{
+			openScene();
+		}
+	}
+	if ((ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyDown(ImGuiKey_C)) ||
+		(ImGui::IsKeyDown(ImGuiKey_RightCtrl) && ImGui::IsKeyDown(ImGuiKey_C))
+		)
+	{
+		if (!ImGui::IsAnyItemActive() && !ImGui::IsAnyItemFocused())
+		{
+			clearScene();
+		}
+	}
+
+}
+
+void Application::viewMenu()
+{
+	static bool checkResDebugPanel = false;
+	static bool checkResStatisticsInfo = false;
+	if (ImGui::BeginMenu("View"))
+	{
+
+		if (ImGui::Checkbox("Debug Panel", &checkResDebugPanel))
+		{
+			m_debugDeferredRenderPanel->setOpen(checkResDebugPanel);
+			m_debugShadowMapPanel->setOpen(checkResDebugPanel);
+		}
+
+		if (ImGui::Checkbox("StatisticsInfo", &checkResStatisticsInfo))
+		{
+			Destiny::Engine::GetInstance()->getSceneManager()->showStatisticsInfo(checkResStatisticsInfo);
+		}
+		ImGui::EndMenu();
+	}
+
+
+	if (ImGui::IsKeyReleased(ImGuiKey_F9))
+	{
+		if (!ImGui::IsAnyItemActive() && !ImGui::IsAnyItemFocused())
+		{
+			checkResStatisticsInfo = !checkResStatisticsInfo;
+			Destiny::Engine::GetInstance()->getSceneManager()->showStatisticsInfo(checkResStatisticsInfo);
+		}
+	}
+}
+
+void Application::settingMenu()
+{
+	if (ImGui::BeginMenu("Setting"))
+	{
+		ImGui::Text("DragFloatStep");
+		ImGui::SameLine();
+		float step = m_propertyPanel->getDragFloatStep();
+		if (ImGui::InputFloat("Value", &step, 0.0f, 0.0f, "%.6f"))
+		{
+			m_propertyPanel->setDragFloatStep(step);
+		}
+
+		ImGui::EndMenu();
+	}
 }

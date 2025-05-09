@@ -27,6 +27,15 @@ namespace Destiny
 		m_clearRenderTarget(std::make_shared<ClearRenderTarget>())
 	{
 		m_shadowMapSampler = std::make_shared<SamplerState>();
+
+		m_shadowMapSampler->getSamplerDesc()->Filter = D3D11_FILTER_COMPARISON_MIN_MAG_LINEAR_MIP_POINT;
+		m_shadowMapSampler->getSamplerDesc()->AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+		m_shadowMapSampler->getSamplerDesc()->AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+		m_shadowMapSampler->getSamplerDesc()->AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+		m_shadowMapSampler->getSamplerDesc()->ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL;
+		m_shadowMapSampler->getSamplerDesc()->BorderColor[0] = { 1.0f };
+		m_shadowMapSampler->getSamplerDesc()->MinLOD = 0;
+		m_shadowMapSampler->getSamplerDesc()->MaxLOD = D3D11_FLOAT32_MAX;
 		m_shadowMapSampler->load(0);
 	}
 

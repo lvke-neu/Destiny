@@ -80,10 +80,19 @@ namespace Destiny
 
 	void VisualScene::uninitialize()
 	{
+		DirectX::XMMATRIX T
+		(
+			0.5f, 0.0f, 0.0f, 0.0f,
+			0.0f, -0.5f, 0.0f, 0.0f,
+			0.0f, 0.0f, 1.0f, 0.0f,
+			0.5f, 0.5f, 0.0f, 1.0f
+		);
+
 		for (const auto& renderer : Renderer::s_cache)
 		{
 			renderer.second->setConstant("g_directionLightCount", 0);
 			renderer.second->setConstant("g_pointLightCount", 0);
+			renderer.second->setConstant("T", XMMatrixTranspose(T));
 		}
 	}
 

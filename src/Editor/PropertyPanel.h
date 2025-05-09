@@ -17,6 +17,8 @@ public:
 	PropertyPanel();
 public:
 	void update();
+	float getDragFloatStep();
+	void setDragFloatStep(float dragFloatStep);
 public slots:
 	void onChoosedNode(void* parameter);
 private:
@@ -48,4 +50,10 @@ private:
 	bool reflectInt(const rttr::property& property, int& value, float speed = 1.0f, int min = 0, int max = 0);
 private:
 	std::shared_ptr<Destiny::Node> m_choosedNode;
+	float m_dragFloatStep;
 };
+
+inline float PropertyPanel::getDragFloatStep()
+{
+	return m_dragFloatStep;
+}

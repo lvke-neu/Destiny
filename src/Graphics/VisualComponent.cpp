@@ -194,6 +194,30 @@ namespace Destiny
 		}
 	}
 
+	void VisualComponent::onRendererTextureChanged()
+	{
+		if (m_visual)
+		{
+			m_visual->setRendererTexturesChanged();
+		}
+		if (m_shadowVisual)
+		{
+			m_shadowVisual->setRendererTexturesChanged();
+		}
+	}
+
+	void VisualComponent::onRendererSamplerStateChanged()
+	{
+		if (m_visual)
+		{
+			m_visual->setRendererSamplerStatesChanged();
+		}
+		if (m_shadowVisual)
+		{
+			m_shadowVisual->setRendererSamplerStatesChanged();
+		}
+	}
+
 	RTTR_REGISTRATION
 	{
 		rttr::registration::class_<VisualComponent>("VisualComponent")

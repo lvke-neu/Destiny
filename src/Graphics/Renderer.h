@@ -37,7 +37,9 @@ namespace Destiny
 		void							fillConstantBuffers(std::unordered_map<std::string, std::string>& variableLinkConstant, std::unordered_map<std::string, std::shared_ptr<ConstantBuffer>>& constantBuffers);
 		void							modifyConstantBuffersByDifference(std::unordered_map<std::string, std::shared_ptr<ConstantBuffer>>& constantBuffers);
 		void							fillTextures(std::unordered_map<std::string, std::pair<std::shared_ptr<TextureDesc>, std::shared_ptr<Texture>>>& textures);
+		void							modifyTexturesByDifferenece(std::unordered_map<std::string, std::pair<std::shared_ptr<TextureDesc>, std::shared_ptr<Texture>>>& textures);
 		void							fillSamplerStates(std::unordered_map<std::string, std::pair<std::shared_ptr<SamplerStateDesc>, std::shared_ptr<SamplerState>>>& samplerStates);
+		void							modifySamplerStatesByDifferenece(std::unordered_map<std::string, std::pair<std::shared_ptr<SamplerStateDesc>, std::shared_ptr<SamplerState>>>& samplerStates);
 		template<typename T>
 		void							setConstant(const char* name, T value);
 		void							setConstant(const char* name, std::shared_ptr<Blob> blob);
@@ -68,6 +70,8 @@ namespace Destiny
 		std::unordered_map<std::string, std::pair<std::shared_ptr<TextureDesc>, std::shared_ptr<Texture>>> m_textures;
 		std::unordered_map<std::string, std::pair<std::shared_ptr<SamplerStateDesc>, std::shared_ptr<SamplerState>>> m_samplerStates;
 		std::unordered_set<std::string>	m_changedConstantBufferNames;
+		std::unordered_set<std::string>	m_changedTextureNames;
+		std::unordered_set<std::string>	m_changedSamplerStateNames;
 	};
 
 	inline std::shared_ptr<Blob> Renderer::getInputSignatureBlob()

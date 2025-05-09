@@ -111,6 +111,8 @@ namespace Destiny
 
 		m_textures[name].second.reset();
 		m_textures[name].second = texture;
+
+		m_changedTextureNames.insert(name);
 	}
 
 	void Renderer::setSamplerSate(const char* name, std::shared_ptr<SamplerState> samplerState)
@@ -123,6 +125,8 @@ namespace Destiny
 
 		m_samplerStates[name].second.reset();
 		m_samplerStates[name].second = samplerState;
+		
+		m_changedSamplerStateNames.insert(name);
 	}
 
 	std::string Renderer::getPath() 
@@ -483,8 +487,40 @@ namespace Destiny
 		textures = m_textures;
 	}
 
+	void Destiny::Renderer::modifyTexturesByDifferenece(std::unordered_map<std::string, std::pair<std::shared_ptr<TextureDesc>, std::shared_ptr<Texture>>>& textures)
+	{
+		for (const auto& changedTextureName : m_changedTextureNames)
+		{
+			auto iter1 = m_textures.find(changedTextureName);
+			if (iter1 != m_textures.end())
+			{
+				auto iter2 = textures.find(changedTextureName);
+				if (iter2 != textures.end())
+				{
+					iter2->second = iter1->second;
+				}
+			}
+		}
+	}
+
 	void Renderer::fillSamplerStates(std::unordered_map<std::string, std::pair<std::shared_ptr<SamplerStateDesc>, std::shared_ptr<SamplerState>>>& samplerStates)
 	{
 		samplerStates = m_samplerStates;
+	}
+
+	void Destiny::Renderer::modifySamplerStatesByDifferenece(std::unordered_map<std::string, std::pair<std::shared_ptr<SamplerStateDesc>, std::shared_ptr<SamplerState>>>& samplerStates)
+	{
+		for (const auto& changedSamplerStateNames : m_changedSamplerStateNames)
+		{
+			auto iter1 = m_samplerStates.find(changedSamplerStateNames);
+			if (iter1 != m_samplerStates.end())
+			{
+				auto iter2 = samplerStates.find(changedSamplerStateNames);
+				if (iter2 != samplerStates.end())
+				{
+					iter2->second = iter1->second;
+				}
+			}
+		}
 	}
 }

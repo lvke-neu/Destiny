@@ -164,11 +164,27 @@ namespace Destiny
 		}
 	}
 
+	void RenderPass::modifyTexturesByDifferenece(std::unordered_map<std::string, std::pair<std::shared_ptr<TextureDesc>, std::shared_ptr<Texture>>>& textures)
+	{
+		if (m_renderer)
+		{
+			m_renderer->modifyTexturesByDifferenece(textures);
+		}
+	}
+
 	void RenderPass::fillSamplerStates(std::unordered_map<std::string, std::pair<std::shared_ptr<SamplerStateDesc>, std::shared_ptr<SamplerState>>>& samplerStates)
 	{
 		if (m_renderer)
 		{
 			m_renderer->fillSamplerStates(samplerStates);
+		}
+	}
+
+	void RenderPass::modifySamplerStatesByDifferenece(std::unordered_map<std::string, std::pair<std::shared_ptr<SamplerStateDesc>, std::shared_ptr<SamplerState>>>& samplerStates)
+	{
+		if (m_renderer)
+		{
+			m_renderer->modifySamplerStatesByDifferenece(samplerStates);
 		}
 	}
 

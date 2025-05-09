@@ -219,6 +219,56 @@ namespace Destiny
 		}
 	}
 
+	void DirectionLightComponent::notifyVisualRendererTextureChanged(std::shared_ptr<Node> node)
+	{
+		if (!node)
+		{
+			return;
+		}
+
+		for (const auto& component : node->getComponents())
+		{
+			auto visualComponent = std::dynamic_pointer_cast<VisualComponent>(component);
+			if (visualComponent)
+			{
+				if (m_node)
+				{
+					visualComponent->onRendererTextureChanged();
+				}
+			}
+		}
+
+		for (const auto& childNode : node->getChilds())
+		{
+			notifyVisualRendererTextureChanged(childNode);
+		}
+	}
+
+	void DirectionLightComponent::notifyVisualRendererSamplerStateChanged(std::shared_ptr<Node> node)
+	{
+		if (!node)
+		{
+			return;
+		}
+
+		for (const auto& component : node->getComponents())
+		{
+			auto visualComponent = std::dynamic_pointer_cast<VisualComponent>(component);
+			if (visualComponent)
+			{
+				if (m_node)
+				{
+					visualComponent->onRendererSamplerStateChanged();
+				}
+			}
+		}
+
+		for (const auto& childNode : node->getChilds())
+		{
+			notifyVisualRendererSamplerStateChanged(childNode);
+		}
+	}
+
 	void DirectionLightComponent::updateDirectionLightRendererConstant(const std::vector<DirectionLight>& directionLights)
 	{
 		std::shared_ptr<Blob> blob = std::make_shared<Blob>(directionLights.size() * sizeof(DirectionLight));
@@ -273,6 +323,9 @@ namespace Destiny
 		auto renderSystem =std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
 		auto shadowMapPipeline = std::static_pointer_cast<ShadowMapPipeline>(renderSystem->getShadowMapPipeline());
 		shadowMapPipeline->onResize(m_resolutionWidth, m_resolutionHeight);
+
+		notifyVisualRendererTextureChanged(m_scene);
+		notifyVisualRendererSamplerStateChanged(m_scene);
 	}
 
 	RTTR_REGISTRATION

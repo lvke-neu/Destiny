@@ -18,10 +18,12 @@ namespace Destiny
 		m_component(nullptr),
 		m_constantsChanged(false),
 		m_texturesChanged(false),
-		m_samplerStatesrChanged(false),
+		m_samplerStatesChanged(false),
 		m_renderPassChanged(false),
 		m_meshChanged(false),
 		m_rendererConstantsChanged(false),
+		m_rendererTexturesChanged(false),
+		m_rendererSamplerStatesChanged(false),
 		m_visualCategory(VisualCategory::RenderToScene),
 		m_enableShadow(true)
 	{
@@ -169,7 +171,21 @@ namespace Destiny
 				m_rendererConstantsChanged = false;
 			}
 
-			if (m_constantsChanged)
+			if (m_rendererTexturesChanged)
+			{
+				m_renderPass->modifyTexturesByDifferenece(m_textures);
+				m_drawParameters->textures = m_textures;
+				m_rendererTexturesChanged = false;
+			}
+
+			if (m_rendererSamplerStatesChanged)
+			{
+				m_renderPass->modifySamplerStatesByDifferenece(m_samplerStates);
+				m_drawParameters->samplerStates = m_samplerStates;
+				m_rendererSamplerStatesChanged = false;
+			}
+
+			 if (m_constantsChanged)
 			{
 				for (const auto& constant : m_constants)
 				{
@@ -207,7 +223,7 @@ namespace Destiny
 				m_texturesChanged = false;
 			}
 
-			if (m_samplerStatesrChanged)
+			if (m_samplerStatesChanged)
 			{
 				for (const auto& samplerState : m_visualSamplerStates)
 				{
@@ -220,7 +236,7 @@ namespace Destiny
 					iter->second.second = samplerState.second;
 				}
 				m_drawParameters->samplerStates = m_samplerStates;
-				m_samplerStatesrChanged = false;
+				m_samplerStatesChanged = false;
 			}
 
 			//if (m_renderPassChanged || m_meshChanged)
@@ -265,6 +281,6 @@ namespace Destiny
 	void Visual::setSamplerSate(const char* name, std::shared_ptr<SamplerState> samplerState)
 	{
 		m_visualSamplerStates[name] = samplerState;
-		m_samplerStatesrChanged = true;
+		m_samplerStatesChanged = true;
 	}
 }

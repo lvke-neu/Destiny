@@ -40,6 +40,8 @@ namespace Destiny
 	private:
 		void				traversal(std::shared_ptr<Node> node, std::vector<DirectionLight>& directionLights, bool ignoreSelf = false);
 		void				notifyVisualRendererConstantChanged(std::shared_ptr<Node> node);
+		void				notifyVisualRendererTextureChanged(std::shared_ptr<Node> node);
+		void				notifyVisualRendererSamplerStateChanged(std::shared_ptr<Node> node);
 		void				updateDirectionLightRendererConstant(const std::vector<DirectionLight>& directionLights);
 		void				updateShadowMapRendererConstant();
 		void				notifyShadoMapPipiline();

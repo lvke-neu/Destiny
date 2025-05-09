@@ -36,6 +36,8 @@ namespace Destiny
 		virtual void				onEnterScene();
 
 		void						onRendererConstantChanged();
+		void						onRendererTextureChanged();
+		void						onRendererSamplerStateChanged();
 	public:
 		void						setRenderPass(std::shared_ptr<RenderPass> renderPass);
 		void						setMesh(std::shared_ptr<Mesh> mesh);

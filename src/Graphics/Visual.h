@@ -41,6 +41,8 @@ namespace Destiny
 		void								setConstant(const char* name, T value);
 		void								setConstant(const char* name, std::shared_ptr<Blob> blob);
 		void								setRendererConstantChanged();
+		void								setRendererTexturesChanged();
+		void								setRendererSamplerStatesChanged();
 		void								setShaderResource(const char* name, std::shared_ptr<Texture> texture);
 		void								setSamplerSate(const char* name, std::shared_ptr<SamplerState> samplerState);
 		void							    reCompileShader();
@@ -65,7 +67,9 @@ namespace Destiny
 		bool m_constantsChanged;
 		bool m_rendererConstantsChanged;
 		bool m_texturesChanged;
-		bool m_samplerStatesrChanged;
+		bool m_rendererTexturesChanged;
+		bool m_samplerStatesChanged;
+		bool m_rendererSamplerStatesChanged;
 		bool m_renderPassChanged;
 		bool m_meshChanged;
 
@@ -111,6 +115,16 @@ namespace Destiny
 	inline void Visual::setRendererConstantChanged()
 	{
 		m_rendererConstantsChanged = true;
+	}
+
+	inline void Visual::setRendererTexturesChanged()
+	{
+		m_rendererTexturesChanged = true;
+	}
+
+	inline void Visual::setRendererSamplerStatesChanged()
+	{
+		m_rendererSamplerStatesChanged = true;
 	}
 
 	inline void Visual::reCompileShader()

@@ -4,12 +4,14 @@
 
 namespace Destiny
 {
+	class BindRenderTargets;
+	class ClearRenderTarget;
 	class WaterComponent : public VisualComponent
 	{
 		RTTR_ENABLE(VisualComponent);
 	public:
 		WaterComponent();
-		virtual ~WaterComponent() = default;
+		virtual ~WaterComponent();
 	public:
 		GET(float, width);
 		void set_width(float width);
@@ -44,6 +46,13 @@ namespace Destiny
 		void set_waveLevel(float waveLevel);
 	public:
 		virtual void onUpdate(float deltaTime) override;
+		virtual void onEnterScene() override;
+	public:
+		std::shared_ptr<BindRenderTargets>		m_bindRenderTargets;
+	private:
+		void onResize(void* data);
+	private:
+		std::shared_ptr<ClearRenderTarget>		m_clearRenderTarget;
 	private:
 		float m_width;
 		float m_depth;

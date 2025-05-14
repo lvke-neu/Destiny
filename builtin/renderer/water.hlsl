@@ -94,6 +94,7 @@ Texture2D t_normal : register(t1);
 Texture2D t_metallic : register(t2);
 Texture2D t_roughness : register(t3);
 Texture2D t_ao : register(t4);
+Texture2D t_underwater : register(t5);
 SamplerState s_sampler : register(s0);
 
 float4 PS(VertexOut pIn) : SV_Target
@@ -184,5 +185,10 @@ float4 PS(VertexOut pIn) : SV_Target
     color = color / (color + float3(1.0f, 1.0f, 1.0f));
     color = pow(color, float3(1.0f / 2.2f, 1.0f / 2.2f, 1.0f / 2.2f));
 
-    return float4(color, u_waterColor.a);
+    //法线扰动模拟折射
+    float2 refractOffset = pIn.normalW.xy * 0.03;
+    float3 underwaterColor = t_underwater.Sample(s_sampler, pIn.texcoord + refractOffset).xyz;
+    float3 finalColor = lerp(underwaterColor, color.xyz, u_waterColor.a);
+
+    return float4(finalColor, u_waterColor.a);
 }

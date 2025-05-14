@@ -6,6 +6,15 @@
 #include "Graphics/Mesh.h"
 #include "Graphics/MeshProvider.h"
 #include "Graphics/PbrMaterial.h"
+#include "Graphics/Texture.h"
+#include "Graphics/VisualScene.h"
+#include "Graphics/ForwardOpaquePipeline.h"
+#include "Graphics/RenderSystem.h"
+#include "Graphics/BindRenderTargets.h"
+#include "Graphics/ClearRenderTarget.h"
+#include "Graphics/RenderTargetView.h"
+#include "Graphics/DepthStencilView.h"
+#include "Engine/EventSystem.h"
 
 namespace Destiny
 {
@@ -21,7 +30,9 @@ namespace Destiny
 		m_waveColor({ 0.0f, 0.2f, 0.4f, 0.6f }),
 		m_waveSpeed(1.0f),
 		m_waveScale(20.0f),
-		m_waveLevel(0.0f)
+		m_waveLevel(0.0f),
+		m_bindRenderTargets(std::make_shared<BindRenderTargets>()),
+		m_clearRenderTarget(std::make_shared<ClearRenderTarget>())
 	{
 		auto renderer = Renderer::Create("builtin://renderer/water.hlsl");
 		renderer->load(0);
@@ -48,6 +59,18 @@ namespace Destiny
 		setConstant("u_waterColor", m_waveColor);
 		setConstant("u_waveScale", m_waveScale);
 		setConstant("u_waterLevel", m_waveLevel);
+
+		//auto texture = Texture::Create("builtin://texture/brick.dds");
+		//texture->load();
+		//setShaderResource("t_underwater", texture);
+
+		Engine::GetInstance()->getEventSystem()->registerEvent(EventType::WindowResize, std::bind(&WaterComponent::onResize, this, std::placeholders::_1));
+		set_updateCategory(UpdateCategory::late_update);
+	}
+
+	WaterComponent::~WaterComponent()
+	{
+		Engine::GetInstance()->getEventSystem()->unRegisterEvent(EventType::WindowResize, std::bind(&WaterComponent::onResize, this, std::placeholders::_1));
 	}
 
 	void WaterComponent::set_width(float width)
@@ -143,6 +166,78 @@ namespace Destiny
 	{
 		m_sumTime += deltaTime * m_waveSpeed;
 		setConstant("u_time", m_sumTime);
+
+
+		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
+		auto forwardOpaquePipeline = std::static_pointer_cast<ForwardOpaquePipeline>(renderSystem->getForwardOpaquePipeline());
+
+		renderSystem->beginEvent(L"Under Water");
+		m_bindRenderTargets->execute(renderSystem->getImmediateContext());
+		m_clearRenderTarget->execute(renderSystem->getImmediateContext());
+		forwardOpaquePipeline->GraphicsCommandList::execute(renderSystem->getImmediateContext());
+		renderSystem->endEvent();
+	}
+
+	void WaterComponent::onEnterScene()
+	{
+		VisualComponent::onEnterScene();
+		
+		WindowResizeData wrd;
+		wrd.width = 100;
+		wrd.height = 100;
+		
+		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
+		if (renderSystem)
+		{
+			if (renderSystem->m_bindRenderTargets->getRenderTargetViews(0))
+			{
+				wrd.width = renderSystem->m_bindRenderTargets->getRenderTargetViews(0)->getWidth();
+				wrd.height = renderSystem->m_bindRenderTargets->getRenderTargetViews(0)->getHeight();
+			}
+		}
+		
+		onResize(&wrd);
+	}
+
+	void WaterComponent::onResize(void* data)
+	{
+		WindowResizeData wrd = *(WindowResizeData*)data;
+		if (!wrd.width || !wrd.height)
+		{
+			return;
+		}
+		//DXGI_FORMAT_R32G32B32A32_FLOAT = 2,
+		auto renderTargetView0 = std::make_shared<RenderTargetView>(wrd.width, wrd.height, 2);
+		renderTargetView0->load(0);
+
+		auto depthStencilView0 = std::make_shared<DepthStencilView>(wrd.width, wrd.height);
+		depthStencilView0->load(0);
+
+		auto viewPort0 = std::make_shared<D3D11_VIEWPORT>();
+		viewPort0->TopLeftX = 0.0f;
+		viewPort0->TopLeftY = 0.0f;
+		viewPort0->Width = (float)wrd.width;
+		viewPort0->Height = (float)wrd.height;
+		viewPort0->MinDepth = 0.0f;
+		viewPort0->MaxDepth = 1.0f;
+
+		std::vector<std::shared_ptr<RenderTargetView>>	renderTargetViews;
+		renderTargetViews.push_back(renderTargetView0);
+
+		std::vector<std::shared_ptr<DepthStencilView>>	depthStencilViews;
+		depthStencilViews.push_back(depthStencilView0);
+
+		std::vector<std::shared_ptr<D3D11_VIEWPORT>>	viewPorts;
+		viewPorts.push_back(viewPort0);
+
+		m_bindRenderTargets->setRenderTargetViews(renderTargetViews);
+		m_bindRenderTargets->setDepthStencilViews(depthStencilViews);
+		m_bindRenderTargets->setViewports(viewPorts);
+
+		m_clearRenderTarget->setRenderTargetView(m_bindRenderTargets->getRenderTargetViews(0));
+		m_clearRenderTarget->setDepthStencilView(m_bindRenderTargets->getDepthStencilViews(0));
+
+		setShaderResource("t_underwater", renderTargetView0->getTexture());
 	}
 
 	RTTR_REGISTRATION

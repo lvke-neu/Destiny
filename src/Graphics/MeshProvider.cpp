@@ -417,4 +417,84 @@ namespace Destiny
 
 		return mesh;
 	}
+
+	std::shared_ptr<Mesh> MeshProvider::Create_Water(float width, float depth, unsigned int m, unsigned int n)
+	{
+		std::string key = "Water_" + std::to_string(width) + "_" + std::to_string(depth) + "_" + std::to_string(m) + "_" + std::to_string(n);
+
+		auto iter = m_cache.find(key);
+		if (iter != m_cache.end())
+		{
+			return m_cache[key];
+		}
+
+		unsigned int vertexCount = m * n;
+		unsigned int faceCount = (m - 1) * (n - 1) * 2;
+
+		std::shared_ptr<Blob> data = nullptr;
+		
+		std::vector<PositionTexcoord> vertices;
+		vertices.resize(vertexCount);
+
+		float halfWidth = 0.5f * width;
+		float halfDepth = 0.5f * depth;
+
+		float dx = width / (m - 1);
+		float dz = depth / (n - 1);
+
+		float du = 1.0f / (m - 1);
+		float dv = 1.0f / (n - 1);
+
+		for (unsigned int i = 0; i < n; ++i)
+		{
+			float z = halfDepth - i * dz;
+			for (unsigned int j = 0; j < m; ++j)
+			{
+				float x = -halfWidth + j * dx;
+
+				vertices[i * m + j].position = DirectX::XMFLOAT3(x, 0.0f, z);
+				vertices[i * m + j].texcoord = DirectX::XMFLOAT2(j * du, i * dv);
+			}
+		}
+
+		data.reset(new Blob(vertices.size() * sizeof(PositionTexcoord)));
+		data->copyfrom(vertices.data(), vertices.size() * sizeof(PositionTexcoord));
+		std::shared_ptr<VertexBuffer> vertexBuffer = std::make_shared<VertexBuffer>(InputLayout::Create_PositionTexcoord(), (unsigned int)sizeof(PositionTexcoord), 0, data);
+
+		std::vector<unsigned int> indices;
+		indices.resize(faceCount * 3);
+		unsigned int k = 0;
+		for (unsigned int i = 0; i < n - 1; ++i)
+		{
+			for (unsigned int j = 0; j < m - 1; ++j)
+			{
+				indices[k] = i * m + j;
+				indices[k + 1] = i * m + j + 1;
+				indices[k + 2] = (i + 1) * m + j;
+
+				indices[k + 3] = (i + 1) * m + j;
+				indices[k + 4] = i * m + j + 1;
+				indices[k + 5] = (i + 1) * m + j + 1;
+
+				k += 6;
+			}
+		}
+
+		data.reset(new Blob(indices.size() * sizeof(unsigned int)));
+		data->copyfrom(indices.data(), indices.size() * sizeof(unsigned int));
+		std::shared_ptr<IndexBuffer> indexBuffer = std::make_shared<IndexBuffer>(IndexBuffer::IndexType::Index32, data);
+
+		DirectX::BoundingBox aabb{ { 0.0f, 0.0f, 0.0f },{ FLT_MAX, FLT_MAX, FLT_MAX } };
+		Mesh::DrawCall drawCall;
+		drawCall.drawMethod = Mesh::DrawMethod::DrawIndexed;
+		drawCall.primitiveTopology = Mesh::PrimitiveTopology::TriangleList;
+		drawCall.indexCount = (unsigned int)indices.size();
+
+
+		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(aabb, drawCall, vertexBuffer, indexBuffer);
+
+		m_cache[key] = mesh;
+
+		return mesh;
+	}
 }

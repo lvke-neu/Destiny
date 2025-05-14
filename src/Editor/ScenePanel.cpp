@@ -90,9 +90,21 @@ void ScenePanel::popup()
 		//	ImGui::EndPopup();
 		//}
 		ImGui::Text((m_choosedNode->get_name() + ":").c_str());
+		if (ImGui::Button("Locate"))
+		{
+			if (m_choosedNode)
+			{
+				auto scene = Destiny::Engine::GetInstance()->getSceneManager()->getCurrentScene();
+				if (scene)
+				{
+					Destiny::Transform transform;
+					transform.set_translation(m_choosedNode->get_translation());
+					scene->locate(transform);
+				}
+			}
+		}
 		if (ImGui::Button("AddNode")) 
 		{
-
 			auto node = std::make_shared<Destiny::Node>("New Node");
 			node->addToParent(m_choosedNode);
 			ImGui::CloseCurrentPopup();

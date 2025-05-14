@@ -20,6 +20,7 @@ namespace Destiny
 		static std::shared_ptr<PbrMaterial> Create_Plastic();
 		static std::shared_ptr<PbrMaterial> Create_Rusted_Iron();
 		static std::shared_ptr<PbrMaterial> Create_Wall();
+		static std::shared_ptr<PbrMaterial> Create_Water();
 	public: 
 		std::string get_albedo();
 		void set_albedo(std::string albedo);

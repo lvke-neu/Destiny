@@ -29,9 +29,11 @@ private:
 
 	void reflectBool(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
 	void reflectString(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
+	void reflectUInt(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
 	void reflectFloat(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
 	void reflectFloat2(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
 	void reflectFloat3(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
+	void reflectFloat4(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
 	void reflectColor(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
 	void reflectTransform(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
 	void reflectEnumeration(const rttr::property& property, std::shared_ptr<Destiny::Object> object);

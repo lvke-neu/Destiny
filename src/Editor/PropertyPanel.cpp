@@ -126,6 +126,10 @@ void PropertyPanel::reflectProperty(const rttr::property& property, std::shared_
 	{
 		reflectFloat(property, object);
 	}
+	else if (property.get_type() == rttr::type::get<unsigned int>())
+	{
+		reflectUInt(property, object);
+	}
 	else if (property.get_type() == rttr::type::get<DirectX::XMFLOAT2>())
 	{
 		reflectFloat2(property, object);
@@ -133,6 +137,10 @@ void PropertyPanel::reflectProperty(const rttr::property& property, std::shared_
 	else if (property.get_type() == rttr::type::get<DirectX::XMFLOAT3>())
 	{
 		reflectFloat3(property, object);
+	}
+	else if (property.get_type() == rttr::type::get<DirectX::XMFLOAT4>())
+	{
+		reflectFloat4(property, object);
 	}
 	else if (property.get_type() == rttr::type::get<Destiny::Color>())
 	{
@@ -267,6 +275,26 @@ void PropertyPanel::reflectString(const rttr::property& property, std::shared_pt
 		//	//}
 		//}
 	}
+}
+
+void PropertyPanel::reflectUInt(const rttr::property& property, std::shared_ptr<Destiny::Object> object)
+{
+	int value = (int)property.get_value(object).to_uint32();
+
+	ImGui::PushID(property.get_name().data());
+	ImGui::Columns(2);
+	ImGui::Text(property.get_name().data());
+	ImGui::NextColumn();
+	if (ImGui::DragInt(("##" + property.get_name().to_string()).c_str(), &value, m_dragFloatStep, 0, UINT32_MAX))
+	{
+		if (value > 0)
+		{
+			unsigned int tmpValue = (unsigned int)value;
+			property.set_value(object, tmpValue);
+		}
+	}
+	ImGui::Columns(1);
+	ImGui::PopID();
 }
 
 void PropertyPanel::reflectFloat(const rttr::property& property, std::shared_ptr<Destiny::Object> object)
@@ -431,6 +459,114 @@ void PropertyPanel::reflectFloat3(const rttr::property& property, std::shared_pt
 		changed = true;
 	}
 	ImGui::PopItemWidth();
+
+
+	ImGui::PopStyleVar();
+
+	ImGui::Columns(1);
+	ImGui::PopID();
+
+	if (changed)
+	{
+		property.set_value(object, value);
+	}
+}
+
+void PropertyPanel::reflectFloat4(const rttr::property& property, std::shared_ptr<Destiny::Object> object)
+{
+	bool changed = false;
+
+	DirectX::XMFLOAT4 value;
+	property.get_value(object).convert(value);
+
+	ImGuiIO& io = ImGui::GetIO();
+	auto boldFont = io.Fonts->Fonts[0];
+
+	ImGui::PushID(property.get_name().data());
+	ImGui::Columns(2);
+	ImGui::SetColumnWidth(0, 100.0f);
+	ImGui::Text(property.get_name().data());
+	ImGui::NextColumn();
+
+	ImGui::PushMultiItemsWidths(4, ImGui::CalcItemWidth());
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0, 0 });
+
+	float lineHeigh = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
+	ImVec2 buttonSize = { lineHeigh + 3.0f, lineHeigh };
+
+	ImGui::PushStyleColor(ImGuiCol_Button, { 0.8f, 0.1f, 0.15f, 1.0f });
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.9f, 0.2f, 0.2f, 1.0f });
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 0.8f, 0.1f, 0.15f, 1.0f });
+	ImGui::PushFont(boldFont);
+	if (ImGui::Button("X", buttonSize))
+	{
+		value.x = 0.0f;
+	}
+	ImGui::PopFont();
+	ImGui::PopStyleColor(3);
+	ImGui::SameLine();
+	if (ImGui::DragFloat("##X", &value.x, m_dragFloatStep, 0.0f, 0.0f, "%.6f"))
+	{
+		changed = true;
+	}
+	ImGui::PopItemWidth();
+	ImGui::SameLine();
+
+	ImGui::PushStyleColor(ImGuiCol_Button, { 0.2f, 0.7f, 0.2f, 1.0f });
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.3f, 0.8f, 0.3f, 1.0f });
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 0.2f, 0.7f, 0.2f, 1.0f });
+	ImGui::PushFont(boldFont);
+	if (ImGui::Button("Y", buttonSize))
+	{
+		value.y = 0.0f;
+		changed = true;
+	}
+	ImGui::PopFont();
+	ImGui::PopStyleColor(3);
+	ImGui::SameLine();
+	if (ImGui::DragFloat("##Y", &value.y, m_dragFloatStep, 0.0f, 0.0f, "%.6f"))
+	{
+		changed = true;
+	}
+	ImGui::PopItemWidth();
+	ImGui::SameLine();
+
+	ImGui::PushStyleColor(ImGuiCol_Button, { 0.1f, 0.25f, 0.8f, 1.0f });
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.2f, 0.3f, 0.2f, 1.0f });
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 0.1f, 0.25f, 0.8f, 1.0f });
+	ImGui::PushFont(boldFont);
+	if (ImGui::Button("Z", buttonSize))
+	{
+		value.z = 0.0f;
+		changed = true;
+	}
+	ImGui::PopFont();
+	ImGui::PopStyleColor(3);
+	ImGui::SameLine();
+	if (ImGui::DragFloat("##Z", &value.z, m_dragFloatStep, 0.0f, 0.0f, "%.6f"))
+	{
+		changed = true;
+	}
+	ImGui::PopItemWidth();
+	ImGui::SameLine();
+
+	ImGui::PushStyleColor(ImGuiCol_Button, { 0.8f, 0.8f, 0.15f, 1.0f });
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.9f, 0.8f, 0.2f, 1.0f });
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 0.8f, 0.8f, 0.15f, 1.0f });
+	ImGui::PushFont(boldFont);
+	if (ImGui::Button("W", buttonSize))
+	{
+		value.w = 0.0f;
+	}
+	ImGui::PopFont();
+	ImGui::PopStyleColor(3);
+	ImGui::SameLine();
+	if (ImGui::DragFloat("##W", &value.w, m_dragFloatStep, 0.0f, 0.0f, "%.6f"))
+	{
+		changed = true;
+	}
+	ImGui::PopItemWidth();
+	ImGui::SameLine();
 
 
 	ImGui::PopStyleVar();

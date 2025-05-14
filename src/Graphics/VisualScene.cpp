@@ -217,6 +217,14 @@ namespace Destiny
 		}
 	}
 
+	void VisualScene::locate(const Transform& transform)
+	{
+		if (m_cameraNode)
+		{
+			m_cameraNode->set_transform(transform);
+		}
+	}
+
 	RTTR_REGISTRATION
 	{
 		rttr::registration::class_<VisualScene>("VisualScene")

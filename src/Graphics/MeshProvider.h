@@ -16,6 +16,7 @@ namespace Destiny
 		static std::shared_ptr<Mesh> Create_Triangle_PositionColor();
 		static std::shared_ptr<Mesh> Create_Position3();
 		static std::shared_ptr<Mesh> Create_FullScreenTriangle();
+		static std::shared_ptr<Mesh> Create_Water(float width, float depth, unsigned int m, unsigned int n);
 	private:
 		static std::unordered_map<std::string, std::shared_ptr<Mesh>> m_cache;
 	};

@@ -15,6 +15,7 @@ namespace Destiny
 		virtual void uninitialize() = 0;
 		virtual void update(float deltaTime) = 0;
 		virtual void lateUpdate(float deltaTime) = 0;
-		virtual void onCull() = 0;	
+		virtual void onCull() = 0;
+		virtual void locate(const Transform& transform) = 0;
 	};
 }

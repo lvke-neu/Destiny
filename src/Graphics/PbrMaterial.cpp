@@ -107,6 +107,24 @@ namespace Destiny
 		return pbrMaterial;
 	}
 
+	std::shared_ptr<PbrMaterial> PbrMaterial::Create_Water()
+	{
+		auto pbrMaterial = std::make_shared<PbrMaterial>();
+
+		Pixel pixel{ (unsigned char)0, (unsigned char)(0.2 * 255), (unsigned char)(0.4 * 255), (unsigned char)(0.6 * 255) };
+		auto blob = std::make_shared<Blob>(sizeof(Pixel));
+		blob->copyfrom(&pixel, sizeof(Pixel));
+
+		auto texture = Texture::Create2D(DXGI_FORMAT_R8G8B8A8_UNORM, 1, 1, blob, sizeof(Pixel), sizeof(Pixel));
+		pbrMaterial->setAlbedo(texture);
+		pbrMaterial->set_normal("builtin://texture/pbr/default/normal.png");
+		pbrMaterial->set_metallic("builtin://texture/pbr/default/metallic.png");
+		pbrMaterial->set_roughness("builtin://texture/pbr/default/roughness.png");
+		pbrMaterial->set_ao("builtin://texture/pbr/default/ao.png");
+
+		return pbrMaterial;
+	}
+
 	std::string PbrMaterial::get_albedo()
 	{
 		if (m_albedo)

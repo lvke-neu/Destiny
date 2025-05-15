@@ -21,6 +21,8 @@ ENDIF()
 
 #spdlog
 include_directories("3rdparty/spdlog/include")
+
+#rapidjson
 include_directories("3rdparty/rapidjson/include")
 
 #assimp
@@ -56,6 +58,7 @@ set(BUILD_PACKAGE OFF)
 set(USE_PCH OFF)
 set(CUSTOM_DOXYGEN_STYLE OFF)
 add_subdirectory("3rdparty/rttr")
+
 #freetype
 set(FT_DISABLE_ZLIB ON)
 set(DISABLE_FORCE_DEBUG_POSTFIX ON)
@@ -72,6 +75,8 @@ file(GLOB SRC_EDITOR_IMGUI src/Editor/ImGui/*)
 file(GLOB SRC_GRAPHICS src/Graphics/*)
 file(GLOB SRC_GRAPHICS_GRAPHICPIPELINE src/Graphics/GraphicsPipeline/*)
 file(GLOB SRC_GRAPHICS_GUI src/Graphics/Gui/*)
+file(GLOB SRC_GRAPHICS_THIRDPARTY_STBIMAGE src/Graphics/ThirdParty/stb_image/*)
+file(GLOB SRC_GRAPHICS_THIRDPARTY_DIRECTXTEX src/Graphics/ThirdParty/DirectXTex/*)
 file(GLOB SRC_Math src/Math/*)
 file(GLOB SRC_SCENE src/Scene/*)
 file(GLOB SRC_SCENE_RUNTIMEEFFECT src/Scene/RuntimeEffect/*)
@@ -90,6 +95,8 @@ source_group("Editor\\ImGui" FILES ${SRC_EDITOR_IMGUI})
 source_group("Graphics" FILES ${SRC_GRAPHICS})
 source_group("Graphics\\GraphicsPipeline" FILES ${SRC_GRAPHICS_GRAPHICPIPELINE})
 source_group("Graphics\\Gui" FILES ${SRC_GRAPHICS_GUI})
+source_group("Graphics\\ThirdParty\\stb_image" FILES ${SRC_GRAPHICS_THIRDPARTY_STBIMAGE})
+source_group("Graphics\\ThirdParty\\DirectXTex" FILES ${SRC_GRAPHICS_THIRDPARTY_DIRECTXTEX})
 source_group("Math" FILES ${SRC_Math})
 source_group("Scene" FILES ${SRC_SCENE})
 source_group("Scene\\RuntimeEffect" FILES ${SRC_SCENE_RUNTIMEEFFECT})
@@ -106,6 +113,8 @@ ${SRC_GRAPHICS}
 ${SRC_GRAPHICS_GRAPHICPIPELINE} 
 ${SRC_GRAPHICS_MODEL} 
 ${SRC_GRAPHICS_GUI} 
+${SRC_GRAPHICS_THIRDPARTY_STBIMAGE} 
+${SRC_GRAPHICS_THIRDPARTY_DIRECTXTEX} 
 ${SRC_Math} 
 ${SRC_SCENE} 
 ${SRC_SCENE_RUNTIMEEFFECT}

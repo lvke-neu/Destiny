@@ -18,7 +18,7 @@ namespace Destiny
 
 	}
 
-	Texture::Texture(ID3D11Texture2D* resource, ID3D11ShaderResourceView* shaderResourceView) :
+	Texture::Texture(ID3D11Resource* resource, ID3D11ShaderResourceView* shaderResourceView) :
 		m_resource(resource),
 		m_shaderResourceView(shaderResourceView)
 	{

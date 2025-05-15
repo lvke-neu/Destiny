@@ -15,7 +15,11 @@ namespace Destiny
 	public:
 		GET(std::string, texture);
 		void set_texture(std::string texture);
+
+		GET(float, exposure);
+		void set_exposure(float exposure);
 	private:
 		std::string m_texture;
+		float m_exposure;
 	};
 }

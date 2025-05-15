@@ -13,7 +13,8 @@
 namespace Destiny
 {
 	SkyboxComponent::SkyboxComponent() :
-		m_texture("builtin://texture/skybox/daylight.dds")
+		m_texture("builtin://texture/skybox/daylight.dds"),
+		m_exposure(1.0f)
 	{
 		auto renderer = Renderer::Create("builtin://renderer/skybox.hlsl");
 		renderer->load(0);
@@ -41,32 +42,33 @@ namespace Destiny
 
 		setShaderResource("t_cube", texture);
 		setSamplerSate("s_sampler", sampler);
+		setConstant("exposure", m_exposure);
 	}
 
 	void SkyboxComponent::onNodeTransformChanged()
 	{
-		if (getVisual())
-		{
-			getVisual()->setConstant("u_worldMatrix", DirectX::XMMatrixTranspose(DirectX::XMMatrixIdentity()));
-		}	
+		setConstant("u_worldMatrix", DirectX::XMMatrixTranspose(DirectX::XMMatrixIdentity()));
 	}
 
 	void SkyboxComponent::set_texture(std::string texture)
 	{
-		auto visual = getVisual();
-		if (visual)
-		{
-			m_texture = texture;
-			auto texture = Texture::Create(m_texture.c_str());
-			texture->load();
-			visual->setShaderResource("t_cube", texture);
-		}
+		m_texture = texture;
+		auto tex = Texture::Create(m_texture.c_str());
+		tex->load();
+		setShaderResource("t_cube", tex);
+	}
+
+	void SkyboxComponent::set_exposure(float exposure)
+	{
+		m_exposure = exposure;
+		setConstant("exposure", m_exposure);
 	}
 
 	RTTR_REGISTRATION
 	{
 		rttr::registration::class_<SkyboxComponent>("SkyboxComponent")
 			.constructor<>()
-			.property("texture", &SkyboxComponent::get_texture, &SkyboxComponent::set_texture);
+			.property("texture", &SkyboxComponent::get_texture, &SkyboxComponent::set_texture)
+			.property("exposure", &SkyboxComponent::get_exposure, &SkyboxComponent::set_exposure);
 	}
 }

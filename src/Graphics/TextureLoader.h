@@ -14,5 +14,6 @@ namespace Destiny
 	private:
 		void loadFromPath(std::shared_ptr<Asset> asset);
 		void loadFromMemory(std::shared_ptr<Asset> asset);
+		void loadFromHDR(std::shared_ptr<Asset> asset);
 	};
 }

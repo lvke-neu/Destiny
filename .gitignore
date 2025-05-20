@@ -9,7 +9,6 @@ backup/
 lib/
 *.cso
 *.mbo
-*.inc
 *.ilk
 *.lib
 *.iobj

@@ -152,183 +152,178 @@ namespace Destiny
 		
 	}
 
-	size_t GetBytesPerPixel(DXGI_FORMAT format)
+	DirectX::XMFLOAT2 DirectionToPanoramaUV(const DirectX::XMFLOAT3& direction)
 	{
-		switch (format)
+		float phi = atan2f(direction.z, direction.x);         
+		float theta = acosf(direction.y);                     
+
+		float u = 0.5f + phi / (2.0f * DirectX::XM_PI);
+		float v = theta / DirectX::XM_PI;
+
+		return { u, v };
+	}
+
+	template<typename T>
+	T clamp(T value, T min, T max) 
+	{
+		if (value < min)
 		{
-		case DXGI_FORMAT_R8_UNORM:
-		case DXGI_FORMAT_R8_SNORM:
-		case DXGI_FORMAT_R8_UINT:
-		case DXGI_FORMAT_R8_SINT:
-			return 1;
-
-		case DXGI_FORMAT_R16_UNORM:
-		case DXGI_FORMAT_R16_SNORM:
-		case DXGI_FORMAT_R16_UINT:
-		case DXGI_FORMAT_R16_SINT:
-		case DXGI_FORMAT_R16_FLOAT:
-		case DXGI_FORMAT_D16_UNORM:
-		case DXGI_FORMAT_R8G8_UNORM:
-		case DXGI_FORMAT_R8G8_SNORM:
-		case DXGI_FORMAT_R8G8_UINT:
-		case DXGI_FORMAT_R8G8_SINT:
-			return 2;
-
-		case DXGI_FORMAT_R32_UINT:
-		case DXGI_FORMAT_R32_SINT:
-		case DXGI_FORMAT_R32_FLOAT:
-		case DXGI_FORMAT_R24_UNORM_X8_TYPELESS:
-		case DXGI_FORMAT_X24_TYPELESS_G8_UINT:
-		case DXGI_FORMAT_R8G8B8A8_UNORM:
-		case DXGI_FORMAT_R8G8B8A8_UNORM_SRGB:
-		case DXGI_FORMAT_R8G8B8A8_SNORM:
-		case DXGI_FORMAT_R8G8B8A8_UINT:
-		case DXGI_FORMAT_R8G8B8A8_SINT:
-		case DXGI_FORMAT_B8G8R8A8_UNORM:
-		case DXGI_FORMAT_B8G8R8X8_UNORM:
-		case DXGI_FORMAT_R10G10B10_XR_BIAS_A2_UNORM:
-		case DXGI_FORMAT_R10G10B10A2_UNORM:
-		case DXGI_FORMAT_R10G10B10A2_UINT:
-		case DXGI_FORMAT_R11G11B10_FLOAT:
-		case DXGI_FORMAT_R9G9B9E5_SHAREDEXP:
-		case DXGI_FORMAT_D32_FLOAT:
-		case DXGI_FORMAT_R32_FLOAT_X8X24_TYPELESS:
-		case DXGI_FORMAT_X32_TYPELESS_G8X24_UINT:
-			return 4;
-
-		case DXGI_FORMAT_R32G32_FLOAT:
-		case DXGI_FORMAT_R32G32_UINT:
-		case DXGI_FORMAT_R32G32_SINT:
-			return 8;
-
-		case DXGI_FORMAT_R32G32B32_FLOAT:
-		case DXGI_FORMAT_R32G32B32_UINT:
-		case DXGI_FORMAT_R32G32B32_SINT:
-			return 12;
-
-		case DXGI_FORMAT_R32G32B32A32_FLOAT:
-		case DXGI_FORMAT_R32G32B32A32_UINT:
-		case DXGI_FORMAT_R32G32B32A32_SINT:
-			return 16;
-
-		default:
-			assert(false && "Unsupported format");
-			return 0;
+			return min;
 		}
+
+		if (value > max)
+		{
+			return max;
+		}
+
+		return value;
+	}
+
+	DirectX::XMFLOAT4 SamplePanorama(const DirectX::ScratchImage& panorama, float u, float v) 
+	{
+		const DirectX::Image* img = panorama.GetImage(0, 0, 0);
+		if (!img)
+		{
+			return { 0, 0, 0, 1 };
+		}
+		
+		u = fmodf(u, 1.0f);
+		if (u < 0) u += 1.0f;
+		v = clamp(v, 0.0f, 1.0f);
+
+		float x = u * (img->width - 1);
+		float y = v * (img->height - 1);
+
+		int x0 = static_cast<int>(x);
+		int y0 = static_cast<int>(y);
+		int x1 = std::min(x0 + 1, static_cast<int>(img->width - 1));
+		int y1 = std::min(y0 + 1, static_cast<int>(img->height - 1));
+
+		float dx = x - x0;
+		float dy = y - y0;
+
+		auto GetPixel = [&](int x, int y) -> DirectX::XMFLOAT4
+		{
+			const float* pixel = reinterpret_cast<const float*>(img->pixels + y * img->rowPitch + x * 4 * sizeof(float));
+			return { pixel[0], pixel[1], pixel[2], pixel[3] };
+		};
+
+		DirectX::XMFLOAT4 c00 = GetPixel(x0, y0);
+		DirectX::XMFLOAT4 c10 = GetPixel(x1, y0);
+		DirectX::XMFLOAT4 c01 = GetPixel(x0, y1);
+		DirectX::XMFLOAT4 c11 = GetPixel(x1, y1);
+
+		DirectX::XMFLOAT4 result;
+		result.x = c00.x * (1 - dx) * (1 - dy) + c10.x * dx * (1 - dy) + c01.x * (1 - dx) * dy + c11.x * dx * dy;
+		result.y = c00.y * (1 - dx) * (1 - dy) + c10.y * dx * (1 - dy) + c01.y * (1 - dx) * dy + c11.y * dx * dy;
+		result.z = c00.z * (1 - dx) * (1 - dy) + c10.z * dx * (1 - dy) + c01.z * (1 - dx) * dy + c11.z * dx * dy;
+		result.w = c00.w * (1 - dx) * (1 - dy) + c10.w * dx * (1 - dy) + c01.w * (1 - dx) * dy + c11.w * dx * dy;
+
+		return result;
+	}
+
+	void convertSrcHdrImageToCubeImage(DirectX::ScratchImage& cubeImage, const DirectX::ScratchImage& srcImage)
+	{
+		const DirectX::XMFLOAT3 faceDirections[6][3] =
+		{
+
+			{ {1,0,0}, {0,1,0}, {0,0,1} },
+			{ {-1,0,0},{0,1,0}, {0,0,-1} },
+			{ {1,0,0}, {0,0,1}, {0,1,0} },
+			{ {1,0,0}, {0,0,-1},{0,-1,0}},
+			{ {0,0,1}, {0,1,0}, {-1,0,0} },
+			{ {0,0,-1},{0,1,0}, {1,0,0} }
+		};
+
+		size_t cubemapSize = 1024;
+
+		DirectX::TexMetadata meta = {};
+		meta.format = srcImage.GetMetadata().format;
+		meta.width = cubemapSize;
+		meta.height = cubemapSize;
+		meta.depth = 1;
+		meta.arraySize = 6;
+		meta.mipLevels = 1;
+		meta.dimension = DirectX::TEX_DIMENSION_TEXTURE2D;
+		meta.miscFlags = DirectX::TEX_MISC_TEXTURECUBE;
+
+		cubeImage.Initialize(meta);
+
+		for (size_t face = 0; face < 6; face++)
+		{
+			const DirectX::Image* destImage = cubeImage.GetImage(0, face, 0);
+			const DirectX::XMFLOAT3& right = faceDirections[face][0];
+			const DirectX::XMFLOAT3& up = faceDirections[face][1];
+			const DirectX::XMFLOAT3& forward = faceDirections[face][2];
+
+			for (size_t y = 0; y < cubemapSize; y++) {
+				for (size_t x = 0; x < cubemapSize; x++) {
+
+					float u = 2.0f * ((float)x / (cubemapSize - 1)) - 1.0f;
+					float v = 1.0f - 2.0f * ((float)y / (cubemapSize - 1));
+
+					if (face == 2 || face == 3)
+					{
+						float temp = u;
+						u = v;
+						v = temp;
+
+						if (face == 3) {
+							u = -u;
+							v = -v;
+						}
+					}
+
+					DirectX::XMFLOAT3 direction
+					(
+						right.x * u + up.x * v + forward.x,
+						right.y * u + up.y * v + forward.y,
+						right.z * u + up.z * v + forward.z
+					);
+
+					DirectX::XMVECTOR dirVec = XMLoadFloat3(&direction);
+					dirVec = DirectX::XMVector3Normalize(dirVec);
+					XMStoreFloat3(&direction, dirVec);
+					DirectX::XMFLOAT2 uv = DirectionToPanoramaUV(direction);
+					DirectX::XMFLOAT4 color = SamplePanorama(srcImage, uv.x, uv.y);
+
+					float* pixel = reinterpret_cast<float*>(destImage->pixels + y * destImage->rowPitch + x * 4 * sizeof(float));
+					pixel[0] = color.x;
+					pixel[1] = color.y;
+					pixel[2] = color.z;
+					pixel[3] = color.w;
+				}
+			}
+		}	
 	}
 
 	void TextureLoader::loadFromHDR(std::shared_ptr<Asset> asset)
 	{
-		auto creationParam = std::dynamic_pointer_cast<BlobHolder>(asset->getCreationParam());
+		auto creationParam = std::static_pointer_cast<BlobHolder>(asset->getCreationParam());
 		auto blob = creationParam->getBlob();
-	
+
+		HRESULT hr = 0;
+
 		DirectX::ScratchImage srcImage;
 		DirectX::LoadFromHDRMemory(blob->getData(), blob->getLength(), nullptr, srcImage);
 
-		HRESULT hr = 0;
-		if (SUCCEEDED(hr)) 
+		if (SUCCEEDED(hr))
 		{
-			auto srcMetadata = srcImage.GetMetadata();
-
-			size_t cubeSize = 1024;
 			DirectX::ScratchImage cubeImage;
-			cubeImage.InitializeCube(srcMetadata.format, cubeSize, cubeSize, 1, 1);
 
-			using namespace DirectX;
+			convertSrcHdrImageToCubeImage(cubeImage, srcImage);
 
-			const float aspectRatio = static_cast<float>(srcMetadata.width) / srcMetadata.height;
-			const float fov = XM_PIDIV2;
-
-			for (int face = 0; face < 6; ++face)
-			{
-				const Image* cubeFace = &cubeImage.GetImages()[face];
-
-				for (size_t y = 0; y < cubeSize; ++y)
-				{
-					for (size_t x = 0; x < cubeSize; ++x)
-					{
-						float u = (x + 0.5f) / cubeSize;
-						float v = (y + 0.5f) / cubeSize;
-
-						XMFLOAT3 direction;
-						switch (face)
-						{
-						case 0:
-							direction = XMFLOAT3(1.0f, -v * 2.0f + 1.0f, -u * 2.0f + 1.0f);
-							break;
-						case 1:
-							direction = XMFLOAT3(-1.0f, -v * 2.0f + 1.0f, u * 2.0f - 1.0f);
-							break;
-						case 2:
-							direction = XMFLOAT3(u * 2.0f - 1.0f, 1.0f, -v * 2.0f + 1.0f);
-							break;
-						case 3:
-							direction = XMFLOAT3(-u * 2.0f + 1.0f, -1.0f, -v * 2.0f + 1.0f);
-							break;
-						case 4:
-							direction = XMFLOAT3(u * 2.0f - 1.0f, -v * 2.0f + 1.0f, 1.0f);
-							break;
-						case 5:
-							direction = XMFLOAT3(-u * 2.0f + 1.0f, -v * 2.0f + 1.0f, -1.0f);
-							break;
-						}
-
-						XMVECTOR dirVec = XMLoadFloat3(&direction);
-						dirVec = XMVector3Normalize(dirVec);
-						XMStoreFloat3(&direction, dirVec);
-
-						float theta = atan2f(direction.z, direction.x);
-						float phi = acosf(direction.y);
-
-						float uHdr = (theta + XM_PI) / (2 * XM_PI);
-						float vHdr = phi / XM_PI;
-
-						uHdr = std::max(0.0f, std::min(1.0f, uHdr));
-						vHdr = std::max(0.0f, std::min(1.0f, vHdr));
-
-						size_t x0 = static_cast<size_t>(uHdr * (srcMetadata.width - 1));
-						size_t y0 = static_cast<size_t>(vHdr * (srcMetadata.height - 1));
-						size_t x1 = std::min(x0 + 1, srcMetadata.width - 1);
-						size_t y1 = std::min(y0 + 1, srcMetadata.height - 1);
-
-						float wx = uHdr * (srcMetadata.width - 1) - x0;
-						float wy = vHdr * (srcMetadata.height - 1) - y0;
-
-						const uint8_t* p00 = srcImage.GetImages()->pixels + (y0 * srcImage.GetImages()->rowPitch) + (x0 * GetBytesPerPixel(srcMetadata.format));
-						const uint8_t* p01 = srcImage.GetImages()->pixels + (y0 * srcImage.GetImages()->rowPitch) + (x1 * GetBytesPerPixel(srcMetadata.format));
-						const uint8_t* p10 = srcImage.GetImages()->pixels + (y1 * srcImage.GetImages()->rowPitch) + (x0 * GetBytesPerPixel(srcMetadata.format));
-						const uint8_t* p11 = srcImage.GetImages()->pixels + (y1 * srcImage.GetImages()->rowPitch) + (x1 * GetBytesPerPixel(srcMetadata.format));
-
-						size_t bytesPerPixel = GetBytesPerPixel(srcMetadata.format);
-						uint8_t* dstPixel = cubeFace->pixels + (y * cubeFace->rowPitch) + (x * bytesPerPixel);
-
-						for (size_t c = 0; c < bytesPerPixel; ++c)
-						{
-							float val00 = static_cast<float>(p00[c]);
-							float val01 = static_cast<float>(p01[c]);
-							float val10 = static_cast<float>(p10[c]);
-							float val11 = static_cast<float>(p11[c]);
-
-							float val0 = val00 * (1.0f - wx) + val01 * wx;
-							float val1 = val10 * (1.0f - wx) + val11 * wx;
-
-							float val = val0 * (1.0f - wy) + val1 * wy;
-
-							dstPixel[c] = static_cast<uint8_t>(std::max(0.0f, std::min(255.0f, val)));
-						}
-					}
-				}
-			}
-			
-			auto cubeMetadata = cubeImage.GetMetadata();
+			const auto& cubeMetadata = cubeImage.GetMetadata();
 			CD3D11_TEXTURE2D_DESC textureDesc(cubeMetadata.format, (unsigned int)cubeMetadata.width, (unsigned int)cubeMetadata.height, 6, 1, D3D11_BIND_SHADER_RESOURCE, D3D11_USAGE_DEFAULT, 0, 1, 0, D3D11_RESOURCE_MISC_TEXTURECUBE);
 
 			std::vector<D3D11_SUBRESOURCE_DATA> initData;
 			initData.resize(cubeMetadata.arraySize * cubeMetadata.mipLevels);
 
-			for (size_t item = 0; item < cubeMetadata.arraySize; ++item) {
-				for (size_t level = 0; level < cubeMetadata.mipLevels; ++level) {
-					const Image* img = cubeImage.GetImage(level, item, 0);
+			for (size_t item = 0; item < cubeMetadata.arraySize; ++item) 
+			{
+				for (size_t level = 0; level < cubeMetadata.mipLevels; ++level) 
+				{
+					const DirectX::Image* img = cubeImage.GetImage(level, item, 0);
 
 					size_t index = item * cubeMetadata.mipLevels + level;
 					initData[index].pSysMem = img->pixels;
@@ -352,14 +347,14 @@ namespace Destiny
 				}
 				else
 				{
-					LOG_ERROR("loadFromHDR CreateShaderResourceView failed");
 					asset->loadFailed__();
+					LOG_ERROR("LoadFromHDR CreateShaderResourceView failed");
 				}
 			}
 			else
 			{
-				LOG_ERROR("loadFromHDR CreateTexture2D failed");
 				asset->loadFailed__();
+				LOG_ERROR("LoadFromHDR CreateTexture2D failed");
 			}
 		}
 		else

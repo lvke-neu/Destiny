@@ -9,5 +9,8 @@ namespace Destiny
 	public:
 		static void GenerateCubeImage(DirectX::ScratchImage& cubeImage, const DirectX::ScratchImage& srcImage, uint32_t threadCount = std::thread::hardware_concurrency());
 		static void ConvertCubeImageToTexture(bool& loadSucceed, ID3D11Resource*& resource, ID3D11ShaderResourceView*& shaderResourceView, const DirectX::ScratchImage& cubeImage);
+		
+		static void GenerateIrradianceImage(DirectX::ScratchImage& irradianceImage, const DirectX::ScratchImage& cubeImage, uint32_t irradianceSize = 32, uint32_t sampleCount = 1024, uint32_t threadCount = std::thread::hardware_concurrency());
+		static void ConvertIrradianceImageToTexture(bool& loadSucceed, ID3D11Resource*& resource, ID3D11ShaderResourceView*& shaderResourceView, const DirectX::ScratchImage& irradianceImage);
 	};
 }

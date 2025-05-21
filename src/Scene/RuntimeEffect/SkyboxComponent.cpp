@@ -13,7 +13,7 @@
 namespace Destiny
 {
 	SkyboxComponent::SkyboxComponent() :
-		m_texture("builtin://texture/skybox/daylight.dds"),
+		m_texture(""),
 		m_exposure(1.0f)
 	{
 		auto renderer = Renderer::Create("builtin://renderer/skybox.hlsl");
@@ -21,8 +21,6 @@ namespace Destiny
 
 		auto sampler = std::make_shared<SamplerState>();
 		sampler->load();
-		auto texture = Texture::Create(m_texture.c_str());
-		texture->load();
 
 		std::shared_ptr<RenderStates> renderStates = std::make_shared<RenderStates>();
 		renderStates->getRasterizerStateDesc()->CullMode = D3D11_CULL_NONE;
@@ -40,7 +38,6 @@ namespace Destiny
 		setRenderPass(renderPass);
 		setMesh(mesh);
 
-		setShaderResource("t_cube", texture);
 		setSamplerSate("s_sampler", sampler);
 		setConstant("exposure", m_exposure);
 	}
@@ -58,13 +55,12 @@ namespace Destiny
 		tex->load();
 		setShaderResource("t_cube", tex);
 
-		////TODO:
-		//if (m_texture.find(".hdr") != std::string::npos)
-		//{
-		//	auto irradianceTex = Texture::Create((m_texture + "?type=IrradianceMap").c_str());
-		//	irradianceTex->load();
-		//	//setShaderResource("t_cube", irradianceTex);
-		//}
+		if (m_texture.find(".hdr") != std::string::npos)
+		{
+			auto tex2 = Texture::Create((m_texture + "?type=irradiance").c_str());
+			tex2->load();
+			//setShaderResource("t_cube", tex2);
+		}
 	}
 
 	void SkyboxComponent::set_exposure(float exposure)

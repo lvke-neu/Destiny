@@ -36,14 +36,16 @@ namespace Destiny
 	{
 		if (std::string(path).find(".hdr") != std::string::npos)
 		{
-			if (std::string(path).find("?type=irradiance") != std::string::npos)
+			auto pos = std::string(path).find("?type=irradiance");
+			if (pos != std::string::npos)
 			{
-				return CreateHdr(path, HdrCreationParma::Irradiance);
+				return CreateHdr(std::string(path).substr(0, pos).c_str(), HdrCreationParma::Irradiance);
 			}
 
-			if (std::string(path).find("?type=prefilter") != std::string::npos)
+			pos = std::string(path).find("?type=prefilter");
+			if (pos != std::string::npos)
 			{
-				return CreateHdr(path, HdrCreationParma::Prefilter);
+				return CreateHdr(std::string(path).substr(0, pos).c_str(), HdrCreationParma::Prefilter);
 			}
 
 			return CreateHdr(path, HdrCreationParma::Hdr);
@@ -126,14 +128,14 @@ namespace Destiny
 			return path;
 		}
 
-		if (std::dynamic_pointer_cast<HdrCreationParma>(m_creationParam))
-		{
-			auto creationParam = std::static_pointer_cast<HdrCreationParma>(m_creationParam);
-			if (creationParam->m_blobHolder)
-			{
-				return creationParam->m_blobHolder->getPath() + "?type=" + HdrCreationParma::mapTypeToString(creationParam->m_type);
-			}
-		}
+		//if (std::dynamic_pointer_cast<HdrCreationParma>(m_creationParam))
+		//{
+		//	auto creationParam = std::static_pointer_cast<HdrCreationParma>(m_creationParam);
+		//	if (creationParam->m_blobHolder)
+		//	{
+		//		return creationParam->m_blobHolder->getPath() + "?type=" + HdrCreationParma::mapTypeToString(creationParam->m_type);
+		//	}
+		//}
 
 		return "";
 	}

@@ -1,3 +1,4 @@
+
 #include "TextureLoader.h"
 #include "Texture.h"
 #include "DDSTextureLoader.h"
@@ -186,7 +187,7 @@ namespace Destiny
 			if (creationParam->m_type == HdrCreationParma::CreateTextureType::Hdr)
 			{
 				DirectX::ScratchImage cubeImage;
-				HDRTextureLoader::GenerateCubeImage(cubeImage, srcImage);
+				HDRTextureLoader::GenerateCubeImage(cubeImage, srcImage, 1);
 				bool loadSucceedCube = false;
 				HDRTextureLoader::ConvertCubeImageToTexture(loadSucceedCube, std::static_pointer_cast<Texture>(asset)->m_resource, std::static_pointer_cast<Texture>(asset)->m_shaderResourceView, cubeImage);
 
@@ -202,7 +203,23 @@ namespace Destiny
 			}
 			else if (creationParam->m_type == HdrCreationParma::CreateTextureType::Irradiance)
 			{
+				DirectX::ScratchImage cubeImage;
+				HDRTextureLoader::GenerateCubeImage(cubeImage, srcImage, 1);
 
+				DirectX::ScratchImage irradianceImage;
+				bool loadSucceedIrradiance= false;
+				HDRTextureLoader::GenerateIrradianceImage(irradianceImage, cubeImage, 32, 1024, 1);
+				HDRTextureLoader::ConvertIrradianceImageToTexture(loadSucceedIrradiance, std::static_pointer_cast<Texture>(asset)->m_resource, std::static_pointer_cast<Texture>(asset)->m_shaderResourceView, irradianceImage);
+
+				if (loadSucceedIrradiance)
+				{
+					asset->getCreationParam().reset();
+					asset->loadSucceeded__();
+				}
+				else
+				{
+					asset->loadFailed__();
+				}
 			}
 			else if (creationParam->m_type == HdrCreationParma::CreateTextureType::Prefilter)
 			{

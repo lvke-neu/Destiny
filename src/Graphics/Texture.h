@@ -4,6 +4,7 @@
 #include <string>
 #include <unordered_map>
 
+
 struct ID3D11Resource;
 struct ID3D11ShaderResourceView;
 namespace Destiny
@@ -52,6 +53,40 @@ namespace Destiny
 		unsigned int slicePitch		= 0;
 	};
 
+	class BlobHolder;
+	class HdrCreationParma : public Object
+	{
+	public:
+		enum CreateTextureType
+		{
+			None,
+			Hdr,
+			Irradiance,
+			Prefilter,
+			CreateTextureTypeCount
+		};
+	public:
+		static std::string mapTypeToString(CreateTextureType type)
+		{
+			switch (type)
+			{
+			case Destiny::HdrCreationParma::Hdr:
+				return "Hdr";
+			case Destiny::HdrCreationParma::Irradiance:
+				return "Irradiance";
+			case Destiny::HdrCreationParma::Prefilter:
+				return "Prefilter";
+			case Destiny::HdrCreationParma::None:
+			case Destiny::HdrCreationParma::CreateTextureTypeCount:
+			default:
+				return "";
+			}
+		}
+	public:
+		CreateTextureType m_type = CreateTextureType::None;
+		std::shared_ptr<BlobHolder> m_blobHolder = nullptr;
+	};
+
 	class TextureLoader;
 	class Texture : public Asset
 	{
@@ -64,6 +99,7 @@ namespace Destiny
 		static std::shared_ptr<TextureLoader> s_textureLoader;
 		static std::shared_ptr<Texture> Create(const char* path);
 		static std::shared_ptr<Texture> Create2D(int format, unsigned int width, unsigned int height, std::shared_ptr<Blob> data, unsigned int pitch, unsigned int slicePitch);
+		static std::shared_ptr<Texture> CreateHdr(const char* path, HdrCreationParma::CreateTextureType type);
 		static std::unordered_map<std::string, std::shared_ptr<Texture>> s_cache;
 	public:
 		std::string getPath();

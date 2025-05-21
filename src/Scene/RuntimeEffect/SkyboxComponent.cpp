@@ -53,9 +53,18 @@ namespace Destiny
 	void SkyboxComponent::set_texture(std::string texture)
 	{
 		m_texture = texture;
+	
 		auto tex = Texture::Create(m_texture.c_str());
 		tex->load();
 		setShaderResource("t_cube", tex);
+
+		////TODO:
+		//if (m_texture.find(".hdr") != std::string::npos)
+		//{
+		//	auto irradianceTex = Texture::Create((m_texture + "?type=IrradianceMap").c_str());
+		//	irradianceTex->load();
+		//	//setShaderResource("t_cube", irradianceTex);
+		//}
 	}
 
 	void SkyboxComponent::set_exposure(float exposure)

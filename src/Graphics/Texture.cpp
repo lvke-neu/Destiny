@@ -34,6 +34,21 @@ namespace Destiny
 
 	std::shared_ptr<Texture> Texture::Create(const char* path)
 	{
+		if (std::string(path).find(".hdr") != std::string::npos)
+		{
+			if (std::string(path).find("?type=irradiance") != std::string::npos)
+			{
+				return CreateHdr(path, HdrCreationParma::Irradiance);
+			}
+
+			if (std::string(path).find("?type=prefilter") != std::string::npos)
+			{
+				return CreateHdr(path, HdrCreationParma::Prefilter);
+			}
+
+			return CreateHdr(path, HdrCreationParma::Hdr);
+		}
+
 		auto iter = s_cache.find(path);
 		if (iter != s_cache.end())
 		{
@@ -69,26 +84,58 @@ namespace Destiny
 		return texture;
 	}
 
+	std::shared_ptr<Texture> Texture::CreateHdr(const char* path, HdrCreationParma::CreateTextureType type)
+	{
+		auto iter = s_cache.find(path + HdrCreationParma::mapTypeToString(type));
+		if (iter != s_cache.end())
+		{
+			return iter->second;
+		}
+
+		std::shared_ptr<Texture> texture = std::make_shared<Texture>();
+
+		auto blobLoader = Engine::GetInstance()->getBlobLoaderManager()->getBlobLoader(path);
+		if (blobLoader)
+		{
+			std::shared_ptr<HdrCreationParma> hdrCreationParma = std::make_shared<HdrCreationParma>();
+			hdrCreationParma->m_type = type;
+			hdrCreationParma->m_blobHolder = blobLoader->createBlobHolder(path);
+			texture->initialize(s_textureLoader, hdrCreationParma);
+		}
+
+		s_cache.insert({ path + HdrCreationParma::mapTypeToString(type), texture });
+		return texture;
+	}
+
 	std::string Texture::getPath()
 	{
-		std::string path;
-
 		if (std::dynamic_pointer_cast<BlobHolder>(m_creationParam))
 		{
 			return std::static_pointer_cast<BlobHolder>(m_creationParam)->getPath();
 		}
-		else if (std::dynamic_pointer_cast<TextureCreationParam>(m_creationParam))
+
+		if (std::dynamic_pointer_cast<TextureCreationParam>(m_creationParam))
 		{
+			std::string path = "";
 			auto creationParam = std::static_pointer_cast<TextureCreationParam>(m_creationParam);
 			if (creationParam->m_type == TextureCreationParam::Create2D)
 			{
 				path += "Type:Create2D,";
 			}
 			path += "width:" + std::to_string(creationParam->width) + "height:" + std::to_string(creationParam->height);
-
+			return path;
 		}
 
-		return path;
+		if (std::dynamic_pointer_cast<HdrCreationParma>(m_creationParam))
+		{
+			auto creationParam = std::static_pointer_cast<HdrCreationParma>(m_creationParam);
+			if (creationParam->m_blobHolder)
+			{
+				return creationParam->m_blobHolder->getPath() + "?type=" + HdrCreationParma::mapTypeToString(creationParam->m_type);
+			}
+		}
+
+		return "";
 	}
 
 	void Texture::bind(std::shared_ptr<TextureDesc> desc)

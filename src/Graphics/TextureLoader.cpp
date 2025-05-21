@@ -222,7 +222,7 @@ namespace Destiny
 		return result;
 	}
 
-	void convertSrcHdrImageToCubeImage(DirectX::ScratchImage& cubeImage, const DirectX::ScratchImage& srcImage)
+	void generateCubeImage(DirectX::ScratchImage& cubeImage, const DirectX::ScratchImage& srcImage, uint32_t threadCount = std::thread::hardware_concurrency())
 	{
 		const DirectX::XMFLOAT3 faceDirections[6][3] =
 		{
@@ -249,7 +249,11 @@ namespace Destiny
 
 		cubeImage.Initialize(meta);
 
-		for (size_t face = 0; face < 6; face++)
+		std::mutex mtx;
+		std::vector<std::thread> threads;
+		threads.reserve(threadCount);
+
+		auto processFace = [&](uint32_t face)
 		{
 			const DirectX::Image* destImage = cubeImage.GetImage(0, face, 0);
 			const DirectX::XMFLOAT3& right = faceDirections[face][0];
@@ -294,9 +298,70 @@ namespace Destiny
 					pixel[3] = color.w;
 				}
 			}
-		}	
+
+			std::lock_guard<std::mutex> lock(mtx);
+			LOG_INFO("Finished cubemap face {0}/6", std::to_string(face));
+		};
+
+		for (uint32_t face = 0; face < 6; face++)
+		{
+			threads.emplace_back(processFace, face);
+			if (threads.size() >= threadCount)
+			{
+				threads.back().join();
+				threads.pop_back();
+			}
+		}
+
+		for (auto& thread : threads)
+			thread.join();
 	}
 
+	void  convertCubeImageToTexture(bool& loadSucceed, ID3D11Resource*& resource, ID3D11ShaderResourceView*& shaderResourceView, const DirectX::ScratchImage& cubeImage)
+	{
+		const auto& cubeMetadata = cubeImage.GetMetadata();
+		CD3D11_TEXTURE2D_DESC textureDesc(cubeMetadata.format, (unsigned int)cubeMetadata.width, (unsigned int)cubeMetadata.height, 6, 1, D3D11_BIND_SHADER_RESOURCE, D3D11_USAGE_DEFAULT, 0, 1, 0, D3D11_RESOURCE_MISC_TEXTURECUBE);
+
+		std::vector<D3D11_SUBRESOURCE_DATA> initData;
+		initData.resize(cubeMetadata.arraySize * cubeMetadata.mipLevels);
+
+		for (size_t item = 0; item < cubeMetadata.arraySize; ++item)
+		{
+			for (size_t level = 0; level < cubeMetadata.mipLevels; ++level)
+			{
+				const DirectX::Image* img = cubeImage.GetImage(level, item, 0);
+
+				size_t index = item * cubeMetadata.mipLevels + level;
+				initData[index].pSysMem = img->pixels;
+				initData[index].SysMemPitch = (unsigned int)img->rowPitch;
+				initData[index].SysMemSlicePitch = (unsigned int)img->slicePitch;
+			}
+		}
+
+		HRESULT hr = 0;
+		ID3D11Texture2D* texture2d = nullptr;
+		hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateTexture2D(&textureDesc, initData.data(), &texture2d);
+		if (SUCCEEDED(hr))
+		{
+			CD3D11_SHADER_RESOURCE_VIEW_DESC srvDesc(D3D11_SRV_DIMENSION_TEXTURECUBE, cubeMetadata.format, 0, 1);
+			hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateShaderResourceView(texture2d, &srvDesc, &shaderResourceView);
+			if (SUCCEEDED(hr))
+			{
+				resource = texture2d;
+				loadSucceed = true;
+			}
+			else
+			{
+				LOG_ERROR("LoadFromHDR CreateShaderResourceView failed");
+				loadSucceed = false;
+			}
+		}
+		else
+		{
+			LOG_ERROR("LoadFromHDR CreateTexture2D failed");
+			loadSucceed = false;
+		}
+	}
 	void TextureLoader::loadFromHDR(std::shared_ptr<Asset> asset)
 	{
 		auto creationParam = std::static_pointer_cast<BlobHolder>(asset->getCreationParam());
@@ -309,38 +374,22 @@ namespace Destiny
 
 		if (SUCCEEDED(hr))
 		{
-			DirectX::ScratchImage cubeImage;
-
-			convertSrcHdrImageToCubeImage(cubeImage, srcImage);
-
-			const auto& cubeMetadata = cubeImage.GetMetadata();
-			CD3D11_TEXTURE2D_DESC textureDesc(cubeMetadata.format, (unsigned int)cubeMetadata.width, (unsigned int)cubeMetadata.height, 6, 1, D3D11_BIND_SHADER_RESOURCE, D3D11_USAGE_DEFAULT, 0, 1, 0, D3D11_RESOURCE_MISC_TEXTURECUBE);
-
-			std::vector<D3D11_SUBRESOURCE_DATA> initData;
-			initData.resize(cubeMetadata.arraySize * cubeMetadata.mipLevels);
-
-			for (size_t item = 0; item < cubeMetadata.arraySize; ++item) 
+			if(creationParam->getPath().find("?type=IrradianceMap") != std::string::npos)
 			{
-				for (size_t level = 0; level < cubeMetadata.mipLevels; ++level) 
-				{
-					const DirectX::Image* img = cubeImage.GetImage(level, item, 0);
 
-					size_t index = item * cubeMetadata.mipLevels + level;
-					initData[index].pSysMem = img->pixels;
-					initData[index].SysMemPitch = (unsigned int)img->rowPitch;
-					initData[index].SysMemSlicePitch = (unsigned int)img->slicePitch;
-				}
 			}
-
-			ID3D11Texture2D* texture2d = nullptr;
-			hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateTexture2D(&textureDesc, initData.data(), &texture2d);
-			std::static_pointer_cast<Texture>(asset)->m_resource = texture2d;
-			if (SUCCEEDED(hr))
+			else if(creationParam->getPath().find("?type=PrefilterMap") != std::string::npos)
 			{
-				CD3D11_SHADER_RESOURCE_VIEW_DESC srvDesc(D3D11_SRV_DIMENSION_TEXTURECUBE, cubeMetadata.format, 0, 1);
 
-				hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateShaderResourceView(texture2d, &srvDesc, &std::dynamic_pointer_cast<Texture>(asset)->m_shaderResourceView);
-				if (SUCCEEDED(hr))
+			}
+			else
+			{
+				DirectX::ScratchImage cubeImage;
+				generateCubeImage(cubeImage, srcImage);
+				bool loadSucceedCube = false;
+				convertCubeImageToTexture(loadSucceedCube, std::static_pointer_cast<Texture>(asset)->m_resource, std::static_pointer_cast<Texture>(asset)->m_shaderResourceView, cubeImage);
+
+				if (loadSucceedCube)
 				{
 					asset->getCreationParam().reset();
 					asset->loadSucceeded__();
@@ -348,13 +397,7 @@ namespace Destiny
 				else
 				{
 					asset->loadFailed__();
-					LOG_ERROR("LoadFromHDR CreateShaderResourceView failed");
 				}
-			}
-			else
-			{
-				asset->loadFailed__();
-				LOG_ERROR("LoadFromHDR CreateTexture2D failed");
 			}
 		}
 		else

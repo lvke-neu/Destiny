@@ -160,11 +160,11 @@ namespace Destiny
 		for (uint32_t face = 0; face < 6; face++)
 		{
 			threads.emplace_back(processFace, face);
-			//if (threads.size() >= threadCount)
-			//{
-			//	threads.back().join();
-			//	threads.pop_back();
-			//}
+			if (threads.size() >= threadCount)
+			{
+				threads.back().join();
+				threads.pop_back();
+			}
 		}
 
 		for (auto& thread : threads)
@@ -471,11 +471,11 @@ namespace Destiny
 		for (uint32_t face = 0; face < 6; face++)
 		{
 			threads.emplace_back(processFace, face);
-			//if (threads.size() >= threadCount)
-			//{
-			//	threads.back().join();
-			//	threads.pop_back();
-			//}
+			if (threads.size() >= threadCount)
+			{
+				threads.back().join();
+				threads.pop_back();
+			}
 		}
 
 		for (auto& thread : threads)

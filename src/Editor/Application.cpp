@@ -14,6 +14,7 @@
 #include "Engine/EventSystem.h"
 #include "Graphics/GraphicsSystem.h"
 #include "Graphics/VisualScene.h"
+#include "Graphics/Texture.h"
 #include "Scene/SceneManager.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_win32.h"
@@ -388,6 +389,7 @@ void Application::drawDock()
 	{
 		fileMenu();
 		viewMenu();
+		toolMenu();
 		settingMenu();
 
 		ImGui::EndMenuBar();
@@ -566,6 +568,20 @@ void Application::viewMenu()
 			checkResStatisticsInfo = !checkResStatisticsInfo;
 			Destiny::Engine::GetInstance()->getSceneManager()->showStatisticsInfo(checkResStatisticsInfo);
 		}
+	}
+}
+
+void Application::toolMenu()
+{
+	if (ImGui::BeginMenu("Tool"))
+	{
+		ImGui::Text("Gen hdr cache");
+		ImGui::SameLine();
+		if (ImGui::Button("Gen hdr cache"))
+		{
+			Destiny::Texture::Hdr_To_Cube_Irradiance_Prefilter_DDS();
+		}
+		ImGui::EndMenu();
 	}
 }
 

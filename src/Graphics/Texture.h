@@ -101,6 +101,7 @@ namespace Destiny
 		static std::shared_ptr<Texture> Create2D(int format, unsigned int width, unsigned int height, std::shared_ptr<Blob> data, unsigned int pitch, unsigned int slicePitch);
 		static std::shared_ptr<Texture> CreateHdr(const char* path, HdrCreationParma::CreateTextureType type);
 		static std::unordered_map<std::string, std::shared_ptr<Texture>> s_cache;
+		static void Hdr_To_Cube_Irradiance_Prefilter_DDS();
 	public:
 		std::string getPath();
 	public:

@@ -12,5 +12,10 @@ namespace Destiny
 		
 		static void GenerateIrradianceImage(DirectX::ScratchImage& irradianceImage, const DirectX::ScratchImage& cubeImage, uint32_t irradianceSize = 32, uint32_t sampleCount = 1024, uint32_t threadCount = std::thread::hardware_concurrency());
 		static void ConvertIrradianceImageToTexture(bool& loadSucceed, ID3D11Resource*& resource, ID3D11ShaderResourceView*& shaderResourceView, const DirectX::ScratchImage& irradianceImage);
+		
+		static void GeneratePrefilterMap(DirectX::ScratchImage& prefilterImage, const DirectX::ScratchImage& cubeImage, uint32_t threadCount = std::thread::hardware_concurrency());
+		static void ConvertPrefilterImageToTexture(bool& loadSucceed, ID3D11Resource*& resource, ID3D11ShaderResourceView*& shaderResourceView, const DirectX::ScratchImage& prefilterImage);
+	
+		static void GenerateBRDFLUT(uint32_t width = 512, uint32_t height = 512);
 	};
 }

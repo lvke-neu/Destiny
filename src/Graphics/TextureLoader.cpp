@@ -1,4 +1,3 @@
-
 #include "TextureLoader.h"
 #include "Texture.h"
 #include "DDSTextureLoader.h"
@@ -10,6 +9,7 @@
 #include "Engine/BlobHolder.h"
 #include "Engine/BlobLoader.h"
 #include "Engine/Utility.h"
+#include "Engine/FileSystem.h"
 
 namespace Destiny
 {
@@ -187,12 +187,20 @@ namespace Destiny
 			if (creationParam->m_type == HdrCreationParma::CreateTextureType::Hdr)
 			{
 				DirectX::ScratchImage cubeImage;
-				HDRTextureLoader::GenerateCubeImage(cubeImage, srcImage, 1);
+				HDRTextureLoader::GenerateCubeImage(cubeImage, srcImage);
 				bool loadSucceedCube = false;
 				HDRTextureLoader::ConvertCubeImageToTexture(loadSucceedCube, std::static_pointer_cast<Texture>(asset)->m_resource, std::static_pointer_cast<Texture>(asset)->m_shaderResourceView, cubeImage);
 
 				if (loadSucceedCube)
 				{
+					hr = DirectX::SaveToDDSFile(
+						cubeImage.GetImages(),
+						cubeImage.GetImageCount(),
+						cubeImage.GetMetadata(),
+						DirectX::DDS_FLAGS_NONE,
+						Utility::MultiByte2WideChar(FileSystem::ReplaceFileSuffixAddFileName(normalizedPath, "Cube", ".dds")).c_str()
+					);
+
 					asset->getCreationParam().reset();
 					asset->loadSucceeded__();
 				}
@@ -204,15 +212,23 @@ namespace Destiny
 			else if (creationParam->m_type == HdrCreationParma::CreateTextureType::Irradiance)
 			{
 				DirectX::ScratchImage cubeImage;
-				HDRTextureLoader::GenerateCubeImage(cubeImage, srcImage, 1);
+				HDRTextureLoader::GenerateCubeImage(cubeImage, srcImage);
 
 				DirectX::ScratchImage irradianceImage;
 				bool loadSucceedIrradiance= false;
-				HDRTextureLoader::GenerateIrradianceImage(irradianceImage, cubeImage, 32, 1024, 1);
+				HDRTextureLoader::GenerateIrradianceImage(irradianceImage, cubeImage);
 				HDRTextureLoader::ConvertIrradianceImageToTexture(loadSucceedIrradiance, std::static_pointer_cast<Texture>(asset)->m_resource, std::static_pointer_cast<Texture>(asset)->m_shaderResourceView, irradianceImage);
 
 				if (loadSucceedIrradiance)
 				{
+					hr = DirectX::SaveToDDSFile(
+						irradianceImage.GetImages(),
+						irradianceImage.GetImageCount(),
+						irradianceImage.GetMetadata(),
+						DirectX::DDS_FLAGS_NONE,
+						Utility::MultiByte2WideChar(FileSystem::ReplaceFileSuffixAddFileName(normalizedPath, "Irradiance", ".dds")).c_str()
+					);
+
 					asset->getCreationParam().reset();
 					asset->loadSucceeded__();
 				}
@@ -223,7 +239,30 @@ namespace Destiny
 			}
 			else if (creationParam->m_type == HdrCreationParma::CreateTextureType::Prefilter)
 			{
+				DirectX::ScratchImage cubeImage;
+				HDRTextureLoader::GenerateCubeImage(cubeImage, srcImage);
 
+				DirectX::ScratchImage prefilterImage;
+				bool loadSucceedPrefilter = false;
+				HDRTextureLoader::GeneratePrefilterMap(prefilterImage, cubeImage);
+				HDRTextureLoader::ConvertIrradianceImageToTexture(loadSucceedPrefilter, std::static_pointer_cast<Texture>(asset)->m_resource, std::static_pointer_cast<Texture>(asset)->m_shaderResourceView, prefilterImage);
+
+				if (loadSucceedPrefilter)
+				{
+					hr = DirectX::SaveToDDSFile(
+						prefilterImage.GetImages(),
+						prefilterImage.GetImageCount(),
+						prefilterImage.GetMetadata(),
+						DirectX::DDS_FLAGS_NONE,
+						Utility::MultiByte2WideChar(FileSystem::ReplaceFileSuffixAddFileName(normalizedPath, "Prefilter", ".dds")).c_str()
+					);
+					asset->getCreationParam().reset();
+					asset->loadSucceeded__();
+				}
+				else
+				{
+					asset->loadFailed__();
+				}
 			}
 			else
 			{

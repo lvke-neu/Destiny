@@ -41,4 +41,64 @@ namespace Destiny
 			ofs.close();
 		}
 	}
+
+	std::string FileSystem::ReplaceFileSuffix(const std::string& filePath, const std::string& newSuffix)
+	{
+        size_t dotPos = filePath.find_last_of('.');
+
+        size_t pathSepPos = filePath.find_last_of("/\\");
+
+        if (dotPos != std::string::npos && (pathSepPos == std::string::npos || dotPos > pathSepPos))
+        {
+            if (!newSuffix.empty() && newSuffix[0] == '.')
+            {
+                return filePath.substr(0, dotPos) + newSuffix;
+            }
+            else
+            {
+                return filePath.substr(0, dotPos) + '.' + newSuffix;
+            }
+        }
+        else
+        {
+            if (!newSuffix.empty() && newSuffix[0] == '.')
+            {
+                return filePath + newSuffix;
+            }
+            else
+            {
+                return filePath + '.' + newSuffix;
+            }
+        }
+	}
+
+	std::string FileSystem::ReplaceFileSuffixAddFileName(const std::string& filePath, const std::string& fileName, const std::string& newSuffix)
+	{
+        size_t dotPos = filePath.find_last_of('.');
+
+        size_t pathSepPos = filePath.find_last_of("/\\");
+
+        if (dotPos != std::string::npos && (pathSepPos == std::string::npos || dotPos > pathSepPos))
+        {
+            if (!newSuffix.empty() && newSuffix[0] == '.')
+            {
+                return filePath.substr(0, dotPos) + fileName + newSuffix;
+            }
+            else
+            {
+                return filePath.substr(0, dotPos) + fileName + '.' + newSuffix;
+            }
+        }
+        else
+        {
+            if (!newSuffix.empty() && newSuffix[0] == '.')
+            {
+                return filePath + fileName +newSuffix;
+            }
+            else
+            {
+                return filePath + fileName + '.' + newSuffix;
+            }
+        }
+	}
 }

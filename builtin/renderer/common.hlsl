@@ -65,26 +65,26 @@ SamplerComparisonState s_shadowMapSampler : register(s10);
 
 float calculateShadow(float4 shadowPosH)
 {
-    // 透视除法
-    shadowPosH.xyz /= shadowPosH.w;
+	// 透视除法
+	shadowPosH.xyz /= shadowPosH.w;
 
-    // NDC空间的深度值
-    float depth = shadowPosH.z - g_shadowBias;
+	// NDC空间的深度值
+	float depth = shadowPosH.z - g_shadowBias;
 
-    float percentLit = 0.0f;
-    const float2 offsets[9] =
-    {
-        float2(-g_dx, -g_dy), float2(0.0f, -g_dy), float2(g_dx, -g_dy),
-        float2(-g_dx, 0.0f), float2(0.0f, 0.0f), float2(g_dx, 0.0f),
-        float2(-g_dx, +g_dy), float2(0.0f, +g_dy), float2(g_dx, +g_dy)
-    };
+	float percentLit = 0.0f;
+	const float2 offsets[9] =
+	{
+		float2(-g_dx, -g_dy), float2(0.0f, -g_dy), float2(g_dx, -g_dy),
+		float2(-g_dx, 0.0f), float2(0.0f, 0.0f), float2(g_dx, 0.0f),
+		float2(-g_dx, +g_dy), float2(0.0f, +g_dy), float2(g_dx, +g_dy)
+	};
 
-    [unroll]
-    for (int i = 0; i < 9; ++i)
-    {
-        percentLit += t_shadowMap.SampleCmpLevelZero(s_shadowMapSampler,
-            shadowPosH.xy + offsets[i], depth).r;
-    }
+	[unroll]
+	for (int i = 0; i < 9; ++i)
+	{
+		percentLit += t_shadowMap.SampleCmpLevelZero(s_shadowMapSampler,
+			shadowPosH.xy + offsets[i], depth).r;
+	}
 
-    return percentLit /= 9.0f;
+	return percentLit /= 9.0f;
 }

@@ -27,6 +27,7 @@ private:
 
 	void fileMenu();
 	void viewMenu();
+	void toolMenu();
 	void settingMenu();
 private:
 	HWND										m_hwnd;

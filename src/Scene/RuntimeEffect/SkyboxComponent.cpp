@@ -9,6 +9,7 @@
 #include "Graphics/SamplerState.h"
 #include "Graphics/Texture.h"
 #include "Engine/Node.h"
+#include "Engine/Scene.h"
 
 namespace Destiny
 {
@@ -55,18 +56,73 @@ namespace Destiny
 		tex->load();
 		setShaderResource("t_cube", tex);
 
-		if (m_texture.find(".hdr") != std::string::npos)
+		auto irradiance = Texture::Create((texture.substr(0, texture.find(".hdr")) + "Irradiance.dds").c_str());
+		irradiance->load(); 
+		auto prefilter = Texture::Create((texture.substr(0, texture.find(".hdr")) + "Prefilter.dds").c_str());
+		prefilter->load(0);
+		auto brdfLUT = Texture::Create("builtin://texture/skybox/hdr/BrdfLUT.dds");
+		brdfLUT->load(0);
+
+		auto sampler1 = std::make_shared<SamplerState>();
+		sampler1->getSamplerDesc()->Filter = D3D11_FILTER_ANISOTROPIC;
+		sampler1->getSamplerDesc()->AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		sampler1->getSamplerDesc()->AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		sampler1->getSamplerDesc()->AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+		sampler1->getSamplerDesc()->MaxAnisotropy = 0;
+		sampler1->getSamplerDesc()->ComparisonFunc = D3D11_COMPARISON_NEVER;
+		sampler1->getSamplerDesc()->MinLOD = 0;
+		sampler1->getSamplerDesc()->MaxLOD = D3D11_FLOAT32_MAX;
+		sampler1->getSamplerDesc()->MipLODBias = 0.0f;
+		sampler1->load();
+
+		auto sampler2 = std::make_shared<SamplerState>();
+		sampler2->load();
+
+		notifyVisualRendererConstantChanged(m_scene);
+		for (const auto& renderer : Renderer::s_cache)
 		{
-			auto tex2 = Texture::Create((m_texture + "?type=irradiance").c_str());
-			tex2->load();
-			//setShaderResource("t_cube", tex2);
+			renderer.second->setShaderResource("t_irradianceMap", irradiance);
+			renderer.second->setShaderResource("t_prefilterMap", prefilter);
+			renderer.second->setShaderResource("t_brdfLUT", brdfLUT);
+
+			renderer.second->setSamplerSate("s_cubeSampler", sampler1);
+			//renderer.second->setSamplerSate("s_brdfLUTSampler", sampler2);
 		}
+		//if (m_texture.find(".hdr") != std::string::npos)
+		//{
+		//	auto tex2 = Texture::Create((m_texture + "?type=prefilter").c_str());
+		//	tex2->load();
+		//	setShaderResource("t_cube", tex2);
+		//}
 	}
 
 	void SkyboxComponent::set_exposure(float exposure)
 	{
 		m_exposure = exposure;
 		setConstant("exposure", m_exposure);
+	}
+
+	void SkyboxComponent::notifyVisualRendererConstantChanged(std::shared_ptr<Node> node)
+	{
+		if (!node)
+		{
+			return;
+		}
+
+		for (const auto& component : node->getComponents())
+		{
+			auto visualComponent = std::dynamic_pointer_cast<VisualComponent>(component);
+			if (visualComponent)
+			{
+				visualComponent->onRendererTextureChanged();
+				visualComponent->onRendererSamplerStateChanged();
+			}
+		}
+
+		for (const auto& childNode : node->getChilds())
+		{
+			notifyVisualRendererConstantChanged(childNode);
+		}
 	}
 
 	RTTR_REGISTRATION

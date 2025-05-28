@@ -6,6 +6,7 @@
 #include "Engine/BlobLoader.h"
 #include "Engine/Utility.h"
 #include <d3d11.h>
+#include "HDRTextureLoader.h"
 
 namespace Destiny
 {
@@ -107,6 +108,48 @@ namespace Destiny
 
 		s_cache.insert({ path + HdrCreationParma::mapTypeToString(type), texture });
 		return texture;
+	}
+
+	void Texture::Hdr_To_Cube_Irradiance_Prefilter_DDS()
+	{
+		std::shared_ptr<Texture> tex = nullptr;
+
+		tex = Texture::Create("builtin://texture/skybox/hdr/blue_photo_studio_4k.hdr");
+		tex->load();
+		tex = Texture::Create("builtin://texture/skybox/hdr/blue_photo_studio_4k.hdr?type=irradiance");
+		tex->load();
+		tex = Texture::Create("builtin://texture/skybox/hdr/blue_photo_studio_4k.hdr?type=prefilter");
+		tex->load();
+
+		//tex = Texture::Create("builtin://texture/skybox/hdr/evening_meadow_4k.hdr");
+		//tex->load();
+		//tex = Texture::Create("builtin://texture/skybox/hdr/evening_meadow_4k.hdr?type=irradiance");
+		//tex->load();
+		//tex = Texture::Create("builtin://texture/skybox/hdr/evening_meadow_4k.hdr?type=prefilter");
+		//tex->load();
+
+		//tex = Texture::Create("builtin://texture/skybox/hdr/little_paris_eiffel_tower_4k.hdr");
+		//tex->load();
+		//tex = Texture::Create("builtin://texture/skybox/hdr/little_paris_eiffel_tower_4k.hdr?type=irradiance");
+		//tex->load();
+		//tex = Texture::Create("builtin://texture/skybox/hdr/little_paris_eiffel_tower_4k.hdr?type=prefilter");
+		//tex->load();
+
+		//tex = Texture::Create("builtin://texture/skybox/hdr/newport_loft.hdr");
+		//tex->load();
+		//tex = Texture::Create("builtin://texture/skybox/hdr/newport_loft.hdr?type=irradiance");
+		//tex->load();
+		//tex = Texture::Create("builtin://texture/skybox/hdr/newport_loft.hdr?type=prefilter");
+		//tex->load();
+
+		//tex = Texture::Create("builtin://texture/skybox/hdr/spree_bank_4k.hdr");
+		//tex->load();
+		//tex = Texture::Create("builtin://texture/skybox/hdr/spree_bank_4k.hdr?type=irradiance");
+		//tex->load();
+		//tex = Texture::Create("builtin://texture/skybox/hdr/spree_bank_4k.hdr?type=prefilter");
+		//tex->load();
+		//HDRTextureLoader::GenerateBRDFLUT();
+	
 	}
 
 	std::string Texture::getPath()

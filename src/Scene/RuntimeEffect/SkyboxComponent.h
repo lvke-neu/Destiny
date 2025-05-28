@@ -19,6 +19,8 @@ namespace Destiny
 		GET(float, exposure);
 		void set_exposure(float exposure);
 	private:
+		void					notifyVisualRendererConstantChanged(std::shared_ptr<Node> node);
+	private:
 		std::string m_texture;
 		float m_exposure;
 	};

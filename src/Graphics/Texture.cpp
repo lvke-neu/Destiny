@@ -116,34 +116,34 @@ namespace Destiny
 
 		tex = Texture::Create("builtin://texture/skybox/hdr/blue_photo_studio_4k.hdr");
 		tex->load();
-		tex = Texture::Create("builtin://texture/skybox/hdr/blue_photo_studio_4k.hdr?type=irradiance");
-		tex->load();
-		tex = Texture::Create("builtin://texture/skybox/hdr/blue_photo_studio_4k.hdr?type=prefilter");
-		tex->load();
-
-		//tex = Texture::Create("builtin://texture/skybox/hdr/evening_meadow_4k.hdr");
+		//tex = Texture::Create("builtin://texture/skybox/hdr/blue_photo_studio_4k.hdr?type=irradiance");
 		//tex->load();
+		//tex = Texture::Create("builtin://texture/skybox/hdr/blue_photo_studio_4k.hdr?type=prefilter");
+		//tex->load();
+
+		tex = Texture::Create("builtin://texture/skybox/hdr/evening_meadow_4k.hdr");
+		tex->load();
 		//tex = Texture::Create("builtin://texture/skybox/hdr/evening_meadow_4k.hdr?type=irradiance");
 		//tex->load();
 		//tex = Texture::Create("builtin://texture/skybox/hdr/evening_meadow_4k.hdr?type=prefilter");
 		//tex->load();
 
-		//tex = Texture::Create("builtin://texture/skybox/hdr/little_paris_eiffel_tower_4k.hdr");
-		//tex->load();
+		tex = Texture::Create("builtin://texture/skybox/hdr/little_paris_eiffel_tower_4k.hdr");
+		tex->load();
 		//tex = Texture::Create("builtin://texture/skybox/hdr/little_paris_eiffel_tower_4k.hdr?type=irradiance");
 		//tex->load();
 		//tex = Texture::Create("builtin://texture/skybox/hdr/little_paris_eiffel_tower_4k.hdr?type=prefilter");
 		//tex->load();
 
-		//tex = Texture::Create("builtin://texture/skybox/hdr/newport_loft.hdr");
-		//tex->load();
+		tex = Texture::Create("builtin://texture/skybox/hdr/newport_loft.hdr");
+		tex->load();
 		//tex = Texture::Create("builtin://texture/skybox/hdr/newport_loft.hdr?type=irradiance");
 		//tex->load();
 		//tex = Texture::Create("builtin://texture/skybox/hdr/newport_loft.hdr?type=prefilter");
 		//tex->load();
 
-		//tex = Texture::Create("builtin://texture/skybox/hdr/spree_bank_4k.hdr");
-		//tex->load();
+		tex = Texture::Create("builtin://texture/skybox/hdr/spree_bank_4k.hdr");
+		tex->load();
 		//tex = Texture::Create("builtin://texture/skybox/hdr/spree_bank_4k.hdr?type=irradiance");
 		//tex->load();
 		//tex = Texture::Create("builtin://texture/skybox/hdr/spree_bank_4k.hdr?type=prefilter");

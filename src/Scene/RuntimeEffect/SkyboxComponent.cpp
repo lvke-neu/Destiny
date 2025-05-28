@@ -41,6 +41,18 @@ namespace Destiny
 
 		setSamplerSate("s_sampler", sampler);
 		setConstant("exposure", m_exposure);
+
+		m_cubeSampler = std::make_shared<SamplerState>();
+		m_cubeSampler->getSamplerDesc()->Filter = D3D11_FILTER_ANISOTROPIC;
+		m_cubeSampler->getSamplerDesc()->AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		m_cubeSampler->getSamplerDesc()->AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		m_cubeSampler->getSamplerDesc()->AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+		m_cubeSampler->getSamplerDesc()->MaxAnisotropy = 0;
+		m_cubeSampler->getSamplerDesc()->ComparisonFunc = D3D11_COMPARISON_NEVER;
+		m_cubeSampler->getSamplerDesc()->MinLOD = 0;
+		m_cubeSampler->getSamplerDesc()->MaxLOD = D3D11_FLOAT32_MAX;
+		m_cubeSampler->getSamplerDesc()->MipLODBias = 0.0f;
+		m_cubeSampler->load();
 	}
 
 	void SkyboxComponent::onNodeTransformChanged()
@@ -56,27 +68,26 @@ namespace Destiny
 		tex->load();
 		setShaderResource("t_cube", tex);
 
-		auto irradiance = Texture::Create((texture.substr(0, texture.find(".hdr")) + "Irradiance.dds").c_str());
-		irradiance->load(); 
-		auto prefilter = Texture::Create((texture.substr(0, texture.find(".hdr")) + "Prefilter.dds").c_str());
-		prefilter->load(0);
-		auto brdfLUT = Texture::Create("builtin://texture/skybox/hdr/BrdfLUT.dds");
-		brdfLUT->load(0);
+		auto pos = texture.find(".hdr");
+		if (pos == std::string::npos)
+		{
+			pos = texture.find("Cube.dds");
+		}
 
-		auto sampler1 = std::make_shared<SamplerState>();
-		sampler1->getSamplerDesc()->Filter = D3D11_FILTER_ANISOTROPIC;
-		sampler1->getSamplerDesc()->AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-		sampler1->getSamplerDesc()->AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-		sampler1->getSamplerDesc()->AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-		sampler1->getSamplerDesc()->MaxAnisotropy = 0;
-		sampler1->getSamplerDesc()->ComparisonFunc = D3D11_COMPARISON_NEVER;
-		sampler1->getSamplerDesc()->MinLOD = 0;
-		sampler1->getSamplerDesc()->MaxLOD = D3D11_FLOAT32_MAX;
-		sampler1->getSamplerDesc()->MipLODBias = 0.0f;
-		sampler1->load();
+		std::shared_ptr<Texture> irradiance = nullptr;
+		std::shared_ptr<Texture> prefilter = nullptr;
 
-		auto sampler2 = std::make_shared<SamplerState>();
-		sampler2->load();
+		if (pos != std::string::npos)
+		{
+			irradiance = Texture::Create((texture.substr(0, pos) + "Irradiance.dds").c_str());
+			prefilter = Texture::Create((texture.substr(0, pos) + "Prefilter.dds").c_str());
+
+			irradiance->load();
+			prefilter->load();
+		}
+
+		std::shared_ptr<Texture> brdfLUT = Texture::Create("builtin://texture/skybox/hdr/BrdfLUT.dds");
+		brdfLUT->load();
 
 		notifyVisualRendererConstantChanged(m_scene);
 		for (const auto& renderer : Renderer::s_cache)
@@ -85,15 +96,8 @@ namespace Destiny
 			renderer.second->setShaderResource("t_prefilterMap", prefilter);
 			renderer.second->setShaderResource("t_brdfLUT", brdfLUT);
 
-			renderer.second->setSamplerSate("s_cubeSampler", sampler1);
-			//renderer.second->setSamplerSate("s_brdfLUTSampler", sampler2);
+			renderer.second->setSamplerSate("s_cubeSampler", m_cubeSampler);
 		}
-		//if (m_texture.find(".hdr") != std::string::npos)
-		//{
-		//	auto tex2 = Texture::Create((m_texture + "?type=prefilter").c_str());
-		//	tex2->load();
-		//	setShaderResource("t_cube", tex2);
-		//}
 	}
 
 	void SkyboxComponent::set_exposure(float exposure)

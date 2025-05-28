@@ -4,6 +4,7 @@
 
 namespace Destiny
 {
+	class SamplerState;
 	class SkyboxComponent : public VisualComponent
 	{
 		RTTR_ENABLE(VisualComponent);
@@ -23,5 +24,6 @@ namespace Destiny
 	private:
 		std::string m_texture;
 		float m_exposure;
+		std::shared_ptr<SamplerState> m_cubeSampler;
 	};
 }

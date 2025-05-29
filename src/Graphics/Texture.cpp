@@ -4,9 +4,11 @@
 #include "Engine/BlobLoaderManager.h"
 #include "Engine/BlobHolder.h"
 #include "Engine/BlobLoader.h"
+#include "Engine/Blob.h"
 #include "Engine/Utility.h"
 #include <d3d11.h>
 #include "HDRTextureLoader.h"
+#include <regex>
 
 namespace Destiny
 {
@@ -51,7 +53,49 @@ namespace Destiny
 
 			return CreateHdr(path, HdrCreationParma::Hdr);
 		}
+		else if (std::string(path).find("proc://") != std::string::npos)
+		{
+			struct Pixel
+			{
+				unsigned char r;
+				unsigned char g;
+				unsigned char b;
+				unsigned char a;
+			};
 
+			std::vector<Pixel> res;
+			res.resize(1);
+
+			static std::regex s_paramPattern("(\\?|\\&)(r|g|b|a)=([^&]*)");
+			const char* str = path + 7;
+			const char* it = str;
+			std::cmatch result;
+			while (std::regex_search(it, result, s_paramPattern))
+			{
+				if (result[2] == "r")
+				{
+					res[0].r = atoi(result[3].str().c_str());
+				}
+				else if (result[2] == "g")
+				{
+					res[0].g = atoi(result[3].str().c_str());
+				}
+				else if (result[2] == "b")
+				{
+					res[0].b = atoi(result[3].str().c_str());
+				}
+				else if (result[2] == "a")
+				{
+					res[0].a = atoi(result[3].str().c_str());
+				}
+				it = result[0].second;
+			}
+
+			auto blobData = std::make_shared<Blob>(res.size() * sizeof(Pixel));
+			blobData->copyfrom(res.data(), blobData->getLength());
+
+			return Create2D(DXGI_FORMAT_R8G8B8A8_UNORM, 1, 1, blobData, sizeof(Pixel), sizeof(Pixel), true, path);
+		}
 		auto iter = s_cache.find(path);
 		if (iter != s_cache.end())
 		{
@@ -70,7 +114,7 @@ namespace Destiny
 		return texture;
 	}
 
-	std::shared_ptr<Texture> Texture::Create2D(int format, unsigned int width, unsigned int height, std::shared_ptr<Blob> data, unsigned int pitch, unsigned int slicePitch)
+	std::shared_ptr<Texture> Texture::Create2D(int format, unsigned int width, unsigned int height, std::shared_ptr<Blob> data, unsigned int pitch, unsigned int slicePitch, bool isProc, const std::string& procPath)
 	{
 		std::shared_ptr<Texture> texture = std::make_shared<Texture>();
 		std::shared_ptr<TextureCreationParam> creationParam = std::make_shared<TextureCreationParam>();
@@ -82,6 +126,8 @@ namespace Destiny
 		creationParam->data = data;
 		creationParam->pitch = pitch;
 		creationParam->slicePitch = slicePitch;
+		creationParam->isProc = isProc;
+		creationParam->procPath = procPath;
 		texture->initialize(s_textureLoader, creationParam);
 
 		return texture;
@@ -163,11 +209,19 @@ namespace Destiny
 		{
 			std::string path = "";
 			auto creationParam = std::static_pointer_cast<TextureCreationParam>(m_creationParam);
-			if (creationParam->m_type == TextureCreationParam::Create2D)
+			if (creationParam->isProc)
 			{
-				path += "Type:Create2D,";
+				path = creationParam->procPath;
 			}
-			path += "width:" + std::to_string(creationParam->width) + "height:" + std::to_string(creationParam->height);
+			else
+			{
+				if (creationParam->m_type == TextureCreationParam::Create2D)
+				{
+					path += "Type:Create2D,";
+				}
+				path += "width:" + std::to_string(creationParam->width) + "height:" + std::to_string(creationParam->height);
+				
+			}
 			return path;
 		}
 

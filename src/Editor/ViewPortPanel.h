@@ -17,6 +17,7 @@ public:
 	ViewPortPanel();
 public:
 	void update();
+	void setGzimoType(int gzimoType);
 public slots:
 	void onChoosedNode(void* parameter);
 private:

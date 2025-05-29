@@ -37,6 +37,8 @@ namespace Destiny
 		static std::wstring MultiByte2WideChar(const std::string& pKey);
 		static std::string WideChar2MultiByte(const std::wstring& pWCStrKey);
 		static std::string GenerateUUID();
+		static bool CopyToClipboard(const std::string& text);
+		static std::string GetClipboardText();
 	};
 }
 

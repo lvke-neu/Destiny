@@ -147,6 +147,11 @@ void ViewPortPanel::update()
 	ImGui::PopStyleVar();
 }
 
+void ViewPortPanel::setGzimoType(int gzimoType)
+{
+	m_gzimoType = gzimoType;
+}
+
 void ViewPortPanel::processEvent()
 {
 	auto viewport = ImGui::GetContentRegionAvail();

@@ -3,6 +3,8 @@
 #include "Engine/Engine.h"
 #include "Engine/Node.h"
 #include "Engine/Component.h"
+#include "Engine/Serializer.h"
+#include "Engine/UnSerializer.h"
 #include "Graphics/VisualScene.h"
 #include "Scene/SceneManager.h"
 #include <queue>
@@ -117,6 +119,24 @@ void ScenePanel::popup()
 				send(ChoosedNode, nullptr);
 			}
 			ImGui::CloseCurrentPopup();
+		}
+		if (ImGui::Button("CopyNode"))
+		{
+			std::string jsonStr;
+			Destiny::Serializer::Serialize(jsonStr, m_choosedNode);
+			Destiny::Utility::CopyToClipboard(jsonStr);
+		}
+		if (ImGui::Button("PasteNode"))
+		{
+			std::string jsonStr = Destiny::Utility::GetClipboardText();
+			std::shared_ptr<Destiny::Object> object = nullptr;
+			Destiny::UnSerializer::UnSerialize(object, jsonStr);
+
+			std::shared_ptr<Destiny::Node> node = std::dynamic_pointer_cast<Destiny::Node>(object);
+			if (node)
+			{
+				node->addToParent(m_choosedNode);
+			}
 		}
 		if (ImGui::Button("AddComponent"))
 		{

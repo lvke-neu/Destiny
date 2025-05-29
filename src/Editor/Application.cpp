@@ -597,6 +597,15 @@ void Application::settingMenu()
 			m_propertyPanel->setDragFloatStep(step);
 		}
 
+		const char* items[] = { "None", "Translate", "Rotate", "Scale"};
+		static int current_item = 1;
+		ImGui::Text("GzimoType");
+		ImGui::SameLine();
+		if (ImGui::Combo("GzimoType", &current_item, items, IM_ARRAYSIZE(items)))
+		{
+			m_viewPortPanel->setGzimoType(current_item - 1);
+		}
+
 		ImGui::EndMenu();
 	}
 }

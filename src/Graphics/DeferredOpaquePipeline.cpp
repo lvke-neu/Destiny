@@ -39,7 +39,7 @@ namespace Destiny
 		//samplerState->getSamplerDesc()->Filter = D3D11_FILTER_ANISOTROPIC;
 		samplerState->load(0);
 
-		auto renderer = Renderer::Create("builtin://renderer/full_screen_triangle.hlsl");
+		auto renderer = Renderer::Create("builtin://renderer/deferred_full_screen_triangle.hlsl");
 		renderer->load(0);
 	
 		std::shared_ptr<RenderStates> renderStates = std::make_shared<RenderStates>();
@@ -116,6 +116,16 @@ namespace Destiny
 	void DeferredOpaquePipeline::onRendererConstantChanged()
 	{
 		m_fullScreenTriangle->setRendererConstantChanged();
+	}
+
+	void DeferredOpaquePipeline::onRendererTexturesChanged()
+	{
+		m_fullScreenTriangle->setRendererTexturesChanged();
+	}
+
+	void DeferredOpaquePipeline::onRendererSamplerStatesChanged()
+	{
+		m_fullScreenTriangle->setRendererSamplerStatesChanged();
 	}
 
 	void DeferredOpaquePipeline::onResize(void* data)

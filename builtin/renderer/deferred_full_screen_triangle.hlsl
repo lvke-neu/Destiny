@@ -30,6 +30,16 @@ Texture2D t_positionW :  register(t3);
 Texture2D t_normalW :  register(t4);
 Texture2D t_texcoord :  register(t5);
 SamplerState s_sampler : register(s0);
+TextureCube t_irradianceMap : register(t6); // 新增：辐照度贴图
+TextureCube t_prefilterMap : register(t7);  // 新增：预过滤环境贴图
+Texture2D t_brdfLUT : register(t8);         // 新增：BRDF查找表
+SamplerState s_cubeSampler : register(s1); // 新增：立方体贴图采样器
+
+// 新增：考虑粗糙度的菲涅尔方程
+float3 fresnelSchlickRoughness(float cosTheta, float3 F0, float roughness)
+{
+	return F0 + (max(float3(1.0f - roughness, 1.0f - roughness, 1.0f - roughness), F0) - F0) * pow(1.0f - cosTheta, 5.0f);
+}
 
 PixelOut PS(VertexOut pIn)
 {
@@ -61,6 +71,7 @@ PixelOut PS(VertexOut pIn)
 
 	float3 N = normalize(mul(tangentNormal, TBN));
 	float3 V = normalize(g_eyePosition.xyz - positionW.xyz);
+	float3 R = reflect(-V, N); // 新增：反射向量
 
 	float3 F0 = float3(0.04f, 0.04f, 0.04f);
 	F0 = lerp(F0, albedo, metallic);
@@ -119,10 +130,30 @@ PixelOut PS(VertexOut pIn)
 
 	}
 
-	float3 ambient = float3(0.03f, 0.03f, 0.03f) * albedo * ao;
-	float3 color = ambient + Lo;
+	// 基于图像的光照 (IBL)
+	// 漫反射部分 - 使用辐照度贴图
+	float3 irradiance = t_irradianceMap.Sample(s_cubeSampler, N).xyz;
+	float3 diffuseIBL = irradiance * albedo;
 
+	// 镜面反射部分 - 使用预过滤贴图和BRDF查找表
+	const float MAX_REFLECTION_LOD = 6.0f; // 假设预过滤贴图有5个Mip级别 (0-4)
+	float3 prefilteredColor = t_prefilterMap.SampleLevel(s_cubeSampler, R, roughness * MAX_REFLECTION_LOD).xyz;
+	float2 brdf = t_brdfLUT.Sample(s_sampler, float2(max(dot(N, V), 0.0f), roughness)).xy;
+	float3 specularIBL = prefilteredColor * (F0 * brdf.x + brdf.y);
+
+	// 结合漫反射和镜面IBL
+	float3 kS = fresnelSchlickRoughness(max(dot(N, V), 0.0f), F0, roughness);
+	float3 kD = 1.0f - kS;
+	kD *= 1.0f - metallic;
+
+	float3 ambientIBL = (kD * diffuseIBL + specularIBL) * ao;
+
+	// 最终颜色 = 环境光照(IBL) + 直接光照
+	float3 color = ambientIBL + Lo;
+
+	// HDR色调映射
 	color = color / (color + float3(1.0f, 1.0f, 1.0f));
+	// 伽马校正
 	color = pow(color, float3(1.0f / 2.2f, 1.0f / 2.2f, 1.0f / 2.2f));
 
 	PixelOut pOut;

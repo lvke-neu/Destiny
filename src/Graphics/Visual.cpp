@@ -40,6 +40,18 @@ namespace Destiny
 		if (m_renderPass)
 		{
 			m_renderPass->set_renderer(renderer);
+
+			m_constantBuffers.clear();
+			m_textures.clear();
+			m_samplerStates.clear();
+		
+			m_constantsChanged = true;
+			m_texturesChanged = true;
+			m_samplerStatesChanged = true;
+
+			m_rendererConstantsChanged = true;
+			m_rendererTexturesChanged = true;
+			m_rendererSamplerStatesChanged = true;
 		}
 	}
 

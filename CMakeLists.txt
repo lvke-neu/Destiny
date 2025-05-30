@@ -82,9 +82,6 @@ file(GLOB SRC_SCENE src/Scene/*)
 file(GLOB SRC_SCENE_RUNTIMEEFFECT src/Scene/RuntimeEffect/*)
 file(GLOB SRC_SCENE_RUNTIMEEFFECT_PARTICLE src/Scene/RuntimeEffect/Particle/*)
 file(GLOB SRC_SCENE_MODEL src/Scene/Model/*)
-file(GLOB BUILTIN_RENDERER builtin/renderer/*)
-file(GLOB BUILTIN_TEXTURE builtin/texture/*)
-file(GLOB BUILTIN_MODEL builtin/model/*)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -102,25 +99,23 @@ source_group("Scene" FILES ${SRC_SCENE})
 source_group("Scene\\RuntimeEffect" FILES ${SRC_SCENE_RUNTIMEEFFECT})
 source_group("Scene\\RuntimeEffect\\Particle" FILES ${SRC_SCENE_RUNTIMEEFFECT_PARTICLE})
 source_group("Scene\\Model" FILES ${SRC_SCENE_MODEL})
-source_group("builtin\\renderer" FILES ${BUILTIN_RENDERER})
-source_group("builtin\\texture" FILES ${BUILTIN_TEXTURE})
-source_group("builtin\\model" FILES ${BUILTIN_MODEL})
 
-add_executable(Destiny WIN32 ${SRC_MAIN} 
-${SRC_ENGINE} ${SRC_ENGINE_DETAIL} 
-${SRC_EDITOR} ${SRC_EDITOR_IMGUI} 
-${SRC_GRAPHICS} 
-${SRC_GRAPHICS_GRAPHICPIPELINE} 
-${SRC_GRAPHICS_MODEL} 
-${SRC_GRAPHICS_GUI} 
-${SRC_GRAPHICS_THIRDPARTY_STBIMAGE} 
-${SRC_GRAPHICS_THIRDPARTY_DIRECTXTEX} 
-${SRC_Math} 
-${SRC_SCENE} 
-${SRC_SCENE_RUNTIMEEFFECT}
-${SRC_SCENE_RUNTIMEEFFECT_PARTICLE}
-${SRC_SCENE_MODEL}
-${BUILTIN} ${BUILTIN_TEXTURE})
+add_executable(
+    Destiny WIN32 ${SRC_MAIN} 
+    ${SRC_ENGINE} ${SRC_ENGINE_DETAIL} 
+    ${SRC_EDITOR} ${SRC_EDITOR_IMGUI} 
+    ${SRC_GRAPHICS} 
+    ${SRC_GRAPHICS_GRAPHICPIPELINE} 
+    ${SRC_GRAPHICS_MODEL} 
+    ${SRC_GRAPHICS_GUI} 
+    ${SRC_GRAPHICS_THIRDPARTY_STBIMAGE} 
+    ${SRC_GRAPHICS_THIRDPARTY_DIRECTXTEX} 
+    ${SRC_Math} 
+    ${SRC_SCENE} 
+    ${SRC_SCENE_RUNTIMEEFFECT}
+    ${SRC_SCENE_RUNTIMEEFFECT_PARTICLE}
+    ${SRC_SCENE_MODEL}
+)
 target_link_libraries(Destiny assimp rttr_core freetype d3d11.lib dxgi.lib dxguid.lib D3DCompiler.lib d2d1.lib dwrite.lib winmm.lib)
 
 

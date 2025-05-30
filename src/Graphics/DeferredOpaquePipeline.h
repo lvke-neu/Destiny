@@ -17,6 +17,9 @@ namespace Destiny
 		virtual void execute(ID3D11DeviceContext* deviceContext) override;
 	public:
 		void						onRendererConstantChanged();
+		void						onRendererTexturesChanged();
+		void						onRendererSamplerStatesChanged();
+
 	public:
 		std::shared_ptr<BindRenderTargets>		m_bindRenderTargets;
 	private:

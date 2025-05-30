@@ -8,6 +8,8 @@
 #include "Graphics/PbrMaterial.h"
 #include "Graphics/SamplerState.h"
 #include "Graphics/Texture.h"
+#include "Graphics/RenderSystem.h"
+#include "Graphics/DeferredOpaquePipeline.h"
 #include "Engine/Node.h"
 #include "Engine/Scene.h"
 
@@ -89,6 +91,9 @@ namespace Destiny
 		std::shared_ptr<Texture> brdfLUT = Texture::Create("builtin://texture/skybox/hdr/BrdfLUT.dds");
 		brdfLUT->load();
 
+		auto pipeLine = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->getDeferredOpaquePipeline();
+		std::static_pointer_cast<DeferredOpaquePipeline>(pipeLine)->onRendererTexturesChanged();
+		std::static_pointer_cast<DeferredOpaquePipeline>(pipeLine)->onRendererSamplerStatesChanged();
 		notifyVisualRendererConstantChanged(m_scene);
 		for (const auto& renderer : Renderer::s_cache)
 		{

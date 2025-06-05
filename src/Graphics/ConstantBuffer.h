@@ -11,7 +11,9 @@ namespace Destiny
 	{
 		BindVS,
 		BindPS,
-		BindGS
+		BindGS,
+		BindHS,
+		BindDS
 	};
 
 	struct ConstantBufferVariable

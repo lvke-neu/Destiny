@@ -42,6 +42,8 @@ namespace Destiny
 			deviceContext->VSSetShader(drawParameters->vertexShader, nullptr, 0);
 			deviceContext->PSSetShader(drawParameters->pixelShader, nullptr, 0);
 			deviceContext->GSSetShader(drawParameters->geometryShader, nullptr, 0);
+			deviceContext->HSSetShader(drawParameters->hullShader, nullptr, 0);
+			deviceContext->DSSetShader(drawParameters->domainShader, nullptr, 0);
 
 			deviceContext->RSSetState(drawParameters->rasterizerState);
 			deviceContext->OMSetDepthStencilState(drawParameters->depthStencilState, 0);

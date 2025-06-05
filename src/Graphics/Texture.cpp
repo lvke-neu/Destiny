@@ -259,6 +259,12 @@ namespace Destiny
 				case TextureBindFlag::BindGS:
 					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->GSSetShaderResources(desc->startSlot, 1, &m_shaderResourceView);
 					break;
+				case TextureBindFlag::BindHS:
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->HSSetShaderResources(desc->startSlot, 1, &m_shaderResourceView);
+					break;
+				case TextureBindFlag::BindDS:
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->DSSetShaderResources(desc->startSlot, 1, &m_shaderResourceView);
+					break;
 				}
 			}
 		}
@@ -286,6 +292,12 @@ namespace Destiny
 					break;
 				case TextureBindFlag::BindGS:
 					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->GSSetShaderResources(desc->startSlot, 1, &srv);
+					break;
+				case TextureBindFlag::BindHS:
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->HSSetShaderResources(desc->startSlot, 1, &srv);
+					break;
+				case TextureBindFlag::BindDS:
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->DSSetShaderResources(desc->startSlot, 1, &srv);
 					break;
 				}
 			}

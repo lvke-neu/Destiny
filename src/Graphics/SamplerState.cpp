@@ -61,6 +61,12 @@ namespace Destiny
 				case SamplerStateBindFlag::BindGS:
 					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->GSSetSamplers(desc->startSlot, 1, &m_samplerState);
 					break;
+				case SamplerStateBindFlag::BindHS:
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->HSSetSamplers(desc->startSlot, 1, &m_samplerState);
+					break;
+				case SamplerStateBindFlag::BindDS:
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->DSSetSamplers(desc->startSlot, 1, &m_samplerState);
+					break;
 				}
 			}
 		}
@@ -88,6 +94,12 @@ namespace Destiny
 					break;
 				case SamplerStateBindFlag::BindGS:
 					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->GSSetSamplers(desc->startSlot, 1, &sampler);
+					break;
+				case SamplerStateBindFlag::BindHS:
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->HSSetSamplers(desc->startSlot, 1, &sampler);
+					break;
+				case SamplerStateBindFlag::BindDS:
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->DSSetSamplers(desc->startSlot, 1, &sampler);
 					break;
 				}
 			}

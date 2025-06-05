@@ -17,11 +17,15 @@ namespace Destiny
 		m_vertexShader(nullptr),
 		m_pixelShader(nullptr),
 		m_geometryShader(nullptr),
+		m_hullShader(nullptr),
+		m_domainShader(nullptr),
 		m_inputSignatureBlob(nullptr),
 		m_blobHolder(nullptr),
 		m_vsCompiledBlob(nullptr),
 		m_psCompiledBlob(nullptr),
-		m_gsCompiledBlob(nullptr)
+		m_gsCompiledBlob(nullptr),
+		m_hsCompiledBlob(nullptr),
+		m_dsCompiledBlob(nullptr)
 	{
 		auto blobLoader = Engine::GetInstance()->getBlobLoaderManager()->getBlobLoader(path);
 		if (blobLoader)
@@ -35,9 +39,14 @@ namespace Destiny
 	{
 		SAFE_RELEASE(m_vertexShader);
 		SAFE_RELEASE(m_pixelShader);
+		SAFE_RELEASE(m_geometryShader);
+		SAFE_RELEASE(m_hullShader);
+		SAFE_RELEASE(m_domainShader);
 		SAFE_RELEASE(m_vsCompiledBlob);
 		SAFE_RELEASE(m_psCompiledBlob);
 		SAFE_RELEASE(m_gsCompiledBlob);
+		SAFE_RELEASE(m_hsCompiledBlob);
+		SAFE_RELEASE(m_dsCompiledBlob);
 	}
 
 	void Renderer::doLoad()
@@ -57,7 +66,7 @@ namespace Destiny
 			return;
 		}
 
-		(createVertexShader() && createPixelShader() && createGeometryShader()) ? loadSucceeded__() : loadFailed__();
+		(createVertexShader() && createPixelShader() && createGeometryShader() && createHullShader() && createDomainShader()) ? loadSucceeded__() : loadFailed__();
 		
 
 		//m_blobHolder.reset();
@@ -65,9 +74,14 @@ namespace Destiny
 		collectReflectionInfo(m_vsCompiledBlob, 0);
 		collectReflectionInfo(m_psCompiledBlob, 1);
 		collectReflectionInfo(m_gsCompiledBlob, 2);
+		collectReflectionInfo(m_hsCompiledBlob, 3);
+		collectReflectionInfo(m_dsCompiledBlob, 4);
+
 		SAFE_RELEASE(m_vsCompiledBlob);
 		SAFE_RELEASE(m_psCompiledBlob);
 		SAFE_RELEASE(m_gsCompiledBlob);
+		SAFE_RELEASE(m_hsCompiledBlob);
+		SAFE_RELEASE(m_dsCompiledBlob);
 	}
 
 	void Renderer::doReload()
@@ -279,6 +293,102 @@ namespace Destiny
 		return true;
 	}
 
+	bool Renderer::createHullShader()
+	{
+		ID3DBlob* errorBlob = nullptr;
+
+		auto blob = m_blobHolder->getBlob();
+
+		std::string content((char*)blob->getData(), blob->getLength());
+		if (content.find("HS") == content.npos)
+		{
+			return true;
+		}
+
+		auto normalizedPath = m_blobHolder->getBlobLoader()->normalizedPath(m_blobHolder);
+
+		unsigned int flag = D3DCOMPILE_ENABLE_STRICTNESS;
+
+#ifdef _DEBUG
+		flag |= D3DCOMPILE_DEBUG;
+		flag |= D3DCOMPILE_SKIP_OPTIMIZATION;
+#endif // 
+
+		HRESULT hr = D3DCompile(blob->getData(), blob->getLength(), normalizedPath.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "HS", "hs_5_0",
+			flag, 0, &m_hsCompiledBlob, &errorBlob);
+		if (FAILED(hr))
+		{
+			if (errorBlob != nullptr)
+			{
+				LOG_ERROR("CompileHullShader Failed:{0}", reinterpret_cast<const char*>(errorBlob->GetBufferPointer()));
+			}
+			else
+			{
+				LOG_ERROR("CompileHullShader {0} Failed:{1}", normalizedPath, "path error");
+			}
+			SAFE_RELEASE(errorBlob);
+			return false;
+		}
+
+		hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateHullShader(m_hsCompiledBlob->GetBufferPointer(), m_hsCompiledBlob->GetBufferSize(), 0, &m_hullShader);
+		if (FAILED(hr))
+		{
+
+			LOG_ERROR("CreateHullShader {0} failed", normalizedPath);
+			return false;
+		}
+
+		return true;
+	}
+
+	bool Renderer::createDomainShader()
+	{
+		ID3DBlob* errorBlob = nullptr;
+
+		auto blob = m_blobHolder->getBlob();
+
+		std::string content((char*)blob->getData(), blob->getLength());
+		if (content.find("DS") == content.npos)
+		{
+			return true;
+		}
+
+		auto normalizedPath = m_blobHolder->getBlobLoader()->normalizedPath(m_blobHolder);
+
+		unsigned int flag = D3DCOMPILE_ENABLE_STRICTNESS;
+
+#ifdef _DEBUG
+		flag |= D3DCOMPILE_DEBUG;
+		flag |= D3DCOMPILE_SKIP_OPTIMIZATION;
+#endif // 
+
+		HRESULT hr = D3DCompile(blob->getData(), blob->getLength(), normalizedPath.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "DS", "ds_5_0",
+			flag, 0, &m_dsCompiledBlob, &errorBlob);
+		if (FAILED(hr))
+		{
+			if (errorBlob != nullptr)
+			{
+				LOG_ERROR("CompileDomainShader Failed:{0}", reinterpret_cast<const char*>(errorBlob->GetBufferPointer()));
+			}
+			else
+			{
+				LOG_ERROR("CompileDomainShader {0} Failed:{1}", normalizedPath, "path error");
+			}
+			SAFE_RELEASE(errorBlob);
+			return false;
+		}
+
+		hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateDomainShader(m_dsCompiledBlob->GetBufferPointer(), m_dsCompiledBlob->GetBufferSize(), 0, &m_domainShader);
+		if (FAILED(hr))
+		{
+
+			LOG_ERROR("CreateDomainShader {0} failed", normalizedPath);
+			return false;
+		}
+
+		return true;
+	}
+
 	void Renderer::collectReflectionInfo(ID3D10Blob* compiledBlob, short flag)
 	{
 		if (!compiledBlob)
@@ -388,7 +498,7 @@ namespace Destiny
 		}
 	}
 
-	void Destiny::Renderer::collectReflectionSamplerStateInfo(ID3D11ShaderReflection* shaderReflection, short flag)
+	void Renderer::collectReflectionSamplerStateInfo(ID3D11ShaderReflection* shaderReflection, short flag)
 	{
 		if (!shaderReflection)
 		{
@@ -436,12 +546,16 @@ namespace Destiny
 			drawParameters->vertexShader = m_vertexShader;
 			drawParameters->pixelShader = m_pixelShader;
 			drawParameters->geometryShader = m_geometryShader;
+			drawParameters->hullShader = m_hullShader;
+			drawParameters->domainShader = m_domainShader;
 		}
 		else
 		{
 			drawParameters->vertexShader = nullptr;
 			drawParameters->pixelShader = nullptr;
 			drawParameters->geometryShader = nullptr;
+			drawParameters->hullShader = nullptr;
+			drawParameters->domainShader = nullptr;
 		}
 
 		//drawParameters->constantBuffers = m_constantBuffers;
@@ -487,7 +601,7 @@ namespace Destiny
 		textures = m_textures;
 	}
 
-	void Destiny::Renderer::modifyTexturesByDifferenece(std::unordered_map<std::string, std::pair<std::shared_ptr<TextureDesc>, std::shared_ptr<Texture>>>& textures)
+	void Renderer::modifyTexturesByDifferenece(std::unordered_map<std::string, std::pair<std::shared_ptr<TextureDesc>, std::shared_ptr<Texture>>>& textures)
 	{
 		for (const auto& changedTextureName : m_changedTextureNames)
 		{
@@ -508,7 +622,7 @@ namespace Destiny
 		samplerStates = m_samplerStates;
 	}
 
-	void Destiny::Renderer::modifySamplerStatesByDifferenece(std::unordered_map<std::string, std::pair<std::shared_ptr<SamplerStateDesc>, std::shared_ptr<SamplerState>>>& samplerStates)
+	void Renderer::modifySamplerStatesByDifferenece(std::unordered_map<std::string, std::pair<std::shared_ptr<SamplerStateDesc>, std::shared_ptr<SamplerState>>>& samplerStates)
 	{
 		for (const auto& changedSamplerStateNames : m_changedSamplerStateNames)
 		{

@@ -24,7 +24,8 @@ namespace Destiny
 			Undefined		= 0,
 			PointList		= 1,
 			LineList		= 2,
-			TriangleList	= 4
+			TriangleList	= 4,
+			PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST = 35
 		};
 		struct DrawCall
 		{

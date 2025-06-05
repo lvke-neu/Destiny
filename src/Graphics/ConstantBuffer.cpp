@@ -14,6 +14,8 @@ namespace Destiny
 		m_constantBufferBindFlag[ConstantBufferBindFlag::BindVS] = false;
 		m_constantBufferBindFlag[ConstantBufferBindFlag::BindPS] = false;
 		m_constantBufferBindFlag[ConstantBufferBindFlag::BindGS] = false;
+		m_constantBufferBindFlag[ConstantBufferBindFlag::BindHS] = false;
+		m_constantBufferBindFlag[ConstantBufferBindFlag::BindDS] = false;
 
 		D3D11_BUFFER_DESC cbd;
 		ZeroMemory(&cbd, sizeof(cbd));
@@ -88,6 +90,12 @@ namespace Destiny
 				case ConstantBufferBindFlag::BindGS:
 					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->GSSetConstantBuffers(m_startSlot, 1, &m_constantBuffer);
 					break;
+				case ConstantBufferBindFlag::BindHS:
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->HSSetConstantBuffers(m_startSlot, 1, &m_constantBuffer);
+					break;
+				case ConstantBufferBindFlag::BindDS:
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->DSSetConstantBuffers(m_startSlot, 1, &m_constantBuffer);
+					break;
 				}
 			}
 		}
@@ -110,6 +118,12 @@ namespace Destiny
 					break;
 				case ConstantBufferBindFlag::BindGS:
 					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->GSSetConstantBuffers(m_startSlot, 1, &buffer);
+					break;
+				case ConstantBufferBindFlag::BindHS:
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->HSSetConstantBuffers(m_startSlot, 1, &buffer);
+					break;
+				case ConstantBufferBindFlag::BindDS:
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->DSSetConstantBuffers(m_startSlot, 1, &buffer);
 					break;
 				}
 			}

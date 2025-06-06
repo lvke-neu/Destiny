@@ -10,20 +10,20 @@ namespace Destiny
 		TessellationComponent();
 		virtual ~TessellationComponent() = default;
 	public:
-		GET(unsigned int, triEdgeTess0);
-		GET(unsigned int, triEdgeTess1);
-		GET(unsigned int, triEdgeTess2);
-		GET(unsigned int, triInsideTess);
+		GET(float, maxTessellation);
+		GET(float, minTessellation);
+		GET(float, tessellationRange);
+		GET(float, heightScale);
 
-		void set_triEdgeTess0(unsigned int triEdgeTess0);
-		void set_triEdgeTess1(unsigned int triEdgeTess1);
-		void set_triEdgeTess2(unsigned int triEdgeTess2);
-		void set_triInsideTess(unsigned int triInsideTess);
+		void set_maxTessellation(float maxTessellation);
+		void set_minTessellation(float minTessellation);
+		void set_tessellationRange(float tessellationRange);
+		void set_heightScale(float heightScale);
 	private:
 		void createMesh();
-		unsigned int m_triEdgeTess0;
-		unsigned int m_triEdgeTess1;
-		unsigned int m_triEdgeTess2;
-		unsigned int m_triInsideTess;
+		float m_maxTessellation;
+		float m_minTessellation;
+		float m_tessellationRange;
+		float m_heightScale;
 	};
 }

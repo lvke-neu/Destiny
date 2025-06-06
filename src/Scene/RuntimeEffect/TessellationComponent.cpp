@@ -15,9 +15,9 @@
 namespace Destiny
 {
 	TessellationComponent::TessellationComponent() :
-		m_maxTessellation(16.0f),
-		m_minTessellation(1.f),
-		m_tessellationRange(2.0f),
+		m_maxTessellation(20.0f),
+		m_minTessellation(0.0f),
+		m_tessellationRange(100.0f),
 		m_heightScale(1.0f)
 	{
 		auto renderer = Renderer::Create("builtin://renderer/tessellation.hlsl");

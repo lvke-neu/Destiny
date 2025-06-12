@@ -58,6 +58,7 @@ struct GBuffer
     float4 positionW : SV_Target3;
     float4 normalW   : SV_Target4;
     float4 texcoord  : SV_Target5;
+    float4 shadowPosH : SV_Target6;
 };
 
 Texture2D t_shadowMap : register(t10);

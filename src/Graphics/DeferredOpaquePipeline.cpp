@@ -30,6 +30,7 @@ namespace Destiny
 		m_clearRenderTarget3(std::make_shared<ClearRenderTarget>()),
 		m_clearRenderTarget4(std::make_shared<ClearRenderTarget>()),
 		m_clearRenderTarget5(std::make_shared<ClearRenderTarget>()),
+		m_clearRenderTarget6(std::make_shared<ClearRenderTarget>()),
 		m_fullScreenTriangle(std::make_shared<Visual>())
 	{
 		m_clearRenderTarget5->setClearColor({ 0.0f, 0.0f, 1.0f, 1.0f });
@@ -75,6 +76,7 @@ namespace Destiny
 		m_clearRenderTarget3->execute(deviceContext);
 		m_clearRenderTarget4->execute(deviceContext);
 		m_clearRenderTarget5->execute(deviceContext);
+		m_clearRenderTarget6->execute(deviceContext);
 
 		//Draw DeferredOpaquePipeline Object 
 		GraphicsCommandList::execute(deviceContext);
@@ -107,6 +109,10 @@ namespace Destiny
 		if (m_bindRenderTargets->getRenderTargetViews(5))
 		{
 			m_fullScreenTriangle->setShaderResource("t_texcoord", m_bindRenderTargets->getRenderTargetViews(5)->getTexture());
+		}
+		if (m_bindRenderTargets->getRenderTargetViews(6))
+		{
+			m_fullScreenTriangle->setShaderResource("t_shadowPosH", m_bindRenderTargets->getRenderTargetViews(6)->getTexture());
 		}
 		
 		m_fullScreenTriangle->updateDrawParameters();
@@ -148,6 +154,8 @@ namespace Destiny
 		renderTargetView4->load(0);
 		auto renderTargetView5 = std::make_shared<RenderTargetView>(wrd.width, wrd.height, 2);
 		renderTargetView5->load(0);
+		auto renderTargetView6 = std::make_shared<RenderTargetView>(wrd.width, wrd.height, 2);
+		renderTargetView6->load(0);
 
 		auto depthStencilView0 = std::make_shared<DepthStencilView>(wrd.width, wrd.height);
 		depthStencilView0->load(0);
@@ -161,6 +169,8 @@ namespace Destiny
 		depthStencilView4->load(0);
 		auto depthStencilView5 = std::make_shared<DepthStencilView>(wrd.width, wrd.height);
 		depthStencilView5->load(0);
+		auto depthStencilView6 = std::make_shared<DepthStencilView>(wrd.width, wrd.height);
+		depthStencilView6->load(0);
 
 		auto viewPort0 = std::make_shared<D3D11_VIEWPORT>();
 		viewPort0->TopLeftX = 0.0f;
@@ -204,6 +214,13 @@ namespace Destiny
 		viewPort5->Height = (float)wrd.height;
 		viewPort5->MinDepth = 0.0f;
 		viewPort5->MaxDepth = 1.0f;
+		auto viewPort6 = std::make_shared<D3D11_VIEWPORT>();
+		viewPort6->TopLeftX = 0.0f;
+		viewPort6->TopLeftY = 0.0f;
+		viewPort6->Width = (float)wrd.width;
+		viewPort6->Height = (float)wrd.height;
+		viewPort6->MinDepth = 0.0f;
+		viewPort6->MaxDepth = 1.0f;
 
 		std::vector<std::shared_ptr<RenderTargetView>>	renderTargetViews;
 		renderTargetViews.push_back(renderTargetView0);
@@ -212,6 +229,7 @@ namespace Destiny
 		renderTargetViews.push_back(renderTargetView3);
 		renderTargetViews.push_back(renderTargetView4);
 		renderTargetViews.push_back(renderTargetView5);
+		renderTargetViews.push_back(renderTargetView6);
 		std::vector<std::shared_ptr<DepthStencilView>>	depthStencilViews;
 		depthStencilViews.push_back(depthStencilView0);
 		depthStencilViews.push_back(depthStencilView1);
@@ -219,6 +237,7 @@ namespace Destiny
 		depthStencilViews.push_back(depthStencilView3);
 		depthStencilViews.push_back(depthStencilView4);
 		depthStencilViews.push_back(depthStencilView5);
+		depthStencilViews.push_back(depthStencilView6);
 		std::vector<std::shared_ptr<D3D11_VIEWPORT>>	viewPorts;
 		viewPorts.push_back(viewPort0);
 		viewPorts.push_back(viewPort1);
@@ -226,6 +245,7 @@ namespace Destiny
 		viewPorts.push_back(viewPort3);
 		viewPorts.push_back(viewPort4);
 		viewPorts.push_back(viewPort5);
+		viewPorts.push_back(viewPort6);
 
 		m_bindRenderTargets->setRenderTargetViews(renderTargetViews);
 		m_bindRenderTargets->setDepthStencilViews(depthStencilViews);
@@ -242,7 +262,8 @@ namespace Destiny
 		m_clearRenderTarget4->setRenderTargetView(m_bindRenderTargets->getRenderTargetViews(4));
 		m_clearRenderTarget4->setDepthStencilView(m_bindRenderTargets->getDepthStencilViews(4));
 		m_clearRenderTarget5->setRenderTargetView(m_bindRenderTargets->getRenderTargetViews(5));
-		m_clearRenderTarget5->setDepthStencilView(m_bindRenderTargets->getDepthStencilViews(5));
-
+		m_clearRenderTarget5->setDepthStencilView(m_bindRenderTargets->getDepthStencilViews(5));		
+		m_clearRenderTarget6->setRenderTargetView(m_bindRenderTargets->getRenderTargetViews(6));
+		m_clearRenderTarget6->setDepthStencilView(m_bindRenderTargets->getDepthStencilViews(6));
 	}
 }

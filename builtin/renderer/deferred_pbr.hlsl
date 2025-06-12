@@ -51,6 +51,6 @@ GBuffer PS(VertexOut pIn)
 	gBuffer.positionW = pIn.positionW;
 	gBuffer.normalW = float4(pIn.normalW, 1.0f);
 	gBuffer.texcoord = float4(pIn.texcoord, pIn.positionH.z, 1.0f);
-
+	gBuffer.shadowPosH = mul(mul(mul(pIn.positionW, g_shadowView), g_shadowProj), T);
 	return gBuffer;
 }

@@ -29,10 +29,11 @@ Texture2D t_mra : register(t2);
 Texture2D t_positionW :  register(t3);
 Texture2D t_normalW :  register(t4);
 Texture2D t_texcoord :  register(t5);
+Texture2D t_shadowPosH :  register(t6);
 SamplerState s_sampler : register(s0);
-TextureCube t_irradianceMap : register(t6); // 新增：辐照度贴图
-TextureCube t_prefilterMap : register(t7);  // 新增：预过滤环境贴图
-Texture2D t_brdfLUT : register(t8);         // 新增：BRDF查找表
+TextureCube t_irradianceMap : register(t7); // 新增：辐照度贴图
+TextureCube t_prefilterMap : register(t8);  // 新增：预过滤环境贴图
+Texture2D t_brdfLUT : register(t9);         // 新增：BRDF查找表
 SamplerState s_cubeSampler : register(s1); // 新增：立方体贴图采样器
 
 // 新增：考虑粗糙度的菲涅尔方程
@@ -78,6 +79,9 @@ PixelOut PS(VertexOut pIn)
 
 	float3 Lo = float3(0.0f, 0.0f, 0.0f);
 
+	// 阴影计算
+	float shadow = calculateShadow(t_shadowPosH.Sample(s_sampler, pIn.texcoord));
+
 	//radiance
 	for (int i = 0; i < g_directionLightCount; i++)
 	{
@@ -100,7 +104,7 @@ PixelOut PS(VertexOut pIn)
 		kD *= 1.0f - metallic;
 
 		float NdotL = max(dot(N, L), 0.0f);
-		Lo += (kD * albedo / PI + specular /*+ t_environment.Sample(s_sampler, reflect(-V, N_)).xyz * kS*/) * radiance * NdotL;
+		Lo += (kD * albedo / PI + specular /*+ t_environment.Sample(s_sampler, reflect(-V, N_)).xyz * kS*/) * radiance * NdotL * shadow;
 
 	}
 	for (int j = 0; j < g_pointLightCount; j++)

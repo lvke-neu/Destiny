@@ -37,6 +37,8 @@ namespace Destiny
 		std::shared_ptr<ClearRenderTarget>		m_clearRenderTarget4;
 		//texcoord
 		std::shared_ptr<ClearRenderTarget>		m_clearRenderTarget5;
+		//shadowPosH
+		std::shared_ptr<ClearRenderTarget>		m_clearRenderTarget6;
 
 		std::shared_ptr<Visual>					m_fullScreenTriangle;
 	};

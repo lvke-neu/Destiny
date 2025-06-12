@@ -95,14 +95,11 @@ namespace Destiny
 		std::static_pointer_cast<DeferredOpaquePipeline>(pipeLine)->onRendererTexturesChanged();
 		std::static_pointer_cast<DeferredOpaquePipeline>(pipeLine)->onRendererSamplerStatesChanged();
 		notifyVisualRendererConstantChanged(m_scene);
-		for (const auto& renderer : Renderer::s_cache)
-		{
-			renderer.second->setShaderResource("t_irradianceMap", irradiance);
-			renderer.second->setShaderResource("t_prefilterMap", prefilter);
-			renderer.second->setShaderResource("t_brdfLUT", brdfLUT);
-
-			renderer.second->setSamplerSate("s_cubeSampler", m_cubeSampler);
-		}
+		
+		Renderer::SetShaderResource("t_irradianceMap", irradiance);
+		Renderer::SetShaderResource("t_prefilterMap", prefilter);
+		Renderer::SetShaderResource("t_brdfLUT", brdfLUT);
+		Renderer::SetSamplerSate("s_cubeSampler", m_cubeSampler);
 	}
 
 	void SkyboxComponent::set_exposure(float exposure)

@@ -166,19 +166,18 @@ namespace Destiny
 		const auto& cameraViewMatrix = m_node->getInvTransposeWorldMatrix();
 		const auto& cameraPos = m_node->get_translation();
 		const auto& cameraProjMaTrix = DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(m_fovy * Math::DEG2RAD, m_aspect, m_nearz, m_farz));
-		for (const auto& renderer : Renderer::s_cache)
-		{
-			renderer.second->setConstant("g_view", cameraViewMatrix);
-			renderer.second->setConstant("g_eyePosition", cameraPos);
 
-			renderer.second->setConstant("g_proj", cameraProjMaTrix);
-			renderer.second->setConstant("g_viewportWidth", m_viewportWidth);
-			renderer.second->setConstant("g_rcpViewportWidth", 1.0f / m_viewportWidth);
-			renderer.second->setConstant("g_viewportHeight", m_viewportHeight);
-			renderer.second->setConstant("g_rcpViewportHeight", 1.0f / m_viewportHeight);
-			renderer.second->setConstant("g_nearPlane", m_nearz);
-			renderer.second->setConstant("g_farPlane", m_farz);
-		}
+		Renderer::SetConstant("g_view", cameraViewMatrix);
+		Renderer::SetConstant("g_view", cameraViewMatrix);
+		Renderer::SetConstant("g_eyePosition", cameraPos);
+
+		Renderer::SetConstant("g_proj", cameraProjMaTrix);
+		Renderer::SetConstant("g_viewportWidth", m_viewportWidth);
+		Renderer::SetConstant("g_rcpViewportWidth", 1.0f / m_viewportWidth);
+		Renderer::SetConstant("g_viewportHeight", m_viewportHeight);
+		Renderer::SetConstant("g_rcpViewportHeight", 1.0f / m_viewportHeight);
+		Renderer::SetConstant("g_nearPlane", m_nearz);
+		Renderer::SetConstant("g_farPlane", m_farz);	
 	}
 
 	RTTR_REGISTRATION

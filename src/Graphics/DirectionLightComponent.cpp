@@ -275,11 +275,8 @@ namespace Destiny
 		blob->copyfrom((void*)directionLights.data(), blob->getLength());
 
 
-		for (const auto& renderer : Renderer::s_cache)
-		{
-			renderer.second->setConstant("g_directionLightCount", (int)directionLights.size());
-			renderer.second->setConstant("g_directionLights", blob);
-		}
+		Renderer::SetConstant("g_directionLightCount", (int)directionLights.size());
+		Renderer::SetConstant("g_directionLights", blob);
 	}
 
 	void DirectionLightComponent::updateShadowMapRendererConstant()
@@ -306,16 +303,12 @@ namespace Destiny
 			0.5f, 0.5f, 0.0f, 1.0f
 		);
 
-
-		for (const auto& renderer : Renderer::s_cache)
-		{
-			renderer.second->setConstant("g_shadowView", XMMatrixTranspose(shadowView));
-			renderer.second->setConstant("g_shadowProj", XMMatrixTranspose(XMMatrixOrthographicLH((float)m_viewPortWidth, (float)m_viewPortHeight, m_nearz, m_farz)));
-			renderer.second->setConstant("T", XMMatrixTranspose(T));
-			renderer.second->setConstant("g_shadowBias", m_shadowBias);
-			renderer.second->setConstant("g_dx", 1.0f / m_resolutionWidth);
-			renderer.second->setConstant("g_dy", 1.0f / m_resolutionHeight);
-		}
+		Renderer::SetConstant("g_shadowView", XMMatrixTranspose(shadowView));
+		Renderer::SetConstant("g_shadowProj", XMMatrixTranspose(XMMatrixOrthographicLH((float)m_viewPortWidth, (float)m_viewPortHeight, m_nearz, m_farz)));
+		Renderer::SetConstant("T", XMMatrixTranspose(T));
+		Renderer::SetConstant("g_shadowBias", m_shadowBias);
+		Renderer::SetConstant("g_dx", 1.0f / m_resolutionWidth);
+		Renderer::SetConstant("g_dy", 1.0f / m_resolutionHeight);
 	}
 
 	void DirectionLightComponent::notifyShadoMapPipiline()

@@ -88,12 +88,9 @@ namespace Destiny
 			0.5f, 0.5f, 0.0f, 1.0f
 		);
 
-		for (const auto& renderer : Renderer::s_cache)
-		{
-			renderer.second->setConstant("g_directionLightCount", 0);
-			renderer.second->setConstant("g_pointLightCount", 0);
-			renderer.second->setConstant("T", XMMatrixTranspose(T));
-		}
+		Renderer::SetConstant("g_directionLightCount", 0);
+		Renderer::SetConstant("g_pointLightCount", 0);
+		Renderer::SetConstant("T", XMMatrixTranspose(T));
 	}
 
 	void VisualScene::update(float deltaTime)

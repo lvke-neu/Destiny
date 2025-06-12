@@ -136,11 +136,8 @@ namespace Destiny
 		std::shared_ptr<Blob> blob = std::make_shared<Blob>(pointLights.size() * sizeof(PointLight));
 		blob->copyfrom((void*)pointLights.data(), blob->getLength());
 
-		for (const auto& renderer : Renderer::s_cache)
-		{
-			renderer.second->setConstant("g_pointLightCount", (int)pointLights.size());
-			renderer.second->setConstant("g_pointLights", blob);
-		}
+		Renderer::SetConstant("g_pointLightCount", (int)pointLights.size());
+		Renderer::SetConstant("g_pointLights", blob);
 	}
 
 	RTTR_REGISTRATION

@@ -13,6 +13,9 @@
 namespace Destiny
 {
 	std::unordered_map<std::string, std::shared_ptr<Renderer>> Renderer::s_cache;
+	std::unordered_map<std::string, std::shared_ptr<Blob>> Renderer::s_cache_constant;
+	std::unordered_map<std::string, std::shared_ptr<Texture>> Renderer::s_cache_shaderResource;
+	std::unordered_map<std::string, std::shared_ptr<SamplerState>> Renderer::s_cache_samplerSate;
 	Renderer::Renderer(const char* path) :
 		m_vertexShader(nullptr),
 		m_pixelShader(nullptr),
@@ -82,6 +85,21 @@ namespace Destiny
 		SAFE_RELEASE(m_gsCompiledBlob);
 		SAFE_RELEASE(m_hsCompiledBlob);
 		SAFE_RELEASE(m_dsCompiledBlob);
+
+		for (const auto& constantBlob : s_cache_constant)
+		{
+			setConstant(constantBlob.first.c_str(), constantBlob.second);
+		}
+
+		for (const auto& shaderResource : s_cache_shaderResource)
+		{
+			setShaderResource(shaderResource.first.c_str(), shaderResource.second);
+		}
+
+		for (const auto& samplerSate : s_cache_samplerSate)
+		{
+			setSamplerSate(samplerSate.first.c_str(), samplerSate.second);
+		}
 	}
 
 	void Renderer::doReload()
@@ -113,6 +131,33 @@ namespace Destiny
 
 		s_cache.insert({ path, renderer });
 		return renderer;
+	}
+
+	void Renderer::SetConstant(const char* name, std::shared_ptr<Blob> blob)
+	{
+		s_cache_constant[name] = blob;
+		for (const auto& renderer : Renderer::s_cache)
+		{
+			renderer.second->setConstant(name, blob);
+		}
+	}
+
+	void Renderer::SetShaderResource(const char* name, std::shared_ptr<Texture> texture)
+	{
+		s_cache_shaderResource[name] = texture;
+		for (const auto& renderer : Renderer::s_cache)
+		{
+			renderer.second->setShaderResource(name, texture);
+		}
+	}
+
+	void Renderer::SetSamplerSate(const char* name, std::shared_ptr<SamplerState> samplerState)
+	{
+		s_cache_samplerSate[name] = samplerState;
+		for (const auto& renderer : Renderer::s_cache)
+		{
+			renderer.second->setSamplerSate(name, samplerState);
+		}
 	}
 
 	void Renderer::setShaderResource(const char* name, std::shared_ptr<Texture> texture)

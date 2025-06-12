@@ -33,6 +33,15 @@ namespace Destiny
 	public:
 		static std::shared_ptr<Renderer> Create(const char* path);
 		static std::unordered_map<std::string, std::shared_ptr<Renderer>> s_cache;
+
+		template<typename T>
+		static void	SetConstant(const char* name, T value);
+		static void SetConstant(const char* name, std::shared_ptr<Blob> blob);
+		static void SetShaderResource(const char* name, std::shared_ptr<Texture> texture);
+		static void SetSamplerSate(const char* name, std::shared_ptr<SamplerState> samplerState);
+		static std::unordered_map<std::string, std::shared_ptr<Blob>> s_cache_constant;
+		static std::unordered_map<std::string, std::shared_ptr<Texture>> s_cache_shaderResource;
+		static std::unordered_map<std::string, std::shared_ptr<SamplerState>> s_cache_samplerSate;
 	public:
 		std::shared_ptr<Blob>			getInputSignatureBlob();
 		void							fillDrawParameters(std::shared_ptr<DrawParameters> drawParameters);
@@ -90,6 +99,18 @@ namespace Destiny
 	inline std::shared_ptr<BlobHolder> Renderer::getBlobHolder()
 	{
 		return m_blobHolder;
+	}
+
+	template<typename T>
+	inline void	Renderer::SetConstant(const char* name, T value)
+	{
+		std::shared_ptr<Blob> blob = std::make_shared<Blob>(sizeof(value));
+		blob->copyfrom(&value, sizeof(value));
+		s_cache_constant[name] = blob;
+		for (const auto& renderer : Renderer::s_cache)
+		{
+			renderer.second->setConstant(name, value);
+		}
 	}
 
 	template<typename T>

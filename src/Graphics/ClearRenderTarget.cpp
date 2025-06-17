@@ -40,7 +40,7 @@ namespace Destiny
 			return;
 		}
 
-		if (m_renderTargetView && m_depthStencilView)
+		if (m_renderTargetView && m_depthStencilView && m_renderTargetView->isLoadingSucceed() && m_depthStencilView->isLoadingSucceed())
 		{
 			deviceContext->ClearRenderTargetView(*m_renderTargetView->getRenderTargetView(), (float*)&m_clearColor);
 			deviceContext->ClearDepthStencilView(m_depthStencilView->getDepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);

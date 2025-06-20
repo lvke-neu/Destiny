@@ -10,11 +10,13 @@ namespace Destiny
 	ModelComponent::ModelComponent() :
 		m_model(nullptr),
 		m_modelChanged(false),
-		m_renderer("builtin://renderer/forward_pbr.hlsl"),
-		m_shadowRenderer("builtin://renderer/forward_pbr_shadow.hlsl"),
+		m_renderer("builtin://renderer/forward_pbr_model.hlsl"),
+		m_shadowRenderer("builtin://renderer/forward_pbr_model_shadow.hlsl"),
 		m_rendererCategory(RendererCategory::ForwardOpaque),
 		m_rasterizerDesc(CD3D11_RASTERIZER_DESC(CD3D11_DEFAULT())),
-		m_enableShadow(true)
+		m_enableShadow(true),
+		m_animation(""),
+		m_animationIndex(-1)
 	{
 
 	}
@@ -111,6 +113,11 @@ namespace Destiny
 			m_modelChanged = false;
 			LOG_INFO("Model:{0} load successfully", m_path);	
 		}
+
+		if (m_model && m_model->isLoadingSucceed())
+		{
+			m_model->updateAnimation(deltaTime);
+		}
 	}
 
 	void ModelComponent::onPropertyChanged(const std::string& property)
@@ -124,6 +131,61 @@ namespace Destiny
 		}
 	}
 
+
+	std::string ModelComponent::get_animation()
+	{
+		if (m_model)
+		{
+			return m_model->get_animation();
+		}
+		return m_animation;
+	}
+
+	void ModelComponent::set_animation(std::string animation)
+	{
+		m_animation = animation;
+		if (m_model)
+		{
+			return m_model->set_animation(m_animation);
+		}
+	}
+
+	unsigned int ModelComponent::get_animationIndex()
+	{
+		if (m_model)
+		{
+			return m_model->get_animationIndex();
+		}
+		return m_animationIndex;
+	}
+
+	void ModelComponent::set_animationIndex(unsigned int animationIndex)
+	{
+		m_animationIndex = animationIndex;
+		if (m_model)
+		{
+			m_model->set_animationIndex(m_animationIndex);
+		}
+	}
+
+	unsigned int ModelComponent::get_animationCount()
+	{
+		if (m_model)
+		{
+			return m_model->get_animationCount();
+		}
+
+		return 0;
+	}
+
+	void ModelComponent::set_animationCount(unsigned int animationCount)
+	{
+		if (m_model)
+		{
+			return m_model->set_animationCount(animationCount);
+		}
+	}
+
 	RTTR_REGISTRATION
 	{
 		rttr::registration::class_<ModelComponent>("ModelComponent")
@@ -133,6 +195,9 @@ namespace Destiny
 			.property("renderer", &ModelComponent::get_renderer, &ModelComponent::set_renderer)
 			.property("shadowRenderer", &ModelComponent::get_shadowRenderer, &ModelComponent::set_shadowRenderer)
 			.property("rendererCategory", &ModelComponent::get_rendererCategory, &ModelComponent::set_rendererCategory)
-			.property("rasterizerDesc", &ModelComponent::get_rasterizerDesc, &ModelComponent::set_rasterizerDesc);
+			.property("rasterizerDesc", &ModelComponent::get_rasterizerDesc, &ModelComponent::set_rasterizerDesc)
+			.property("animation", &ModelComponent::get_animation, &ModelComponent::set_animation)
+			.property("animationIndex", &ModelComponent::get_animationIndex, &ModelComponent::set_animationIndex)
+			.property("animationCount", &ModelComponent::get_animationCount, &ModelComponent::set_animationCount);
 	}
 }

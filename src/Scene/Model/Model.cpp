@@ -1,5 +1,6 @@
 #include "Model.h"
 #include "ModelLoader.h"
+#include "Animation.h"
 #include "Engine/BlobHolder.h"
 #include "Engine/Engine.h"
 #include "Engine/BlobLoader.h"
@@ -14,7 +15,8 @@ namespace Destiny
 	std::shared_ptr<ModelLoader> Model::s_modelLoader = std::make_shared<ModelLoader>();
 	Model::Model() :
 		m_node(nullptr),
-		m_mergedAABB{ { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } }
+		m_mergedAABB{ { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+		m_animator(std::make_shared<Animator>())
 	{
 
 	}
@@ -123,5 +125,62 @@ namespace Destiny
 				visualComponent->set_rasterizerDesc(desc);
 			}
 		}
+	}
+
+	void Model::updateAnimation(float deltaTime)
+	{
+		long long CurrentTimeMillis = GetTickCount64();
+		float AnimationTimeSec = ((float)(CurrentTimeMillis - m_animator->startTimeMillis)) / 1000.0f;
+		m_animator->calcuFinalTransform(AnimationTimeSec);
+
+		std::vector<DirectX::XMMATRIX> boneTransforms;
+		for (const auto& boneInfo : m_animator->m_skeleton->boneInfo)
+		{
+			boneTransforms.emplace_back(boneInfo.finalTransformation);
+		}
+
+		std::shared_ptr<Blob> blob = std::make_shared<Blob>(boneTransforms.size() * sizeof(DirectX::XMMATRIX));
+		blob->copyfrom((void*)boneTransforms.data(), blob->getLength());
+
+		for (const auto& visualComponent : m_visualComponents)
+		{
+			if (visualComponent)
+			{
+				visualComponent->setConstant("u_boneTransforms", blob);
+				visualComponent->getShadowVisual()->setConstant("u_boneTransforms", blob);
+			}
+		}
+
+	}
+
+	std::string Model::get_animation()
+	{
+		return m_animator->get_animation();
+	}
+
+	void Model::set_animation(std::string animation)
+	{
+		m_animator->set_animation(animation);
+	}
+
+	unsigned int Model::get_animationIndex()
+	{
+		return m_animator->get_animationIndex();
+	}
+
+	void Model::set_animationIndex(unsigned int animationIndex)
+	{
+		m_animator->set_animationIndex(animationIndex);
+	}
+
+
+	unsigned int Model::get_animationCount()
+	{
+		return m_animator->get_animationCount();
+	}
+
+	void Model::set_animationCount(unsigned int animationCount)
+	{
+		m_animator->set_animationCount(animationCount);
 	}
 }

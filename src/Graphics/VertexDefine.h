@@ -31,4 +31,17 @@ namespace Destiny
 	{
 		DirectX::XMFLOAT2 position;
 	};
+
+
+	struct PositionNormalTexcoordBone
+	{
+		DirectX::XMFLOAT3 position;
+		DirectX::XMFLOAT3 normal;
+		DirectX::XMFLOAT2 texcoord;
+		//bone
+		DirectX::XMUINT4  boneIds;
+		DirectX::XMFLOAT4 weights;
+		DirectX::XMUINT4  boneIds2;
+		DirectX::XMFLOAT4 weights2;
+	};
 }

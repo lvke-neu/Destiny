@@ -287,7 +287,7 @@ void PropertyPanel::reflectUInt(const rttr::property& property, std::shared_ptr<
 	ImGui::NextColumn();
 	if (ImGui::DragInt(("##" + property.get_name().to_string()).c_str(), &value, m_dragFloatStep, 0, UINT32_MAX))
 	{
-		if (value > 0)
+		//if (value > 0)
 		{
 			unsigned int tmpValue = (unsigned int)value;
 			property.set_value(object, tmpValue);

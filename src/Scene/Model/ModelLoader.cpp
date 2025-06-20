@@ -1,5 +1,6 @@
 #include "ModelLoader.h"
 #include "Model.h"
+#include "Animation.h"
 #include "Engine/BlobHolder.h"
 #include "Engine/BlobLoader.h"
 #include "Engine/Node.h"
@@ -33,6 +34,18 @@ namespace Destiny
 	ModelLoader::~ModelLoader()
 	{
 
+	}
+
+	
+	DirectX::XMMATRIX AssimpMatToDXMat(const aiMatrix4x4& aiMat4)
+	{
+		return 
+		{
+			aiMat4.a1, aiMat4.a2, aiMat4.a3, aiMat4.a4,
+			aiMat4.b1, aiMat4.b2, aiMat4.b3, aiMat4.b4,
+			aiMat4.c1, aiMat4.c2, aiMat4.c3, aiMat4.c4,
+			aiMat4.d1, aiMat4.d2, aiMat4.d3, aiMat4.d4,
+		};
 	}
 
 	void ModelLoader::loadAsset(std::shared_ptr<Asset> asset)
@@ -70,6 +83,15 @@ namespace Destiny
 		auto model = std::dynamic_pointer_cast<Model>(asset);
 		model->m_node = copyTree(aiScene, nullptr, aiScene->mRootNode, model, creationParam->getPath());
 
+
+		//animation
+		model->m_animator->m_node = model->m_node;
+		processAnimation(aiScene, model);
+		if (model->m_animator->m_animations.size())
+		{
+			model->m_animator->set_animationIndex(0);
+		}
+		
 		asset->loadSucceeded__();
 	}
 
@@ -136,7 +158,7 @@ namespace Destiny
 
 		std::shared_ptr<Blob> data = nullptr;
 		std::vector<DirectX::XMFLOAT3> positions;
-		std::vector<PositionNormalTexcoord> vertices;
+		std::vector<PositionNormalTexcoordBone> vertices;
 		vertices.resize(otherMesh->mNumVertices);
 		if (otherMesh->HasPositions())
 		{
@@ -166,9 +188,74 @@ namespace Destiny
 				}
 			}
 		}
-		data.reset(new Blob(vertices.size() * sizeof(PositionNormalTexcoord)));
-		data->copyfrom(vertices.data(), vertices.size() * sizeof(PositionNormalTexcoord));
-		std::shared_ptr<VertexBuffer> vertexBuffer = std::make_shared<VertexBuffer>(InputLayout::Create_PositionNormalTexcoord(), (unsigned int)sizeof(PositionNormalTexcoord), 0, data);
+
+		auto animation = model->m_animator;
+		auto skeleton = animation->m_skeleton;
+		for (unsigned int i = 0; i < otherMesh->mNumBones; i++) {
+			int BoneId = skeleton->GetBoneId(otherMesh->mBones[i]->mName.C_Str());
+
+			if (BoneId == skeleton->boneInfo.size()) {
+				BoneInfo bi(AssimpMatToDXMat(otherMesh->mBones[i]->mOffsetMatrix));
+				skeleton->boneInfo.push_back(bi);
+			}
+
+			for (unsigned j = 0; j < otherMesh->mBones[i]->mNumWeights; j++) {
+		
+				if (vertices[otherMesh->mBones[i]->mWeights[j].mVertexId].boneIds.x == 0 && vertices[otherMesh->mBones[i]->mWeights[j].mVertexId].weights.x == 0)
+				{
+					vertices[otherMesh->mBones[i]->mWeights[j].mVertexId].boneIds.x = BoneId;
+					vertices[otherMesh->mBones[i]->mWeights[j].mVertexId].weights.x = otherMesh->mBones[i]->mWeights[j].mWeight;
+					continue;
+				}
+				if (vertices[otherMesh->mBones[i]->mWeights[j].mVertexId].boneIds.y == 0 && vertices[otherMesh->mBones[i]->mWeights[j].mVertexId].weights.y == 0)
+				{
+					vertices[otherMesh->mBones[i]->mWeights[j].mVertexId].boneIds.y = BoneId;
+					vertices[otherMesh->mBones[i]->mWeights[j].mVertexId].weights.y = otherMesh->mBones[i]->mWeights[j].mWeight;
+					continue;
+				}
+				if (vertices[otherMesh->mBones[i]->mWeights[j].mVertexId].boneIds.z == 0 && vertices[otherMesh->mBones[i]->mWeights[j].mVertexId].weights.z == 0)
+				{
+					vertices[otherMesh->mBones[i]->mWeights[j].mVertexId].boneIds.z = BoneId;
+					vertices[otherMesh->mBones[i]->mWeights[j].mVertexId].weights.z = otherMesh->mBones[i]->mWeights[j].mWeight;
+					continue;
+				}
+				if (vertices[otherMesh->mBones[i]->mWeights[j].mVertexId].boneIds.w == 0 && vertices[otherMesh->mBones[i]->mWeights[j].mVertexId].weights.w == 0)
+				{
+					vertices[otherMesh->mBones[i]->mWeights[j].mVertexId].boneIds.w = BoneId;
+					vertices[otherMesh->mBones[i]->mWeights[j].mVertexId].weights.w = otherMesh->mBones[i]->mWeights[j].mWeight;
+					continue;
+				}
+
+				if (vertices[otherMesh->mBones[i]->mWeights[j].mVertexId].boneIds2.x == 0 && vertices[otherMesh->mBones[i]->mWeights[j].mVertexId].weights2.x == 0)
+				{
+					vertices[otherMesh->mBones[i]->mWeights[j].mVertexId].boneIds2.x = BoneId;
+					vertices[otherMesh->mBones[i]->mWeights[j].mVertexId].weights2.x = otherMesh->mBones[i]->mWeights[j].mWeight;
+					continue;
+				}
+				if (vertices[otherMesh->mBones[i]->mWeights[j].mVertexId].boneIds2.y == 0 && vertices[otherMesh->mBones[i]->mWeights[j].mVertexId].weights2.y == 0)
+				{
+					vertices[otherMesh->mBones[i]->mWeights[j].mVertexId].boneIds2.y = BoneId;
+					vertices[otherMesh->mBones[i]->mWeights[j].mVertexId].weights2.y = otherMesh->mBones[i]->mWeights[j].mWeight;
+					continue;
+				}
+				if (vertices[otherMesh->mBones[i]->mWeights[j].mVertexId].boneIds2.z == 0 && vertices[otherMesh->mBones[i]->mWeights[j].mVertexId].weights2.z == 0)
+				{
+					vertices[otherMesh->mBones[i]->mWeights[j].mVertexId].boneIds2.z = BoneId;
+					vertices[otherMesh->mBones[i]->mWeights[j].mVertexId].weights2.z = otherMesh->mBones[i]->mWeights[j].mWeight;
+					continue;
+				}
+				if (vertices[otherMesh->mBones[i]->mWeights[j].mVertexId].boneIds2.w == 0 && vertices[otherMesh->mBones[i]->mWeights[j].mVertexId].weights2.w == 0)
+				{
+					vertices[otherMesh->mBones[i]->mWeights[j].mVertexId].boneIds2.w = BoneId;
+					vertices[otherMesh->mBones[i]->mWeights[j].mVertexId].weights2.w = otherMesh->mBones[i]->mWeights[j].mWeight;
+					continue;
+				}
+			}
+		}
+
+		data.reset(new Blob(vertices.size() * sizeof(PositionNormalTexcoordBone)));
+		data->copyfrom(vertices.data(), vertices.size() * sizeof(PositionNormalTexcoordBone));
+		std::shared_ptr<VertexBuffer> vertexBuffer = std::make_shared<VertexBuffer>(InputLayout::Create_PositionNormalTexcoordBone(), (unsigned int)sizeof(PositionNormalTexcoordBone), 0, data);
 	
 		std::vector<unsigned int> indices;
 		if (otherMesh->HasFaces())
@@ -261,5 +348,49 @@ namespace Destiny
 		}
 
 		return pbrMaterial;
+	}
+
+	void ModelLoader::processAnimation(const aiScene* otherScene, std::shared_ptr<Model> model)
+	{
+		model->m_animator->globalInverseTransform = DirectX::XMMatrixInverse(nullptr, AssimpMatToDXMat(otherScene->mRootNode->mTransformation));
+		model->m_animator->startTimeMillis = GetTickCount64();
+
+		for (unsigned int i = 0; i < otherScene->mNumAnimations; i++)
+		{
+			
+			std::shared_ptr<Animation> animation = std::make_shared<Animation>();
+			animation->name = otherScene->mAnimations[i]->mName.C_Str();
+			animation->duration = otherScene->mAnimations[i]->mDuration;
+			animation->ticksPerSecond = otherScene->mAnimations[i]->mTicksPerSecond > 0 ? otherScene->mAnimations[i]->mTicksPerSecond : 25.0;
+
+			for (unsigned int j = 0; j < otherScene->mAnimations[i]->mNumChannels; j++)
+			{
+				const aiNodeAnim* aiChannel = otherScene->mAnimations[i]->mChannels[j];
+				std::shared_ptr<Animation::Channel> channel = std::make_shared<Animation::Channel>();
+				channel->nodeName = aiChannel->mNodeName.C_Str();
+
+				for (unsigned int k = 0; k < aiChannel->mNumPositionKeys; k++)
+				{
+					channel->positionKeys.push_back({ aiChannel->mPositionKeys[k].mValue.x, aiChannel->mPositionKeys[k].mValue.y, aiChannel->mPositionKeys[k].mValue.z });
+					channel->positionTimes.push_back((float)aiChannel->mPositionKeys[k].mTime);
+				}
+
+				for (unsigned int k = 0; k < aiChannel->mNumRotationKeys; k++)
+				{
+					channel->rotationKeys.push_back({ aiChannel->mRotationKeys[k].mValue.x, aiChannel->mRotationKeys[k].mValue.y,  aiChannel->mRotationKeys[k].mValue.z, aiChannel->mRotationKeys[k].mValue.w });
+					channel->rotationTimes.push_back((float)aiChannel->mRotationKeys[k].mTime);
+				}
+
+				for (unsigned int k = 0; k < aiChannel->mNumScalingKeys; k++)
+				{
+					channel->scalingKeys.push_back({ aiChannel->mScalingKeys[k].mValue.x, aiChannel->mScalingKeys[k].mValue.y, aiChannel->mScalingKeys[k].mValue.z });
+					channel->scalingTimes.push_back((float)aiChannel->mScalingKeys[k].mTime);
+				}
+
+				animation->channels.push_back(channel);
+			}
+
+			model->m_animator->m_animations.push_back(animation);
+		}
 	}
 }

@@ -27,5 +27,7 @@ namespace Destiny
 		std::shared_ptr<RenderPass>		getRenderPass();
 		std::shared_ptr<Mesh>			getMesh(aiMesh* otherMesh, std::shared_ptr<Model> model);
 		std::shared_ptr<Material>		getMaterial(aiMaterial* otherMaterial, const std::string& path);
+
+		void processAnimation(const aiScene* otherScene, std::shared_ptr<Model> model);
 	};
 }

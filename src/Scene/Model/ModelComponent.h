@@ -25,6 +25,14 @@ namespace Destiny
 		void set_rasterizerDesc(D3D11_RASTERIZER_DESC rasterizerDesc);
 		GET(bool, enableShadow);
 		void set_enableShadow(bool enableShadow);
+
+	public:
+		std::string get_animation();
+		void set_animation(std::string animation);
+		unsigned int get_animationIndex();
+		void set_animationIndex(unsigned int animationIndex);
+		unsigned int get_animationCount();
+		void set_animationCount(unsigned int animationCount);
 	private:
 		virtual void onUpdate(float deltaTime) override;
 		virtual void onPropertyChanged(const std::string& property) override;
@@ -37,5 +45,8 @@ namespace Destiny
 		RendererCategory		m_rendererCategory;
 		D3D11_RASTERIZER_DESC   m_rasterizerDesc;
 		bool m_enableShadow;
+
+		std::string m_animation;
+		unsigned int m_animationIndex;
 	};
 }

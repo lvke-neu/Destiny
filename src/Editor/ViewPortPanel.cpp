@@ -115,7 +115,9 @@ void ViewPortPanel::update()
 						LOG_ERROR("Open Scene:{0} Failure", dropPath);
 					}
 				}
-				else if (dropPath.find(".obj") != std::string::npos || dropPath.find(".dae") != std::string::npos || dropPath.find(".gltf") != std::string::npos)
+				else if (dropPath.find(".obj") != std::string::npos || dropPath.find(".dae") 
+					!= std::string::npos || dropPath.find(".gltf") != std::string::npos ||
+					dropPath.find(".glb") != std::string::npos || dropPath.find(".fbx") != std::string::npos || dropPath.find(".FBX") != std::string::npos)
 				{
 					if (Destiny::Engine::GetInstance()->getSceneManager()->getCurrentScene())
 					{

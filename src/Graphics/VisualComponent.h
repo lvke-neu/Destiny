@@ -50,6 +50,7 @@ namespace Destiny
 
 		template<typename T>
 		void						setConstant(const char* name, T value);
+		void						setConstant(const char* name, std::shared_ptr<Blob> blob);
 		void						setShaderResource(const char* name, std::shared_ptr<Texture> texture);
 		void						setSamplerSate(const char* name, std::shared_ptr<SamplerState> samplerState);
 	private:
@@ -114,6 +115,14 @@ namespace Destiny
 		if (m_visual)
 		{
 			m_visual->setConstant(name, value);
+		}
+	}
+
+	inline void VisualComponent::setConstant(const char* name, std::shared_ptr<Blob> blob)
+	{
+		if (m_visual)
+		{
+			m_visual->setConstant(name, blob);
 		}
 	}
 

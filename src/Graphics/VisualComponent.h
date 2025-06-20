@@ -53,6 +53,8 @@ namespace Destiny
 		void						setConstant(const char* name, std::shared_ptr<Blob> blob);
 		void						setShaderResource(const char* name, std::shared_ptr<Texture> texture);
 		void						setSamplerSate(const char* name, std::shared_ptr<SamplerState> samplerState);
+		template<typename T>
+		void						setShadowConstant(const char* name, T value);
 	private:
 		std::shared_ptr<Visual> m_visual;
 		std::shared_ptr<Visual> m_shadowVisual;
@@ -115,6 +117,15 @@ namespace Destiny
 		if (m_visual)
 		{
 			m_visual->setConstant(name, value);
+		}
+	}
+
+	template<typename T>
+	inline void VisualComponent::setShadowConstant(const char* name, T value)
+	{
+		if (m_shadowVisual)
+		{
+			m_shadowVisual->setConstant(name, value);
 		}
 	}
 

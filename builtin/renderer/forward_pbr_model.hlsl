@@ -5,6 +5,7 @@ cbuffer cbPerObject : register(b0)
     matrix u_worldMatrix;
     matrix u_worldInvTransposeMatrix;
     float4x4 u_boneTransforms[256];
+    float u_hasAnimation;
 }
 
 struct VertexIn
@@ -27,38 +28,79 @@ struct VertexOut
     float4 shadowPosH : TEXCOORD1;
 };
 
+
+float3x3 Inverse3x3(float3x3 m) 
+{
+    float det00 = m[1][1] * m[2][2] - m[1][2] * m[2][1];
+    float det01 = m[1][0] * m[2][2] - m[1][2] * m[2][0];
+    float det02 = m[1][0] * m[2][1] - m[1][1] * m[2][0];
+
+
+    float det = m[0][0] * det00 - m[0][1] * det01 + m[0][2] * det02;
+
+
+    float invDet = 1.0f / max(det, 1e-6f);
+
+    return float3x3(
+        det00 * invDet,
+        -(m[0][1] * m[2][2] - m[0][2] * m[2][1]) * invDet,
+        (m[0][1] * m[1][2] - m[0][2] * m[1][1]) * invDet,
+
+        -det01 * invDet,
+        (m[0][0] * m[2][2] - m[0][2] * m[2][0]) * invDet,
+        -(m[0][0] * m[1][2] - m[0][2] * m[1][0]) * invDet,
+
+        det02 * invDet,
+        -(m[0][0] * m[2][1] - m[0][1] * m[2][0]) * invDet,
+        (m[0][0] * m[1][1] - m[0][1] * m[1][0]) * invDet
+        );
+}
+
 VertexOut VS(VertexIn vIn)
 {
     VertexOut vOut;
-    
 
-    matrix BoneTransform = u_boneTransforms[vIn.boneIds.x] * vIn.weights.x;
-    BoneTransform += u_boneTransforms[vIn.boneIds.y] * vIn.weights.y;
-    BoneTransform += u_boneTransforms[vIn.boneIds.z] * vIn.weights.z;
-    BoneTransform += u_boneTransforms[vIn.boneIds.w] * vIn.weights.w;
+    if (u_hasAnimation > 0.5f)
+    {
+        matrix BoneTransform = u_boneTransforms[vIn.boneIds.x] * vIn.weights.x;
+        BoneTransform += u_boneTransforms[vIn.boneIds.y] * vIn.weights.y;
+        BoneTransform += u_boneTransforms[vIn.boneIds.z] * vIn.weights.z;
+        BoneTransform += u_boneTransforms[vIn.boneIds.w] * vIn.weights.w;
 
-    BoneTransform += u_boneTransforms[vIn.boneIds2.x] * vIn.weights2.x;
-    BoneTransform += u_boneTransforms[vIn.boneIds2.y] * vIn.weights2.y;
-    BoneTransform += u_boneTransforms[vIn.boneIds2.z] * vIn.weights2.z;
-    BoneTransform += u_boneTransforms[vIn.boneIds2.w] * vIn.weights2.w;
-
-    float4 skinnedPos = float4(0.0f, 0.0f, 0.0f, 0.0f);
-    float3 skinnedNormal = float3(0.0f, 0.0f, 0.0f);
-
-    skinnedPos = mul(float4(vIn.positionL, 1.0f), BoneTransform);
-
-    float3x3 normalMatrix = transpose((float3x3)BoneTransform);
-
-    // 变换法线
-    skinnedNormal = mul(vIn.normalL, normalMatrix);
-    skinnedNormal = normalize(skinnedNormal); // 归一化以防止精度问题
+        BoneTransform += u_boneTransforms[vIn.boneIds2.x] * vIn.weights2.x;
+        BoneTransform += u_boneTransforms[vIn.boneIds2.y] * vIn.weights2.y;
+        BoneTransform += u_boneTransforms[vIn.boneIds2.z] * vIn.weights2.z;
+        BoneTransform += u_boneTransforms[vIn.boneIds2.w] * vIn.weights2.w;
 
 
-    vOut.positionH = mul(mul(mul(skinnedPos, u_worldMatrix), g_view), g_proj);
-    vOut.positionW = mul(skinnedPos, u_worldMatrix);
-    vOut.normalW = mul(skinnedNormal, (float3x3) u_worldInvTransposeMatrix);
-    vOut.texcoord = vIn.texcoord;
-    vOut.shadowPosH = mul(mul(mul(vOut.positionW, g_shadowView), g_shadowProj), T);
+        float4 skinnedPos = mul(float4(vIn.positionL, 1.0f), BoneTransform);
+
+
+        float3x3 normalMatrix = transpose(Inverse3x3((float3x3)BoneTransform));
+
+
+        float3 skinnedNormal = mul(vIn.normalL, normalMatrix);
+
+        vOut.positionW = mul(skinnedPos, u_worldMatrix);
+        vOut.positionH = mul(mul(mul(skinnedPos, u_worldMatrix), g_view), g_proj);
+
+
+        float3x3 worldNormalMatrix = (float3x3) u_worldInvTransposeMatrix;
+        vOut.normalW = mul(skinnedNormal, worldNormalMatrix);
+
+        vOut.normalW = normalize(vOut.normalW);
+
+        vOut.texcoord = vIn.texcoord;
+        vOut.shadowPosH = mul(mul(mul(vOut.positionW, g_shadowView), g_shadowProj), T);
+    }
+    else
+    {
+        vOut.positionH = mul(mul(mul(float4(vIn.positionL, 1.0f), u_worldMatrix), g_view), g_proj);
+        vOut.positionW = mul(float4(vIn.positionL, 1.0f), u_worldMatrix);
+        vOut.normalW = mul(vIn.normalL, (float3x3) u_worldInvTransposeMatrix);
+        vOut.texcoord = vIn.texcoord;
+        vOut.shadowPosH = mul(mul(mul(vOut.positionW, g_shadowView), g_shadowProj), T);
+    }
 
     return vOut;
 }

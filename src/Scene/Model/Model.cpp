@@ -90,6 +90,7 @@ namespace Destiny
 			if (visualComponent)
 			{
 				visualComponent->set_renderer(renderer);
+				visualComponent->setConstant("u_hasAnimation", m_animator->m_animations.size() > 0 ? 1.0f : 0.0f);
 			}
 		}
 	}
@@ -101,6 +102,7 @@ namespace Destiny
 			if (visualComponent)
 			{
 				visualComponent->set_shadowRenderer(renderer);
+				visualComponent->setShadowConstant("u_hasAnimation", m_animator->m_animations.size() > 0 ? 1.0f : 0.0f);
 			}
 		}
 	}
@@ -182,5 +184,15 @@ namespace Destiny
 	void Model::set_animationCount(unsigned int animationCount)
 	{
 		m_animator->set_animationCount(animationCount);
+	}
+
+	float Model::get_animationSpeed()
+	{
+		return m_animator->get_animationSpeed();
+	}
+
+	void Model::set_animationSpeed(float animationSpeed)
+	{
+		m_animator->set_animationSpeed(animationSpeed);
 	}
 }

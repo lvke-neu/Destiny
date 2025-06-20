@@ -33,6 +33,8 @@ namespace Destiny
 		void set_animationIndex(unsigned int animationIndex);
 		unsigned int get_animationCount();
 		void set_animationCount(unsigned int animationCount);
+		float get_animationSpeed();
+		void set_animationSpeed(float animationSpeed);
 	private:
 		virtual void onUpdate(float deltaTime) override;
 		virtual void onPropertyChanged(const std::string& property) override;

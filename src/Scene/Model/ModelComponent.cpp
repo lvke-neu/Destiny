@@ -186,6 +186,23 @@ namespace Destiny
 		}
 	}
 
+	float ModelComponent::get_animationSpeed()
+	{
+		if (m_model)
+		{
+			return m_model->get_animationSpeed();
+		}
+		return 1.0f;
+	}
+
+	void ModelComponent::set_animationSpeed(float animationSpeed)
+	{
+		if (m_model)
+		{
+			return m_model->set_animationSpeed(animationSpeed);
+		}
+	}
+
 	RTTR_REGISTRATION
 	{
 		rttr::registration::class_<ModelComponent>("ModelComponent")
@@ -198,6 +215,7 @@ namespace Destiny
 			.property("rasterizerDesc", &ModelComponent::get_rasterizerDesc, &ModelComponent::set_rasterizerDesc)
 			.property("animation", &ModelComponent::get_animation, &ModelComponent::set_animation)
 			.property("animationIndex", &ModelComponent::get_animationIndex, &ModelComponent::set_animationIndex)
-			.property("animationCount", &ModelComponent::get_animationCount, &ModelComponent::set_animationCount);
+			.property("animationCount", &ModelComponent::get_animationCount, &ModelComponent::set_animationCount)
+			.property("animationSpeed", &ModelComponent::get_animationSpeed, &ModelComponent::set_animationSpeed);
 	}
 }

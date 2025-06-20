@@ -10,7 +10,8 @@ namespace Destiny
 {
 	Animator::Animator() :
 		m_skeleton(std::make_shared<Skeleton>()),
-		m_animationIndex(-1)
+		m_animationIndex(-1),
+		m_animationSpeed(1.0f)
 	{
 
 	}
@@ -226,9 +227,26 @@ namespace Destiny
 			return;
 		}
 
-		float TicksPerSecond = (float)(m_animations[m_animationIndex]->ticksPerSecond != 0 ? m_animations[m_animationIndex]->ticksPerSecond : 25.0f);
-		float TimeInTicks = TimeInSeconds * TicksPerSecond;
-		float AnimationTimeTicks = fmod(TimeInTicks, (float)m_animations[m_animationIndex]->duration);
+		float AdjustedTimeInSeconds = TimeInSeconds * m_animationSpeed;
+
+		float TicksPerSecond = (float)(m_animations[m_animationIndex]->ticksPerSecond != 0 ?
+			m_animations[m_animationIndex]->ticksPerSecond : 25.0f);
+		float TimeInTicks = AdjustedTimeInSeconds * TicksPerSecond;
+		float duration = (float)m_animations[m_animationIndex]->duration;
+
+
+		float AnimationTimeTicks;
+		if (m_animationSpeed >= 0)
+		{
+			AnimationTimeTicks = fmod(TimeInTicks, duration);
+			if (AnimationTimeTicks < 0) AnimationTimeTicks += duration;
+		}
+		else
+		{
+			AnimationTimeTicks = fmod(TimeInTicks, duration);
+			if (AnimationTimeTicks < 0) AnimationTimeTicks += duration;
+			AnimationTimeTicks = duration - AnimationTimeTicks;
+		}
 
 		readNodeHierarchy(AnimationTimeTicks, m_node, DirectX::XMMatrixIdentity());
 	}
@@ -270,5 +288,15 @@ namespace Destiny
 	void Animator::set_animationCount(unsigned int animationCount)
 	{
 
+	}
+
+	float Animator::get_animationSpeed()
+	{
+		return m_animationSpeed;
+	}
+
+	void Animator::set_animationSpeed(float animationSpeed)
+	{
+		m_animationSpeed = animationSpeed;
 	}
 }

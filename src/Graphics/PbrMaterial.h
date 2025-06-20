@@ -27,12 +27,16 @@ namespace Destiny
 		void setAlbedo(std::shared_ptr<Texture> texture);
 		std::string get_normal();
 		void set_normal(std::string normal);
+		void setNormal(std::shared_ptr<Texture> texture);
 		std::string get_metallic();
 		void set_metallic(std::string metallic);
+		void setMetallic(std::shared_ptr<Texture> texture);
 		std::string get_roughness();
 		void set_roughness(std::string roughness);
+		void setRoughness(std::shared_ptr<Texture> texture);
 		std::string get_ao();
 		void set_ao(std::string ao);
+		void setAo(std::shared_ptr<Texture> texture);
 	private:
 		virtual void update() override;
 	private:

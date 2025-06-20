@@ -114,6 +114,18 @@ namespace Destiny
 		return texture;
 	}
 
+	std::shared_ptr<Texture> Texture::Create(std::shared_ptr<Blob> blob, const char* type)
+	{
+		std::shared_ptr<Texture> texture = std::make_shared<Texture>();
+
+		std::shared_ptr<BlobHolder> blobHolder = std::make_shared<BlobHolder>(Engine::GetInstance()->getBlobLoaderManager()->getBlobLoader("builtin://"), type);
+		blobHolder->loadSucceeded__(blob);
+
+		texture->initialize(s_textureLoader, blobHolder);
+
+		return texture;
+	}
+
 	std::shared_ptr<Texture> Texture::Create2D(int format, unsigned int width, unsigned int height, std::shared_ptr<Blob> data, unsigned int pitch, unsigned int slicePitch, bool isProc, const std::string& procPath)
 	{
 		std::shared_ptr<Texture> texture = std::make_shared<Texture>();

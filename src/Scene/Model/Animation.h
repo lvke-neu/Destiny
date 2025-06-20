@@ -83,6 +83,8 @@ namespace Destiny
 		void set_animationIndex(unsigned int animationIndex);
 		unsigned int get_animationCount();
 		void set_animationCount(unsigned int animationCount);
+		float get_animationSpeed();
+		void set_animationSpeed(float animationSpeed);
 	public:
 		void calcuFinalTransform(float TimeInSeconds);
 		void readNodeHierarchy(float TimeInSeconds, std::shared_ptr<Node> pNode, const DirectX::XMMATRIX& ParentTransform);
@@ -96,5 +98,7 @@ namespace Destiny
 		std::shared_ptr<Node> m_node;
 
 		unsigned int m_animationIndex;
+
+		float m_animationSpeed;
 	};
 }

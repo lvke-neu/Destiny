@@ -167,6 +167,14 @@ namespace Destiny
 		update();
 	}
 
+	void PbrMaterial::setNormal(std::shared_ptr<Texture> texture)
+	{
+		m_normal.reset();
+		m_normal = texture;
+		m_normal->load();
+		update();
+	}
+
 	std::string PbrMaterial::get_metallic()
 	{
 		if (m_metallic)
@@ -180,6 +188,14 @@ namespace Destiny
 	{
 		m_metallic.reset();
 		m_metallic = Texture::Create(metallic.c_str());
+		m_metallic->load();
+		update();
+	}
+
+	void PbrMaterial::setMetallic(std::shared_ptr<Texture> texture)
+	{
+		m_metallic.reset();
+		m_metallic = texture;
 		m_metallic->load();
 		update();
 	}
@@ -201,6 +217,14 @@ namespace Destiny
 		update();
 	}
 
+	void PbrMaterial::setRoughness(std::shared_ptr<Texture> texture)
+	{
+		m_roughness.reset();
+		m_roughness = texture;
+		m_roughness->load();
+		update();
+	}
+
 	std::string PbrMaterial::get_ao()
 	{
 		if (m_ao)
@@ -214,6 +238,14 @@ namespace Destiny
 	{
 		m_ao.reset();
 		m_ao = Texture::Create(ao.c_str());
+		m_ao->load();
+		update();
+	}
+
+	void PbrMaterial::setAo(std::shared_ptr<Texture> texture)
+	{
+		m_ao.reset();
+		m_ao = texture;
 		m_ao->load();
 		update();
 	}

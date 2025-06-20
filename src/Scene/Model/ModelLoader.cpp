@@ -113,7 +113,7 @@ namespace Destiny
 
 			visualComponent->setRenderPass(getRenderPass());
 			visualComponent->setMesh(getMesh(otherScene->mMeshes[otherNode->mMeshes[i]], model));
-			visualComponent->set_material(getMaterial(otherScene->mMaterials[otherScene->mMeshes[otherNode->mMeshes[i]]->mMaterialIndex], path));
+			visualComponent->set_material(getMaterial(otherScene, otherScene->mMaterials[otherScene->mMeshes[otherNode->mMeshes[i]]->mMaterialIndex], path));
 			visualComponent->setShadowMesh(visualComponent->getMesh());
 			visualComponent->setShadowRenderPass(getRenderPass());
 			myNode->addComponent(visualComponent);
@@ -298,7 +298,7 @@ namespace Destiny
 		return stdString;
 	}
 
-	std::shared_ptr<Material> ModelLoader::getMaterial(aiMaterial* otherMaterial, const std::string& path)
+	std::shared_ptr<Material> ModelLoader::getMaterial(const aiScene* otherScene, aiMaterial* otherMaterial, const std::string& path)
 	{
 		if (!otherMaterial)
 		{
@@ -310,7 +310,23 @@ namespace Destiny
 		
 		if (otherMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &otherStr) == aiReturn_SUCCESS)
 		{
-			pbrMaterial->set_albedo(reassembleStr(otherStr, path));
+			std::string otherStdStr = otherStr.C_Str();
+			if (otherStr.length == 2 && otherStdStr.find("*") == 0)
+			{
+				int indexTex = std::stoi(otherStdStr.substr(1,1));
+				auto aiTexture = otherScene->mTextures[indexTex];
+				if (aiTexture->mHeight == 0)
+				{
+					auto blob = std::make_shared<Blob>(aiTexture->mWidth);
+					blob->copyfrom(aiTexture->pcData, blob->getLength());
+
+					pbrMaterial->setAlbedo(Texture::Create(blob, aiTexture->achFormatHint));
+				}
+			}
+			else
+			{
+				pbrMaterial->set_albedo(reassembleStr(otherStr, path));
+			}
 		}
 		else
 		{
@@ -329,22 +345,89 @@ namespace Destiny
 
 		if (otherMaterial->GetTexture(aiTextureType_NORMALS, 0, &otherStr) == aiReturn_SUCCESS)
 		{
-			pbrMaterial->set_normal(reassembleStr(otherStr, path));
+			std::string otherStdStr = otherStr.C_Str();
+			if (otherStr.length == 2 && otherStdStr.find("*") == 0)
+			{
+				int indexTex = std::stoi(otherStdStr.substr(1, 1));
+				auto aiTexture = otherScene->mTextures[indexTex];
+				if (aiTexture->mHeight == 0)
+				{
+					auto blob = std::make_shared<Blob>(aiTexture->mWidth);
+					blob->copyfrom(aiTexture->pcData, blob->getLength());
+
+					pbrMaterial->setNormal(Texture::Create(blob, aiTexture->achFormatHint));
+				}
+			}
+			else
+			{
+				pbrMaterial->set_normal(reassembleStr(otherStr, path));
+
+			}
 		}
 
 		if (otherMaterial->GetTexture(aiTextureType_METALNESS, 0, &otherStr) == aiReturn_SUCCESS)
 		{
-			pbrMaterial->set_metallic(reassembleStr(otherStr, path));
+			std::string otherStdStr = otherStr.C_Str();
+			if (otherStr.length == 2 && otherStdStr.find("*") == 0)
+			{
+				int indexTex = std::stoi(otherStdStr.substr(1, 1));
+				auto aiTexture = otherScene->mTextures[indexTex];
+				if (aiTexture->mHeight == 0)
+				{
+					auto blob = std::make_shared<Blob>(aiTexture->mWidth);
+					blob->copyfrom(aiTexture->pcData, blob->getLength());
+
+					pbrMaterial->setMetallic(Texture::Create(blob, aiTexture->achFormatHint));
+				}
+			}
+			else
+			{
+				pbrMaterial->set_metallic(reassembleStr(otherStr, path));
+			}
+			
 		}
 
 		if (otherMaterial->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, 0, &otherStr) == aiReturn_SUCCESS)
 		{
-			pbrMaterial->set_roughness(reassembleStr(otherStr, path));
+			std::string otherStdStr = otherStr.C_Str();
+			if (otherStr.length == 2 && otherStdStr.find("*") == 0)
+			{
+				int indexTex = std::stoi(otherStdStr.substr(1, 1));
+				auto aiTexture = otherScene->mTextures[indexTex];
+				if (aiTexture->mHeight == 0)
+				{
+					auto blob = std::make_shared<Blob>(aiTexture->mWidth);
+					blob->copyfrom(aiTexture->pcData, blob->getLength());
+
+					pbrMaterial->setRoughness(Texture::Create(blob, aiTexture->achFormatHint));
+				}
+			}
+			else
+			{
+				pbrMaterial->set_roughness(reassembleStr(otherStr, path));
+			}
+			
 		}		
 		
 		if (otherMaterial->GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &otherStr) == aiReturn_SUCCESS)
 		{
-			pbrMaterial->set_ao(reassembleStr(otherStr, path));
+			std::string otherStdStr = otherStr.C_Str();
+			if (otherStr.length == 2 && otherStdStr.find("*") == 0)
+			{
+				int indexTex = std::stoi(otherStdStr.substr(1, 1));
+				auto aiTexture = otherScene->mTextures[indexTex];
+				if (aiTexture->mHeight == 0)
+				{
+					auto blob = std::make_shared<Blob>(aiTexture->mWidth);
+					blob->copyfrom(aiTexture->pcData, blob->getLength());
+
+					pbrMaterial->setAo(Texture::Create(blob, aiTexture->achFormatHint));
+				}
+			}
+			else
+			{
+				pbrMaterial->set_ao(reassembleStr(otherStr, path));
+			}
 		}
 
 		return pbrMaterial;

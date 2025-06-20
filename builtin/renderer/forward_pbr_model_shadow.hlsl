@@ -5,6 +5,7 @@ cbuffer cbPerObject : register(b0)
     matrix u_worldMatrix;
     matrix u_worldInvTransposeMatrix;
     float4x4 u_boneTransforms[256];
+    float u_hasAnimation;
 }
 
 struct VertexIn
@@ -27,22 +28,29 @@ VertexOut VS(VertexIn vIn)
 {
     VertexOut vOut;
     
-    matrix BoneTransform = u_boneTransforms[vIn.boneIds.x] * vIn.weights.x;
-    BoneTransform += u_boneTransforms[vIn.boneIds.y] * vIn.weights.y;
-    BoneTransform += u_boneTransforms[vIn.boneIds.z] * vIn.weights.z;
-    BoneTransform += u_boneTransforms[vIn.boneIds.w] * vIn.weights.w;
+    if (u_hasAnimation > 0.5f)
+    {
+        matrix BoneTransform = u_boneTransforms[vIn.boneIds.x] * vIn.weights.x;
+        BoneTransform += u_boneTransforms[vIn.boneIds.y] * vIn.weights.y;
+        BoneTransform += u_boneTransforms[vIn.boneIds.z] * vIn.weights.z;
+        BoneTransform += u_boneTransforms[vIn.boneIds.w] * vIn.weights.w;
 
-    BoneTransform += u_boneTransforms[vIn.boneIds2.x] * vIn.weights2.x;
-    BoneTransform += u_boneTransforms[vIn.boneIds2.y] * vIn.weights2.y;
-    BoneTransform += u_boneTransforms[vIn.boneIds2.z] * vIn.weights2.z;
-    BoneTransform += u_boneTransforms[vIn.boneIds2.w] * vIn.weights2.w;
+        BoneTransform += u_boneTransforms[vIn.boneIds2.x] * vIn.weights2.x;
+        BoneTransform += u_boneTransforms[vIn.boneIds2.y] * vIn.weights2.y;
+        BoneTransform += u_boneTransforms[vIn.boneIds2.z] * vIn.weights2.z;
+        BoneTransform += u_boneTransforms[vIn.boneIds2.w] * vIn.weights2.w;
 
-    float4 skinnedPos = float4(0.0f, 0.0f, 0.0f, 0.0f);
-    float3 skinnedNormal = float3(0.0f, 0.0f, 0.0f);
+        float4 skinnedPos = float4(0.0f, 0.0f, 0.0f, 0.0f);
+        float3 skinnedNormal = float3(0.0f, 0.0f, 0.0f);
 
-    skinnedPos = mul(float4(vIn.positionL, 1.0f), BoneTransform);
+        skinnedPos = mul(float4(vIn.positionL, 1.0f), BoneTransform);
 
-    vOut.positionH = mul(mul(mul(skinnedPos, u_worldMatrix), g_shadowView), g_shadowProj);
+        vOut.positionH = mul(mul(mul(skinnedPos, u_worldMatrix), g_shadowView), g_shadowProj);
+    }
+    else
+    {
+        vOut.positionH = mul(mul(mul(float4(vIn.positionL, 1.0f), u_worldMatrix), g_shadowView), g_shadowProj);
+    }
 
     return vOut;
 }

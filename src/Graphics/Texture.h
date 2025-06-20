@@ -105,6 +105,7 @@ namespace Destiny
 	public:
 		static std::shared_ptr<TextureLoader> s_textureLoader;
 		static std::shared_ptr<Texture> Create(const char* path);
+		static std::shared_ptr<Texture> Create(std::shared_ptr<Blob> blob, const char* type);
 		static std::shared_ptr<Texture> Create2D(int format, unsigned int width, unsigned int height, std::shared_ptr<Blob> data, unsigned int pitch, unsigned int slicePitch, bool isProc = false, const std::string& procPath = "");
 		static std::shared_ptr<Texture> CreateHdr(const char* path, HdrCreationParma::CreateTextureType type);
 		static std::unordered_map<std::string, std::shared_ptr<Texture>> s_cache;

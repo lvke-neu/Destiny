@@ -17,7 +17,7 @@ namespace Destiny
 		m_color({ 1.0f, 1.0f, 1.0f, 1.0f })
 	{
 		auto renderer = Renderer::Create("builtin://renderer/pixel_billboard.hlsl");
-		renderer->load();
+		renderer->load(0);
 
 		auto samplerState = std::make_shared<SamplerState>();
 		samplerState->load();

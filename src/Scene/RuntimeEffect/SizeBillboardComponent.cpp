@@ -14,7 +14,7 @@ namespace Destiny
 	SizeBillboardComponent::SizeBillboardComponent()
 	{
 		auto renderer = Renderer::Create("builtin://renderer/size_billboard.hlsl");
-		renderer->load();
+		renderer->load(0);
 
 		auto texture = Texture::Create("builtin://texture/wind.png");
 		texture->load();

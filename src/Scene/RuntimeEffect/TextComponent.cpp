@@ -19,7 +19,7 @@ namespace Destiny
 		m_color({1.0f, 1.0f, 1.0f, 1.0f})
 	{
 		auto renderer = Renderer::Create("builtin://renderer/text.hlsl");
-		renderer->load();
+		renderer->load(0);
 
 
 		//renderer->setShaderResource("t_texture", FontManager::GetInstance()->getFontTexture('A', 5000, 5000));

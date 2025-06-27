@@ -170,9 +170,6 @@ namespace Destiny
 					continue;
 				}
 
-
-				std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->commitVisual(visualComponent->getShadowVisual());
-
 				if (!m_enableCull)
 				{
 					std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->commitVisual(visualComponent->getVisual());
@@ -191,6 +188,7 @@ namespace Destiny
 					visualAABB.Transform(visualAABB, rootToThisWorldMatrix);
 					if (cameraFrustum.Intersects(visualAABB))
 					{
+						std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->commitVisual(visualComponent->getShadowVisual());
 						std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->commitVisual(visualComponent->getVisual());
 					}
 				}

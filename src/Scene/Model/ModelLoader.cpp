@@ -277,11 +277,18 @@ namespace Destiny
 		drawCall.primitiveTopology = Mesh::PrimitiveTopology::TriangleList;
 		drawCall.indexCount = (unsigned int)indices.size();
 
-		DirectX::BoundingBox aabb;
-		DirectX::BoundingBox::CreateFromPoints(aabb, positions.size(), positions.data(), 0);
-		DirectX::BoundingBox::CreateMerged(model->m_mergedAABB, model->m_mergedAABB, aabb);
+		//DirectX::BoundingBox aabb;
+		//DirectX::BoundingBox::CreateFromPoints(aabb, positions.size(), positions.data(), sizeof(DirectX::XMFLOAT3));
+		//DirectX::BoundingBox::CreateMerged(model->m_mergedAABB, model->m_mergedAABB, aabb);
 
-		std::shared_ptr<Mesh> myMesh = std::make_shared<Mesh>(drawCall, vertexBuffer, indexBuffer);
+		//std::shared_ptr<Mesh> myMesh = std::make_shared<Mesh>(drawCall, vertexBuffer, indexBuffer);
+
+
+		DirectX::BoundingBox aabb;
+		DirectX::BoundingBox::CreateFromPoints(aabb, positions.size(), positions.data(), sizeof(DirectX::XMFLOAT3));
+
+		std::shared_ptr<Mesh> myMesh = std::make_shared<Mesh>(aabb, drawCall, vertexBuffer, indexBuffer);
+
 		return myMesh;
 	}
 

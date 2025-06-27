@@ -5,10 +5,12 @@
 #include "Engine/Engine.h"
 #include "Engine/BlobLoader.h"
 #include "Engine/BlobLoaderManager.h"
+#include "Engine/Node.h"
 #include "Graphics/VisualComponent.h"
 #include "Graphics/SamplerState.h"
 #include "Graphics/Texture.h"
 #include "Graphics/Mesh.h"
+#include "../RuntimeEffect/BoxVisualizationComponent.h"
 
 namespace Destiny
 {
@@ -47,16 +49,25 @@ namespace Destiny
 
 	void Model::onDataLoaded()
 	{
+
 		for (const auto& visualComponent : m_visualComponents)
 		{
 			if (visualComponent && visualComponent->getVisual())
 			{
 				visualComponent->getVisual()->load(0);
 
-				if (visualComponent->getVisual()->getMesh())
-				{
-					visualComponent->getVisual()->getMesh()->setBoundingBox(m_mergedAABB);
-				}
+				//if (visualComponent->getVisual()->getMesh())
+				//{
+				//	visualComponent->getVisual()->getMesh()->setBoundingBox(m_mergedAABB);
+				//}
+
+				auto boxVisualizationComponent = std::make_shared<BoxVisualizationComponent>();
+				boxVisualizationComponent->modifyMesh(visualComponent->getVisual()->getMesh()->getBoundingBox());
+
+				auto boxVisualizationNode = std::make_shared<Node>("AABB Visualization");
+				boxVisualizationNode->set_serializable(false);
+				boxVisualizationNode->addComponent(boxVisualizationComponent);
+				boxVisualizationNode->addToParent(visualComponent->get_node());
 			}	
 		}
 	}

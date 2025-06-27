@@ -26,6 +26,7 @@ namespace Destiny
 		GET(std::shared_ptr<Scene>, scene);
 		GET_SET(UpdateCategory, updateCategory);
 	public:
+		//do not modify m_node's components int onUpdate function
 		virtual void			onUpdate(float deltaTime) {};
 		virtual void			onAddToNode() {};
 		virtual void			onNodeTransformChanged() {};

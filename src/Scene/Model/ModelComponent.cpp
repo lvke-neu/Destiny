@@ -3,6 +3,7 @@
 #include "Engine/Node.h"
 #include "Engine/Utility.h"
 #include "Graphics/VisualComponent.h"
+#include "../RuntimeEffect/BoxVisualizationComponent.h"
 #include <queue>
 
 namespace Destiny
@@ -111,6 +112,16 @@ namespace Destiny
 			m_model->setRendererCategory(m_rendererCategory);
 			//m_model.reset();
 			m_modelChanged = false;
+
+
+			//auto boxVisualizationComponent = std::make_shared<BoxVisualizationComponent>();
+			//boxVisualizationComponent->modifyMesh(m_model->getBox());
+
+			//auto boxVisualizationNode = std::make_shared<Node>("AABB Visualization");
+			//boxVisualizationNode->set_serializable(false);
+			//boxVisualizationNode->addComponent(boxVisualizationComponent);
+			//boxVisualizationNode->addToParent(m_node);
+
 			LOG_INFO("Model:{0} load successfully", m_path);	
 		}
 

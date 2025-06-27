@@ -28,6 +28,7 @@ namespace Destiny
 		void					setRasterizerDesc(D3D11_RASTERIZER_DESC desc);
 
 		void					updateAnimation(float deltaTime);
+		DirectX::BoundingBox	getBox();
 	public:
 		std::string get_animation();
 		void set_animation(std::string animation);
@@ -51,5 +52,10 @@ namespace Destiny
 	inline std::shared_ptr<Node> Model::getNode()
 	{
 		return m_node;
+	}
+
+	inline DirectX::BoundingBox Model::getBox()
+	{
+		return m_mergedAABB;
 	}
 }

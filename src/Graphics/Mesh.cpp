@@ -128,4 +128,9 @@ namespace Destiny
 	{
 		m_drawCall = drawCall;
 	}
+
+	void Mesh::modifyBoundingBox(const DirectX::BoundingBox& box)
+	{
+		m_aabb = box;
+	}
 }

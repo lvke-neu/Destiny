@@ -48,6 +48,7 @@ namespace Destiny
 		DrawCall						getDrawCall();
 		void							modifyVertexBuffer(std::shared_ptr<VertexBuffer> vertexBuffer);
 		void							modifyDrawCall(const DrawCall& drawCall);
+		void							modifyBoundingBox(const DirectX::BoundingBox& box);
 	private:
 		DirectX::BoundingBox			m_aabb;
 		DrawCall						m_drawCall;

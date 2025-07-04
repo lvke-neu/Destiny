@@ -15,7 +15,8 @@ namespace Destiny
 {
 	VisualScene::VisualScene() :
 		Scene(),
-		m_enableCull(true)
+		m_enableCull(true),
+		m_intersectionCount(0)
 	{
 
 	}
@@ -145,6 +146,8 @@ namespace Destiny
 
 	void VisualScene::onCull()
 	{
+		m_intersectionCount = 0;
+
 		DirectX::BoundingFrustum cameraFrustum;
 		DirectX::BoundingFrustum::CreateFromMatrix(cameraFrustum, m_camera->getProjectionMatrix());
 		cameraFrustum.Transform(cameraFrustum, m_cameraNode->getWorldMatrix());
@@ -191,6 +194,8 @@ namespace Destiny
 						std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->commitVisual(visualComponent->getShadowVisual());
 						std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->commitVisual(visualComponent->getVisual());
 					}
+
+					++m_intersectionCount;
 				}
 			}
 

@@ -37,6 +37,11 @@ void GraphicsStatPanel::update()
 
 	ImGui::Text("GuiVisualCount:%ld", Destiny::Engine::GetInstance()->getGraphicsSystem()->getGraphicsStat().GuiVisualCount);
 
+	if (Destiny::Engine::GetInstance()->getSceneManager()->getCurrentScene())
+	{
+		ImGui::Text("IntersectionCount:%ld", std::static_pointer_cast<Destiny::VisualScene>(Destiny::Engine::GetInstance()->getSceneManager()->getCurrentScene())->getIntersectionCount());
+	}
+	
 	ImGui::End();
 	ImGui::PopStyleVar();
 }

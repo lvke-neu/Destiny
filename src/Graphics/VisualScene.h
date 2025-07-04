@@ -26,12 +26,15 @@ namespace Destiny
 		std::shared_ptr<CameraComponent>			getCamera();
 		std::shared_ptr<CameraController>			getCameraController();
 		std::shared_ptr<Node>						getCameraNode();
+
+		unsigned long long							getIntersectionCount();
 	protected:
 		std::shared_ptr<CameraComponent>			m_camera;
 		std::shared_ptr<CameraController>			m_cameraController;
 		std::shared_ptr<Node>						m_cameraNode;
 
 		bool										m_enableCull;
+		unsigned long long							m_intersectionCount;
 	};
 
 	inline std::shared_ptr<CameraComponent> VisualScene::getCamera()
@@ -47,5 +50,10 @@ namespace Destiny
 	inline std::shared_ptr<Node> VisualScene::getCameraNode()
 	{
 		return m_cameraNode;
+	}
+
+	inline unsigned long long VisualScene::getIntersectionCount()
+	{
+		return m_intersectionCount;
 	}
 }

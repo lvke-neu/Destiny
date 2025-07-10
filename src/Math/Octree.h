@@ -1,18 +1,16 @@
-#pragma once
+#pragma
 #include "OctreeNode.h"
 
 namespace Destiny
 {
-	class Visual;
-	class Octree : public OctreeNode
-	{
-	public:
-		Octree(float sceneRadius, unsigned int octreeMaxDepth, unsigned int octreeMaxCapacity);
-	public:
-		void addVisual(std::shared_ptr<Visual> visual, const DirectX::BoundingBox& worldAABB);
-	private:
-		float m_sceneRadius;
-		unsigned int m_octreeMaxDepth;
-		unsigned int m_octreeMaxCapacity;
-	};
+    class Octree {
+    public:
+        Octree(const DirectX::BoundingBox& worldBounds);
+        ~Octree();
+    public:
+        void insert(std::shared_ptr<Visual> visual, const DirectX::BoundingBox& worldBox);
+        void getVisibleObjects(const DirectX::BoundingFrustum& frustum, std::vector<std::shared_ptr<Visual>>& outObjects) const;
+    private:
+        std::unique_ptr<OctreeNode> root;
+    };
 }

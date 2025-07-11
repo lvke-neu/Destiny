@@ -20,7 +20,6 @@ VertexOut VS(uint vertexID : SV_VertexID)
 
 Texture2D t_renderedTexture : register(t0);
 SamplerState s_sampler : register(s0);
-
 float4 PS(VertexOut pIn) : SV_TARGET
 {
 	return t_renderedTexture.Sample(s_sampler, pIn.texcoord);
@@ -31,3 +30,17 @@ float4 PS(VertexOut pIn) : SV_TARGET
 	//return grayscaleColor;
 }
 
+
+
+Texture2D t_texture : register(t0);
+RWTexture2D<unorm float4> u_texture : register(u0);
+
+//SV_DispatchThreadID 
+//SV_GroupID
+//SV_GroupThreadID
+
+[numthreads(16, 16, 1)]
+void CS(uint3 dispatchThreadID : SV_DispatchThreadID)
+{
+	u_texture[dispatchThreadID.xy] = t_texture[dispatchThreadID.xy];
+}

@@ -6,6 +6,7 @@ namespace Destiny
 	class BindRenderTargets;
 	class ClearRenderTarget;
 	class Visual;
+	class ComputerCommand;
 	class PostProcessingPipeline : public GraphicsPipeline
 	{
 	public:
@@ -20,5 +21,6 @@ namespace Destiny
 	private:
 		std::shared_ptr<ClearRenderTarget>		m_clearRenderTarget;
 		std::shared_ptr<Visual>					m_fullScreenTriangle;
+		std::shared_ptr<ComputerCommand>		m_computerCommand;
 	};
 }

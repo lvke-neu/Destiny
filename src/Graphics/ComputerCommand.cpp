@@ -89,11 +89,20 @@ namespace Destiny
 		load(0);
 	}
 
-	void ComputerCommand::setthreadGroupCount(unsigned int threadGroupCountX, unsigned int threadGroupCountY, unsigned int threadGroupCountZ)
+	void ComputerCommand::setThreadGroupCount(unsigned int threadGroupCountX, unsigned int threadGroupCountY, unsigned int threadGroupCountZ)
 	{
 		m_threadGroupCountX = threadGroupCountX;
 		m_threadGroupCountY = threadGroupCountY;
 		m_threadGroupCountZ = threadGroupCountZ;
+	}
+
+	std::shared_ptr<Texture> ComputerCommand::getUnorderedAccessViews(int index)
+	{
+		if (index < 0 || index >= m_uavs.size())
+		{
+			return nullptr;
+		}
+		return m_uavs[index];
 	}
 
 	void ComputerCommand::setUnorderedAccessViews(const std::vector<std::shared_ptr<Texture>>& uavs)

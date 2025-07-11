@@ -23,7 +23,8 @@ namespace Destiny
 	public:
 		void setDebugName(const std::wstring& debugName);
 		void setComputerEffectPath(const char* path);
-		void setthreadGroupCount(unsigned int threadGroupCountX, unsigned int threadGroupCountY, unsigned int threadGroupCountZ);
+		void setThreadGroupCount(unsigned int threadGroupCountX, unsigned int threadGroupCountY, unsigned int threadGroupCountZ);
+		std::shared_ptr<Texture> getUnorderedAccessViews(int index);
 		void setUnorderedAccessViews(const std::vector<std::shared_ptr<Texture>>& uavs);
 		void setShaderResourceView(const char* name, std::shared_ptr<Texture> texture);
 	private:

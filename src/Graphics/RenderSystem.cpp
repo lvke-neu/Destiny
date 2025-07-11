@@ -23,12 +23,13 @@ namespace Destiny
 		m_transparentPipeline(nullptr),
 		m_guiPipeline(nullptr),
 		m_postProcessingPipeline(nullptr),
+		m_commonRenderTargetCommand(std::make_shared<GraphicsCommandList>()),
 		m_beforePipelineCommand(std::make_shared<GraphicsCommandList>()),
 		m_bindRenderTargets(std::make_shared<BindRenderTargets>()),
 		m_clearRenderTarget(std::make_shared<ClearRenderTarget>())
 	{
-		m_beforePipelineCommand->addGraphicsCommand(m_bindRenderTargets);
-		m_beforePipelineCommand->addGraphicsCommand(m_clearRenderTarget);
+		m_commonRenderTargetCommand->addGraphicsCommand(m_bindRenderTargets);
+		m_commonRenderTargetCommand->addGraphicsCommand(m_clearRenderTarget);
 	}
 
 	RenderSystem::~RenderSystem()
@@ -54,6 +55,10 @@ namespace Destiny
 
 		beginEvent(L"Before Pipeline");
 		m_beforePipelineCommand->execute(getImmediateContext());
+		endEvent();
+
+		beginEvent(L"Common RenderTarget");
+		m_commonRenderTargetCommand->execute(getImmediateContext());
 		endEvent();
 
 		beginEvent(L"Shadow Pass");
@@ -191,6 +196,11 @@ namespace Destiny
 	{
 		//return m_bindRenderTargets->getRenderTargetViews(0);
 		return std::static_pointer_cast<PostProcessingPipeline>(m_postProcessingPipeline)->m_bindRenderTargets->getRenderTargetViews(0);
+	}
+
+	void RenderSystem::addBeforePipelineCommand(std::shared_ptr<GraphicsCommand> graphicsCommand)
+	{
+		m_beforePipelineCommand->addGraphicsCommand(graphicsCommand);
 	}
 
 	void RenderSystem::onResize(void* data)

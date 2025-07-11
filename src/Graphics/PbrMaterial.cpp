@@ -115,7 +115,7 @@ namespace Destiny
 		auto blob = std::make_shared<Blob>(sizeof(Pixel));
 		blob->copyfrom(&pixel, sizeof(Pixel));
 
-		auto texture = Texture::Create2D(DXGI_FORMAT_R8G8B8A8_UNORM, 1, 1, blob, sizeof(Pixel), sizeof(Pixel));
+		auto texture = Texture::Create2DSRV(DXGI_FORMAT_R8G8B8A8_UNORM, 1, 1, blob, sizeof(Pixel), sizeof(Pixel));
 		pbrMaterial->setAlbedo(texture);
 		pbrMaterial->set_normal("builtin://texture/pbr/default/normal.png");
 		pbrMaterial->set_metallic("builtin://texture/pbr/default/metallic.png");

@@ -106,7 +106,7 @@ namespace Destiny
 		auto creationParam = std::dynamic_pointer_cast<TextureCreationParam>(asset->getCreationParam());
 		switch (creationParam->m_type)
 		{
-		case TextureCreationParam::Create2D:
+		case TextureCreationParam::Create2DSRV:
 		{
 			CD3D11_TEXTURE2D_DESC textureDesc((DXGI_FORMAT)creationParam->format, creationParam->width, creationParam->height, 1, 1);
 	
@@ -126,6 +126,51 @@ namespace Destiny
 				if (SUCCEEDED(hr))
 				{
 					asset->getCreationParam().reset();
+					asset->loadSucceeded__();
+				}
+				else
+				{
+					LOG_ERROR("LoadFromMemory CreateShaderResourceView failed");
+					asset->loadFailed__();
+				}
+			}
+			else
+			{
+				LOG_ERROR("LoadFromMemory CreateTexture2D failed");
+				asset->loadFailed__();
+			}
+
+			break;
+		}
+		case TextureCreationParam::Create2DUAV:
+		{
+			CD3D11_TEXTURE2D_DESC textureDesc((DXGI_FORMAT)creationParam->format, creationParam->width, creationParam->height, 1, 1);
+			textureDesc.BindFlags |= D3D11_BIND_UNORDERED_ACCESS;
+
+			ID3D11Texture2D* texture2d = nullptr;
+			HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateTexture2D(&textureDesc, nullptr, &texture2d);
+			std::static_pointer_cast<Texture>(asset)->m_resource = texture2d;
+			if (SUCCEEDED(hr))
+			{
+				
+				CD3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc(D3D11_UAV_DIMENSION_TEXTURE2D, (DXGI_FORMAT)creationParam->format);
+
+				hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateUnorderedAccessView(std::dynamic_pointer_cast<Texture>(asset)->m_resource, &uavDesc, &std::dynamic_pointer_cast<Texture>(asset)->m_unorderedAccessView);
+				if (SUCCEEDED(hr))
+				{
+
+				}
+				else
+				{
+					LOG_ERROR("LoadFromMemory CreateUnorderedAccessView failed");
+					asset->loadFailed__();
+					return;
+				}
+
+				CD3D11_SHADER_RESOURCE_VIEW_DESC srvDesc(D3D11_SRV_DIMENSION_TEXTURE2D, (DXGI_FORMAT)creationParam->format);
+				hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateShaderResourceView(std::dynamic_pointer_cast<Texture>(asset)->m_resource, &srvDesc, &std::dynamic_pointer_cast<Texture>(asset)->m_shaderResourceView);
+				if (SUCCEEDED(hr))
+				{
 					asset->loadSucceeded__();
 				}
 				else

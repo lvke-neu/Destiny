@@ -16,14 +16,16 @@ namespace Destiny
 	std::unordered_map<std::string, std::shared_ptr<Texture>> Texture::s_cache;
 	Texture::Texture() :
 		m_resource(nullptr),
-		m_shaderResourceView(nullptr)
+		m_shaderResourceView(nullptr),
+		m_unorderedAccessView(nullptr)
 	{
 
 	}
 
 	Texture::Texture(ID3D11Resource* resource, ID3D11ShaderResourceView* shaderResourceView) :
 		m_resource(resource),
-		m_shaderResourceView(shaderResourceView)
+		m_shaderResourceView(shaderResourceView),
+		m_unorderedAccessView(nullptr)
 	{
 		SAFE_ADDREF(m_resource);
 		SAFE_ADDREF(m_shaderResourceView);
@@ -33,6 +35,7 @@ namespace Destiny
 	{
 		SAFE_RELEASE(m_resource);
 		SAFE_RELEASE(m_shaderResourceView);
+		SAFE_RELEASE(m_unorderedAccessView);
 	}
 
 	std::shared_ptr<Texture> Texture::Create(const char* path)
@@ -94,7 +97,7 @@ namespace Destiny
 			auto blobData = std::make_shared<Blob>(res.size() * sizeof(Pixel));
 			blobData->copyfrom(res.data(), blobData->getLength());
 
-			return Create2D(DXGI_FORMAT_R8G8B8A8_UNORM, 1, 1, blobData, sizeof(Pixel), sizeof(Pixel), true, path);
+			return Create2DSRV(DXGI_FORMAT_R8G8B8A8_UNORM, 1, 1, blobData, sizeof(Pixel), sizeof(Pixel), true, path);
 		}
 		auto iter = s_cache.find(path);
 		if (iter != s_cache.end())
@@ -126,12 +129,12 @@ namespace Destiny
 		return texture;
 	}
 
-	std::shared_ptr<Texture> Texture::Create2D(int format, unsigned int width, unsigned int height, std::shared_ptr<Blob> data, unsigned int pitch, unsigned int slicePitch, bool isProc, const std::string& procPath)
+	std::shared_ptr<Texture> Texture::Create2DSRV(int format, unsigned int width, unsigned int height, std::shared_ptr<Blob> data, unsigned int pitch, unsigned int slicePitch, bool isProc, const std::string& procPath)
 	{
 		std::shared_ptr<Texture> texture = std::make_shared<Texture>();
 		std::shared_ptr<TextureCreationParam> creationParam = std::make_shared<TextureCreationParam>();
 		
-		creationParam->m_type = TextureCreationParam::Create2D;
+		creationParam->m_type = TextureCreationParam::Create2DSRV;
 		creationParam->format = format;
 		creationParam->width = width;
 		creationParam->height = height;
@@ -140,6 +143,25 @@ namespace Destiny
 		creationParam->slicePitch = slicePitch;
 		creationParam->isProc = isProc;
 		creationParam->procPath = procPath;
+		texture->initialize(s_textureLoader, creationParam);
+
+		return texture;
+	}
+
+	std::shared_ptr<Texture> Texture::Create2DUAV(int format, unsigned int width, unsigned int height)
+	{
+		std::shared_ptr<Texture> texture = std::make_shared<Texture>();
+		std::shared_ptr<TextureCreationParam> creationParam = std::make_shared<TextureCreationParam>();
+
+		creationParam->m_type = TextureCreationParam::Create2DUAV;
+		creationParam->format = format;
+		creationParam->width = width;
+		creationParam->height = height;
+		//creationParam->data = data;
+		//creationParam->pitch = pitch;
+		//creationParam->slicePitch = slicePitch;
+		//creationParam->isProc = isProc;
+		//creationParam->procPath = procPath;
 		texture->initialize(s_textureLoader, creationParam);
 
 		return texture;
@@ -227,9 +249,9 @@ namespace Destiny
 			}
 			else
 			{
-				if (creationParam->m_type == TextureCreationParam::Create2D)
+				if (creationParam->m_type == TextureCreationParam::Create2DSRV)
 				{
-					path += "Type:Create2D,";
+					path += "Type:Create2DSRV,";
 				}
 				path += "width:" + std::to_string(creationParam->width) + "height:" + std::to_string(creationParam->height);
 				
@@ -277,6 +299,9 @@ namespace Destiny
 				case TextureBindFlag::BindDS:
 					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->DSSetShaderResources(desc->startSlot, 1, &m_shaderResourceView);
 					break;
+				case TextureBindFlag::BindCS:
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->CSSetShaderResources(desc->startSlot, 1, &m_shaderResourceView);
+					break;
 				}
 			}
 		}
@@ -310,6 +335,9 @@ namespace Destiny
 					break;
 				case TextureBindFlag::BindDS:
 					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->DSSetShaderResources(desc->startSlot, 1, &srv);
+					break;
+				case TextureBindFlag::BindCS:
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->CSSetShaderResources(desc->startSlot, 1, &srv);
 					break;
 				}
 			}

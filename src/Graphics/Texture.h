@@ -7,6 +7,7 @@
 
 struct ID3D11Resource;
 struct ID3D11ShaderResourceView;
+struct ID3D11UnorderedAccessView;
 namespace Destiny
 {
 	enum class TextureBindFlag
@@ -15,7 +16,8 @@ namespace Destiny
 		BindPS,
 		BindGS,
 		BindHS,
-		BindDS
+		BindDS,
+		BindCS
 	};
 
 	struct TextureDesc
@@ -29,7 +31,8 @@ namespace Destiny
 				{TextureBindFlag::BindPS, false },
 				{TextureBindFlag::BindGS, false },
 				{TextureBindFlag::BindHS, false },
-				{TextureBindFlag::BindDS, false }
+				{TextureBindFlag::BindDS, false },
+				{TextureBindFlag::BindCS, false }
 			};
 		}
 		std::unordered_map<TextureBindFlag, bool> textureBindFlag;
@@ -43,7 +46,8 @@ namespace Destiny
 		enum CreateTextureType
 		{
 			None,
-			Create2D,
+			Create2DSRV,
+			Create2DUAV,
 			CreateTextureTypeCount
 		};
 	public:
@@ -106,7 +110,8 @@ namespace Destiny
 		static std::shared_ptr<TextureLoader> s_textureLoader;
 		static std::shared_ptr<Texture> Create(const char* path);
 		static std::shared_ptr<Texture> Create(std::shared_ptr<Blob> blob, const char* type);
-		static std::shared_ptr<Texture> Create2D(int format, unsigned int width, unsigned int height, std::shared_ptr<Blob> data, unsigned int pitch, unsigned int slicePitch, bool isProc = false, const std::string& procPath = "");
+		static std::shared_ptr<Texture> Create2DSRV(int format, unsigned int width, unsigned int height, std::shared_ptr<Blob> data, unsigned int pitch, unsigned int slicePitch, bool isProc = false, const std::string& procPath = "");
+		static std::shared_ptr<Texture> Create2DUAV(int format, unsigned int width, unsigned int height);
 		static std::shared_ptr<Texture> CreateHdr(const char* path, HdrCreationParma::CreateTextureType type);
 		static std::unordered_map<std::string, std::shared_ptr<Texture>> s_cache;
 		static void Hdr_To_Cube_Irradiance_Prefilter_DDS();
@@ -116,14 +121,21 @@ namespace Destiny
 		void bind(std::shared_ptr<TextureDesc> desc);
 		void unBind(std::shared_ptr<TextureDesc> desc);
 		ID3D11ShaderResourceView* getShaderResourceView();
+		ID3D11UnorderedAccessView** getUnorderedAccessView();
 	private:
 		ID3D11Resource* m_resource;
 		ID3D11ShaderResourceView* m_shaderResourceView;
+		ID3D11UnorderedAccessView* m_unorderedAccessView;
 	};
 
 	inline ID3D11ShaderResourceView* Texture::getShaderResourceView()
 	{
 		return m_shaderResourceView;
+	}
+
+	inline ID3D11UnorderedAccessView** Texture::getUnorderedAccessView()
+	{
+		return &m_unorderedAccessView;
 	}
 
 }

@@ -95,7 +95,7 @@ namespace Destiny
 
 		auto blobData = std::make_shared<Blob>(res.size() * sizeof(Pixel));
 		blobData->copyfrom(res.data(), blobData->getLength());
-		auto texture = Texture::Create2D(DXGI_FORMAT_R8G8B8A8_UNORM, width, maxHeight, blobData, width * sizeof(Pixel), width * sizeof(Pixel) * maxHeight);
+		auto texture = Texture::Create2DSRV(DXGI_FORMAT_R8G8B8A8_UNORM, width, maxHeight, blobData, width * sizeof(Pixel), width * sizeof(Pixel) * maxHeight);
 		texture->load(0);
 
 		return texture;

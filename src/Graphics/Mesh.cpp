@@ -4,6 +4,7 @@
 #include "IndexBuffer.h"
 #include "DrawParameters.h"
 #include "InputLayout.h"
+#include "IndirectBuffer.h"
 #include "Engine/Utility.h"
 
 namespace Destiny
@@ -12,7 +13,9 @@ namespace Destiny
 		m_drawCall(drawCall),
 		m_vertexBuffer(vertexBuffer),
 		m_indexBuffer(indexBuffer),
-		m_instanceBuffer(instanceBuffer)
+		m_instanceBuffer(instanceBuffer),
+		m_indirectBuffer(nullptr),
+		m_indirectBufferOffset(0)
 	{
 		m_aabb = { { 0.0f, 0.0f, 0.0f },{ -1.0f, -1.0f, -1.0 } };
 	}
@@ -22,7 +25,9 @@ namespace Destiny
 		m_drawCall(drawCall),
 		m_vertexBuffer(vertexBuffer),
 		m_indexBuffer(indexBuffer),
-		m_instanceBuffer(instanceBuffer)
+		m_instanceBuffer(instanceBuffer),
+		m_indirectBuffer(nullptr),
+		m_indirectBufferOffset(0)
 	{
 
 	}
@@ -108,6 +113,12 @@ namespace Destiny
 			drawParameters->instanceBuffer_offset = m_instanceBuffer->m_offset;
 			drawParameters->instanceCount = m_instanceBuffer->m_instanceCount;
 		}
+
+		if (m_indirectBuffer)
+		{
+			drawParameters->indirectBuffer = m_indirectBuffer->m_indirectBuffer;
+			drawParameters->indirectBufferOffset = m_indirectBufferOffset;
+		}
 	}
 
 	void Mesh::modifyVertexBuffer(std::shared_ptr<VertexBuffer> vertexBuffer)
@@ -132,5 +143,11 @@ namespace Destiny
 	void Mesh::modifyBoundingBox(const DirectX::BoundingBox& box)
 	{
 		m_aabb = box;
+	}
+
+	void Mesh::setIndirectMode(std::shared_ptr<IndirectBuffer> indirectBuffer, unsigned int indirectBufferOffset)
+	{
+		m_indirectBuffer = indirectBuffer;
+		m_indirectBufferOffset = indirectBufferOffset;
 	}
 }

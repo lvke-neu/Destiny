@@ -21,6 +21,8 @@ namespace Destiny
 			{
 			case 1:
 			case 2:
+			case 4:
+			case 5:
 			{
 				deviceContext->IASetVertexBuffers(0, drawParameters->vertexBuffer ? 1 : 0 , &drawParameters->vertexBuffer, &drawParameters->vertexBuffer_stride, &drawParameters->vertexBuffer_offset);
 				break;
@@ -83,6 +85,12 @@ namespace Destiny
 				break;
 			case 3:
 				deviceContext->DrawIndexedInstanced(drawParameters->indexCount, drawParameters->instanceCount, 0, 0, 0);
+				break;
+			case 4:
+				deviceContext->DrawInstancedIndirect(drawParameters->indirectBuffer, drawParameters->indirectBufferOffset);
+				break;
+			case 5:
+				deviceContext->DrawIndexedInstancedIndirect(drawParameters->indirectBuffer, drawParameters->indirectBufferOffset);
 				break;
 			}
 

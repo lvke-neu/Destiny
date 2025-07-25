@@ -36,6 +36,9 @@ namespace Destiny
 		short format												 = 0;
 		short primitiveTopology										 = 0;
 		ID3D11InputLayout* inputLayout								 = nullptr;
+
+		ID3D11Buffer* indirectBuffer								 = nullptr;
+		unsigned int indirectBufferOffset							 = 0;
 																	 
 		ID3D11VertexShader* vertexShader							 = nullptr;
 		ID3D11PixelShader* pixelShader								 = nullptr;

@@ -167,6 +167,21 @@ namespace Destiny
 		return texture;
 	}
 
+	std::shared_ptr<Texture> Texture::CreateStructured(unsigned int structureByteStride, unsigned int structureByteWidth, std::shared_ptr<Blob> data)
+	{
+		std::shared_ptr<Texture> texture = std::make_shared<Texture>();
+		std::shared_ptr<TextureCreationParam> creationParam = std::make_shared<TextureCreationParam>();
+
+		creationParam->m_type = TextureCreationParam::CreateStructured;
+		creationParam->data = data;
+		creationParam->structureByteStride = structureByteStride;
+		creationParam->structureByteWidth = structureByteWidth;
+
+		texture->initialize(s_textureLoader, creationParam);
+
+		return texture;
+	}
+
 	std::shared_ptr<Texture> Texture::CreateHdr(const char* path, HdrCreationParma::CreateTextureType type)
 	{
 		auto iter = s_cache.find(path + HdrCreationParma::mapTypeToString(type));
@@ -341,6 +356,27 @@ namespace Destiny
 					break;
 				}
 			}
+		}
+	}
+
+	void Texture::updateBuffer(std::shared_ptr<Blob> data)
+	{
+		if (!data)
+		{
+			return;
+		}
+
+		D3D11_MAPPED_SUBRESOURCE mappedData;
+		HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->Map(m_resource, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData);
+		if (SUCCEEDED(hr))
+		{
+			if (mappedData.RowPitch != data->getLength())
+			{
+				return;
+			}
+
+			memcpy_s(mappedData.pData, data->getLength(), data->getData(), data->getLength());
+			Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->Unmap(m_resource, 0);
 		}
 	}
 }

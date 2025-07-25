@@ -48,6 +48,7 @@ namespace Destiny
 			None,
 			Create2DSRV,
 			Create2DUAV,
+			CreateStructured,
 			CreateTextureTypeCount
 		};
 	public:
@@ -57,8 +58,21 @@ namespace Destiny
 		unsigned int height			= 0;
 
 		std::shared_ptr<Blob> data	= nullptr;
-		unsigned int pitch			= 0;
-		unsigned int slicePitch		= 0;
+		union 
+		{
+			//for Create2DSRV
+			unsigned int pitch = 0;
+			//for CreateStructured
+			unsigned int structureByteStride;
+		};
+		union
+		{
+			//for Create2DSRV
+			unsigned int slicePitch = 0;
+			//for CreateStructured
+			unsigned int structureByteWidth;
+		};
+		
 		bool isProc = false;
 
 		std::string procPath = "";
@@ -112,7 +126,9 @@ namespace Destiny
 		static std::shared_ptr<Texture> Create(std::shared_ptr<Blob> blob, const char* type);
 		static std::shared_ptr<Texture> Create2DSRV(int format, unsigned int width, unsigned int height, std::shared_ptr<Blob> data, unsigned int pitch, unsigned int slicePitch, bool isProc = false, const std::string& procPath = "");
 		static std::shared_ptr<Texture> Create2DUAV(int format, unsigned int width, unsigned int height);
+		static std::shared_ptr<Texture> CreateStructured(unsigned int structureByteStride, unsigned int structureByteWidth, std::shared_ptr<Blob> data = nullptr);
 		static std::shared_ptr<Texture> CreateHdr(const char* path, HdrCreationParma::CreateTextureType type);
+
 		static std::unordered_map<std::string, std::shared_ptr<Texture>> s_cache;
 		static void Hdr_To_Cube_Irradiance_Prefilter_DDS();
 	public:
@@ -122,6 +138,7 @@ namespace Destiny
 		void unBind(std::shared_ptr<TextureDesc> desc);
 		ID3D11ShaderResourceView* getShaderResourceView();
 		ID3D11UnorderedAccessView** getUnorderedAccessView();
+		void updateBuffer(std::shared_ptr<Blob> data);
 	private:
 		ID3D11Resource* m_resource;
 		ID3D11ShaderResourceView* m_shaderResourceView;

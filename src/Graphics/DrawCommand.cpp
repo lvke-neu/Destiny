@@ -95,7 +95,10 @@ namespace Destiny
 			}
 
 			//restore all
-			deviceContext->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
+			ID3D11Buffer* nullBuffer = nullptr;
+			unsigned int stride = 0;
+			unsigned int offset = 0;
+			deviceContext->IASetVertexBuffers(0, 1, &nullBuffer, &stride, &offset);
 			deviceContext->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
 			deviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_UNDEFINED);
 			deviceContext->IASetInputLayout(nullptr);

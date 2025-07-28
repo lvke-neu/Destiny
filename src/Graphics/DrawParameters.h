@@ -38,7 +38,7 @@ namespace Destiny
 		ID3D11InputLayout* inputLayout								 = nullptr;
 
 		ID3D11Buffer* indirectBuffer								 = nullptr;
-		unsigned int indirectBufferOffset							 = 0;
+		std::vector<std::pair<short, unsigned int>>		drawIndirectMethod_indirectBufferOffsets;
 																	 
 		ID3D11VertexShader* vertexShader							 = nullptr;
 		ID3D11PixelShader* pixelShader								 = nullptr;

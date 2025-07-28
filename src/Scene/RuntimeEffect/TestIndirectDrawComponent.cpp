@@ -57,7 +57,7 @@ namespace Destiny
 	{
 		std::shared_ptr<Blob> data = nullptr;
 		std::vector<PositionNormalTexcoord> vertices;
-		vertices.resize(24);
+		vertices.resize(27);
 
 		vertices[0].position = DirectX::XMFLOAT3(1.0f, -1.0f, -1.0f);
 		vertices[1].position = DirectX::XMFLOAT3(1.0f, 1.0f, -1.0f);
@@ -100,6 +100,17 @@ namespace Destiny
 			vertices[i * 4 + 3].texcoord = DirectX::XMFLOAT2(1.0f, 1.0f);
 
 		}
+
+		vertices[24].position = { -3.0f, 0.0f, 3.0f };
+		vertices[24].normal = { 0.0f, 0.0f, -1.0f };
+		vertices[24].texcoord = { 0.5f, 0.5f};
+		vertices[25].position = { 0.0f, 3.0f, 3.0f };
+		vertices[25].normal = { 0.0f, 0.0f, -1.0f };
+		vertices[25].texcoord = { 0.5f, 0.5f };
+		vertices[26].position = { 3.0f, 0.0f, 3.0f };
+		vertices[26].normal = { 0.0f, 0.0f, -1.0f };
+		vertices[26].texcoord = { 0.5f, 0.5f };
+
 		data.reset(new Blob(vertices.size() * sizeof(PositionNormalTexcoord)));
 		data->copyfrom(vertices.data(), vertices.size() * sizeof(PositionNormalTexcoord));
 		std::shared_ptr<VertexBuffer> vertexBuffer = std::make_shared<VertexBuffer>(InputLayout::Create_PositionNormalTexcoord(), (unsigned int)sizeof(PositionNormalTexcoord), 0, data);
@@ -111,35 +122,48 @@ namespace Destiny
 			8, 9, 10, 10, 11, 8,
 			12, 13, 14, 14, 15, 12,
 			16, 17, 18, 18, 19, 16,
-			20, 21, 22, 22, 23, 20
+			20, 21, 22, 22, 23, 20,
+			24,25,26
 		};
 		data.reset(new Blob(indices.size() * sizeof(unsigned short)));
 		data->copyfrom(indices.data(), indices.size() * sizeof(unsigned short));
 		std::shared_ptr<IndexBuffer> indexBuffer = std::make_shared<IndexBuffer>(IndexBuffer::IndexType::Index16, data);
 
 		DirectX::BoundingBox aabb;
-		DirectX::BoundingBox::CreateFromPoints(aabb, { -1.0f,-1.0f,-1.0f }, { 1.0f,1.0f,1.0f });
+		DirectX::BoundingBox::CreateFromPoints(aabb, { -10.0f,-10.0f,-10.0f }, { 10.0f,10.0f,10.0f });
 
 		Mesh::DrawCall drawCall;
-		drawCall.drawMethod = Mesh::DrawMethod::DrawIndexedInstancedIndirect;
+		drawCall.drawMethod = Mesh::DrawMethod::DrawIndirect;
 		drawCall.primitiveTopology = Mesh::PrimitiveTopology::TriangleList;
-		drawCall.indexCount = (unsigned int)indices.size();
 
-		D3D11_DRAW_INDEXED_INSTANCED_INDIRECT_ARGS indirectArgs;
-		indirectArgs.IndexCountPerInstance = (unsigned int)indices.size();
-		indirectArgs.InstanceCount = 1;
-		indirectArgs.StartIndexLocation = 0;
-		indirectArgs.BaseVertexLocation = 0;
-		indirectArgs.StartInstanceLocation = 0;
+		std::vector<D3D11_DRAW_INDEXED_INSTANCED_INDIRECT_ARGS> indirectArgs;
+		indirectArgs.resize(2);
 
-		data.reset(new Blob(sizeof(D3D11_DRAW_INDEXED_INSTANCED_INDIRECT_ARGS)));
-		data->copyfrom(&indirectArgs, data->getLength());
+		indirectArgs[0].IndexCountPerInstance = 36;
+		indirectArgs[0].InstanceCount = 1;
+		indirectArgs[0].StartIndexLocation = 0;
+		indirectArgs[0].BaseVertexLocation = 0;
+		indirectArgs[0].StartInstanceLocation = 0;
+
+		indirectArgs[1].IndexCountPerInstance = 3;
+		indirectArgs[1].InstanceCount = 1;
+		indirectArgs[1].StartIndexLocation = 36;
+		indirectArgs[1].BaseVertexLocation = 0;
+		indirectArgs[1].StartInstanceLocation = 0;
+
+		data.reset(new Blob(indirectArgs.size() * sizeof(D3D11_DRAW_INDEXED_INSTANCED_INDIRECT_ARGS)));
+		data->copyfrom(indirectArgs.data(), data->getLength());
 
 		std::shared_ptr<IndirectBuffer> indirectBuffer = std::make_shared<IndirectBuffer>(data);
 		indirectBuffer->load(0);
 
+		std::vector<std::pair<Mesh::DrawIndirectMethod, unsigned int>> drawIndirectMethod_indirectBufferOffsets;
+		drawIndirectMethod_indirectBufferOffsets.resize(2);
+		drawIndirectMethod_indirectBufferOffsets[0] = { Mesh::DrawIndirectMethod::DrawIndexedInstancedIndirect, 0 };
+		drawIndirectMethod_indirectBufferOffsets[1] = { Mesh::DrawIndirectMethod::DrawIndexedInstancedIndirect, (unsigned int)sizeof(D3D11_DRAW_INDEXED_INSTANCED_INDIRECT_ARGS) };
+
 		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(aabb, drawCall, vertexBuffer, indexBuffer);
-		mesh->setIndirectMode(indirectBuffer, 0);
+		mesh->setIndirectMode(indirectBuffer, drawIndirectMethod_indirectBufferOffsets);
 
 		return mesh;
 	}

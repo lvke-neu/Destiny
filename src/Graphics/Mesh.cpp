@@ -14,8 +14,7 @@ namespace Destiny
 		m_vertexBuffer(vertexBuffer),
 		m_indexBuffer(indexBuffer),
 		m_instanceBuffer(instanceBuffer),
-		m_indirectBuffer(nullptr),
-		m_indirectBufferOffset(0)
+		m_indirectBuffer(nullptr)
 	{
 		m_aabb = { { 0.0f, 0.0f, 0.0f },{ -1.0f, -1.0f, -1.0 } };
 	}
@@ -26,8 +25,7 @@ namespace Destiny
 		m_vertexBuffer(vertexBuffer),
 		m_indexBuffer(indexBuffer),
 		m_instanceBuffer(instanceBuffer),
-		m_indirectBuffer(nullptr),
-		m_indirectBufferOffset(0)
+		m_indirectBuffer(nullptr)
 	{
 
 	}
@@ -116,8 +114,14 @@ namespace Destiny
 
 		if (m_indirectBuffer)
 		{
+			std::vector<std::pair<short, unsigned int>>		tmp_drawIndirectMethod_indirectBufferOffsets;
+			for (const auto& drawIndirectMethod_indirectBufferOffset : m_drawIndirectMethod_indirectBufferOffsets)
+			{
+				tmp_drawIndirectMethod_indirectBufferOffsets.push_back({(short)drawIndirectMethod_indirectBufferOffset .first, drawIndirectMethod_indirectBufferOffset .second});
+			}
+
 			drawParameters->indirectBuffer = m_indirectBuffer->m_indirectBuffer;
-			drawParameters->indirectBufferOffset = m_indirectBufferOffset;
+			drawParameters->drawIndirectMethod_indirectBufferOffsets = tmp_drawIndirectMethod_indirectBufferOffsets;
 		}
 	}
 
@@ -145,9 +149,9 @@ namespace Destiny
 		m_aabb = box;
 	}
 
-	void Mesh::setIndirectMode(std::shared_ptr<IndirectBuffer> indirectBuffer, unsigned int indirectBufferOffset)
+	void Mesh::setIndirectMode(std::shared_ptr<IndirectBuffer> indirectBuffer, const std::vector<std::pair<DrawIndirectMethod, unsigned int>>& drawIndirectMethod_indirectBufferOffsets)
 	{
 		m_indirectBuffer = indirectBuffer;
-		m_indirectBufferOffset = indirectBufferOffset;
+		m_drawIndirectMethod_indirectBufferOffsets = drawIndirectMethod_indirectBufferOffsets;
 	}
 }

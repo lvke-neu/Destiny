@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/Asset.h"
+#include <vector>
 #include <DirectXCollision.h>
 
 namespace Destiny
@@ -19,6 +20,11 @@ namespace Destiny
 			Draw,
 			DrawIndexed,
 			DrawIndexedInstanced,
+			DrawIndirect
+		};
+		enum class DrawIndirectMethod
+		{
+			Undefined,
 			DrawInstancedIndirect,
 			DrawIndexedInstancedIndirect
 		};
@@ -32,10 +38,10 @@ namespace Destiny
 		};
 		struct DrawCall
 		{
-			DrawMethod					drawMethod{ DrawMethod::Undefined };
-			PrimitiveTopology			primitiveTopology{ PrimitiveTopology::Undefined };
-			unsigned int indexCount		= 0;
-			unsigned int vertexCount	= 0;
+			DrawMethod							drawMethod{ DrawMethod::Undefined };
+			PrimitiveTopology					primitiveTopology{ PrimitiveTopology::Undefined };
+			unsigned int indexCount				= 0;
+			unsigned int vertexCount			= 0;
 		};
 	public:
 		Mesh(const DrawCall& drawCall, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer, std::shared_ptr<InstanceBuffer> instanceBuffer = nullptr);
@@ -52,7 +58,7 @@ namespace Destiny
 		void							modifyVertexBuffer(std::shared_ptr<VertexBuffer> vertexBuffer);
 		void							modifyDrawCall(const DrawCall& drawCall);
 		void							modifyBoundingBox(const DirectX::BoundingBox& box);
-		void							setIndirectMode(std::shared_ptr<IndirectBuffer>	indirectBuffer, unsigned int indirectBufferOffset);
+		void							setIndirectMode(std::shared_ptr<IndirectBuffer>	indirectBuffer, const std::vector<std::pair<DrawIndirectMethod, unsigned int>>& drawIndirectMethod_indirectBufferOffsets);
 	private:
 		DirectX::BoundingBox			m_aabb;
 		DrawCall						m_drawCall;
@@ -60,7 +66,7 @@ namespace Destiny
 		std::shared_ptr<IndexBuffer>	m_indexBuffer;
 		std::shared_ptr<InstanceBuffer>	m_instanceBuffer;
 		std::shared_ptr<IndirectBuffer>	m_indirectBuffer;
-		unsigned int					m_indirectBufferOffset;
+		std::vector<std::pair<DrawIndirectMethod, unsigned int>> m_drawIndirectMethod_indirectBufferOffsets;
 	};
 
 	inline DirectX::BoundingBox Mesh::getBoundingBox()

@@ -282,7 +282,7 @@ namespace Destiny
 				}
 				else
 				{
-					LOG_ERROR("LoadFromMemory CreateStructured CreateUnorderedAccessView failed");
+					LOG_ERROR("LoadFromMemory CreateTyped CreateUnorderedAccessView failed");
 					asset->loadFailed__();
 					return;
 				}
@@ -300,13 +300,75 @@ namespace Destiny
 				}
 				else
 				{
-					LOG_ERROR("LoadFromMemory CreateStructured  CreateShaderResourceView failed");
+					LOG_ERROR("LoadFromMemory CreateTyped  CreateShaderResourceView failed");
 					asset->loadFailed__();
 				}
 			}
 			else
 			{
-				LOG_ERROR("LoadFromMemory CreateStructured Buffer failed");
+				LOG_ERROR("LoadFromMemory CreateTyped Buffer failed");
+				asset->loadFailed__();
+			}
+
+			break;
+		}
+		case TextureCreationParam::CreateRaw:
+		{
+			D3D11_BUFFER_DESC bufferDesc = {};
+			bufferDesc.ByteWidth = creationParam->rawBufferWidth;
+			bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+			bufferDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
+			bufferDesc.CPUAccessFlags = 0;
+			bufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_ALLOW_RAW_VIEWS | D3D11_RESOURCE_MISC_DRAWINDIRECT_ARGS;
+			//bufferDesc.StructureByteStride = creationParam->structureByteStride;
+
+			D3D11_SUBRESOURCE_DATA initData = {};
+			initData.pSysMem = creationParam->data ? initData.pSysMem = creationParam->data->getData() : nullptr;
+
+			ID3D11Buffer* pBuffer = nullptr;
+			HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateBuffer(&bufferDesc, creationParam->data ? &initData : nullptr, &pBuffer);
+			if (SUCCEEDED(hr))
+			{
+				std::static_pointer_cast<Texture>(asset)->m_resource = pBuffer;
+
+				D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
+				uavDesc.Format = DXGI_FORMAT_R32_TYPELESS;
+				uavDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
+				uavDesc.Buffer.NumElements = creationParam->rawBufferWidth / 4;
+				uavDesc.Buffer.Flags = D3D11_BUFFER_UAV_FLAG_RAW;
+				//D3D11_BUFFER_UAV_FLAG_APPEND
+				hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateUnorderedAccessView(std::static_pointer_cast<Texture>(asset)->m_resource, &uavDesc, &std::static_pointer_cast<Texture>(asset)->m_unorderedAccessView);
+				if (SUCCEEDED(hr))
+				{
+
+				}
+				else
+				{
+					LOG_ERROR("LoadFromMemory CreateRaw CreateUnorderedAccessView failed");
+					asset->loadFailed__();
+					return;
+				}
+
+				D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+				srvDesc.Format = DXGI_FORMAT_R32_UINT;
+				srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+				srvDesc.Buffer.NumElements = creationParam->rawBufferWidth / 4;
+				srvDesc.Buffer.FirstElement = 0;
+
+				hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateShaderResourceView(std::static_pointer_cast<Texture>(asset)->m_resource, &srvDesc, &std::static_pointer_cast<Texture>(asset)->m_shaderResourceView);
+				if (SUCCEEDED(hr))
+				{
+					asset->loadSucceeded__();
+				}
+				else
+				{
+					LOG_ERROR("LoadFromMemory CreateRaw  CreateShaderResourceView failed");
+					asset->loadFailed__();
+				}
+			}
+			else
+			{
+				LOG_ERROR("LoadFromMemory CreateRaw Buffer failed");
 				asset->loadFailed__();
 			}
 

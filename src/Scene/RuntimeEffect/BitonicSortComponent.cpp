@@ -13,28 +13,34 @@
 
 namespace Destiny
 {
-	BitonicSortComponent::BitonicSortComponent()
+	BitonicSortComponent::BitonicSortComponent() : 
+		m_cIndirectArgStride(12),
+		m_indirectArgsTexture(nullptr)
 	{
-		std::vector<unsigned int> numbers = { 3,2,5,1,7,2,1,9,22,32 };
+		indirectArgsCS();
+	}
 
-		std::shared_ptr<Blob> data = std::make_shared<Blob>(sizeof(unsigned int) * numbers.size());
-		data->copyfrom(numbers.data(), data->getLength());
+	void BitonicSortComponent::indirectArgsCS()
+	{
+		m_indirectArgsTexture = Texture::CreateRaw(m_cIndirectArgStride * 22 * 23 / 2, nullptr);
+		m_indirectArgsTexture->load();
 
-		auto sortedBufferIn = Texture::CreateTyped((int)DXGI_FORMAT_R32_UINT, sizeof(unsigned int), (unsigned int)data->getLength(), data);
-		sortedBufferIn->load();
+		std::vector<std::shared_ptr<Texture>> uavs = { m_indirectArgsTexture };
+		auto IndirectArgsCS = std::make_shared<ComputerCommand>();
+		IndirectArgsCS->setDebugName(L"IndirectArgsCS");
+		IndirectArgsCS->setComputerEffectPath("builtin://renderer/bitonic_sort/IndirectArgsCS.hlsl");
 
-		auto sortedBufferOut = Texture::CreateTyped((int)DXGI_FORMAT_R32_UINT, sizeof(unsigned int), (unsigned int)data->getLength());
-		sortedBufferOut->load();
+		IndirectArgsCS->setUnorderedAccessViews(uavs);
+		IndirectArgsCS->setThreadGroupCount(1, 1, 1);
 
-		std::vector<std::shared_ptr<Texture>> uavs = { sortedBufferIn, sortedBufferOut };
-		auto computerCommand = std::make_shared<ComputerCommand>();
-		computerCommand->setDebugName(L"BitonicSort");
-		computerCommand->setComputerEffectPath("builtin://renderer/bitonic_sort.hlsl");
+		std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->addBeforePipelineCommand(IndirectArgsCS);
 
-		computerCommand->setUnorderedAccessViews(uavs);
-		computerCommand->setThreadGroupCount(1, 1, 1);
+		auto IndirectArgsCS2 = std::make_shared<ComputerCommand>();
+		IndirectArgsCS2->setDebugName(L"IndirectArgsCS2");
+		IndirectArgsCS2->setComputerEffectPath("builtin://renderer/bitonic_sort/IndirectArgsCS2.hlsl");
+		IndirectArgsCS2->setIndirectMode(true, m_indirectArgsTexture, { 0 });
 
-		std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->addBeforePipelineCommand(computerCommand);
+		std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->addBeforePipelineCommand(IndirectArgsCS2);
 	}
 
 	RTTR_REGISTRATION

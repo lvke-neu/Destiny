@@ -4,7 +4,7 @@ RWByteAddressBuffer g_IndirectArgsBuffer : register(u0);
 //SV_GroupID
 //SV_GroupThreadID
 
-[numthreads(1, 1, 1)]
+[numthreads(2, 1, 1)]
 void CS(uint3 groupThreadID : SV_GroupThreadID)
 {
 	g_IndirectArgsBuffer.Store3(groupThreadID.x, uint3(1, 2, 3));

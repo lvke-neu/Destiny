@@ -27,6 +27,8 @@ namespace Destiny
 		std::shared_ptr<Texture> getUnorderedAccessViews(int index);
 		void setUnorderedAccessViews(const std::vector<std::shared_ptr<Texture>>& uavs);
 		void setShaderResourceView(const char* name, std::shared_ptr<Texture> texture);
+
+		void setIndirectMode(bool bIndirectMode, std::shared_ptr<Texture> indirectTexture = nullptr, std::vector<unsigned int> indirectOffsets = std::vector<unsigned int>());
 	private:
 		ID3D11ComputeShader* m_computeShader;
 		ID3D10Blob* m_csCompiledBlob;
@@ -37,5 +39,9 @@ namespace Destiny
 		std::vector<std::shared_ptr<Texture>> m_uavs;
 		std::unordered_map<std::string, std::pair<std::shared_ptr<TextureDesc>, std::shared_ptr<Texture>>> m_srvs;
 		std::wstring m_debugName;
+
+		bool m_bIndirectMode;
+		std::shared_ptr<Texture>  m_indirectTexture;
+		std::vector<unsigned int> m_indirectOffsets;
 	};
 }

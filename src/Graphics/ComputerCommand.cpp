@@ -18,7 +18,9 @@ namespace Destiny
 		m_threadGroupCountX(0),
 		m_threadGroupCountY(0),
 		m_threadGroupCountZ(0),
-		m_debugName(L"")
+		m_debugName(L""),
+		m_bIndirectMode(false),
+		m_indirectTexture(nullptr)
 	{
 
 	}
@@ -49,7 +51,20 @@ namespace Destiny
 			}
 		}
 
-		deviceContext->Dispatch(m_threadGroupCountX, m_threadGroupCountY, m_threadGroupCountZ);
+		if (!m_bIndirectMode)
+		{
+			deviceContext->Dispatch(m_threadGroupCountX, m_threadGroupCountY, m_threadGroupCountZ);
+		}
+		else
+		{
+			if (m_indirectTexture)
+			{
+				for (const auto& indirectOffset : m_indirectOffsets)
+				{
+					deviceContext->DispatchIndirect((ID3D11Buffer*)m_indirectTexture->m_resource, indirectOffset);
+				}
+			}
+		}
 		
 		for (const auto& srv : m_srvs)
 		{
@@ -119,5 +134,12 @@ namespace Destiny
 		}
 
 		iter->second.second = texture;
+	}
+
+	void ComputerCommand::setIndirectMode(bool bIndirectMode, std::shared_ptr<Texture> indirectTexture, std::vector<unsigned int> indirectOffsets)
+	{
+		m_bIndirectMode = bIndirectMode;
+		m_indirectTexture = indirectTexture;
+		m_indirectOffsets = indirectOffsets;
 	}
 }

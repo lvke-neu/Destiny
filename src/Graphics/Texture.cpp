@@ -187,11 +187,25 @@ namespace Destiny
 		std::shared_ptr<Texture> texture = std::make_shared<Texture>();
 		std::shared_ptr<TextureCreationParam> creationParam = std::make_shared<TextureCreationParam>();
 
-		creationParam->m_type = TextureCreationParam::CreateStructured;
+		creationParam->m_type = TextureCreationParam::CreateTyped;
 		creationParam->data = data;
 		creationParam->format = format;
 		creationParam->typedBufferByteStride = typedBufferByteStride;
 		creationParam->typedBufferByteWidth = typedBufferByteWidth;
+
+		texture->initialize(s_textureLoader, creationParam);
+
+		return texture;
+	}
+
+	std::shared_ptr<Texture> Texture::CreateRaw(unsigned int rawBufferWidth, std::shared_ptr<Blob> data)
+	{
+		std::shared_ptr<Texture> texture = std::make_shared<Texture>();
+		std::shared_ptr<TextureCreationParam> creationParam = std::make_shared<TextureCreationParam>();
+
+		creationParam->m_type = TextureCreationParam::CreateRaw;
+		creationParam->data = data;
+		creationParam->rawBufferWidth = rawBufferWidth;
 
 		texture->initialize(s_textureLoader, creationParam);
 

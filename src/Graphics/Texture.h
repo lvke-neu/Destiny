@@ -50,6 +50,7 @@ namespace Destiny
 			Create2DUAV,
 			CreateStructured,
 			CreateTyped,
+			CreateRaw,
 			CreateTextureTypeCount
 		};
 	public:
@@ -67,6 +68,8 @@ namespace Destiny
 			unsigned int structuredBufferByteStride;
 			//for CreateTyped
 			unsigned int typedBufferByteStride;
+			//for CreateRaw
+			unsigned int rawBufferWidth;
 		};
 		union
 		{
@@ -121,6 +124,7 @@ namespace Destiny
 	class Texture : public Asset
 	{
 		friend class TextureLoader;
+		friend class ComputerCommand;
 	public:
 		Texture();
 		Texture(ID3D11Resource* resource, ID3D11ShaderResourceView* shaderResourceView);
@@ -133,6 +137,7 @@ namespace Destiny
 		static std::shared_ptr<Texture> Create2DUAV(int format, unsigned int width, unsigned int height);
 		static std::shared_ptr<Texture> CreateStructured(unsigned int structuredBufferByteStride, unsigned int structuredBufferByteWidth, std::shared_ptr<Blob> data = nullptr);
 		static std::shared_ptr<Texture> CreateTyped(int format, unsigned int typedBufferByteStride, unsigned int typedBufferByteWidth, std::shared_ptr<Blob> data = nullptr);
+		static std::shared_ptr<Texture> CreateRaw(unsigned int rawBufferWidth, std::shared_ptr<Blob> data = nullptr);
 		static std::shared_ptr<Texture> CreateHdr(const char* path, HdrCreationParma::CreateTextureType type);
 
 		static std::unordered_map<std::string, std::shared_ptr<Texture>> s_cache;

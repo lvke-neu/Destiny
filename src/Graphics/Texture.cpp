@@ -167,15 +167,31 @@ namespace Destiny
 		return texture;
 	}
 
-	std::shared_ptr<Texture> Texture::CreateStructured(unsigned int structureByteStride, unsigned int structureByteWidth, std::shared_ptr<Blob> data)
+	std::shared_ptr<Texture> Texture::CreateStructured(unsigned int structuredBufferByteStride, unsigned int structuredBufferByteWidth, std::shared_ptr<Blob> data)
 	{
 		std::shared_ptr<Texture> texture = std::make_shared<Texture>();
 		std::shared_ptr<TextureCreationParam> creationParam = std::make_shared<TextureCreationParam>();
 
 		creationParam->m_type = TextureCreationParam::CreateStructured;
 		creationParam->data = data;
-		creationParam->structureByteStride = structureByteStride;
-		creationParam->structureByteWidth = structureByteWidth;
+		creationParam->structuredBufferByteStride = structuredBufferByteStride;
+		creationParam->structuredBufferByteWidth = structuredBufferByteWidth;
+
+		texture->initialize(s_textureLoader, creationParam);
+
+		return texture;
+	}
+
+	std::shared_ptr<Texture> Texture::CreateTyped(int format, unsigned int typedBufferByteStride, unsigned int typedBufferByteWidth, std::shared_ptr<Blob> data)
+	{
+		std::shared_ptr<Texture> texture = std::make_shared<Texture>();
+		std::shared_ptr<TextureCreationParam> creationParam = std::make_shared<TextureCreationParam>();
+
+		creationParam->m_type = TextureCreationParam::CreateStructured;
+		creationParam->data = data;
+		creationParam->format = format;
+		creationParam->typedBufferByteStride = typedBufferByteStride;
+		creationParam->typedBufferByteWidth = typedBufferByteWidth;
 
 		texture->initialize(s_textureLoader, creationParam);
 

@@ -49,6 +49,7 @@ namespace Destiny
 			Create2DSRV,
 			Create2DUAV,
 			CreateStructured,
+			CreateTyped,
 			CreateTextureTypeCount
 		};
 	public:
@@ -63,14 +64,18 @@ namespace Destiny
 			//for Create2DSRV
 			unsigned int pitch = 0;
 			//for CreateStructured
-			unsigned int structureByteStride;
+			unsigned int structuredBufferByteStride;
+			//for CreateTyped
+			unsigned int typedBufferByteStride;
 		};
 		union
 		{
 			//for Create2DSRV
 			unsigned int slicePitch = 0;
 			//for CreateStructured
-			unsigned int structureByteWidth;
+			unsigned int structuredBufferByteWidth;
+			//for CreateTyped
+			unsigned int typedBufferByteWidth;
 		};
 		
 		bool isProc = false;
@@ -126,7 +131,8 @@ namespace Destiny
 		static std::shared_ptr<Texture> Create(std::shared_ptr<Blob> blob, const char* type);
 		static std::shared_ptr<Texture> Create2DSRV(int format, unsigned int width, unsigned int height, std::shared_ptr<Blob> data, unsigned int pitch, unsigned int slicePitch, bool isProc = false, const std::string& procPath = "");
 		static std::shared_ptr<Texture> Create2DUAV(int format, unsigned int width, unsigned int height);
-		static std::shared_ptr<Texture> CreateStructured(unsigned int structureByteStride, unsigned int structureByteWidth, std::shared_ptr<Blob> data = nullptr);
+		static std::shared_ptr<Texture> CreateStructured(unsigned int structuredBufferByteStride, unsigned int structuredBufferByteWidth, std::shared_ptr<Blob> data = nullptr);
+		static std::shared_ptr<Texture> CreateTyped(int format, unsigned int typedBufferByteStride, unsigned int typedBufferByteWidth, std::shared_ptr<Blob> data = nullptr);
 		static std::shared_ptr<Texture> CreateHdr(const char* path, HdrCreationParma::CreateTextureType type);
 
 		static std::unordered_map<std::string, std::shared_ptr<Texture>> s_cache;

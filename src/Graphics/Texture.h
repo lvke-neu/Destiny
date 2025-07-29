@@ -150,6 +150,7 @@ namespace Destiny
 		ID3D11ShaderResourceView* getShaderResourceView();
 		ID3D11UnorderedAccessView** getUnorderedAccessView();
 		void updateBuffer(std::shared_ptr<Blob> data);
+		bool getBuffer(std::shared_ptr<Blob>& data);
 	private:
 		ID3D11Resource* m_resource;
 		ID3D11ShaderResourceView* m_shaderResourceView;

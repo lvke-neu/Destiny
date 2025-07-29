@@ -51,6 +51,14 @@ namespace Destiny
 			}
 		}
 
+		for (const auto& constantBuffer : m_constantBuffers)
+		{
+			if (constantBuffer.second)
+			{
+				constantBuffer.second->bind();
+			}
+		}
+
 		if (!m_bIndirectMode)
 		{
 			deviceContext->Dispatch(m_threadGroupCountX, m_threadGroupCountY, m_threadGroupCountZ);
@@ -73,6 +81,15 @@ namespace Destiny
 				srv.second.second->unBind(srv.second.first);
 			}
 		}
+
+		for (const auto& constantBuffer : m_constantBuffers)
+		{
+			if (constantBuffer.second)
+			{
+				constantBuffer.second->unBind();
+			}
+		}
+
 		ID3D11UnorderedAccessView* uav = nullptr;
 		deviceContext->CSSetShader(nullptr, nullptr, 0);
 		for (int i = 0; i < m_uavs.size(); i++)

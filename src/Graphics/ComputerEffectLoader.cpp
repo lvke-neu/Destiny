@@ -92,9 +92,64 @@ namespace Destiny
 		hr = D3DReflect(compiledBlob->GetBufferPointer(), compiledBlob->GetBufferSize(), __uuidof(ID3D11ShaderReflection), (void**)(&shaderReflection));
 		if (SUCCEEDED(hr))
 		{
-			//collectReflectionConstantInfo(shaderReflection, flag);
+			collectReflectionConstantInfo(shaderReflection, computerCommand);
 			collectReflectionTextureInfo(shaderReflection, computerCommand);
 			//collectReflectionSamplerStateInfo(shaderReflection, flag);
+		}
+	}
+
+	void ComputerEffectLoader::collectReflectionConstantInfo(ID3D11ShaderReflection* shaderReflection, std::shared_ptr<ComputerCommand> computerCommand)
+	{
+		if (!shaderReflection || !computerCommand)
+		{
+			return;
+		}
+
+		HRESULT hr = 0;
+		D3D11_SHADER_DESC shaderDesc;
+		hr = shaderReflection->GetDesc(&shaderDesc);
+		if (SUCCEEDED(hr))
+		{
+			for (unsigned int i = 0; i < shaderDesc.ConstantBuffers; i++)
+			{
+				ID3D11ShaderReflectionConstantBuffer* reflectionConstantBuffer = nullptr;
+				reflectionConstantBuffer = shaderReflection->GetConstantBufferByIndex(i);
+				if (reflectionConstantBuffer)
+				{
+					D3D11_SHADER_BUFFER_DESC shaderBufferDesc;
+					hr = reflectionConstantBuffer->GetDesc(&shaderBufferDesc);
+
+					if (SUCCEEDED(hr))
+					{
+						D3D11_SHADER_INPUT_BIND_DESC shaderInputBindDesc;
+						hr = shaderReflection->GetResourceBindingDescByName(shaderBufferDesc.Name, &shaderInputBindDesc);
+
+						if (SUCCEEDED(hr))
+						{
+							auto iter = computerCommand->m_constantBuffers.find(shaderBufferDesc.Name);
+							if (iter == computerCommand->m_constantBuffers.end())
+							{
+								computerCommand->m_constantBuffers[shaderBufferDesc.Name] = std::make_shared<ConstantBuffer>(shaderInputBindDesc.BindPoint, shaderBufferDesc.Size);
+								for (unsigned int j = 0; j < shaderBufferDesc.Variables; j++)
+								{
+									ID3D11ShaderReflectionVariable* shaderReflectionVariable = reflectionConstantBuffer->GetVariableByIndex(j);
+									if (shaderReflectionVariable)
+									{
+										D3D11_SHADER_VARIABLE_DESC shaderVariableDesc;
+										hr = shaderReflectionVariable->GetDesc(&shaderVariableDesc);
+										if (SUCCEEDED(hr))
+										{
+											computerCommand->m_constantBuffers[shaderBufferDesc.Name]->addVariable(shaderVariableDesc.Name, { shaderVariableDesc.StartOffset, shaderVariableDesc.Size });
+											computerCommand->m_variableLinkConstant[shaderVariableDesc.Name] = shaderBufferDesc.Name;
+										}
+									}
+								}
+							}
+							computerCommand->m_constantBuffers[shaderBufferDesc.Name]->setConstantBufferBindFlag(ConstantBufferBindFlag::BindCS, true);
+						}
+					}
+				}
+			}
 		}
 	}
 

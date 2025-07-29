@@ -402,11 +402,64 @@ namespace Destiny
 		{
 			if (mappedData.RowPitch != data->getLength())
 			{
+				Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->Unmap(m_resource, 0);
 				return;
 			}
 
 			memcpy_s(mappedData.pData, data->getLength(), data->getData(), data->getLength());
 			Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->Unmap(m_resource, 0);
 		}
+	}
+
+	bool Texture::getBuffer(std::shared_ptr<Blob>& data)
+	{
+		if (!data)
+		{
+			return false;
+		}
+
+		auto creationParam = std::dynamic_pointer_cast<TextureCreationParam>(m_creationParam);
+		if (!creationParam || creationParam->m_type != TextureCreationParam::CreateRaw)
+		{
+			return false;
+		}
+
+		D3D11_BUFFER_DESC stagingDesc = {};
+		stagingDesc.ByteWidth = creationParam->rawBufferWidth;
+		stagingDesc.Usage = D3D11_USAGE_STAGING;      
+		stagingDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ; 
+		stagingDesc.BindFlags = 0;                   
+		stagingDesc.MiscFlags = 0;                   
+
+		ID3D11Buffer* pStagingBuffer = nullptr;
+		HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateBuffer(&stagingDesc, nullptr, &pStagingBuffer);
+
+		if (SUCCEEDED(hr))
+		{
+			Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->CopyResource(pStagingBuffer, m_resource);
+
+			D3D11_MAPPED_SUBRESOURCE mappedData;
+			hr = Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->Map(pStagingBuffer, 0, D3D11_MAP_READ, 0, &mappedData);
+
+			if (SUCCEEDED(hr))
+			{
+				if (mappedData.RowPitch < data->getLength())
+				{
+					SAFE_RELEASE(pStagingBuffer);
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->Unmap(m_resource, 0);
+					return false;
+				}
+
+				memcpy_s(data->getData(), data->getLength(), mappedData.pData, data->getLength());
+				Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->Unmap(m_resource, 0);
+
+				SAFE_RELEASE(pStagingBuffer);
+				return true;
+			}
+		}
+
+		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->Unmap(m_resource, 0);
+		SAFE_RELEASE(pStagingBuffer);
+		return false;
 	}
 }

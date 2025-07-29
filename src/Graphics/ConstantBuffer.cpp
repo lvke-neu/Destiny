@@ -96,6 +96,9 @@ namespace Destiny
 				case ConstantBufferBindFlag::BindDS:
 					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->DSSetConstantBuffers(m_startSlot, 1, &m_constantBuffer);
 					break;
+				case ConstantBufferBindFlag::BindCS:
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->CSSetConstantBuffers(m_startSlot, 1, &m_constantBuffer);
+					break;
 				}
 			}
 		}
@@ -124,6 +127,9 @@ namespace Destiny
 					break;
 				case ConstantBufferBindFlag::BindDS:
 					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->DSSetConstantBuffers(m_startSlot, 1, &buffer);
+					break;
+				case ConstantBufferBindFlag::BindCS:
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->CSSetConstantBuffers(m_startSlot, 1, &buffer);
 					break;
 				}
 			}

@@ -23,6 +23,7 @@ namespace Destiny
 		std::shared_ptr<GraphicsPipeline>		getShadowMapPipeline();
 		std::shared_ptr<RenderTargetView>		getRenderTargetView();
 		void									addBeforePipelineCommand(std::shared_ptr<GraphicsCommand> graphicsCommand);
+		void									clearBeforePipelineCommand();
 	public:
 		std::shared_ptr<BindRenderTargets>		m_bindRenderTargets;
 	private:

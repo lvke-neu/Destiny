@@ -203,6 +203,11 @@ namespace Destiny
 		m_beforePipelineCommand->addGraphicsCommand(graphicsCommand);
 	}
 
+	void RenderSystem::clearBeforePipelineCommand()
+	{
+		m_beforePipelineCommand->clearGraphicsCommand();
+	}
+
 	void RenderSystem::onResize(void* data)
 	{
 		WindowResizeData wrd = *(WindowResizeData*)data;

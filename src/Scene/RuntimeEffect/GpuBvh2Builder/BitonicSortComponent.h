@@ -6,6 +6,7 @@ namespace Destiny
 	class ComputerCommand;
 	class Texture;
 	class BitonicOuterAndInnerCommand;
+	class GraphicsCommandList;
 	class BitonicSortComponent : public Component
 	{
 		RTTR_ENABLE(Component);
@@ -44,6 +45,7 @@ namespace Destiny
 		std::shared_ptr<ComputerCommand> m_outerSortCS;
 		std::shared_ptr<ComputerCommand> m_innerSortCS;
 		std::shared_ptr<BitonicOuterAndInnerCommand> m_bitonicOuterAndInnerCommand;
+		std::shared_ptr<GraphicsCommandList>	m_graphicsCommandList;
 
 		Button m_test;
 	};

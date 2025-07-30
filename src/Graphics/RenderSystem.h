@@ -1,6 +1,7 @@
 #pragma once
 #include "GraphicsSystem.h"
 #include "GraphicsPipeline/GraphicsPipeline.h"
+#include <unordered_map>
 
 namespace Destiny
 {
@@ -24,6 +25,7 @@ namespace Destiny
 		std::shared_ptr<RenderTargetView>		getRenderTargetView();
 		void									addBeforePipelineCommand(std::shared_ptr<GraphicsCommand> graphicsCommand);
 		void									clearBeforePipelineCommand();
+		void									addBeforePipelineCommandList(const std::wstring& debugName, std::shared_ptr<GraphicsCommandList> graphicsCommandList);
 	public:
 		std::shared_ptr<BindRenderTargets>		m_bindRenderTargets;
 	private:
@@ -36,8 +38,9 @@ namespace Destiny
 		std::shared_ptr<GraphicsPipeline>		m_guiPipeline;
 		std::shared_ptr<GraphicsPipeline>		m_postProcessingPipeline;
 
-		std::shared_ptr<GraphicsCommandList>	m_beforePipelineCommand;
-		std::shared_ptr<GraphicsCommandList>	m_commonRenderTargetCommand;
+		std::unordered_map<std::wstring, std::unordered_set<std::shared_ptr<GraphicsCommandList>>> m_beforePipelineCommandLists;
+		std::shared_ptr<GraphicsCommandList>	m_beforePipelineCommandList;
+		std::shared_ptr<GraphicsCommandList>	m_commonRenderTargetCommandList;
 		std::shared_ptr<ClearRenderTarget>		m_clearRenderTarget;
 	};
 

@@ -81,6 +81,7 @@ file(GLOB SRC_Math src/Math/*)
 file(GLOB SRC_SCENE src/Scene/*)
 file(GLOB SRC_SCENE_RUNTIMEEFFECT src/Scene/RuntimeEffect/*)
 file(GLOB SRC_SCENE_RUNTIMEEFFECT_PARTICLE src/Scene/RuntimeEffect/Particle/*)
+file(GLOB SRC_SCENE_RUNTIMEEFFECT_GPUBVH2BUILDER src/Scene/RuntimeEffect/GpuBvh2Builder/*)
 file(GLOB SRC_SCENE_MODEL src/Scene/Model/*)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -98,6 +99,7 @@ source_group("Math" FILES ${SRC_Math})
 source_group("Scene" FILES ${SRC_SCENE})
 source_group("Scene\\RuntimeEffect" FILES ${SRC_SCENE_RUNTIMEEFFECT})
 source_group("Scene\\RuntimeEffect\\Particle" FILES ${SRC_SCENE_RUNTIMEEFFECT_PARTICLE})
+source_group("Scene\\RuntimeEffect\\GpuBvh2Builder" FILES ${SRC_SCENE_RUNTIMEEFFECT_GPUBVH2BUILDER})
 source_group("Scene\\Model" FILES ${SRC_SCENE_MODEL})
 
 add_executable(
@@ -114,6 +116,7 @@ add_executable(
     ${SRC_SCENE} 
     ${SRC_SCENE_RUNTIMEEFFECT}
     ${SRC_SCENE_RUNTIMEEFFECT_PARTICLE}
+    ${SRC_SCENE_RUNTIMEEFFECT_GPUBVH2BUILDER}
     ${SRC_SCENE_MODEL}
 )
 target_link_libraries(Destiny assimp rttr_core freetype d3d11.lib dxgi.lib dxguid.lib D3DCompiler.lib d2d1.lib dwrite.lib winmm.lib)

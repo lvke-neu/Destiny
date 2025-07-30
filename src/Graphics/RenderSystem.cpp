@@ -23,13 +23,13 @@ namespace Destiny
 		m_transparentPipeline(nullptr),
 		m_guiPipeline(nullptr),
 		m_postProcessingPipeline(nullptr),
-		m_commonRenderTargetCommand(std::make_shared<GraphicsCommandList>()),
-		m_beforePipelineCommand(std::make_shared<GraphicsCommandList>()),
+		m_commonRenderTargetCommandList(std::make_shared<GraphicsCommandList>()),
+		m_beforePipelineCommandList(std::make_shared<GraphicsCommandList>()),
 		m_bindRenderTargets(std::make_shared<BindRenderTargets>()),
 		m_clearRenderTarget(std::make_shared<ClearRenderTarget>())
 	{
-		m_commonRenderTargetCommand->addGraphicsCommand(m_bindRenderTargets);
-		m_commonRenderTargetCommand->addGraphicsCommand(m_clearRenderTarget);
+		m_commonRenderTargetCommandList->addGraphicsCommand(m_bindRenderTargets);
+		m_commonRenderTargetCommandList->addGraphicsCommand(m_clearRenderTarget);
 	}
 
 	RenderSystem::~RenderSystem()
@@ -51,38 +51,52 @@ namespace Destiny
 
 	void RenderSystem::render()
 	{
+		auto deviceContext = getImmediateContext();
+
 		beginEvent(L"Standard Scene");
 
 		beginEvent(L"Before Pipeline");
-		m_beforePipelineCommand->execute(getImmediateContext());
+		m_beforePipelineCommandList->execute(deviceContext);
+		for (const auto& commandList : m_beforePipelineCommandLists)
+		{
+			beginEvent(commandList.first.c_str());
+			for (const auto& command : commandList.second)
+			{
+				if (command)
+				{
+					command->execute(deviceContext);
+				}
+			}
+			endEvent();
+		}
 		endEvent();
 
 		beginEvent(L"Common RenderTarget");
-		m_commonRenderTargetCommand->execute(getImmediateContext());
+		m_commonRenderTargetCommandList->execute(deviceContext);
 		endEvent();
 
 		beginEvent(L"Shadow Pass");
-		m_shadowMapPipeline->execute(getImmediateContext());
+		m_shadowMapPipeline->execute(deviceContext);
 		endEvent();
 
 		beginEvent(L"DeferredOpaque Pass");
-		m_deferredOpaquePipeline->execute(getImmediateContext());
+		m_deferredOpaquePipeline->execute(deviceContext);
 		endEvent();
  
 		beginEvent(L"ForwardOpaque Pass");
-		m_forwardOpaquePipeline->execute(getImmediateContext());
+		m_forwardOpaquePipeline->execute(deviceContext);
 		endEvent();
 
 		beginEvent(L"Transparent Pass");
-		m_transparentPipeline->execute(getImmediateContext());
+		m_transparentPipeline->execute(deviceContext);
 		endEvent();
 
 		beginEvent(L"Gui Pass");
-		m_guiPipeline->execute(getImmediateContext());
+		m_guiPipeline->execute(deviceContext);
 		endEvent();
 
 		beginEvent(L"Postprocess Pass");
-		m_postProcessingPipeline->execute(getImmediateContext());
+		m_postProcessingPipeline->execute(deviceContext);
 		endEvent();
 
 		endEvent();
@@ -200,12 +214,17 @@ namespace Destiny
 
 	void RenderSystem::addBeforePipelineCommand(std::shared_ptr<GraphicsCommand> graphicsCommand)
 	{
-		m_beforePipelineCommand->addGraphicsCommand(graphicsCommand);
+		m_beforePipelineCommandList->addGraphicsCommand(graphicsCommand);
 	}
 
 	void RenderSystem::clearBeforePipelineCommand()
 	{
-		m_beforePipelineCommand->clearGraphicsCommand();
+		m_beforePipelineCommandList->clearGraphicsCommand();
+	}
+
+	void RenderSystem::addBeforePipelineCommandList(const std::wstring& debugName, std::shared_ptr<GraphicsCommandList> graphicsCommandList)
+	{
+		m_beforePipelineCommandLists[debugName].insert(graphicsCommandList);
 	}
 
 	void RenderSystem::onResize(void* data)

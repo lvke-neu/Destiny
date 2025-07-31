@@ -74,7 +74,8 @@ namespace Destiny
 			{
 				m_computerCommand->setShaderResourceView("t_texture", m_renderSystem->m_bindRenderTargets->getRenderTargetViews(0)->getTexture());
 
-				m_fullScreenTriangle->setShaderResource("t_renderedTexture", m_computerCommand->getUnorderedAccessViews(0));
+				//m_fullScreenTriangle->setShaderResource("t_renderedTexture", m_computerCommand->getUnorderedAccessViews(0));
+				m_fullScreenTriangle->setShaderResource("t_renderedTexture", m_renderSystem->m_bindRenderTargets->getRenderTargetViews(0)->getTexture());
 			}
 		}
 

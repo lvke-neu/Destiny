@@ -1,5 +1,7 @@
 #pragma once
-#include "Graphics/VisualComponent.h"
+#include "Engine/Component.h"
+#include "Graphics/GraphicsDefine.h"
+#include <vector>
 
 namespace Destiny
 {

@@ -478,7 +478,7 @@ namespace Destiny
 						D3D11_SHADER_INPUT_BIND_DESC shaderInputBindDesc;
 						hr = shaderReflection->GetResourceBindingDescByName(shaderBufferDesc.Name, &shaderInputBindDesc);
 
-						if (SUCCEEDED(hr))
+						if (SUCCEEDED(hr) && shaderInputBindDesc.Type == D3D_SIT_CBUFFER)
 						{
 							auto iter = m_constantBuffers.find(shaderBufferDesc.Name);
 							if (iter == m_constantBuffers.end())

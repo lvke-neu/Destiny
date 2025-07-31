@@ -29,5 +29,13 @@ namespace Destiny
 			else
 				return 0;
 		}
+
+		template <typename T>
+		T DivideAndRoundUp(T dividend, T divisor) { return (dividend - 1) / divisor + 1; }
+		
+		inline unsigned int GetNumAABBsOutputFromPass(unsigned int numElements, unsigned int elementsSummedPerThread)
+		{
+			return  DivideAndRoundUp< unsigned int>(numElements, elementsSummedPerThread);
+		}
 	}
 }

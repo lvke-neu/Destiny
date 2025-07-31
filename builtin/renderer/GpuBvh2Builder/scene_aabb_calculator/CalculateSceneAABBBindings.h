@@ -9,12 +9,14 @@
 //
 //*********************************************************
 
+#include "../common/RaytracingHlslCompat.h"
+
 #ifndef HLSL
-#include "HlslCompat.h"
+#include "../common/HlslCompat.h"
 #else
-#include "ShaderUtil.hlsli"
+#include "../common/ShaderUtil.hlsli"
 #endif
-#include "RaytracingHlslCompat.h"
+
 
 #define ElementsSummedPerThread 8
 

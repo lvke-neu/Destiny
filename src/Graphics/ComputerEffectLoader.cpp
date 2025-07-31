@@ -55,17 +55,18 @@ namespace Destiny
 		{
 			if (errorBlob != nullptr)
 			{
-				LOG_ERROR("CompileComputerShader Failed:{0}", reinterpret_cast<const char*>(errorBlob->GetBufferPointer()));
+				LOG_ERROR("CompileComputerShader Failed:{0}, {1}", reinterpret_cast<const char*>(errorBlob->GetBufferPointer()), normalizedPath);
 			}
 			else
 			{
 				LOG_ERROR("CompileComputerShader {0} Failed:{1}", normalizedPath, "path error");
 			}
+
 			SAFE_RELEASE(errorBlob);
 			computerCommand->loadFailed__();
 			return;
 		}
-
+		LOG_ERROR("CompileComputerShader Succeed:{0}", normalizedPath);
 		hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateComputeShader(computerCommand->m_csCompiledBlob->GetBufferPointer(), computerCommand->m_csCompiledBlob->GetBufferSize(), 0, &computerCommand->m_computeShader);
 		if (FAILED(hr))
 		{

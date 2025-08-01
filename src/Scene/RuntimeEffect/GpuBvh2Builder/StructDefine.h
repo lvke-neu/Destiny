@@ -1,5 +1,6 @@
 #pragma once
 #include <DirectXMath.h>
+#include <vector>
 
 namespace Destiny
 {
@@ -8,6 +9,16 @@ namespace Destiny
 		DirectX::XMFLOAT3 min = { 0.0f, 0.0f, 0.0f };
 		DirectX::XMFLOAT3 max = { 0.0f, 0.0f, 0.0f };
 	};
+
+    struct AABBNode
+    {
+        float    center[3];
+        unsigned int    flags;
+        float halfDim[3];
+        unsigned int    rightNodeIndex;
+    };
+
+    std::vector<AABB> GenerateTrulyRandomAABBs();
 
 #define		ElementsSummedPerThread 8
 #define     THREAD_GROUP_WIDTH 8

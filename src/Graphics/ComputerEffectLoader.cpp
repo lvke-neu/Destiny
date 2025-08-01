@@ -66,7 +66,7 @@ namespace Destiny
 			computerCommand->loadFailed__();
 			return;
 		}
-		LOG_ERROR("CompileComputerShader Succeed:{0}", normalizedPath);
+		
 		hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateComputeShader(computerCommand->m_csCompiledBlob->GetBufferPointer(), computerCommand->m_csCompiledBlob->GetBufferSize(), 0, &computerCommand->m_computeShader);
 		if (FAILED(hr))
 		{

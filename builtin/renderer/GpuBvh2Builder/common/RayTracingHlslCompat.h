@@ -10,7 +10,7 @@
 //*********************************************************
 #ifndef RAYTRACING_HLSL_COMPAT_H_INCLUDED
 #define RAYTRACING_HLSL_COMPAT_H_INCLUDED
-#include "WaveDimensions.h"
+#include "../common/WaveDimensions.h"
 
 //*********----- AMD driver limitation workarounds ------******************
 //  
@@ -30,12 +30,12 @@
 #define     MAX_TRIS_IN_LEAF                1
 
 #ifdef HLSL
-#include "EmulatedPointer.hlsli"
+#include "../common/EmulatedPointer.hlsli"
 #else
 
 #pragma once
 
-#include "HlslCompat.h"
+#include "../common/HlslCompat.h"
 #pragma pack(push, 1)
 #endif
 

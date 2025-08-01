@@ -11,9 +11,9 @@
 #ifndef RAYTACING_HELPER_H_INCLUDED
 #define RAYTACING_HELPER_H_INCLUDED
 
-#include "EmulatedPointer.hlsli"
-#include "RayTracingHlslCompat.h"
-#include "ShaderUtil.hlsli"
+#include "../common/EmulatedPointer.hlsli"
+#include "../common/RayTracingHlslCompat.h"
+#include "../common/ShaderUtil.hlsli"
 
 // Hidden
 #define AABB_Min_Padding 0.001

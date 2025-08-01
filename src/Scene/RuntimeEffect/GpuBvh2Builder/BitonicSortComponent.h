@@ -18,11 +18,9 @@ namespace Destiny
 	public:
 		GET(Button, test);
 		void set_test(Button test);
-		GET(unsigned int, elementCount);
-		void set_elementCount(unsigned int elementCount);
+	public:
+		void init(unsigned int elementCount, std::shared_ptr<Texture> sortTexture, std::shared_ptr<Texture> indexTexture);
 	private:
-		void generateFakeData();
-
 		void indirectArgsCS();
 		void preSortCS();
 		void outerSortCS();
@@ -32,8 +30,6 @@ namespace Destiny
 		void setCSConstants();
 	private:
 		unsigned int m_elementCount;
-		std::vector<unsigned int> m_fakeSortData;
-		std::vector<unsigned int> m_fakeIndexData;
 
 		unsigned int m_cIndirectArgStride;
 		unsigned int m_alignedNumElements;

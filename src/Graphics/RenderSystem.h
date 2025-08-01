@@ -3,6 +3,7 @@
 #include "GraphicsPipeline/GraphicsPipeline.h"
 #include <unordered_map>
 
+class GpuTimer;
 namespace Destiny
 {
 	class RenderTargetView;
@@ -42,6 +43,8 @@ namespace Destiny
 		std::shared_ptr<GraphicsCommandList>	m_beforePipelineCommandList;
 		std::shared_ptr<GraphicsCommandList>	m_commonRenderTargetCommandList;
 		std::shared_ptr<ClearRenderTarget>		m_clearRenderTarget;
+
+		std::shared_ptr<GpuTimer>				m_gpuTimer;
 	};
 
 	inline std::shared_ptr<GraphicsPipeline> RenderSystem::getDeferredOpaquePipeline()

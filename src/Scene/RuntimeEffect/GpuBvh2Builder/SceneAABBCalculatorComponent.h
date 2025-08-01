@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/Component.h"
+#include "StructDefine.h"
 
 namespace Destiny
 {
@@ -9,10 +10,13 @@ namespace Destiny
 	class Texture;
 	class SceneAABBCalculatorComponent : public Component
 	{
+		friend class GpuBvh2BuilderComponent;
 		RTTR_ENABLE(Component);
 	public:
 		SceneAABBCalculatorComponent();
 		virtual ~SceneAABBCalculatorComponent() = default;
+	public:
+		void init(const std::vector<AABB>& aabbs);
 	private:
 		void generateFakeData();
 		void calculateSceneAABBFromBVHsCS();

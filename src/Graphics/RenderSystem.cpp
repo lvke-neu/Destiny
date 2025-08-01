@@ -12,6 +12,7 @@
 #include "ClearRenderTarget.h"
 #include "RenderTargetView.h"
 #include "DepthStencilView.h"
+#include "GpuTimer.h"
 #include "Engine/EventSystem.h"
 
 namespace Destiny
@@ -26,7 +27,8 @@ namespace Destiny
 		m_commonRenderTargetCommandList(std::make_shared<GraphicsCommandList>()),
 		m_beforePipelineCommandList(std::make_shared<GraphicsCommandList>()),
 		m_bindRenderTargets(std::make_shared<BindRenderTargets>()),
-		m_clearRenderTarget(std::make_shared<ClearRenderTarget>())
+		m_clearRenderTarget(std::make_shared<ClearRenderTarget>()),
+		m_gpuTimer(std::make_shared<GpuTimer>())
 	{
 		m_commonRenderTargetCommandList->addGraphicsCommand(m_bindRenderTargets);
 		m_commonRenderTargetCommandList->addGraphicsCommand(m_clearRenderTarget);
@@ -47,6 +49,8 @@ namespace Destiny
 		m_transparentPipeline = std::make_shared<TransparentPipeline>(shared_from_this());
 		m_guiPipeline = std::make_shared<GuiPipeline>(shared_from_this());
 		m_postProcessingPipeline = std::make_shared<PostProcessingPipeline>(shared_from_this());
+
+		m_gpuTimer->Init(getDevice(), getImmediateContext());
 	}
 
 	void RenderSystem::render()
@@ -56,7 +60,10 @@ namespace Destiny
 		beginEvent(L"Standard Scene");
 
 		beginEvent(L"Before Pipeline");
-		m_beforePipelineCommandList->execute(deviceContext);
+		//{
+		//	m_gpuTimer->Start();
+		//	m_beforePipelineCommandList->execute(deviceContext);
+		//}
 		for (const auto& commandList : m_beforePipelineCommandLists)
 		{
 			beginEvent(commandList.first.c_str());
@@ -69,6 +76,11 @@ namespace Destiny
 			}
 			endEvent();
 		}
+		//{
+		//	m_gpuTimer->Stop();
+		//	double gpuComputeTime = m_gpuTimer->GetTime();
+		//	LOG_TRACE("Gpu time {0}", std::to_string(gpuComputeTime));
+		//}
 		endEvent();
 
 		beginEvent(L"Common RenderTarget");

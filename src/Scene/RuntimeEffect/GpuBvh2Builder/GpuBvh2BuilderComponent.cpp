@@ -23,7 +23,7 @@ namespace Destiny
 		m_mortonCodesCalculatorComponent(std::make_shared<MortonCodesCalculatorComponent>()),
 		m_bitonicSortComponent(std::make_shared<BitonicSortComponent>())
 	{
-		auto aabbs = GenerateTrulyRandomAABBs();
+		auto aabbs = GenerateTrulyRandomAABBs(1000000);
 
 		DirectX::XMFLOAT3 min = { FLT_MAX,FLT_MAX,FLT_MAX };
 		DirectX::XMFLOAT3 max = { -FLT_MAX,-FLT_MAX ,-FLT_MAX };

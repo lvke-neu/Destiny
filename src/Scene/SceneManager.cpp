@@ -15,7 +15,6 @@
 #include "RuntimeEffect/SphereComponent.h"
 #include "RuntimeEffect/ScriptComponent.h"
 #include "RuntimeEffect/SkyboxComponent.h"
-#include "RuntimeEffect/Particle/ParticleRainComponent.h"
 #include "RuntimeEffect/SceneStatisticsComponent.h"
 #include "Math/Math.h"
 

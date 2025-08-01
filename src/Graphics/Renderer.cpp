@@ -217,7 +217,7 @@ namespace Destiny
 		{
 			if (errorBlob != nullptr)
 			{
-				LOG_ERROR("CompileVertexShader Failed:{0}", reinterpret_cast<const char*>(errorBlob->GetBufferPointer()));
+				LOG_ERROR("CompileVertexShader Failed:{0}, {1}", reinterpret_cast<const char*>(errorBlob->GetBufferPointer()), normalizedPath);
 			}
 			else
 			{
@@ -528,7 +528,7 @@ namespace Destiny
 					break;
 				}
 
-				if (shaderInputBindDesc.Type == D3D_SIT_TEXTURE)
+				if (shaderInputBindDesc.Type == D3D_SIT_TEXTURE || shaderInputBindDesc.Type == D3D_SIT_STRUCTURED)
 				{
 					auto iter = m_textures.find(shaderInputBindDesc.Name);
 					if (iter == m_textures.end())

@@ -60,10 +60,7 @@ namespace Destiny
 		beginEvent(L"Standard Scene");
 
 		beginEvent(L"Before Pipeline");
-		//{
-		//	m_gpuTimer->Start();
-		//	m_beforePipelineCommandList->execute(deviceContext);
-		//}
+		m_beforePipelineCommandList->execute(deviceContext);
 		for (const auto& commandList : m_beforePipelineCommandLists)
 		{
 			beginEvent(commandList.first.c_str());
@@ -76,11 +73,6 @@ namespace Destiny
 			}
 			endEvent();
 		}
-		//{
-		//	m_gpuTimer->Stop();
-		//	double gpuComputeTime = m_gpuTimer->GetTime();
-		//	LOG_TRACE("Gpu time {0}", std::to_string(gpuComputeTime));
-		//}
 		endEvent();
 
 		beginEvent(L"Common RenderTarget");

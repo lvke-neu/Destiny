@@ -51,7 +51,7 @@ namespace Destiny
 
 	void SceneAABBCalculatorComponent::generateFakeData()
 	{
-		std::vector<AABB> aabbs = GenerateTrulyRandomAABBs();
+		std::vector<AABB> aabbs = GenerateTrulyRandomAABBs(10000);
 
 		DirectX::XMFLOAT3 min = { FLT_MAX,FLT_MAX,FLT_MAX };
 		DirectX::XMFLOAT3 max = { -FLT_MAX,-FLT_MAX ,-FLT_MAX };

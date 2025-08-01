@@ -18,7 +18,7 @@ namespace Destiny
         unsigned int    rightNodeIndex;
     };
 
-    std::vector<AABB> GenerateTrulyRandomAABBs();
+    std::vector<AABB> GenerateTrulyRandomAABBs(unsigned int boxCount);
 
 #define		ElementsSummedPerThread 8
 #define     THREAD_GROUP_WIDTH 8

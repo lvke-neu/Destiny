@@ -169,6 +169,8 @@ namespace Destiny
 		worldMatrix = XMMatrixTranspose(XMMatrixInverse(nullptr, worldMatrix));
 		m_visual->setConstant("u_worldInvTransposeMatrix", XMMatrixTranspose(worldMatrix));
 		m_shadowVisual->setConstant("u_worldInvTransposeMatrix", XMMatrixTranspose(worldMatrix));
+
+		onPropertyChanged("NodeTransform");
 	}
 
 	void VisualComponent::onEnterScene()

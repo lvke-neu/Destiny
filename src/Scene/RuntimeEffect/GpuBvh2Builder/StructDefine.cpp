@@ -5,9 +5,7 @@
 
 namespace Destiny
 {
-	std::vector<AABB> GenerateTrulyRandomAABBs() {
-		unsigned int boxCount = 1000000;
-
+	std::vector<AABB> GenerateTrulyRandomAABBs(unsigned int boxCount) {
 		std::vector<AABB> aabbs;
 		aabbs.resize(boxCount);
 

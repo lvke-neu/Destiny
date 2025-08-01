@@ -3,10 +3,15 @@
 
 namespace Destiny
 {
-	struct Particle
-	{
-		DirectX::XMFLOAT3	position{ 0.0f, 0.0f, 0.0f };
-		DirectX::XMFLOAT3	velocity{ 0.0f, 0.0f, 0.0f };
-		float				age{ 0.0f };
-	};
+    struct Particle
+    {
+        DirectX::XMFLOAT3 position;    
+        DirectX::XMFLOAT3 velocity;    
+        DirectX::XMFLOAT3 acceleration;
+        float lifetime;       
+        float maxLifetime;    
+        DirectX::XMFLOAT3 color;
+        float size;           
+    };
+
 }

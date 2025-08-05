@@ -33,7 +33,11 @@ namespace Destiny
 
 	void ComputerCommand::execute(ID3D11DeviceContext* deviceContext)
 	{
-		Engine::GetInstance()->getGraphicsSystem()->beginEvent(m_debugName.c_str());
+		if (!m_debugName.empty())
+		{
+			Engine::GetInstance()->getGraphicsSystem()->beginEvent(m_debugName.c_str());
+		}
+		
 
 		deviceContext->CSSetShader(m_computeShader, nullptr, 0);
 		for (int i = 0; i < m_uavs.size(); i++)
@@ -100,8 +104,10 @@ namespace Destiny
 			}
 		}
 
-
-		Engine::GetInstance()->getGraphicsSystem()->endEvent();
+		if (!m_debugName.empty())
+		{
+			Engine::GetInstance()->getGraphicsSystem()->endEvent();
+		}
 	}
 
 	void ComputerCommand::setDebugName(const std::wstring& debugName)

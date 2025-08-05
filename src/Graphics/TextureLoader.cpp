@@ -314,6 +314,11 @@ namespace Destiny
 		}
 		case TextureCreationParam::CreateRaw:
 		{
+			//for D3D11_RESOURCE_MISC_DRAWINDIRECT_ARGS
+			if (creationParam->rawBufferWidth < 20)
+			{
+				creationParam->rawBufferWidth = 20;
+			}
 			D3D11_BUFFER_DESC bufferDesc = {};
 			bufferDesc.ByteWidth = creationParam->rawBufferWidth;
 			bufferDesc.Usage = D3D11_USAGE_DEFAULT;

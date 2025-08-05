@@ -58,9 +58,9 @@ namespace Destiny
 			auto renderer = Renderer::Create("builtin://renderer/particle_fire_render.hlsl");
 			renderer->load(0);
 			setShaderResource("particles", m_particlesBuffer);
-			auto particleTexture = Texture::Create("builtin://texture/particle/whiteDot.png");
-			particleTexture->load();
-			setShaderResource("particleTexture", particleTexture);
+			//auto particleTexture = Texture::Create("builtin://texture/particle/whiteDot.png");
+			//particleTexture->load();
+			//setShaderResource("particleTexture", particleTexture);
 			auto samplerState = std::make_shared<SamplerState>();
 			samplerState->load();
 			setSamplerSate("samplerState", samplerState);

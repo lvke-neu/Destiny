@@ -7,7 +7,14 @@ namespace Destiny
 	{
 		if (graphicsCommand)
 		{
-			return m_graphicsCommandList.insert(graphicsCommand).second;
+			auto find = std::find(m_graphicsCommandList.begin(), m_graphicsCommandList.end(), graphicsCommand);
+			if (find != m_graphicsCommandList.end())
+			{
+				return false;
+			}
+			
+			m_graphicsCommandList.push_back(graphicsCommand);
+			return true;
 		}
 
 		return false;

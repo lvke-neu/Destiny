@@ -39,7 +39,7 @@ namespace Destiny
 		std::shared_ptr<GraphicsPipeline>		m_guiPipeline;
 		std::shared_ptr<GraphicsPipeline>		m_postProcessingPipeline;
 
-		std::unordered_map<std::wstring, std::unordered_set<std::shared_ptr<GraphicsCommandList>>> m_beforePipelineCommandLists;
+		std::vector<std::pair<std::wstring, std::shared_ptr<GraphicsCommandList>>> m_beforePipelineCommandLists;
 		std::shared_ptr<GraphicsCommandList>	m_beforePipelineCommandList;
 		std::shared_ptr<GraphicsCommandList>	m_commonRenderTargetCommandList;
 		std::shared_ptr<ClearRenderTarget>		m_clearRenderTarget;

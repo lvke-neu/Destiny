@@ -16,6 +16,8 @@ namespace Destiny
 		SceneAABBCalculatorComponent();
 		virtual ~SceneAABBCalculatorComponent() = default;
 	public:
+		static unsigned int ScratchBufferSizeNeeded(unsigned int numElements);
+	public:
 		void init(const std::vector<AABB>& aabbs);
 	private:
 		void generateFakeData();

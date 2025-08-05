@@ -64,12 +64,9 @@ namespace Destiny
 		for (const auto& commandList : m_beforePipelineCommandLists)
 		{
 			beginEvent(commandList.first.c_str());
-			for (const auto& command : commandList.second)
+			if (commandList.second)
 			{
-				if (command)
-				{
-					command->execute(deviceContext);
-				}
+				commandList.second->execute(deviceContext);
 			}
 			endEvent();
 		}
@@ -228,7 +225,7 @@ namespace Destiny
 
 	void RenderSystem::addBeforePipelineCommandList(const std::wstring& debugName, std::shared_ptr<GraphicsCommandList> graphicsCommandList)
 	{
-		m_beforePipelineCommandLists[debugName].insert(graphicsCommandList);
+		m_beforePipelineCommandLists.push_back({ debugName,  graphicsCommandList });
 	}
 
 	void RenderSystem::onResize(void* data)

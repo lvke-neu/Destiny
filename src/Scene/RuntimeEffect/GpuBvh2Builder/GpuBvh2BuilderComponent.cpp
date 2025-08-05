@@ -14,6 +14,8 @@
 #include "SceneAABBCalculatorComponent.h"
 #include "MortonCodesCalculatorComponent.h"
 #include "BitonicSortComponent.h"
+#include "ConstructHierarchyComponent.h"
+#include "ConstructAABBPassComponent.h"
 #include <numeric> 
 
 namespace Destiny
@@ -21,7 +23,9 @@ namespace Destiny
 	GpuBvh2BuilderComponent::GpuBvh2BuilderComponent() :
 		m_sceneAABBCalculatorComponent(std::make_shared<SceneAABBCalculatorComponent>()),
 		m_mortonCodesCalculatorComponent(std::make_shared<MortonCodesCalculatorComponent>()),
-		m_bitonicSortComponent(std::make_shared<BitonicSortComponent>())
+		m_bitonicSortComponent(std::make_shared<BitonicSortComponent>()),
+		m_constructHierarchyComponent(std::make_shared<ConstructHierarchyComponent>()),
+		m_constructAABBPassComponent(std::make_shared<ConstructAABBPassComponent>())
 	{
 		auto aabbs = GenerateTrulyRandomAABBs(1000000);
 
@@ -64,6 +68,8 @@ namespace Destiny
 		m_sceneAABBCalculatorComponent->init(aabbs);
 		m_mortonCodesCalculatorComponent->init(aabbs, m_sceneAABBCalculatorComponent->m_outputBuffer);
 		m_bitonicSortComponent->init((unsigned int)aabbs.size(), m_mortonCodesCalculatorComponent->m_outputMortonCodesBuffer, m_mortonCodesCalculatorComponent->m_outputIndicesBuffer);
+		m_constructHierarchyComponent->init((unsigned int)aabbs.size(), m_mortonCodesCalculatorComponent->m_outputMortonCodesBuffer);
+		m_constructAABBPassComponent->init(aabbs, m_constructHierarchyComponent->m_hierarchyBuffer, m_mortonCodesCalculatorComponent->m_outputIndicesBuffer);
 	}
 
 	RTTR_REGISTRATION

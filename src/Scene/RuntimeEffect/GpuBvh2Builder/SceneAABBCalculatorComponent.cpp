@@ -30,6 +30,25 @@ namespace Destiny
 		std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->addBeforePipelineCommandList(L"SceneAABBCalculate", m_graphicsCommandList);
 	}
 
+	unsigned int GetNumAABBsOutputFromPass(unsigned int numElements)
+	{
+		return  Math::DivideAndRoundUp<unsigned int>(numElements, ElementsSummedPerThread);
+	}
+
+	unsigned int SceneAABBCalculatorComponent::ScratchBufferSizeNeeded(unsigned int numElements)
+	{
+		if (numElements == 0) return 0;
+
+		// Data is ping-ponged between the upper and lower part of the scratch buffer so
+		// only need to sum the first 2 biggest passes
+		auto numberOfAABBsOutput = GetNumAABBsOutputFromPass(numElements);
+		if (numberOfAABBsOutput > 1)
+		{
+			numberOfAABBsOutput += GetNumAABBsOutputFromPass(numberOfAABBsOutput);
+		}
+		return numberOfAABBsOutput * sizeof(AABB);
+	}
+
 	void SceneAABBCalculatorComponent::init(const std::vector<AABB>& aabbs)
 	{
 		m_numElements = (unsigned int)aabbs.size();

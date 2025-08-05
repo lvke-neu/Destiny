@@ -167,13 +167,32 @@ BoundingBox GetBoxFromBuffer(RWByteAddressBuffer buffer, uint boxStartOffset, ui
     LoadBVHMetadata(byteAddressBufferPointer.buffer, GetBVHMetadataAddress(byteAddressBufferPointer, offsetToLeafNodeMetaData, leafIndex))
 
 static
-BoundingBox BVHReadBoundingBox(RWByteAddressBufferPointer pointer, int nodeIndex, out uint2 flags)
+BoundingBox BVHReadBoundingBox(GpuVA address, RWByteAddressBufferPointer pointer, int nodeIndex, out uint2 flags)
 {
-    const uint boxAddress = GetBoxAddress(GetOffsetToBoxes(pointer), nodeIndex);
+    //const uint boxAddress = GetBoxAddress(GetOffsetToBoxes(pointer), nodeIndex);
+    //uint4 a = uint4(0,0,0,0);
+    //uint4 b = uint4(0, 0, 0, 0);
 
-    const uint4 a = pointer.buffer.Load4(boxAddress);
-    const uint4 b = pointer.buffer.Load4(boxAddress + 16);
-    return RawDataToBoundingBox(a, b, flags);
+    //uint bufferIndex = address[EmulatedPointerDescriptorHeapIndex];
+    //switch (bufferIndex)
+    //{
+    //case 0:
+    //{
+    //    a = DescriptorHeapBufferTable0.Load4(boxAddress);
+    //    b = DescriptorHeapBufferTable0.Load4(boxAddress + 16);
+    //    break;
+    //}
+    //case 1:
+    //{
+    //    a = DescriptorHeapBufferTable1.Load4(boxAddress);
+    //    b = DescriptorHeapBufferTable1.Load4(boxAddress + 16);
+    //    break;
+    //}
+    //}
+
+    //return RawDataToBoundingBox(a, b, flags);
+    BoundingBox box;
+    return box;
 }
 
 void CompressBox(BoundingBox box, uint2 flags, out uint4 data1, out uint4 data2)

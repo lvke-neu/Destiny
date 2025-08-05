@@ -15,6 +15,6 @@ namespace Destiny
 		virtual void	execute(ID3D11DeviceContext* deviceContext);
 		void			clearGraphicsCommand();
 	protected:
-		std::unordered_set<std::shared_ptr<GraphicsCommand>> m_graphicsCommandList;
+		std::vector<std::shared_ptr<GraphicsCommand>> m_graphicsCommandList;
 	};
 }

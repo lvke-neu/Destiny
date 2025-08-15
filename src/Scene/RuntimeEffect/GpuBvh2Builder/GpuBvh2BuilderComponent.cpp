@@ -27,12 +27,12 @@ namespace Destiny
 		m_constructHierarchyComponent(std::make_shared<ConstructHierarchyComponent>()),
 		m_constructAABBPassComponent(std::make_shared<ConstructAABBPassComponent>())
 	{
-		auto aabbs = GenerateTrulyRandomAABBs(1000000);
+		m_aabbs = GenerateTrulyRandomAABBs(4015);
 
 		DirectX::XMFLOAT3 min = { FLT_MAX,FLT_MAX,FLT_MAX };
 		DirectX::XMFLOAT3 max = { -FLT_MAX,-FLT_MAX ,-FLT_MAX };
 
-		for (const auto& aabb : aabbs)
+		for (const auto& aabb : m_aabbs)
 		{
 			if (aabb.min.x < min.x)
 			{
@@ -65,16 +65,63 @@ namespace Destiny
 			std::to_string(min.x), std::to_string(min.y), std::to_string(min.z),
 			std::to_string(max.x), std::to_string(max.y), std::to_string(max.z));
 
-		m_sceneAABBCalculatorComponent->init(aabbs);
-		m_mortonCodesCalculatorComponent->init(aabbs, m_sceneAABBCalculatorComponent->m_outputBuffer);
-		m_bitonicSortComponent->init((unsigned int)aabbs.size(), m_mortonCodesCalculatorComponent->m_outputMortonCodesBuffer, m_mortonCodesCalculatorComponent->m_outputIndicesBuffer);
-		m_constructHierarchyComponent->init((unsigned int)aabbs.size(), m_mortonCodesCalculatorComponent->m_outputMortonCodesBuffer);
-		m_constructAABBPassComponent->init(aabbs, m_constructHierarchyComponent->m_hierarchyBuffer, m_mortonCodesCalculatorComponent->m_outputIndicesBuffer);
+		m_sceneAABBCalculatorComponent->init(m_aabbs);
+		m_mortonCodesCalculatorComponent->init(m_aabbs, m_sceneAABBCalculatorComponent->m_outputBuffer);
+		m_bitonicSortComponent->init((unsigned int)m_aabbs.size(), m_mortonCodesCalculatorComponent->m_outputMortonCodesBuffer, m_mortonCodesCalculatorComponent->m_outputIndicesBuffer);
+		m_constructHierarchyComponent->init((unsigned int)m_aabbs.size(), m_mortonCodesCalculatorComponent->m_outputMortonCodesBuffer);
+		m_constructAABBPassComponent->init(m_aabbs, m_constructHierarchyComponent->m_hierarchyBuffer, m_mortonCodesCalculatorComponent->m_outputIndicesBuffer);
+	}
+
+	GpuBvh2BuilderComponent::~GpuBvh2BuilderComponent()
+	{
+		//std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->clear();
+	}
+
+	static UINT GetNumberOfInternalNodes(UINT numLeaves)
+	{
+		// A binary tree with N leaves will always have N - 1 internal nodes
+		return std::max(0, (INT)(numLeaves - 1));
+
+	}
+	void GpuBvh2BuilderComponent::set_test(Button test)
+	{
+		auto numElements = (unsigned int)m_aabbs.size();
+		unsigned int totalNumNodes = numElements + GetNumberOfInternalNodes(numElements);
+		auto resultDataMaxSizeInBytes = sizeof(BVHOffsets) + sizeof(AABBNode) * totalNumNodes + sizeof(BVHMetadata) * numElements;
+
+		auto rawBufferWidth = std::static_pointer_cast<TextureCreationParam>(m_constructAABBPassComponent->m_outputBVH->getCreationParam())->rawBufferWidth;
+		std::shared_ptr<Blob> data = std::make_shared<Blob>(rawBufferWidth);
+
+		std::vector<AABBNode> aabbnodes;
+		aabbnodes.resize(totalNumNodes);
+		if (m_constructAABBPassComponent->m_outputBVH->getBuffer(data))
+		{
+			memcpy_s(aabbnodes.data(), sizeof(AABBNode) * totalNumNodes, (char*)data->getData() + sizeof(BVHOffsets), sizeof(AABBNode) * totalNumNodes);
+		}
+		
+
+		for (const auto& aabb : m_aabbs)
+		{
+			LOG_TRACE("min:{0},{1},{2}     max:{3},{4},{5}",
+				std::to_string(aabb.min.x), std::to_string(aabb.min.y), std::to_string(aabb.min.z),
+				std::to_string(aabb.max.x), std::to_string(aabb.max.y), std::to_string(aabb.max.z));
+		}
+
+
+		LOG_TRACE("=============================================================");
+
+		for (const auto& aabbnode : aabbnodes)
+		{
+			LOG_TRACE("min:{0},{1},{2}     max:{3},{4},{5}",
+				std::to_string(aabbnode.center[0] - aabbnode.halfDim[0]), std::to_string(aabbnode.center[1] - aabbnode.halfDim[1]), std::to_string(aabbnode.center[2] - aabbnode.halfDim[2]),
+				std::to_string(aabbnode.center[0] + aabbnode.halfDim[0]), std::to_string(aabbnode.center[1] + aabbnode.halfDim[1]), std::to_string(aabbnode.center[2] + aabbnode.halfDim[2]));
+		}
 	}
 
 	RTTR_REGISTRATION
 	{
 		rttr::registration::class_<GpuBvh2BuilderComponent>("GpuBvh2BuilderComponent")
-			.constructor<>();
+			.constructor<>()
+			.property("test", &GpuBvh2BuilderComponent::get_test, &GpuBvh2BuilderComponent::set_test);
 	}
 }

@@ -228,6 +228,11 @@ namespace Destiny
 		m_beforePipelineCommandLists.push_back({ debugName,  graphicsCommandList });
 	}
 
+	void RenderSystem::clear()
+	{
+		m_beforePipelineCommandLists.clear();
+	}
+
 	void RenderSystem::onResize(void* data)
 	{
 		WindowResizeData wrd = *(WindowResizeData*)data;

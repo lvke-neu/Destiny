@@ -9,6 +9,7 @@ namespace Destiny
 	class GraphicsCommandList;
 	class ConstructAABBPassComponent : public Component
 	{
+		friend class GpuBvh2BuilderComponent;
 		RTTR_ENABLE(Component);
 	public:
 		ConstructAABBPassComponent();
@@ -24,6 +25,7 @@ namespace Destiny
 		std::shared_ptr<ComputerCommand> m_computeAABBs;
 
 		unsigned int m_numElements;
+		//outputBVH : BVHOffsets + box + metadata
 		std::shared_ptr<Texture> m_outputBVH;
 		std::shared_ptr<Texture> m_scratchMemory;
 		std::shared_ptr<Texture> m_childNodesProcessedCounter;

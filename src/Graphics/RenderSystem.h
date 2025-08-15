@@ -27,6 +27,7 @@ namespace Destiny
 		void									addBeforePipelineCommand(std::shared_ptr<GraphicsCommand> graphicsCommand);
 		void									clearBeforePipelineCommand();
 		void									addBeforePipelineCommandList(const std::wstring& debugName, std::shared_ptr<GraphicsCommandList> graphicsCommandList);
+		void clear();
 	public:
 		std::shared_ptr<BindRenderTargets>		m_bindRenderTargets;
 	private:

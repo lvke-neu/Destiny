@@ -27,7 +27,7 @@ namespace Destiny
 		m_constructHierarchyComponent(std::make_shared<ConstructHierarchyComponent>()),
 		m_constructAABBPassComponent(std::make_shared<ConstructAABBPassComponent>())
 	{
-		m_aabbs = GenerateTrulyRandomAABBs(4015);
+		m_aabbs = GenerateTrulyRandomAABBs(4);
 
 		DirectX::XMFLOAT3 min = { FLT_MAX,FLT_MAX,FLT_MAX };
 		DirectX::XMFLOAT3 max = { -FLT_MAX,-FLT_MAX ,-FLT_MAX };

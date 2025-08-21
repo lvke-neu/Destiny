@@ -135,4 +135,18 @@ namespace Destiny
 
 		return std::make_shared<InputLayout>(inputLayoutDesc);
 	}
+
+	std::shared_ptr<InputLayout> InputLayout::Create_PositionNormal()
+	{
+		std::vector<D3D11_INPUT_ELEMENT_DESC> inputElements =
+		{
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		};
+
+		std::shared_ptr<Blob> inputLayoutDesc = std::make_shared<Blob>(sizeof(D3D11_INPUT_ELEMENT_DESC) * inputElements.size());
+		inputLayoutDesc->copyfrom(inputElements.data(), sizeof(D3D11_INPUT_ELEMENT_DESC) * inputElements.size());
+
+		return std::make_shared<InputLayout>(inputLayoutDesc);
+	}
 }

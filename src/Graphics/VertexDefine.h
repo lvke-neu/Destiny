@@ -32,6 +32,11 @@ namespace Destiny
 		DirectX::XMFLOAT2 position;
 	};
 
+	struct PositionNormal
+	{
+		DirectX::XMFLOAT3 position;
+		DirectX::XMFLOAT3 normal;
+	};
 
 	struct PositionNormalTexcoordBone
 	{

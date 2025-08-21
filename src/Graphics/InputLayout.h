@@ -19,6 +19,7 @@ namespace Destiny
 		static std::shared_ptr<InputLayout>		Create_PositionNormalTexcoord();
 		static std::shared_ptr<InputLayout>		Create_PositionNormalTexcoordBone();
 		static std::shared_ptr<InputLayout>		Create_PositionColor();
+		static std::shared_ptr<InputLayout>		Create_PositionNormal();
 	private:
 		std::shared_ptr<Blob>	m_inputLayoutDesc;
 		ID3D11InputLayout*		m_inputLayout;

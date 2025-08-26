@@ -33,18 +33,32 @@ namespace Destiny
 
 	void ComputerCommand::execute(ID3D11DeviceContext* deviceContext)
 	{
+		////clear append type structed uav
+		//UINT clearValues[4] = { 0, 0, 0, 0xffffffff };
+		//for (int i = 0; i < m_uavs.size(); i++)
+		//{
+		//	if (m_uavs[i])
+		//	{
+		//		auto creationParam = std::static_pointer_cast<TextureCreationParam>(m_uavs[i]->getCreationParam());
+		//		if (creationParam && creationParam->createStructuredType == TextureCreationParam::CreateStructuredType::Counter)
+		//		{
+		//			deviceContext->ClearUnorderedAccessViewUint(*m_uavs[i]->getUnorderedAccessView(), clearValues);
+		//		}	
+		//	}
+		//}
+		
 		if (!m_debugName.empty())
 		{
 			Engine::GetInstance()->getGraphicsSystem()->beginEvent(m_debugName.c_str());
 		}
 		
-
+		UINT clearCounts[1] = { 0 };
 		deviceContext->CSSetShader(m_computeShader, nullptr, 0);
 		for (int i = 0; i < m_uavs.size(); i++)
 		{
 			if (m_uavs[i])
 			{
-				deviceContext->CSSetUnorderedAccessViews(i, 1, m_uavs[i]->getUnorderedAccessView(), nullptr);
+				deviceContext->CSSetUnorderedAccessViews(i, 1, m_uavs[i]->getUnorderedAccessView(), clearCounts);
 			}
 		}
 		for (const auto& srv : m_srvs)

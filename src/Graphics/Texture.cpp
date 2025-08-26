@@ -129,12 +129,25 @@ namespace Destiny
 		return texture;
 	}
 
+	std::shared_ptr<Texture> Texture::CreateBuffer(unsigned int bufferByteWidth)
+	{
+		std::shared_ptr<Texture> texture = std::make_shared<Texture>();
+		std::shared_ptr<TextureCreationParam> creationParam = std::make_shared<TextureCreationParam>();
+
+		creationParam->m_type = TextureCreationParam::CreateTextureType::CreateBuffer;
+		creationParam->bufferByteWidth = bufferByteWidth;
+
+		texture->initialize(s_textureLoader, creationParam);
+
+		return texture;
+	}
+
 	std::shared_ptr<Texture> Texture::Create2DSRV(int format, unsigned int width, unsigned int height, std::shared_ptr<Blob> data, unsigned int pitch, unsigned int slicePitch, bool isProc, const std::string& procPath)
 	{
 		std::shared_ptr<Texture> texture = std::make_shared<Texture>();
 		std::shared_ptr<TextureCreationParam> creationParam = std::make_shared<TextureCreationParam>();
 		
-		creationParam->m_type = TextureCreationParam::Create2DSRV;
+		creationParam->m_type = TextureCreationParam::CreateTextureType::Create2DSRV;
 		creationParam->format = format;
 		creationParam->width = width;
 		creationParam->height = height;
@@ -153,7 +166,7 @@ namespace Destiny
 		std::shared_ptr<Texture> texture = std::make_shared<Texture>();
 		std::shared_ptr<TextureCreationParam> creationParam = std::make_shared<TextureCreationParam>();
 
-		creationParam->m_type = TextureCreationParam::Create2DUAV;
+		creationParam->m_type = TextureCreationParam::CreateTextureType::Create2DUAV;
 		creationParam->format = format;
 		creationParam->width = width;
 		creationParam->height = height;
@@ -172,10 +185,43 @@ namespace Destiny
 		std::shared_ptr<Texture> texture = std::make_shared<Texture>();
 		std::shared_ptr<TextureCreationParam> creationParam = std::make_shared<TextureCreationParam>();
 
-		creationParam->m_type = TextureCreationParam::CreateStructured;
+		creationParam->m_type = TextureCreationParam::CreateTextureType::CreateStructured;
 		creationParam->data = data;
 		creationParam->structuredBufferByteStride = structuredBufferByteStride;
 		creationParam->structuredBufferByteWidth = structuredBufferByteWidth;
+		creationParam->createStructuredType = TextureCreationParam::CreateStructuredType::None;
+
+		texture->initialize(s_textureLoader, creationParam);
+
+		return texture;
+	}
+
+	std::shared_ptr<Texture> Texture::CreateStructuredAppend(unsigned int structuredBufferByteStride, unsigned int structuredBufferByteWidth, std::shared_ptr<Blob> data)
+	{
+		std::shared_ptr<Texture> texture = std::make_shared<Texture>();
+		std::shared_ptr<TextureCreationParam> creationParam = std::make_shared<TextureCreationParam>();
+
+		creationParam->m_type = TextureCreationParam::CreateTextureType::CreateStructured;
+		creationParam->data = data;
+		creationParam->structuredBufferByteStride = structuredBufferByteStride;
+		creationParam->structuredBufferByteWidth = structuredBufferByteWidth;
+		creationParam->createStructuredType = TextureCreationParam::CreateStructuredType::Append;
+
+		texture->initialize(s_textureLoader, creationParam);
+
+		return texture;
+	}
+
+	std::shared_ptr<Texture> Texture::CreateStructuredCounter(unsigned int structuredBufferByteStride, unsigned int structuredBufferByteWidth, std::shared_ptr<Blob> data)
+	{
+		std::shared_ptr<Texture> texture = std::make_shared<Texture>();
+		std::shared_ptr<TextureCreationParam> creationParam = std::make_shared<TextureCreationParam>();
+
+		creationParam->m_type = TextureCreationParam::CreateTextureType::CreateStructured;
+		creationParam->data = data;
+		creationParam->structuredBufferByteStride = structuredBufferByteStride;
+		creationParam->structuredBufferByteWidth = structuredBufferByteWidth;
+		creationParam->createStructuredType = TextureCreationParam::CreateStructuredType::Counter;
 
 		texture->initialize(s_textureLoader, creationParam);
 
@@ -187,7 +233,7 @@ namespace Destiny
 		std::shared_ptr<Texture> texture = std::make_shared<Texture>();
 		std::shared_ptr<TextureCreationParam> creationParam = std::make_shared<TextureCreationParam>();
 
-		creationParam->m_type = TextureCreationParam::CreateTyped;
+		creationParam->m_type = TextureCreationParam::CreateTextureType::CreateTyped;
 		creationParam->data = data;
 		creationParam->format = format;
 		creationParam->typedBufferByteStride = typedBufferByteStride;
@@ -203,7 +249,7 @@ namespace Destiny
 		std::shared_ptr<Texture> texture = std::make_shared<Texture>();
 		std::shared_ptr<TextureCreationParam> creationParam = std::make_shared<TextureCreationParam>();
 
-		creationParam->m_type = TextureCreationParam::CreateRaw;
+		creationParam->m_type = TextureCreationParam::CreateTextureType::CreateRaw;
 		creationParam->data = data;
 		creationParam->rawBufferWidth = rawBufferWidth;
 
@@ -294,7 +340,7 @@ namespace Destiny
 			}
 			else
 			{
-				if (creationParam->m_type == TextureCreationParam::Create2DSRV)
+				if (creationParam->m_type == TextureCreationParam::CreateTextureType::Create2DSRV)
 				{
 					path += "Type:Create2DSRV,";
 				}
@@ -419,13 +465,41 @@ namespace Destiny
 		}
 
 		auto creationParam = std::dynamic_pointer_cast<TextureCreationParam>(m_creationParam);
-		if (!creationParam || creationParam->m_type != TextureCreationParam::CreateRaw)
+		auto type = creationParam->m_type;
+		if (!creationParam /* || (type != TextureCreationParam::CreateTextureType::CreateRaw && type != TextureCreationParam::CreateTextureType::CreateBuffer)*/)
 		{
 			return false;
 		}
 
+		unsigned int byteWidth = 0;
+
+		switch (type)
+		{
+		case TextureCreationParam::CreateTextureType::None:
+			break;
+		case Destiny::TextureCreationParam::CreateTextureType::CreateBuffer:
+			byteWidth = creationParam->bufferByteWidth;
+			break;
+		case TextureCreationParam::CreateTextureType::Create2DSRV:
+			break;
+		case TextureCreationParam::CreateTextureType::Create2DUAV:
+			break;
+		case TextureCreationParam::CreateTextureType::CreateStructured:
+			byteWidth = creationParam->structuredBufferByteWidth;
+			break;
+		case TextureCreationParam::CreateTextureType::CreateTyped:
+			break;
+		case TextureCreationParam::CreateTextureType::CreateRaw:
+			byteWidth = creationParam->rawBufferWidth;
+			break;
+		case TextureCreationParam::CreateTextureType::CreateTextureTypeCount:
+			break;
+		default:
+			break;
+		}
+
 		D3D11_BUFFER_DESC stagingDesc = {};
-		stagingDesc.ByteWidth = creationParam->rawBufferWidth;
+		stagingDesc.ByteWidth = byteWidth;
 		stagingDesc.Usage = D3D11_USAGE_STAGING;      
 		stagingDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ; 
 		stagingDesc.BindFlags = 0;                   

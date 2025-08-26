@@ -106,7 +106,31 @@ namespace Destiny
 		auto creationParam = std::static_pointer_cast<TextureCreationParam>(asset->getCreationParam());
 		switch (creationParam->m_type)
 		{
-		case TextureCreationParam::Create2DSRV:
+		case TextureCreationParam::CreateTextureType::CreateBuffer :
+		{
+			D3D11_BUFFER_DESC bufferDesc = {};
+			bufferDesc.ByteWidth = creationParam->bufferByteWidth;
+			bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+			bufferDesc.BindFlags = 0;
+			bufferDesc.CPUAccessFlags = 0;
+			bufferDesc.MiscFlags = 0;
+			bufferDesc.StructureByteStride = 0;
+
+			ID3D11Buffer* pBuffer = nullptr;
+			HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateBuffer(&bufferDesc, nullptr, &pBuffer);
+			if (SUCCEEDED(hr))
+			{
+				std::static_pointer_cast<Texture>(asset)->m_resource = pBuffer;
+			}
+			else
+			{
+				LOG_ERROR("LoadFromMemory Create Buffer failed");
+				asset->loadFailed__();
+			}
+
+			break;
+		}
+		case TextureCreationParam::CreateTextureType::Create2DSRV:
 		{
 			CD3D11_TEXTURE2D_DESC textureDesc((DXGI_FORMAT)creationParam->format, creationParam->width, creationParam->height, 1, 1);
 	
@@ -142,7 +166,7 @@ namespace Destiny
 
 			break;
 		}
-		case TextureCreationParam::Create2DUAV:
+		case TextureCreationParam::CreateTextureType::Create2DUAV:
 		{
 			CD3D11_TEXTURE2D_DESC textureDesc((DXGI_FORMAT)creationParam->format, creationParam->width, creationParam->height, 1, 1);
 			textureDesc.BindFlags |= D3D11_BIND_UNORDERED_ACCESS;
@@ -188,7 +212,7 @@ namespace Destiny
 
 			break;
 		}
-		case TextureCreationParam::CreateStructured:
+		case TextureCreationParam::CreateTextureType::CreateStructured:
 		{
 			D3D11_BUFFER_DESC bufferDesc = {};
 			bufferDesc.ByteWidth = creationParam->structuredBufferByteWidth;
@@ -211,8 +235,8 @@ namespace Destiny
 				uavDesc.Format = DXGI_FORMAT_UNKNOWN;
 				uavDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
 				uavDesc.Buffer.NumElements = creationParam->structuredBufferByteWidth / creationParam->structuredBufferByteStride;
-				uavDesc.Buffer.Flags = 0;
-				//D3D11_BUFFER_UAV_FLAG_APPEND
+				uavDesc.Buffer.Flags = (int)creationParam->createStructuredType;
+
 				hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateUnorderedAccessView(std::static_pointer_cast<Texture>(asset)->m_resource, &uavDesc, &std::static_pointer_cast<Texture>(asset)->m_unorderedAccessView);
 				if (SUCCEEDED(hr))
 				{
@@ -250,7 +274,7 @@ namespace Destiny
 
 			break;
 		}
-		case TextureCreationParam::CreateTyped:
+		case TextureCreationParam::CreateTextureType::CreateTyped:
 		{
 			D3D11_BUFFER_DESC bufferDesc = {};
 			bufferDesc.ByteWidth = creationParam->typedBufferByteWidth;
@@ -312,7 +336,7 @@ namespace Destiny
 
 			break;
 		}
-		case TextureCreationParam::CreateRaw:
+		case TextureCreationParam::CreateTextureType::CreateRaw:
 		{
 			//for D3D11_RESOURCE_MISC_DRAWINDIRECT_ARGS
 			if (creationParam->rawBufferWidth < 20)

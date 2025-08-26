@@ -160,6 +160,17 @@ BoundingBox GetBoxFromBuffer(RWByteAddressBuffer buffer, uint boxStartOffset, ui
     return RawDataToBoundingBox(data1, data2, dummyFlag);
 }
 
+static
+BoundingBox GetBoxFromBuffer(RWByteAddressBuffer buffer, uint boxStartOffset, uint boxIndex, out uint2 flag)
+{
+    uint boxAddress = GetBoxAddress(boxStartOffset, boxIndex);
+
+    int4 data1 = buffer.Load4(boxAddress);
+    int4 data2 = buffer.Load4(boxAddress + 16);
+
+    return RawDataToBoundingBox(data1, data2, flag);
+}
+
 #define GetBVHMetadataAddress(byteAddressBufferPointer, offsetToInstanceDescs, leafIndex) \
     offsetToInstanceDescs + leafIndex * SizeOfBVHMetadata
 

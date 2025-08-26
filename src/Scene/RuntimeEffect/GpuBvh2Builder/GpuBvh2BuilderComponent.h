@@ -10,6 +10,8 @@ namespace Destiny
 	class BitonicSortComponent;
 	class ConstructHierarchyComponent;
 	class ConstructAABBPassComponent;
+	class ApplyBvhComponent;
+	class BoxVisualizationComponent;
 	class GpuBvh2BuilderComponent : public Component
 	{
 		RTTR_ENABLE(Component);
@@ -19,12 +21,16 @@ namespace Destiny
 	public:
 		GET(Button, test);
 		void set_test(Button test);
+	public:
+		virtual void onAddToNode() override;
 	private:
 		std::shared_ptr<SceneAABBCalculatorComponent> m_sceneAABBCalculatorComponent;
 		std::shared_ptr<MortonCodesCalculatorComponent> m_mortonCodesCalculatorComponent;
 		std::shared_ptr<BitonicSortComponent> m_bitonicSortComponent;
 		std::shared_ptr<ConstructHierarchyComponent> m_constructHierarchyComponent;
 		std::shared_ptr<ConstructAABBPassComponent> m_constructAABBPassComponent;
+		std::shared_ptr<ApplyBvhComponent> m_applyBvhComponent;
+		std::vector<std::shared_ptr<BoxVisualizationComponent>> m_boxVisualizationComponents;
 
 		Button m_test;
 

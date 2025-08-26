@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/Asset.h"
+#include "Engine/Blob.h"
 #include "GraphicsPipeline/GraphicsCommand.h"
 #include "Graphics/Texture.h"
 #include "ConstantBuffer.h"

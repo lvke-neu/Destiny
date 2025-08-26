@@ -43,15 +43,24 @@ namespace Destiny
 	class TextureCreationParam : public Object
 	{
 	public:
-		enum CreateTextureType
+		enum class CreateTextureType
 		{
 			None,
+			CreateBuffer,
 			Create2DSRV,
 			Create2DUAV,
 			CreateStructured,
 			CreateTyped,
 			CreateRaw,
+
 			CreateTextureTypeCount
+		};
+
+		enum class CreateStructuredType
+		{
+			None = 0,
+			Append = 0x2,
+			Counter = 0x4
 		};
 	public:
 		CreateTextureType m_type	= CreateTextureType::None;
@@ -73,12 +82,19 @@ namespace Destiny
 		};
 		union
 		{
+			//for buffer
+			unsigned int bufferByteWidth = 0;
 			//for Create2DSRV
-			unsigned int slicePitch = 0;
+			unsigned int slicePitch;
 			//for CreateStructured
 			unsigned int structuredBufferByteWidth;
 			//for CreateTyped
 			unsigned int typedBufferByteWidth;
+		};
+
+		union 
+		{
+			CreateStructuredType  createStructuredType = CreateStructuredType::None;
 		};
 		
 		bool isProc = false;
@@ -133,9 +149,12 @@ namespace Destiny
 		static std::shared_ptr<TextureLoader> s_textureLoader;
 		static std::shared_ptr<Texture> Create(const char* path);
 		static std::shared_ptr<Texture> Create(std::shared_ptr<Blob> blob, const char* type);
+		static std::shared_ptr<Texture> CreateBuffer(unsigned int bufferByteWidth);
 		static std::shared_ptr<Texture> Create2DSRV(int format, unsigned int width, unsigned int height, std::shared_ptr<Blob> data, unsigned int pitch, unsigned int slicePitch, bool isProc = false, const std::string& procPath = "");
 		static std::shared_ptr<Texture> Create2DUAV(int format, unsigned int width, unsigned int height);
 		static std::shared_ptr<Texture> CreateStructured(unsigned int structuredBufferByteStride, unsigned int structuredBufferByteWidth, std::shared_ptr<Blob> data = nullptr);
+		static std::shared_ptr<Texture> CreateStructuredAppend(unsigned int structuredBufferByteStride, unsigned int structuredBufferByteWidth, std::shared_ptr<Blob> data = nullptr);
+		static std::shared_ptr<Texture> CreateStructuredCounter(unsigned int structuredBufferByteStride, unsigned int structuredBufferByteWidth, std::shared_ptr<Blob> data = nullptr);
 		static std::shared_ptr<Texture> CreateTyped(int format, unsigned int typedBufferByteStride, unsigned int typedBufferByteWidth, std::shared_ptr<Blob> data = nullptr);
 		static std::shared_ptr<Texture> CreateRaw(unsigned int rawBufferWidth, std::shared_ptr<Blob> data = nullptr);
 		static std::shared_ptr<Texture> CreateHdr(const char* path, HdrCreationParma::CreateTextureType type);
@@ -147,6 +166,7 @@ namespace Destiny
 	public:
 		void bind(std::shared_ptr<TextureDesc> desc);
 		void unBind(std::shared_ptr<TextureDesc> desc);
+		ID3D11Resource* getResource();
 		ID3D11ShaderResourceView* getShaderResourceView();
 		ID3D11UnorderedAccessView** getUnorderedAccessView();
 		void updateBuffer(std::shared_ptr<Blob> data);
@@ -157,6 +177,11 @@ namespace Destiny
 		ID3D11UnorderedAccessView* m_unorderedAccessView;
 	};
 
+	inline ID3D11Resource* Texture::getResource()
+	{
+		return m_resource;
+	}
+
 	inline ID3D11ShaderResourceView* Texture::getShaderResourceView()
 	{
 		return m_shaderResourceView;
@@ -166,5 +191,4 @@ namespace Destiny
 	{
 		return &m_unorderedAccessView;
 	}
-
 }

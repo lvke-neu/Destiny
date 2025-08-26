@@ -168,7 +168,6 @@ namespace Destiny
 		const auto& cameraProjMaTrix = DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(m_fovy * Math::DEG2RAD, m_aspect, m_nearz, m_farz));
 
 		Renderer::SetConstant("g_view", cameraViewMatrix);
-		Renderer::SetConstant("g_view", cameraViewMatrix);
 		Renderer::SetConstant("g_eyePosition", cameraPos);
 
 		Renderer::SetConstant("g_proj", cameraProjMaTrix);

@@ -15,7 +15,7 @@ namespace Destiny
 		ApplyBvhComponent();
 		virtual ~ApplyBvhComponent() = default;
 	public:
-		void init(unsigned int elementCount, std::shared_ptr<Texture> outputBVH, std::shared_ptr<Texture> hierarchyBuffer);
+		void init(unsigned int elementCount, std::shared_ptr<Texture> outputBVH, std::shared_ptr<Texture> hierarchyBuffer, std::shared_ptr<Texture> bitonicSortIndicesBuffer);
 	public:
 		virtual void onUpdate(float deltaTime) override;
 	private:
@@ -28,6 +28,7 @@ namespace Destiny
 
 		std::shared_ptr<Texture> m_outputBVH;
 		std::shared_ptr<Texture> m_hierarchyBuffer;
+		std::shared_ptr<Texture> m_bitonicSortIndicesBuffer;
 		std::shared_ptr<Texture> m_stack;
 		std::shared_ptr<Texture> m_cullElement;
 		std::shared_ptr<Texture> m_cullElementCount;

@@ -16,6 +16,7 @@ namespace Destiny
 		m_applyBvhCS(nullptr),
 		m_copyStructureCount(nullptr),
 		m_outputBVH(nullptr),
+		m_bitonicSortIndicesBuffer(nullptr),
 		m_hierarchyBuffer(nullptr),
 		m_stack(nullptr),
 		m_cullElement(nullptr),
@@ -25,10 +26,11 @@ namespace Destiny
 		std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->addBeforePipelineCommandList(L"ApplyBvh", m_graphicsCommandList);
 	}
 
-	void ApplyBvhComponent::init(unsigned int elementCount, std::shared_ptr<Texture> outputBVH, std::shared_ptr<Texture> hierarchyBuffer)
+	void ApplyBvhComponent::init(unsigned int elementCount, std::shared_ptr<Texture> outputBVH, std::shared_ptr<Texture> hierarchyBuffer, std::shared_ptr<Texture> bitonicSortIndicesBuffer)
 	{
 		m_outputBVH = outputBVH;
 		m_hierarchyBuffer = hierarchyBuffer;
+		m_bitonicSortIndicesBuffer = bitonicSortIndicesBuffer;
 
 		applyBvhCS(elementCount);
 		copyStructureCount();
@@ -63,13 +65,14 @@ namespace Destiny
 
 		std::vector<std::shared_ptr<Texture>> uavs =
 		{
-			m_outputBVH, m_hierarchyBuffer, m_stack, m_cullElement
+			m_outputBVH, m_hierarchyBuffer, m_bitonicSortIndicesBuffer, m_stack, m_cullElement
 		};
 		
 		m_applyBvhCS = std::make_shared<ComputerCommand>();
 		m_applyBvhCS->setComputerEffectPath("builtin://renderer/GpuBvh2Builder/apply_bvh/apply_bvh.hlsl");
 		m_applyBvhCS->setUnorderedAccessViews(uavs);
 		m_applyBvhCS->setThreadGroupCount(1, 1, 1);
+		m_applyBvhCS->setConstant("NumberOfElements", elementCount);
 
 		m_graphicsCommandList->addGraphicsCommand(m_applyBvhCS);
 	}

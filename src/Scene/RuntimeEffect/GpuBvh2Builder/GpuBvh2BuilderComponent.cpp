@@ -31,26 +31,26 @@ namespace Destiny
 		m_constructAABBPassComponent(std::make_shared<ConstructAABBPassComponent>()),
 		m_applyBvhComponent(std::make_shared<ApplyBvhComponent>())
 	{
-		m_aabbs = GenerateTrulyRandomAABBs(4015);
-		//m_aabbs =
-		//{
-		//	{
-		//		{-5.0f, -5.0f, 95.0f},
-		//		{5.0f, 5.0f,105.0f}
-		//	},
-		//	{
-		//		{-5.0f, -5.0f, -105.0f},
-		//		{5.0f, 5.0f,-95.0f}
-		//	},
-		//	{
-		//		{-105.0f, -5.0f, -5.0f},
-		//		{-95.0f, 5.0f,5.0f}
-		//	},
-		//	{
-		//		{95.0f, -5.0f, -5.0f},
-		//		{105.0f, 5.0f,5.0f}
-		//	}
-		//};
+		//m_aabbs = GenerateTrulyRandomAABBs(4015);
+		m_aabbs =
+		{
+			{
+				{-5.0f, -5.0f, 95.0f},
+				{5.0f, 5.0f,105.0f}
+			},
+			{
+				{-5.0f, -5.0f, -105.0f},
+				{5.0f, 5.0f,-95.0f}
+			},
+			{
+				{-105.0f, -5.0f, -5.0f},
+				{-95.0f, 5.0f,5.0f}
+			},
+			{
+				{95.0f, -5.0f, -5.0f},
+				{105.0f, 5.0f,5.0f}
+			}
+		};
 
 		for (int i = 0; i < m_aabbs.size(); i++)
 		{
@@ -111,7 +111,7 @@ namespace Destiny
 		m_bitonicSortComponent->init((unsigned int)m_aabbs.size(), m_mortonCodesCalculatorComponent->m_outputMortonCodesBuffer, m_mortonCodesCalculatorComponent->m_outputIndicesBuffer);
 		m_constructHierarchyComponent->init((unsigned int)m_aabbs.size(), m_mortonCodesCalculatorComponent->m_outputMortonCodesBuffer);
 		m_constructAABBPassComponent->init(m_aabbs, m_constructHierarchyComponent->m_hierarchyBuffer, m_mortonCodesCalculatorComponent->m_outputIndicesBuffer);
-		m_applyBvhComponent->init((unsigned int)m_aabbs.size(), m_constructAABBPassComponent->m_outputBVH, m_constructAABBPassComponent->m_hierarchyBuffer);
+		m_applyBvhComponent->init((unsigned int)m_aabbs.size(), m_constructAABBPassComponent->m_outputBVH, m_constructAABBPassComponent->m_hierarchyBuffer, m_mortonCodesCalculatorComponent->m_outputIndicesBuffer);
 	}
 
 	GpuBvh2BuilderComponent::~GpuBvh2BuilderComponent()

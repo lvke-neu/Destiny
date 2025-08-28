@@ -20,6 +20,8 @@ namespace Destiny
 		void set_test(Button test);
 	public:
 		void init(unsigned int elementCount, std::shared_ptr<Texture> sortTexture, std::shared_ptr<Texture> indexTexture);
+	public:
+		virtual void onLeaveScene() override;
 	private:
 		void indirectArgsCS();
 		void preSortCS();

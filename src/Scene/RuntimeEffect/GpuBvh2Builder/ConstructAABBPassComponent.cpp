@@ -44,6 +44,11 @@ namespace Destiny
 		bindResource(aabbs);
 	}
 
+	void ConstructAABBPassComponent::onLeaveScene()
+	{
+		std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->removeBeforePipelineCommandList(L"ConstructAABBPass", m_graphicsCommandList);
+	}
+
 	void ConstructAABBPassComponent::prepareForComputeAABBsCS()
 	{
 		m_prepareForComputeAABBs = std::make_shared<ComputerCommand>();

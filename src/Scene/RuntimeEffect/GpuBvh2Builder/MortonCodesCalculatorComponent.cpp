@@ -154,6 +154,11 @@ namespace Destiny
 		m_calcuateMortonCodesForAABBs->setThreadGroupCount(dispatchWidth, 1, 1);
 	}
 
+	void MortonCodesCalculatorComponent::onLeaveScene()
+	{
+		std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->removeBeforePipelineCommandList(L"MortonCodesCalculate", m_graphicsCommandList);
+	}
+
 	RTTR_REGISTRATION
 	{
 		rttr::registration::class_<MortonCodesCalculatorComponent>("MortonCodesCalculatorComponent")

@@ -12,6 +12,7 @@ namespace Destiny
 		virtual ~GraphicsCommandList() = default;
 	public:
 		bool			addGraphicsCommand(std::shared_ptr<GraphicsCommand> graphicsCommand);
+		void			removeGraphicsCommand(std::shared_ptr<GraphicsCommand> graphicsCommand);
 		virtual void	execute(ID3D11DeviceContext* deviceContext);
 		void			clearGraphicsCommand();
 	protected:

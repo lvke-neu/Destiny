@@ -76,6 +76,11 @@ namespace Destiny
 		bitonicOuterAndInnerCommand();
 	}
 
+	void BitonicSortComponent::onLeaveScene()
+	{
+		std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->removeBeforePipelineCommandList(L"BitonicSort", m_graphicsCommandList);
+	}
+
 	void BitonicSortComponent::indirectArgsCS()
 	{
 		m_indirectArgsTexture = Texture::CreateRaw(m_cIndirectArgStride * 22 * 23 / 2, nullptr);

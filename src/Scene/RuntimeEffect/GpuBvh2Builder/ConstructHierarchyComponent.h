@@ -17,6 +17,8 @@ namespace Destiny
 	public:
 		void init(unsigned int numElements, std::shared_ptr<Texture> outputMortonCodesBuffer);
 	public:
+		virtual void onLeaveScene() override;
+	public:
 		void buildSplitsCS();
 	private:
 		unsigned int m_numElements;

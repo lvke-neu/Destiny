@@ -37,6 +37,11 @@ namespace Destiny
 		buildSplitsCS();
 	}
 
+	void ConstructHierarchyComponent::onLeaveScene()
+	{
+		std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->removeBeforePipelineCommandList(L"BuildSplits", m_graphicsCommandList);
+	}
+
 	static UINT GetNumberOfInternalNodes(UINT numLeaves)
 	{
 		// A binary tree with N leaves will always have N - 1 internal nodes

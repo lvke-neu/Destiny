@@ -31,44 +31,44 @@ namespace Destiny
 		m_constructAABBPassComponent(std::make_shared<ConstructAABBPassComponent>()),
 		m_applyBvhComponent(std::make_shared<ApplyBvhComponent>())
 	{
-		//m_aabbs = GenerateTrulyRandomAABBs(4015);
-		m_aabbs =
-		{
-			{
-				{-5.0f, -5.0f, 95.0f},
-				{5.0f, 5.0f,105.0f}
-			},
-			{
-				{-5.0f, -5.0f, -105.0f},
-				{5.0f, 5.0f,-95.0f}
-			},
-			{
-				{-105.0f, -5.0f, -5.0f},
-				{-95.0f, 5.0f,5.0f}
-			},
-			{
-				{95.0f, -5.0f, -5.0f},
-				{105.0f, 5.0f,5.0f}
-			}
-		};
+		m_aabbs = GenerateTrulyRandomAABBs(100000);
+		//m_aabbs =
+		//{
+		//	{
+		//		{-5.0f, -5.0f, 95.0f},
+		//		{5.0f, 5.0f,105.0f}
+		//	},
+		//	{
+		//		{-5.0f, -5.0f, -105.0f},
+		//		{5.0f, 5.0f,-95.0f}
+		//	},
+		//	{
+		//		{-105.0f, -5.0f, -5.0f},
+		//		{-95.0f, 5.0f,5.0f}
+		//	},
+		//	{
+		//		{95.0f, -5.0f, -5.0f},
+		//		{105.0f, 5.0f,5.0f}
+		//	}
+		//};
 
-		for (int i = 0; i < m_aabbs.size(); i++)
-		{
-			m_boxVisualizationComponents.push_back(std::make_shared<BoxVisualizationComponent>());
+		//for (int i = 0; i < m_aabbs.size(); i++)
+		//{
+		//	m_boxVisualizationComponents.push_back(std::make_shared<BoxVisualizationComponent>());
 
-			DirectX::XMFLOAT3 center;
-			center.x = (m_aabbs[i].min.x + m_aabbs[i].max.x) / 2;
-			center.y = (m_aabbs[i].min.y + m_aabbs[i].max.y) / 2;
-			center.z = (m_aabbs[i].min.z + m_aabbs[i].max.z) / 2;
+		//	DirectX::XMFLOAT3 center;
+		//	center.x = (m_aabbs[i].min.x + m_aabbs[i].max.x) / 2;
+		//	center.y = (m_aabbs[i].min.y + m_aabbs[i].max.y) / 2;
+		//	center.z = (m_aabbs[i].min.z + m_aabbs[i].max.z) / 2;
 
-			DirectX::XMFLOAT3 extent;
-			extent.x = (m_aabbs[i].min.x - m_aabbs[i].max.x) / 2;
-			extent.y = (m_aabbs[i].min.y - m_aabbs[i].max.y) / 2;
-			extent.z = (m_aabbs[i].min.z - m_aabbs[i].max.z) / 2;
+		//	DirectX::XMFLOAT3 extent;
+		//	extent.x = (m_aabbs[i].min.x - m_aabbs[i].max.x) / 2;
+		//	extent.y = (m_aabbs[i].min.y - m_aabbs[i].max.y) / 2;
+		//	extent.z = (m_aabbs[i].min.z - m_aabbs[i].max.z) / 2;
 
-			m_boxVisualizationComponents[i]->modifyMesh({ center,extent });
-			m_boxVisualizationComponents[i]->set_serializable(false);
-		}
+		//	m_boxVisualizationComponents[i]->modifyMesh({ center,extent });
+		//	m_boxVisualizationComponents[i]->set_serializable(false);
+		//}
 
 		DirectX::XMFLOAT3 min = { FLT_MAX,FLT_MAX,FLT_MAX };
 		DirectX::XMFLOAT3 max = { -FLT_MAX,-FLT_MAX ,-FLT_MAX };
@@ -116,7 +116,7 @@ namespace Destiny
 
 	GpuBvh2BuilderComponent::~GpuBvh2BuilderComponent()
 	{
-		//std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->clear();
+		
 	}
 
 	static UINT GetNumberOfInternalNodes(UINT numLeaves)
@@ -196,11 +196,21 @@ namespace Destiny
 		auto node = std::make_shared<Node>();
 		node->set_name("Debug_Apply");
 		node->addToParent(m_node);
-		for (const auto& boxVisualizationComponent : m_boxVisualizationComponents)
-		{
-			node->addComponent(boxVisualizationComponent);
-		}
+		//for (const auto& boxVisualizationComponent : m_boxVisualizationComponents)
+		//{
+		//	node->addComponent(boxVisualizationComponent);
+		//}
 		node->addComponent(m_applyBvhComponent);
+	}
+
+	void GpuBvh2BuilderComponent::onLeaveScene()
+	{
+		m_sceneAABBCalculatorComponent->onLeaveScene();
+		m_mortonCodesCalculatorComponent->onLeaveScene();
+		m_bitonicSortComponent->onLeaveScene();
+		m_constructHierarchyComponent->onLeaveScene();
+		m_constructAABBPassComponent->onLeaveScene();
+		m_applyBvhComponent->onLeaveScene();
 	}
 
 	RTTR_REGISTRATION

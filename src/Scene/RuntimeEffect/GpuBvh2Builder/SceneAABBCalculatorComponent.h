@@ -19,6 +19,8 @@ namespace Destiny
 		static unsigned int ScratchBufferSizeNeeded(unsigned int numElements);
 	public:
 		void init(const std::vector<AABB>& aabbs);
+	public:
+		virtual void onLeaveScene() override;
 	private:
 		void generateFakeData();
 		void calculateSceneAABBFromBVHsCS();

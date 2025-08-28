@@ -23,6 +23,7 @@ namespace Destiny
 		void set_test(Button test);
 	public:
 		virtual void onAddToNode() override;
+		virtual void onLeaveScene() override;
 	private:
 		std::shared_ptr<SceneAABBCalculatorComponent> m_sceneAABBCalculatorComponent;
 		std::shared_ptr<MortonCodesCalculatorComponent> m_mortonCodesCalculatorComponent;

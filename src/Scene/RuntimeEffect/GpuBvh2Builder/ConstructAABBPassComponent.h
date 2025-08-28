@@ -17,6 +17,8 @@ namespace Destiny
 	public:
 		void init(const std::vector<AABB>& aabbs, std::shared_ptr<Texture> hierarchyBuffer, std::shared_ptr<Texture> bitonicSortIndicesBuffer);
 	public:
+		virtual void onLeaveScene() override;
+	public:
 		void prepareForComputeAABBsCS();
 		void computeAABBsCS();
 		void bindResource(const std::vector<AABB>& aabbs);

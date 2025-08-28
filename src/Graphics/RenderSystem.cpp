@@ -209,7 +209,6 @@ namespace Destiny
 
 	std::shared_ptr<RenderTargetView> RenderSystem::getRenderTargetView()
 	{
-		//return m_bindRenderTargets->getRenderTargetViews(0);
 		return std::static_pointer_cast<PostProcessingPipeline>(m_postProcessingPipeline)->m_bindRenderTargets->getRenderTargetViews(0);
 	}
 
@@ -218,9 +217,9 @@ namespace Destiny
 		m_beforePipelineCommandList->addGraphicsCommand(graphicsCommand);
 	}
 
-	void RenderSystem::clearBeforePipelineCommand()
+	void RenderSystem::removeBeforePipelineCommand(std::shared_ptr<GraphicsCommand> graphicsCommand)
 	{
-		m_beforePipelineCommandList->clearGraphicsCommand();
+		m_beforePipelineCommandList->removeGraphicsCommand(graphicsCommand);
 	}
 
 	void RenderSystem::addBeforePipelineCommandList(const std::wstring& debugName, std::shared_ptr<GraphicsCommandList> graphicsCommandList)
@@ -228,9 +227,14 @@ namespace Destiny
 		m_beforePipelineCommandLists.push_back({ debugName,  graphicsCommandList });
 	}
 
-	void RenderSystem::clear()
+	void RenderSystem::removeBeforePipelineCommandList(const std::wstring& debugName, std::shared_ptr<GraphicsCommandList> graphicsCommandList)
 	{
-		m_beforePipelineCommandLists.clear();
+		auto pair = std::make_pair(debugName, graphicsCommandList);
+		auto iter = std::find(m_beforePipelineCommandLists.begin(), m_beforePipelineCommandLists.end(), pair);
+		if (iter != m_beforePipelineCommandLists.end())
+		{
+			m_beforePipelineCommandLists.erase(iter);
+		}
 	}
 
 	void RenderSystem::onResize(void* data)

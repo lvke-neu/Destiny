@@ -20,6 +20,15 @@ namespace Destiny
 		return false;
 	}
 
+	void GraphicsCommandList::removeGraphicsCommand(std::shared_ptr<GraphicsCommand> graphicsCommand)
+	{
+		auto iter = std::find(m_graphicsCommandList.begin(), m_graphicsCommandList.end(), graphicsCommand);
+		if (iter != m_graphicsCommandList.end())
+		{
+			m_graphicsCommandList.erase(iter);
+		}
+	}
+
 	void GraphicsCommandList::execute(ID3D11DeviceContext* deviceContext)
 	{
 		for (const auto& graphicsCommand : m_graphicsCommandList)

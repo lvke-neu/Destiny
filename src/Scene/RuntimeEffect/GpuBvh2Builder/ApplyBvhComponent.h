@@ -18,6 +18,7 @@ namespace Destiny
 		void init(unsigned int elementCount, std::shared_ptr<Texture> outputBVH, std::shared_ptr<Texture> hierarchyBuffer, std::shared_ptr<Texture> bitonicSortIndicesBuffer);
 	public:
 		virtual void onUpdate(float deltaTime) override;
+		virtual void onLeaveScene() override;
 	private:
 		void applyBvhCS(unsigned int elementCount);
 		void copyStructureCount();

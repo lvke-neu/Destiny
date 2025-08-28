@@ -18,6 +18,8 @@ namespace Destiny
 		void init(const std::vector<AABB>& aabbs, std::shared_ptr<Texture> sceneAABB);
 	private:
 		void calcuateMortonCodesForAABBsCS();
+	public:
+		virtual void onLeaveScene() override;
 	private:
 		std::shared_ptr<ComputerCommand> m_calcuateMortonCodesForAABBs;
 		std::shared_ptr<GraphicsCommandList>	m_graphicsCommandList;

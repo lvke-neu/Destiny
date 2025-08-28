@@ -68,6 +68,11 @@ namespace Destiny
 		m_sceneAABBCalculatorCommand->setParam(m_numElements, m_aabbBuffer, m_outputBuffer, m_calculateSceneAABBFromBVHs, m_calculateSceneAABBFromAABBs);
 	}
 
+	void SceneAABBCalculatorComponent::onLeaveScene()
+	{
+		std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->removeBeforePipelineCommandList(L"SceneAABBCalculate", m_graphicsCommandList);
+	}
+
 	void SceneAABBCalculatorComponent::generateFakeData()
 	{
 		std::vector<AABB> aabbs = GenerateTrulyRandomAABBs(10000);

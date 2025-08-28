@@ -9,6 +9,9 @@
 //
 //*********************************************************
 
+#ifndef CALCULATE_SCENE_AABB_BINDINGS
+#define CALCULATE_SCENE_AABB_BINDINGS
+
 #include "../common/RaytracingHlslCompat.h"
 
 #ifndef HLSL
@@ -53,4 +56,5 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 
     OutputBuffer[outputAABBIndex] = CalculateSceneAABB(BaseElementIndex);
 }
+#endif
 #endif

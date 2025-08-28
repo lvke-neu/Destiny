@@ -51,6 +51,11 @@ namespace Destiny
 		}
 	}
 
+	void ApplyBvhComponent::onLeaveScene()
+	{
+		std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->removeBeforePipelineCommandList(L"ApplyBvh", m_graphicsCommandList);
+	}
+
 	void ApplyBvhComponent::applyBvhCS(unsigned int elementCount)
 	{
 		{

@@ -19,6 +19,8 @@ IF (WIN32)
 		ENDIF(MSVC)
 ENDIF()
 
+
+
 #spdlog
 include_directories("3rdparty/spdlog/include")
 
@@ -48,6 +50,10 @@ add_subdirectory("3rdparty/assimp")
      SET(ASSIMP_MSVC_VERSION "vc143")
    ENDIF()
  ENDIF()
+if(TARGET assimp)
+    target_compile_options(assimp PRIVATE /wd4100) # 忽略未使用参数警告
+endif()
+
 
 #rttr
 set(BUILD_UNIT_TESTS OFF)
@@ -63,6 +69,77 @@ add_subdirectory("3rdparty/rttr")
 set(FT_DISABLE_ZLIB ON)
 set(DISABLE_FORCE_DEBUG_POSTFIX ON)
 add_subdirectory("3rdparty/freetype")
+set_target_properties(freetype PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/3rdparty/freetype/$<CONFIG>"
+    LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/3rdparty/freetype/$<CONFIG>"
+    RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/3rdparty/freetype/$<CONFIG>"
+)
+
+#bullet3
+set(BUILD_SHARED_LIBS OFF) # 可改 ON 生成 DLL
+set(BUILD_UNIT_TESTS OFF)
+set(BUILD_EXTRAS OFF)
+set(BUILD_CPU_DEMOS OFF)
+set(BUILD_OPENCL_DEMOS OFF)
+set(BUILD_BULLET2_DEMOS OFF)
+add_subdirectory("3rdparty/bullet3")
+set(BULLET3_OUTPUT_DIR "${PROJECT_BINARY_DIR}/3rdparty/bullet3/$<CONFIG>")
+foreach(bullet_target LinearMath BulletCollision BulletDynamics BulletSoftBody Bullet3Common Bullet3Geometry Bullet3Dynamics)
+    if(TARGET ${bullet_target})
+        set_target_properties(${bullet_target} PROPERTIES
+            ARCHIVE_OUTPUT_DIRECTORY "${BULLET3_OUTPUT_DIR}"
+            LIBRARY_OUTPUT_DIRECTORY "${BULLET3_OUTPUT_DIR}"
+            RUNTIME_OUTPUT_DIRECTORY "${BULLET3_OUTPUT_DIR}"
+        )
+    endif()
+endforeach()
+
+
+if(MSVC)
+    foreach(tgt assimp rttr_core freetype LinearMath BulletCollision BulletDynamics BulletSoftBody)
+        if(TARGET ${tgt})
+            # Debug 配置使用 /MDd
+            target_compile_options(${tgt} PRIVATE
+                $<$<CONFIG:Debug>:/MDd>
+                $<$<CONFIG:Release>:/MD>
+                $<$<CONFIG:RelWithDebInfo>:/MD>
+                $<$<CONFIG:MinSizeRel>:/MD>
+            )
+        endif()
+    endforeach()
+endif()
+
+
+
+if(MSVC)
+    set_property(TARGET assimp PROPERTY FOLDER "ThirdParty")
+    set_property(TARGET rttr_core PROPERTY FOLDER "ThirdParty")
+    set_property(TARGET freetype PROPERTY FOLDER "ThirdParty")
+
+    set_property(TARGET LinearMath PROPERTY FOLDER "ThirdParty/Bullet3")
+    set_property(TARGET BulletCollision PROPERTY FOLDER "ThirdParty/Bullet3")
+    set_property(TARGET BulletDynamics PROPERTY FOLDER "ThirdParty/Bullet3")
+    set_property(TARGET BulletSoftBody PROPERTY FOLDER "ThirdParty/Bullet3")
+    set_property(TARGET Bullet3Common PROPERTY FOLDER "ThirdParty/Bullet3")
+    set_property(TARGET Bullet3Geometry PROPERTY FOLDER "ThirdParty/Bullet3")
+    set_property(TARGET Bullet3Dynamics PROPERTY FOLDER "ThirdParty/Bullet3")
+    set_property(TARGET Bullet2FileLoader PROPERTY FOLDER "ThirdParty/Bullet3")
+    set_property(TARGET Bullet3Collision PROPERTY FOLDER "ThirdParty/Bullet3")
+    set_property(TARGET Bullet3OpenCL_clew PROPERTY FOLDER "ThirdParty/Bullet3")
+    set_property(TARGET BulletInverseDynamics PROPERTY FOLDER "ThirdParty/Bullet3")
+endif()
+
+
+
+
+# include
+include_directories(
+    "src"
+    "3rdparty/bullet3/src"
+    "3rdparty/bullet3/src/LinearMath"
+    "3rdparty/bullet3/src/BulletCollision"
+    "3rdparty/bullet3/src/BulletDynamics"
+)
 
 
 include_directories("src/")
@@ -83,6 +160,7 @@ file(GLOB SRC_SCENE_RUNTIMEEFFECT src/Scene/RuntimeEffect/*)
 file(GLOB SRC_SCENE_RUNTIMEEFFECT_PARTICLE src/Scene/RuntimeEffect/Particle/*)
 file(GLOB SRC_SCENE_RUNTIMEEFFECT_GPUBVH2BUILDER src/Scene/RuntimeEffect/GpuBvh2Builder/*)
 file(GLOB SRC_SCENE_MODEL src/Scene/Model/*)
+file(GLOB SRC_PHYSICS src/Physics/*)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -101,6 +179,7 @@ source_group("Scene\\RuntimeEffect" FILES ${SRC_SCENE_RUNTIMEEFFECT})
 source_group("Scene\\RuntimeEffect\\Particle" FILES ${SRC_SCENE_RUNTIMEEFFECT_PARTICLE})
 source_group("Scene\\RuntimeEffect\\GpuBvh2Builder" FILES ${SRC_SCENE_RUNTIMEEFFECT_GPUBVH2BUILDER})
 source_group("Scene\\Model" FILES ${SRC_SCENE_MODEL})
+source_group("Physice" FILES ${SRC_PHYSICS})
 
 add_executable(
     Destiny WIN32 ${SRC_MAIN} 
@@ -118,8 +197,18 @@ add_executable(
     ${SRC_SCENE_RUNTIMEEFFECT_PARTICLE}
     ${SRC_SCENE_RUNTIMEEFFECT_GPUBVH2BUILDER}
     ${SRC_SCENE_MODEL}
+    ${SRC_PHYSICS}
 )
-target_link_libraries(Destiny assimp rttr_core freetype d3d11.lib dxgi.lib dxguid.lib D3DCompiler.lib d2d1.lib dwrite.lib winmm.lib)
+
+target_link_libraries(Destiny
+    assimp
+    rttr_core
+    freetype
+    BulletDynamics
+    BulletCollision
+    LinearMath
+    d3d11.lib dxgi.lib dxguid.lib D3DCompiler.lib d2d1.lib dwrite.lib winmm.lib
+)
 
 
 add_custom_command(TARGET Destiny

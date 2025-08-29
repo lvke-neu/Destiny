@@ -17,6 +17,7 @@ namespace Destiny
 	class ThreadPool;
 	class GraphicsSystem;
 	class SceneManager;
+	class PhysicsSystem;
 	class Engine
 	{
 		SINGLETON(Engine);
@@ -44,6 +45,7 @@ namespace Destiny
 		std::shared_ptr<ThreadPool>			m_dataLoadThreadPool;
 		std::shared_ptr<GraphicsSystem>		m_graphicsSystem;
 		std::shared_ptr<SceneManager>		m_sceneManager;
+		std::shared_ptr<PhysicsSystem>		m_physicsSystem;
 	};
 
 	inline std::shared_ptr<LogManager> Engine::getLogManager()

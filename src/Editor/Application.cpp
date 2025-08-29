@@ -23,6 +23,7 @@
 #include "Engine/UnSerializer.h"
 #include "Engine/FileSystem.h"
 #include "Engine/Blob.h"
+#include "Physics/PhysicsSystem.h"
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -604,6 +605,14 @@ void Application::settingMenu()
 		if (ImGui::Combo("GzimoType", &current_item, items, IM_ARRAYSIZE(items)))
 		{
 			m_viewPortPanel->setGzimoType(current_item - 1);
+		}
+
+		bool bSimulation = Destiny::Engine::GetInstance()->getPhysicsSystem()->get_bSimulation();
+		ImGui::Text("Physics Simulation");
+		ImGui::SameLine();
+		if (ImGui::Checkbox("##Physics Simulation", &bSimulation))
+		{
+			Destiny::Engine::GetInstance()->getPhysicsSystem()->set_bSimulation(bSimulation);
 		}
 
 		ImGui::EndMenu();

@@ -128,10 +128,10 @@ namespace Destiny
 
 	void Transform::updateWorldMatrix()
 	{
-		DirectX::XMFLOAT3 radiansRotation{ DirectX::XMConvertToRadians(m_rotation.x), DirectX::XMConvertToRadians(m_rotation.y), DirectX::XMConvertToRadians(m_rotation.z) };
+		DirectX::XMFLOAT3 radianRotation{ DirectX::XMConvertToRadians(m_rotation.x), DirectX::XMConvertToRadians(m_rotation.y), DirectX::XMConvertToRadians(m_rotation.z) };
 		m_worldMatrix =
 			DirectX::XMMatrixScalingFromVector(XMLoadFloat3(&m_scale)) *
-			DirectX::XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&radiansRotation)) *
+			DirectX::XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&radianRotation)) *
 			DirectX::XMMatrixTranslationFromVector(XMLoadFloat3(&m_translation));
 	}
 

@@ -33,8 +33,11 @@ namespace Destiny
 		GET(Transform, transform);
 		void												set_transform(Transform transform);
 		DirectX::XMFLOAT3									get_translation();
+		void												set_translation(const DirectX::XMFLOAT3& translation);
 		DirectX::XMFLOAT3									get_rotation();
+		void												set_rotation(const DirectX::XMFLOAT3& rotation);
 		DirectX::XMFLOAT3									get_scale();
+		void												set_scale(const DirectX::XMFLOAT3& scale);
 		DirectX::XMMATRIX									getInverseWorldMatrix();
 	private:
 		void												onEnterScene();
@@ -68,14 +71,32 @@ namespace Destiny
 		return m_transform.get_translation();
 	}
 
+	inline void Node::set_translation(const DirectX::XMFLOAT3& translation)
+	{
+		m_transform.set_translation(translation);
+		onNodeTransformChanged();
+	}
+
 	inline DirectX::XMFLOAT3 Node::get_rotation()
 	{
 		return m_transform.get_rotation();
 	}
 
+	inline void Node::set_rotation(const DirectX::XMFLOAT3& rotation)
+	{
+		m_transform.set_rotation(rotation);
+		onNodeTransformChanged();
+	}
+
 	inline DirectX::XMFLOAT3 Node::get_scale()
 	{
 		return m_transform.get_scale();
+	}
+
+	inline void Node::set_scale(const DirectX::XMFLOAT3& scale)
+	{
+		m_transform.set_scale(scale);
+		onNodeTransformChanged();
 	}
 
 	inline DirectX::XMMATRIX Node::getInverseWorldMatrix()

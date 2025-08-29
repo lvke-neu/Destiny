@@ -37,6 +37,7 @@ namespace Destiny
 		std::shared_ptr<ThreadPool>			getThreadPool();
 		std::shared_ptr<GraphicsSystem>		getGraphicsSystem();
 		std::shared_ptr<SceneManager>		getSceneManager();
+		std::shared_ptr<PhysicsSystem>		getPhysicsSystem();
 	private:
 		std::shared_ptr<Timer>				m_timer;
 		std::shared_ptr<LogManager>			m_logManager;
@@ -76,5 +77,10 @@ namespace Destiny
 	inline std::shared_ptr<SceneManager> Engine::getSceneManager()
 	{
 		return m_sceneManager;
+	}
+
+	inline std::shared_ptr<PhysicsSystem> Engine::getPhysicsSystem()
+	{
+		return m_physicsSystem;
 	}
 }

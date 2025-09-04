@@ -12,26 +12,38 @@
 #include "Graphics/ComputerCommand.h"
 #include "Graphics/RenderSystem.h"
 #include "Math/Math.h"
+#include "ConstructClusterComponent.h"
 #include "SceneAABBCalculatorComponent.h"
 #include "MortonCodesCalculatorComponent.h"
 #include "BitonicSortComponent.h"
 #include "ConstructHierarchyComponent.h"
 #include "ConstructAABBPassComponent.h"
 #include "ApplyBvhComponent.h"
+#include "ApplyBvhComponent2.h"
 #include "../BoxVisualizationComponent.h"
 #include <numeric> 
 
 namespace Destiny
 {
 	GpuBvh2BuilderComponent::GpuBvh2BuilderComponent() :
+		m_constructClusterComponent(std::make_shared<ConstructClusterComponent>()),
 		m_sceneAABBCalculatorComponent(std::make_shared<SceneAABBCalculatorComponent>()),
 		m_mortonCodesCalculatorComponent(std::make_shared<MortonCodesCalculatorComponent>()),
 		m_bitonicSortComponent(std::make_shared<BitonicSortComponent>()),
 		m_constructHierarchyComponent(std::make_shared<ConstructHierarchyComponent>()),
 		m_constructAABBPassComponent(std::make_shared<ConstructAABBPassComponent>()),
-		m_applyBvhComponent(std::make_shared<ApplyBvhComponent>())
+		m_applyBvhComponent(std::make_shared<ApplyBvhComponent>()),
+		m_applyBvhComponent2(std::make_shared<ApplyBvhComponent2>())
 	{
-		m_aabbs = GenerateTrulyRandomAABBs(100000);
+		/*
+			注意：1、stack buffer 需要线程合理分配
+				  2、stack buffer 大小需要重新计算
+				  
+
+
+
+		*/
+		m_aabbs = GenerateTrulyRandomAABBs(1000000);
 		//m_aabbs =
 		//{
 		//	{
@@ -106,17 +118,35 @@ namespace Destiny
 			std::to_string(min.x), std::to_string(min.y), std::to_string(min.z),
 			std::to_string(max.x), std::to_string(max.y), std::to_string(max.z));
 
+		//m_boxVisualizationComponents.push_back(std::make_shared<BoxVisualizationComponent>());
+
+		//DirectX::XMFLOAT3 center;
+		//center.x = (min.x + max.x) / 2;
+		//center.y = (min.y + max.y) / 2;
+		//center.z = (min.z + max.z) / 2;
+
+		//DirectX::XMFLOAT3 extent;
+		//extent.x = (min.x - max.x) / 2;
+		//extent.y = (min.y - max.y) / 2;
+		//extent.z = (min.z - max.z) / 2;
+
+		//m_boxVisualizationComponents.back()->modifyMesh({ center,extent });
+		//m_boxVisualizationComponents.back()->set_serializable(false);
+
+
+		//m_constructClusterComponent->init(m_aabbs);
 		m_sceneAABBCalculatorComponent->init(m_aabbs);
 		m_mortonCodesCalculatorComponent->init(m_aabbs, m_sceneAABBCalculatorComponent->m_outputBuffer);
 		m_bitonicSortComponent->init((unsigned int)m_aabbs.size(), m_mortonCodesCalculatorComponent->m_outputMortonCodesBuffer, m_mortonCodesCalculatorComponent->m_outputIndicesBuffer);
 		m_constructHierarchyComponent->init((unsigned int)m_aabbs.size(), m_mortonCodesCalculatorComponent->m_outputMortonCodesBuffer);
 		m_constructAABBPassComponent->init(m_aabbs, m_constructHierarchyComponent->m_hierarchyBuffer, m_mortonCodesCalculatorComponent->m_outputIndicesBuffer);
-		m_applyBvhComponent->init((unsigned int)m_aabbs.size(), m_constructAABBPassComponent->m_outputBVH, m_constructAABBPassComponent->m_hierarchyBuffer, m_mortonCodesCalculatorComponent->m_outputIndicesBuffer);
+		//m_applyBvhComponent->init((unsigned int)m_aabbs.size(), m_constructAABBPassComponent->m_outputBVH, m_constructAABBPassComponent->m_hierarchyBuffer, m_mortonCodesCalculatorComponent->m_outputIndicesBuffer);
+		m_applyBvhComponent2->init((unsigned int)m_aabbs.size(), m_constructAABBPassComponent->m_outputBVH, m_mortonCodesCalculatorComponent->m_outputIndicesBuffer);
 	}
 
 	GpuBvh2BuilderComponent::~GpuBvh2BuilderComponent()
 	{
-		
+
 	}
 
 	static UINT GetNumberOfInternalNodes(UINT numLeaves)
@@ -163,32 +193,32 @@ namespace Destiny
 		LOG_TRACE("=====================copy structure count========================================");
 		unsigned int copytStructureCount = 0;
 		data.reset(new Blob(sizeof(unsigned int)));
-		if (m_applyBvhComponent->m_cullElementCount->getBuffer(data))
+		if (m_applyBvhComponent2->m_cullElementCount->getBuffer(data))
 		{
 			memcpy_s(&copytStructureCount, sizeof(unsigned int), data->getData(), sizeof(unsigned int));
 		}
 		LOG_TRACE("CopytStructureCount:{0}", std::to_string(copytStructureCount));
 
-		LOG_TRACE("=====================cull elment========================================");
-		std::vector<unsigned int> cullElements;
-		cullElements.resize(numElements);
-		data.reset(new Blob(numElements * sizeof(unsigned int)));
-		if (m_applyBvhComponent->m_cullElement->getBuffer(data))
-		{
-			memcpy_s(cullElements.data(), numElements * sizeof(unsigned int), data->getData(), numElements * sizeof(unsigned int));
-		}
+		//LOG_TRACE("=====================cull elment========================================");
+		//std::vector<unsigned int> cullElements;
+		//cullElements.resize(numElements);
+		//data.reset(new Blob(numElements * sizeof(unsigned int)));
+		//if (m_applyBvhComponent2->m_cullElement->getBuffer(data))
+		//{
+		//	memcpy_s(cullElements.data(), numElements * sizeof(unsigned int), data->getData(), numElements * sizeof(unsigned int));
+		//}
 
-		std::string resStr;
-		for (unsigned int i = 0; i < copytStructureCount; i++)
-		{
-			resStr += std::to_string(cullElements[i]);
-			if (i != copytStructureCount - 1)
-			{
-				resStr += ",";
-			}
-		}
+		//std::string resStr;
+		//for (unsigned int i = 0; i < copytStructureCount; i++)
+		//{
+		//	resStr += std::to_string(cullElements[i]);
+		//	if (i != copytStructureCount - 1)
+		//	{
+		//		resStr += ",";
+		//	}
+		//}
 
-		LOG_TRACE(resStr);
+		//LOG_TRACE(resStr);
 	}
 
 	void GpuBvh2BuilderComponent::onAddToNode()
@@ -200,11 +230,13 @@ namespace Destiny
 		//{
 		//	node->addComponent(boxVisualizationComponent);
 		//}
-		node->addComponent(m_applyBvhComponent);
+		//node->addComponent(m_applyBvhComponent);
+		node->addComponent(m_applyBvhComponent2);
 	}
 
 	void GpuBvh2BuilderComponent::onLeaveScene()
 	{
+		m_constructClusterComponent->onLeaveScene();
 		m_sceneAABBCalculatorComponent->onLeaveScene();
 		m_mortonCodesCalculatorComponent->onLeaveScene();
 		m_bitonicSortComponent->onLeaveScene();

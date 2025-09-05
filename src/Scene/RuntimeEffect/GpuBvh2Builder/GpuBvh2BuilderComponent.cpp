@@ -12,7 +12,6 @@
 #include "Graphics/ComputerCommand.h"
 #include "Graphics/RenderSystem.h"
 #include "Math/Math.h"
-#include "ConstructClusterComponent.h"
 #include "SceneAABBCalculatorComponent.h"
 #include "MortonCodesCalculatorComponent.h"
 #include "BitonicSortComponent.h"
@@ -26,7 +25,6 @@
 namespace Destiny
 {
 	GpuBvh2BuilderComponent::GpuBvh2BuilderComponent() :
-		m_constructClusterComponent(std::make_shared<ConstructClusterComponent>()),
 		m_sceneAABBCalculatorComponent(std::make_shared<SceneAABBCalculatorComponent>()),
 		m_mortonCodesCalculatorComponent(std::make_shared<MortonCodesCalculatorComponent>()),
 		m_bitonicSortComponent(std::make_shared<BitonicSortComponent>()),
@@ -35,14 +33,6 @@ namespace Destiny
 		m_applyBvhComponent(std::make_shared<ApplyBvhComponent>()),
 		m_applyBvhComponent2(std::make_shared<ApplyBvhComponent2>())
 	{
-		/*
-			注意：1、stack buffer 需要线程合理分配
-				  2、stack buffer 大小需要重新计算
-				  
-
-
-
-		*/
 		m_aabbs = GenerateTrulyRandomAABBs(1000000);
 		//m_aabbs =
 		//{
@@ -236,7 +226,6 @@ namespace Destiny
 
 	void GpuBvh2BuilderComponent::onLeaveScene()
 	{
-		m_constructClusterComponent->onLeaveScene();
 		m_sceneAABBCalculatorComponent->onLeaveScene();
 		m_mortonCodesCalculatorComponent->onLeaveScene();
 		m_bitonicSortComponent->onLeaveScene();

@@ -5,7 +5,6 @@
 
 namespace Destiny
 {
-	class ConstructClusterComponent;
 	class SceneAABBCalculatorComponent;
 	class MortonCodesCalculatorComponent;
 	class BitonicSortComponent;
@@ -27,7 +26,6 @@ namespace Destiny
 		virtual void onAddToNode() override;
 		virtual void onLeaveScene() override;
 	private:
-		std::shared_ptr<ConstructClusterComponent> m_constructClusterComponent;
 		std::shared_ptr<SceneAABBCalculatorComponent> m_sceneAABBCalculatorComponent;
 		std::shared_ptr<MortonCodesCalculatorComponent> m_mortonCodesCalculatorComponent;
 		std::shared_ptr<BitonicSortComponent> m_bitonicSortComponent;

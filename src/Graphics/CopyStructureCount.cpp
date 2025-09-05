@@ -19,7 +19,12 @@ namespace Destiny
 		}
 
 		auto creationParamDst = std::static_pointer_cast<TextureCreationParam>(dstTexture->getCreationParam());
-		if (!creationParamDst || creationParamDst->m_type != TextureCreationParam::CreateTextureType::CreateBuffer)
+		if (!creationParamDst || 
+			(
+				creationParamDst->m_type != TextureCreationParam::CreateTextureType::CreateBuffer &&
+				creationParamDst->m_type != TextureCreationParam::CreateTextureType::CreateRaw
+			)
+			)
 		{
 			return;
 		}

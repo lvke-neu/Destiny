@@ -51,7 +51,6 @@ float Max(float t1, float t2, float t3)
 RWStructuredBuffer<AABB> AABBBuffer : register(u0);
 RWStructuredBuffer<uint> ClusterCounts: register(u1);
 
-
 [numthreads(1024, 1, 1)]
 void CS(uint3 dispatchThreadID : SV_DispatchThreadID)
 {

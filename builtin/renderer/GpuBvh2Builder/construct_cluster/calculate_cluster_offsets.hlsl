@@ -2,15 +2,16 @@
 #include "../common/RaytracingHlslCompat.h"
 
 RWStructuredBuffer<AABB> AABBBuffer : register(u0);
-RWStructuredBuffer<uint> ClusterCounts: register(u1);
-RWStructuredBuffer<uint> ClusterOffsets: register(u2);
-
+RWStructuredBuffer<uint> ClusterCounts : register(u1);
+RWStructuredBuffer<uint> ClusterOffsets : register(u2);
+AppendStructuredBuffer<uint> ClusterIndexes : register(u3);
 
 [numthreads(1024, 1, 1)]
 void CS(uint3 dispatchThreadID : SV_DispatchThreadID)
 {
     uint idx = dispatchThreadID.x;
-    if (idx >= AABBBuffer.Length)
+
+    if (idx >= ClusterCounts.Length)
     {
         return;
     }
@@ -33,4 +34,5 @@ void CS(uint3 dispatchThreadID : SV_DispatchThreadID)
     }
 
     ClusterOffsets[idx] = res;
+    ClusterIndexes.Append(idx);
 }

@@ -43,7 +43,7 @@ namespace Destiny
 		computerCommand->setDebugName(L"test computer shader2");
 		computerCommand->setComputerEffectPath("builtin://renderer/computer_shader2.hlsl");
 
-		computerCommand->setUnorderedAccessViews(uavs);
+		computerCommand->setUnorderedAccessViews(uavs, {0,0});
 		computerCommand->setThreadGroupCount(1, 1, 1);
 
 		std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->addBeforePipelineCommand(computerCommand);

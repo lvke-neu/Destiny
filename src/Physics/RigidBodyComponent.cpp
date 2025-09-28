@@ -54,6 +54,8 @@ namespace Destiny
 
 	void RigidBodyComponent::onAddToNode()
 	{
+		VisualComponent::onAddToNode();
+
 		if (!m_node)
 		{
 			return;
@@ -79,6 +81,8 @@ namespace Destiny
 
 	void RigidBodyComponent::onNodeTransformChanged()
 	{
+		VisualComponent::onNodeTransformChanged();
+
 		if (Engine::GetInstance()->getPhysicsSystem()->get_bSimulation())
 		{
 			return;
@@ -142,65 +146,11 @@ namespace Destiny
 		m_btRigidBody->setRestitution(m_restitution);
 	}
 
-	RigidBodyBoxComponent::RigidBodyBoxComponent() :
-		m_boxHalfExtents({ 0.5f, 0.5f, 0.5f })
-	{
-		m_btCollisionShape = std::make_shared<btBoxShape>(btVector3(m_boxHalfExtents.x, m_boxHalfExtents.y, m_boxHalfExtents.z));
-	}
-
-	RigidBodyBoxComponent::~RigidBodyBoxComponent()
-	{
-
-	}
-
-	void RigidBodyBoxComponent::set_boxHalfExtents(DirectX::XMFLOAT3 boxHalfExtents)
-	{
-		if (Engine::GetInstance()->getPhysicsSystem()->get_bSimulation())
-		{
-			return;
-		}
-
-		m_boxHalfExtents = boxHalfExtents;
-		m_btCollisionShape = std::make_shared<btBoxShape>(btVector3(boxHalfExtents.x, boxHalfExtents.y, boxHalfExtents.z));
-		
-		reConstructRigidBody();
-	}
-
-	RigidBodyStaticPlaneComponent::RigidBodyStaticPlaneComponent() :
-		m_position(0.0f)
-	{
-		m_btCollisionShape = std::make_shared<btStaticPlaneShape>(btVector3(0.0f, 1.0f, 0.0f), m_position);
-	}
-
-	RigidBodyStaticPlaneComponent::~RigidBodyStaticPlaneComponent()
-	{
-
-	}
-
-	void RigidBodyStaticPlaneComponent::set_position(float position)
-	{
-		if (Engine::GetInstance()->getPhysicsSystem()->get_bSimulation())
-		{
-			return;
-		}
-
-		m_position = position;
-		m_btCollisionShape = std::make_shared<btStaticPlaneShape>(btVector3(0.0f, 1.0f, 0.0f), m_position);
-		
-		reConstructRigidBody();
-	}
-
 	RTTR_REGISTRATION
 	{
 		rttr::registration::class_<RigidBodyComponent>("RigidBodyComponent")
 			.constructor<>()
 			.property("mass", &RigidBodyComponent::get_mass, &RigidBodyComponent::set_mass)
 			.property("restitution", &RigidBodyComponent::get_restitution, &RigidBodyComponent::set_restitution);
-		rttr::registration::class_<RigidBodyBoxComponent>("RigidBodyBoxComponent")
-			.constructor<>()
-			.property("boxHalfExtents", &RigidBodyBoxComponent::get_boxHalfExtents, &RigidBodyBoxComponent::set_boxHalfExtents);
-		rttr::registration::class_<RigidBodyStaticPlaneComponent>("RigidBodyStaticPlaneComponent")
-			.constructor<>()
-			.property("position", &RigidBodyStaticPlaneComponent::get_position, &RigidBodyStaticPlaneComponent::set_position);
 	}
 }

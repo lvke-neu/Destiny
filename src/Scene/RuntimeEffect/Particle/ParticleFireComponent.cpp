@@ -49,7 +49,7 @@ namespace Destiny
 
 			unsigned int numGroups = (m_maxParticlesCount + 63) / 64;
 			std::vector<std::shared_ptr<Texture>> uavs = { m_particlesBuffer };
-			m_particleUpdateCS->setUnorderedAccessViews(uavs);
+			m_particleUpdateCS->setUnorderedAccessViews(uavs, {0});
 			m_particleUpdateCS->setThreadGroupCount(numGroups, 1, 1);
 		}
 

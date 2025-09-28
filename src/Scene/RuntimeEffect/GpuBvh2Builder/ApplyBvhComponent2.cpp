@@ -113,7 +113,7 @@ namespace Destiny
 
 		m_applyBvhTopLevelCS = std::make_shared<ComputerCommand>();
 		m_applyBvhTopLevelCS->setComputerEffectPath("builtin://renderer/GpuBvh2Builder/apply_bvh2/apply_bvh_top_level.hlsl");
-		m_applyBvhTopLevelCS->setUnorderedAccessViews(uavs);
+		m_applyBvhTopLevelCS->setUnorderedAccessViews(uavs, {0,0,0});
 		m_applyBvhTopLevelCS->setThreadGroupCount(1, 1, 1);
 
 		m_graphicsCommandList->addGraphicsCommand(m_applyBvhTopLevelCS);
@@ -132,7 +132,7 @@ namespace Destiny
 		
 		m_applyBvhMiddleLevelCS = std::make_shared<ComputerCommand>();
 		m_applyBvhMiddleLevelCS->setComputerEffectPath("builtin://renderer/GpuBvh2Builder/apply_bvh2/apply_bvh_middle_level.hlsl");
-		m_applyBvhMiddleLevelCS->setUnorderedAccessViews(uavs);
+		m_applyBvhMiddleLevelCS->setUnorderedAccessViews(uavs, {0,0,0,0});
 		m_applyBvhMiddleLevelCS->setIndirectMode(true, m_indirectBuffer, { 0 });
 
 		m_graphicsCommandList->addGraphicsCommand(m_copyStructureCount);
@@ -152,7 +152,7 @@ namespace Destiny
 
 		m_applyBvhBottomLevelCS = std::make_shared<ComputerCommand>();
 		m_applyBvhBottomLevelCS->setComputerEffectPath("builtin://renderer/GpuBvh2Builder/apply_bvh2/apply_bvh_bottom_level.hlsl");
-		m_applyBvhBottomLevelCS->setUnorderedAccessViews(uavs);
+		m_applyBvhBottomLevelCS->setUnorderedAccessViews(uavs, {0,0,0,0,0});
 		m_applyBvhBottomLevelCS->setConstant("NumberOfElements", elementCount);
 		m_applyBvhBottomLevelCS->setIndirectMode(true, m_indirectBuffer2, { 0 });
 

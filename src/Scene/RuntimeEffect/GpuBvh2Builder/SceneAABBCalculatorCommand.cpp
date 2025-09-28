@@ -58,8 +58,8 @@ namespace Destiny
 				uavs[0] = m_scratchBuffers[inputScratchBufferIndex];
 			}
 
-			m_calculateSceneAABBFromBVHs->setUnorderedAccessViews(uavs);
-			m_calculateSceneAABBFromAABBs->setUnorderedAccessViews(uavs);
+			m_calculateSceneAABBFromBVHs->setUnorderedAccessViews(uavs, {0,0});
+			m_calculateSceneAABBFromAABBs->setUnorderedAccessViews(uavs, { 0,0 });
 
 			const UINT dispatchWidth = Math::DivideAndRoundUp<UINT>(threadsNeeded, THREAD_GROUP_1D_WIDTH);
 			m_calculateSceneAABBFromBVHs->setThreadGroupCount(dispatchWidth, 1, 1);

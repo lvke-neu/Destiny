@@ -142,8 +142,8 @@ namespace Destiny
 		};
 
 		{
-			m_prepareForComputeAABBs->setUnorderedAccessViews(uavs);
-			m_computeAABBs->setUnorderedAccessViews(uavs);
+			m_prepareForComputeAABBs->setUnorderedAccessViews(uavs, {0,0,0,0,0,0,0});
+			m_computeAABBs->setUnorderedAccessViews(uavs, { 0,0,0,0,0,0,0 });
 
 			bool isEmptyAccelerationStructure = m_numElements == 0;
 			unsigned int NumberOfElements = m_numElements;

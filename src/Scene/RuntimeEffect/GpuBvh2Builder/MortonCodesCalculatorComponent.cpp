@@ -74,7 +74,7 @@ namespace Destiny
 		}
 
 		std::vector<std::shared_ptr<Texture>> uavs = { m_outputIndicesBuffer,  m_outputMortonCodesBuffer, m_sceneAABB, m_inputBuffer };
-		m_calcuateMortonCodesForAABBs->setUnorderedAccessViews(uavs);
+		m_calcuateMortonCodesForAABBs->setUnorderedAccessViews(uavs, {0,0,0,0});
 		m_calcuateMortonCodesForAABBs->setConstant("Constants", (unsigned int)aabbs.size());
 
 		const unsigned int dispatchWidth = Math::DivideAndRoundUp<unsigned int>((unsigned int)aabbs.size(), THREAD_GROUP_1D_WIDTH);
@@ -147,7 +147,7 @@ namespace Destiny
 		}
 
 		std::vector<std::shared_ptr<Texture>> uavs = { m_outputIndicesBuffer,  m_outputMortonCodesBuffer, m_sceneAABB, m_inputBuffer };
-		m_calcuateMortonCodesForAABBs->setUnorderedAccessViews(uavs);
+		m_calcuateMortonCodesForAABBs->setUnorderedAccessViews(uavs, {0,0,0,0});
 		m_calcuateMortonCodesForAABBs->setConstant("Constants", (unsigned int)aabbs.size());
 
 		const unsigned int dispatchWidth = Math::DivideAndRoundUp<unsigned int>((unsigned int)aabbs.size(), THREAD_GROUP_1D_WIDTH);

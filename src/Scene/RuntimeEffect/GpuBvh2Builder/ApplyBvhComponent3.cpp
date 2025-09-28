@@ -80,13 +80,13 @@ namespace Destiny
 
 		m_cullClusters = std::make_shared<ComputerCommand>();
 		m_cullClusters->setComputerEffectPath("builtin://renderer/GpuBvh2Builder/apply_bvh3/cull_clusters.hlsl");
-		m_cullClusters->setUnorderedAccessViews(uavs);
+		m_cullClusters->setUnorderedAccessViews(uavs, {0,0});
 		m_cullClusters->setIndirectMode(true, m_indirectBuffer, { 0 });
 
 		uavs = { m_clustersSmallers, m_commitClusters, m_aabbuffer, m_clusterOffsets, m_clusterElements, m_commitElements };
 		m_cullElements = std::make_shared<ComputerCommand>();
 		m_cullElements->setComputerEffectPath("builtin://renderer/GpuBvh2Builder/apply_bvh3/cull_elements.hlsl");
-		m_cullElements->setUnorderedAccessViews(uavs);
+		m_cullElements->setUnorderedAccessViews(uavs, {0,0,0,0,0,0});
 		m_cullElements->setIndirectMode(true, m_indirectBuffer2, { 0 });
 
 

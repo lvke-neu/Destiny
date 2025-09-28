@@ -54,13 +54,24 @@ namespace Destiny
 		
 		UINT clearCounts[1] = { 0 };
 		deviceContext->CSSetShader(m_computeShader, nullptr, 0);
-		for (int i = 0; i < m_uavs.size(); i++)
+		if (m_uavs.size() == m_clearUint.size())
 		{
-			if (m_uavs[i])
+			for (int i = 0; i < m_uavs.size(); i++)
 			{
-				deviceContext->CSSetUnorderedAccessViews(i, 1, m_uavs[i]->getUnorderedAccessView(), clearCounts);
+				if (m_uavs[i])
+				{
+					if (m_clearUint[i] == 0)
+					{
+						deviceContext->CSSetUnorderedAccessViews(i, 1, m_uavs[i]->getUnorderedAccessView(), clearCounts);
+					}
+					else
+					{
+						deviceContext->CSSetUnorderedAccessViews(i, 1, m_uavs[i]->getUnorderedAccessView(), nullptr);
+					}
+				}
 			}
 		}
+
 		for (const auto& srv : m_srvs)
 		{
 			if (srv.second.second)
@@ -157,9 +168,10 @@ namespace Destiny
 		return m_uavs[index];
 	}
 
-	void ComputerCommand::setUnorderedAccessViews(const std::vector<std::shared_ptr<Texture>>& uavs)
+	void ComputerCommand::setUnorderedAccessViews(const std::vector<std::shared_ptr<Texture>>& uavs, const std::vector<unsigned int>& clearUint)
 	{
 		m_uavs = uavs;
+		m_clearUint = clearUint;
 	}
 
 	void ComputerCommand::setShaderResourceView(const char* name, std::shared_ptr<Texture> texture)

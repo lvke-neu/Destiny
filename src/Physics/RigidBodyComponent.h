@@ -1,5 +1,5 @@
 #pragma once
-#include "Engine/Component.h"
+#include "Graphics/VisualComponent.h"
 #include "Engine/Utility.h"
 #include <DirectXMath.h>
 
@@ -8,9 +8,9 @@ class btCollisionShape;
 class btMotionState;
 namespace Destiny
 {
-	class RigidBodyComponent : public Component , public std::enable_shared_from_this<RigidBodyComponent>
+	class RigidBodyComponent : public VisualComponent
 	{
-		RTTR_ENABLE(Component);
+		RTTR_ENABLE(VisualComponent);
 	public:
 		RigidBodyComponent();
 		virtual ~RigidBodyComponent();
@@ -40,30 +40,4 @@ namespace Destiny
 	{
 		return m_btRigidBody;
 	}
-
-	class RigidBodyBoxComponent : public RigidBodyComponent
-	{
-		RTTR_ENABLE(RigidBodyComponent);
-	public:
-		RigidBodyBoxComponent();
-		virtual ~RigidBodyBoxComponent();
-	public:
-		GET(DirectX::XMFLOAT3, boxHalfExtents);
-		void set_boxHalfExtents(DirectX::XMFLOAT3 boxHalfExtents);
-	private:
-		DirectX::XMFLOAT3 m_boxHalfExtents;
-	};
-
-	class RigidBodyStaticPlaneComponent : public RigidBodyComponent
-	{
-		RTTR_ENABLE(RigidBodyComponent);
-	public:
-		RigidBodyStaticPlaneComponent();
-		virtual ~RigidBodyStaticPlaneComponent();
-	public:
-		GET(float, position);
-		void set_position(float position);
-	private:
-		float m_position;
-	};
 }

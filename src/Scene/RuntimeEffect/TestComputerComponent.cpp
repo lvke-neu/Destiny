@@ -50,7 +50,7 @@ namespace Destiny
 		computerCommand->setComputerEffectPath("builtin://renderer/computer_shader.hlsl");
 		computerCommand->setShaderResourceView("t_texture0", texture0);
 		computerCommand->setShaderResourceView("t_texture1", texture1);
-		computerCommand->setUnorderedAccessViews(uavs);
+		computerCommand->setUnorderedAccessViews(uavs, {0});
 		computerCommand->setThreadGroupCount(32, 32, 1);
 
 		std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->addBeforePipelineCommand(computerCommand);

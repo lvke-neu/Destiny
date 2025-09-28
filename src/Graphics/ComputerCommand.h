@@ -27,7 +27,7 @@ namespace Destiny
 		void setComputerEffectPath(const char* path);
 		void setThreadGroupCount(unsigned int threadGroupCountX, unsigned int threadGroupCountY, unsigned int threadGroupCountZ);
 		std::shared_ptr<Texture> getUnorderedAccessViews(int index);
-		void setUnorderedAccessViews(const std::vector<std::shared_ptr<Texture>>& uavs);
+		void setUnorderedAccessViews(const std::vector<std::shared_ptr<Texture>>& uavs, const std::vector<unsigned int>& clearUint);
 		void setShaderResourceView(const char* name, std::shared_ptr<Texture> texture);
 		template<typename T>
 		void							setConstant(const char* name, T value);
@@ -50,6 +50,8 @@ namespace Destiny
 
 		std::unordered_map<std::string, std::shared_ptr<ConstantBuffer>> m_constantBuffers;
 		std::unordered_map<std::string, std::string> m_variableLinkConstant;
+
+		std::vector<unsigned int> m_clearUint;
 	};
 
 	template<typename T>

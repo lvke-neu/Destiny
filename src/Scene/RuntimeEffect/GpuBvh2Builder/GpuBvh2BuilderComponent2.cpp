@@ -30,68 +30,68 @@ namespace Destiny
 		m_constructClusterComponent(std::make_shared<ConstructClusterComponent>()),
 		m_applyBvhComponent3(std::make_shared<ApplyBvhComponent3>())
 	{
-		m_aabbs = GenerateTrulyRandomAABBs(4015);
+		//m_aabbs = GenerateTrulyRandomAABBs(100000);
 
-		//AABB tmp0 =
-		//{
-		//		{-5.0f, -5.0f, 95.0f},
-		//		{5.0f, 5.0f,105.0f}
-		//};
+		AABB tmp0 =
+		{
+				{-5.0f, -5.0f, 95.0f},
+				{5.0f, 5.0f,105.0f}
+		};
 
-		//AABB tmp1 =
-		//{
-		//		{-5.0f, -5.0f, -105.0f},
-		//		{5.0f, 5.0f,-95.0f}
-		//};
-		//AABB tmp2 =
-		//{
-		//		{-105.0f, -5.0f, -5.0f},
-		//		{-95.0f, 5.0f,5.0f}
-		//};
-		//AABB tmp3 =
-		//{
-		//		{95.0f, -5.0f, -5.0f},
-		//		{105.0f, 5.0f,5.0f}
-		//};
+		AABB tmp1 =
+		{
+				{-5.0f, -5.0f, -105.0f},
+				{5.0f, 5.0f,-95.0f}
+		};
+		AABB tmp2 =
+		{
+				{-105.0f, -5.0f, -5.0f},
+				{-95.0f, 5.0f,5.0f}
+		};
+		AABB tmp3 =
+		{
+				{95.0f, -5.0f, -5.0f},
+				{105.0f, 5.0f,5.0f}
+		};
 
 
-		//for (int i = 0; i < 1; i++)
-		//{
-		//	m_aabbs.push_back(tmp0);
-		//}
+		for (int i = 0; i < 1; i++)
+		{
+			m_aabbs.push_back(tmp0);
+		}
 
-		//for (int i = 0; i < 1; i++)
-		//{
-		//	m_aabbs.push_back(tmp1);
-		//}
+		for (int i = 0; i < 1; i++)
+		{
+			m_aabbs.push_back(tmp1);
+		}
 
-		//for (int i = 0; i < 1; i++)
-		//{
-		//	m_aabbs.push_back(tmp2);
-		//}
+		for (int i = 0; i < 1; i++)
+		{
+			m_aabbs.push_back(tmp2);
+		}
 
-		//for (int i = 0; i < 1; i++)
-		//{
-		//	m_aabbs.push_back(tmp3);
-		//}
+		for (int i = 0; i < 1; i++)
+		{
+			m_aabbs.push_back(tmp3);
+		}
 
-		//for (int i = 0; i < m_aabbs.size(); i++)
-		//{
-		//	m_boxVisualizationComponents.push_back(std::make_shared<BoxVisualizationComponent>());
+		for (int i = 0; i < m_aabbs.size(); i++)
+		{
+			m_boxVisualizationComponents.push_back(std::make_shared<BoxVisualizationComponent>());
 
-		//	DirectX::XMFLOAT3 center;
-		//	center.x = (m_aabbs[i].min.x + m_aabbs[i].max.x) / 2;
-		//	center.y = (m_aabbs[i].min.y + m_aabbs[i].max.y) / 2;
-		//	center.z = (m_aabbs[i].min.z + m_aabbs[i].max.z) / 2;
+			DirectX::XMFLOAT3 center;
+			center.x = (m_aabbs[i].min.x + m_aabbs[i].max.x) / 2;
+			center.y = (m_aabbs[i].min.y + m_aabbs[i].max.y) / 2;
+			center.z = (m_aabbs[i].min.z + m_aabbs[i].max.z) / 2;
 
-		//	DirectX::XMFLOAT3 extent;
-		//	extent.x = (m_aabbs[i].min.x - m_aabbs[i].max.x) / 2;
-		//	extent.y = (m_aabbs[i].min.y - m_aabbs[i].max.y) / 2;
-		//	extent.z = (m_aabbs[i].min.z - m_aabbs[i].max.z) / 2;
+			DirectX::XMFLOAT3 extent;
+			extent.x = (m_aabbs[i].min.x - m_aabbs[i].max.x) / 2;
+			extent.y = (m_aabbs[i].min.y - m_aabbs[i].max.y) / 2;
+			extent.z = (m_aabbs[i].min.z - m_aabbs[i].max.z) / 2;
 
-		//	m_boxVisualizationComponents[i]->modifyMesh({ center,extent });
-		//	m_boxVisualizationComponents[i]->set_serializable(false);
-		//}
+			m_boxVisualizationComponents[i]->modifyMesh({ center,extent });
+			m_boxVisualizationComponents[i]->set_serializable(false);
+		}
 
 		DirectX::XMFLOAT3 min = { FLT_MAX,FLT_MAX,FLT_MAX };
 		DirectX::XMFLOAT3 max = { -FLT_MAX,-FLT_MAX ,-FLT_MAX };

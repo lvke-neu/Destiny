@@ -75,7 +75,7 @@ namespace Destiny
 		
 		m_applyBvhCS = std::make_shared<ComputerCommand>();
 		m_applyBvhCS->setComputerEffectPath("builtin://renderer/GpuBvh2Builder/apply_bvh/apply_bvh.hlsl");
-		m_applyBvhCS->setUnorderedAccessViews(uavs);
+		m_applyBvhCS->setUnorderedAccessViews(uavs, {0,0,0,0,0});
 		m_applyBvhCS->setThreadGroupCount(1, 1, 1);
 		m_applyBvhCS->setConstant("NumberOfElements", elementCount);
 

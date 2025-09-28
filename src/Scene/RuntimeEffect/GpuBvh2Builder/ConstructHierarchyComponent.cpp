@@ -66,7 +66,7 @@ namespace Destiny
 			m_outputMortonCodesBuffer,  m_hierarchyBuffer
 		};
 		const UINT dispatchWidth = Math::DivideAndRoundUp<UINT>(m_numElements, THREAD_GROUP_1D_WIDTH);
-		m_buildSplits->setUnorderedAccessViews(uavs); 
+		m_buildSplits->setUnorderedAccessViews(uavs, {0,0});
 		m_buildSplits->setConstant("Constants", m_numElements);
 		m_buildSplits->setThreadGroupCount(dispatchWidth, 1, 1);
 		

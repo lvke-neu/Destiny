@@ -100,30 +100,30 @@ namespace Destiny
 		m_calculateClusterCounts = std::make_shared<ComputerCommand>();
 		m_calculateClusterCounts->setDebugName(L"CalculateClusterCounts");
 		m_calculateClusterCounts->setComputerEffectPath("builtin://renderer/GpuBvh2Builder/construct_cluster/calculate_cluster_counts.hlsl");
-		m_calculateClusterCounts->setUnorderedAccessViews(uavs);
+		m_calculateClusterCounts->setUnorderedAccessViews(uavs, {1,0});
 		m_calculateClusterCounts->setThreadGroupCount(numGroupsX, 1, 1);
 
-		uavs = { m_aabbBuffer,  m_clusterCounts, m_clusterOffsets, m_clusterIndexes };
+		uavs = { m_aabbBuffer,  m_clusterCounts, m_clusterOffsets, m_clusterIndexes,m_clustersSmallers };
 		m_calculateClusterOffsets = std::make_shared<ComputerCommand>();
 		m_calculateClusterOffsets->setDebugName(L"CalculateClusterOffsets");
 		m_calculateClusterOffsets->setComputerEffectPath("builtin://renderer/GpuBvh2Builder/construct_cluster/calculate_cluster_offsets.hlsl");
-		m_calculateClusterOffsets->setUnorderedAccessViews(uavs);
+		m_calculateClusterOffsets->setUnorderedAccessViews(uavs, {1,0,0,0,1});
 		m_calculateClusterOffsets->setThreadGroupCount(1, 1, 1);
 
 		uavs = { m_aabbBuffer,  m_clusterCounts, m_clusterOffsets, m_clusterElements };
 		m_writeClusterElements = std::make_shared<ComputerCommand>();
 		m_writeClusterElements->setDebugName(L"WriteClusterElements");
 		m_writeClusterElements->setComputerEffectPath("builtin://renderer/GpuBvh2Builder/construct_cluster/write_cluster_elements.hlsl");
-		m_writeClusterElements->setUnorderedAccessViews(uavs);
+		m_writeClusterElements->setUnorderedAccessViews(uavs, {0,0,0,0});
 		m_writeClusterElements->setThreadGroupCount(numGroupsX, 1, 1);
 
 		
-		m_copyStructureCount->setDstAndSrcTexture(m_indirectBuffer, m_clusterIndexes);
+		m_copyStructureCount->setDstAndSrcTexture(m_indirectBuffer, m_clustersSmallers);
 		uavs = { m_aabbBuffer, m_clusterCounts, m_clusterOffsets,m_clusterIndexes,m_clusterElements,m_clustersSmallers };
 		m_writeCluster64 = std::make_shared<ComputerCommand>();
 		m_writeCluster64->setDebugName(L"WriteClusterSmallers");
 		m_writeCluster64->setComputerEffectPath("builtin://renderer/GpuBvh2Builder/construct_cluster/write_cluster_smaller_64.hlsl");
-		m_writeCluster64->setUnorderedAccessViews(uavs);
+		m_writeCluster64->setUnorderedAccessViews(uavs, {0,0,0,0,0,1});
 		m_writeCluster64->setIndirectMode(true, m_indirectBuffer, {0});
 
 		m_graphicsCommandList->addGraphicsCommand(m_clearUnorderedAccessView);

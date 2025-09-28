@@ -61,13 +61,13 @@ namespace Destiny
 				//	visualComponent->getVisual()->getMesh()->setBoundingBox(m_mergedAABB);
 				//}
 
-				auto boxVisualizationComponent = std::make_shared<BoxVisualizationComponent>();
-				boxVisualizationComponent->modifyMesh(visualComponent->getVisual()->getMesh()->getBoundingBox());
+				//auto boxVisualizationComponent = std::make_shared<BoxVisualizationComponent>();
+				//boxVisualizationComponent->modifyMesh(visualComponent->getVisual()->getMesh()->getBoundingBox());
 
-				auto boxVisualizationNode = std::make_shared<Node>("AABB Visualization");
-				boxVisualizationNode->set_serializable(false);
-				boxVisualizationNode->addComponent(boxVisualizationComponent);
-				boxVisualizationNode->addToParent(visualComponent->get_node());
+				//auto boxVisualizationNode = std::make_shared<Node>("AABB Visualization");
+				//boxVisualizationNode->set_serializable(false);
+				//boxVisualizationNode->addComponent(boxVisualizationComponent);
+				//boxVisualizationNode->addToParent(visualComponent->get_node());
 			}	
 		}
 	}

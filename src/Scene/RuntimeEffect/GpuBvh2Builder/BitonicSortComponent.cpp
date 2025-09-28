@@ -90,7 +90,7 @@ namespace Destiny
 		m_indirectArgsCS = std::make_shared<ComputerCommand>();
 		m_indirectArgsCS->setDebugName(L"IndirectArgsCS");
 		m_indirectArgsCS->setComputerEffectPath("builtin://renderer/GpuBvh2Builder/bitonic_sort/IndirectArgsCS.hlsl");
-		m_indirectArgsCS->setUnorderedAccessViews(uavs);
+		m_indirectArgsCS->setUnorderedAccessViews(uavs, {0});
 		m_indirectArgsCS->setThreadGroupCount(1, 1, 1);
 
 		m_graphicsCommandList->addGraphicsCommand(m_indirectArgsCS);
@@ -103,7 +103,7 @@ namespace Destiny
 		m_preSortCS = std::make_shared<ComputerCommand>();
 		m_preSortCS->setDebugName(L"PreSortCS");
 		m_preSortCS->setComputerEffectPath("builtin://renderer/GpuBvh2Builder/bitonic_sort/PreSortCS.hlsl");
-		m_preSortCS->setUnorderedAccessViews(uavs);
+		m_preSortCS->setUnorderedAccessViews(uavs, {0,0});
 		m_preSortCS->setIndirectMode(true, m_indirectArgsTexture, { 0 });
 
 		m_graphicsCommandList->addGraphicsCommand(m_preSortCS);
@@ -116,7 +116,7 @@ namespace Destiny
 		m_outerSortCS = std::make_shared<ComputerCommand>();
 		m_outerSortCS->setDebugName(L"OuterSortCS");
 		m_outerSortCS->setComputerEffectPath("builtin://renderer/GpuBvh2Builder/bitonic_sort/OuterSortCS.hlsl");
-		m_outerSortCS->setUnorderedAccessViews(uavs);
+		m_outerSortCS->setUnorderedAccessViews(uavs, {0,0});
 	}
 
 	void BitonicSortComponent::innerSortCS()
@@ -126,7 +126,7 @@ namespace Destiny
 		m_innerSortCS = std::make_shared<ComputerCommand>();
 		m_innerSortCS->setDebugName(L"InnerSort");
 		m_innerSortCS->setComputerEffectPath("builtin://renderer/GpuBvh2Builder/bitonic_sort/InnerSortCS.hlsl");
-		m_innerSortCS->setUnorderedAccessViews(uavs);
+		m_innerSortCS->setUnorderedAccessViews(uavs, {0,0});
 	}
 
 	void BitonicSortComponent::bitonicOuterAndInnerCommand()

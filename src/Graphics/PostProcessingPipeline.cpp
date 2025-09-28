@@ -127,6 +127,6 @@ namespace Destiny
 		auto uav = Texture::Create2DUAV(DXGI_FORMAT_R8G8B8A8_UNORM, wrd.width, wrd.height);
 		uav->load(0);
 		std::vector<std::shared_ptr<Texture>> uavs = { uav };
-		m_computerCommand->setUnorderedAccessViews(uavs);
+		m_computerCommand->setUnorderedAccessViews(uavs, {0});
 	}
 }

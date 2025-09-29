@@ -1,12 +1,15 @@
 #include "BlobLoaderManager.h"
 #include "Utility.h"
 #include "Detail/BuiltinResourceBlobLoader.h"
+#include "Detail/HttpBlobLoader.h"
 
 namespace Destiny
 {
 	BlobLoaderManager::BlobLoaderManager()
 	{
 		registerBlobLoader(std::make_shared<BuiltinResourceBlobLoader>());
+		registerBlobLoader(std::make_shared<HttpBlobLoader>("http://"));
+		registerBlobLoader(std::make_shared<HttpBlobLoader>("https://"));
 	}
 
 	void BlobLoaderManager::registerBlobLoader(std::shared_ptr<BlobLoader> blobLoader)

@@ -76,7 +76,7 @@ set_target_properties(freetype PROPERTIES
 )
 
 #bullet3
-set(BUILD_SHARED_LIBS OFF) # 可改 ON 生成 DLL
+set(BUILD_SHARED_LIBS ON) # 可改 ON 生成 DLL
 set(BUILD_UNIT_TESTS OFF)
 set(BUILD_EXTRAS OFF)
 set(BUILD_CPU_DEMOS OFF)
@@ -93,6 +93,48 @@ foreach(bullet_target LinearMath BulletCollision BulletDynamics BulletSoftBody B
         )
     endif()
 endforeach()
+
+# curl
+set(BUILD_CURL_EXE OFF)
+set(BUILD_TESTING OFF)
+
+# 禁用各种协议
+set(CURL_DISABLE_LDAP ON)
+set(CURL_DISABLE_TELNET ON)
+set(CURL_DISABLE_DICT ON)
+set(CURL_DISABLE_FILE ON)
+set(CURL_DISABLE_GOPHER ON)
+set(CURL_DISABLE_IMAP ON)
+set(CURL_DISABLE_POP3 ON)
+set(CURL_DISABLE_RTSP ON)
+set(CURL_DISABLE_SMTP ON)
+set(CURL_DISABLE_TFTP ON)
+set(CURL_DISABLE_WEBSOCKET ON)
+
+# SSL 设置
+set(CURL_USE_SCHANNEL ON)  # Windows 原生 SSL
+set(CURL_STATICLIB OFF)    # 编译为动态库
+
+# 禁用所有可选压缩库
+set(CURL_ZLIB OFF)
+set(CURL_BROTLI OFF)
+set(CURL_ZSTD OFF)
+
+# 禁用 HTTP/2 支持
+set(CURL_HTTP2 OFF)
+set(CURL_NGHTTP2 OFF)
+
+# 如果想禁用 HTTP/3，也可以
+set(CURL_HTTP3 OFF)
+
+# 添加子目录
+add_subdirectory("3rdparty/curl")
+
+
+
+# include
+include_directories("3rdparty/curl/include")
+
 
 
 if(MSVC)
@@ -207,6 +249,7 @@ target_link_libraries(Destiny
     BulletDynamics
     BulletCollision
     LinearMath
+    libcurl
     d3d11.lib dxgi.lib dxguid.lib D3DCompiler.lib d2d1.lib dwrite.lib winmm.lib
 )
 
@@ -235,3 +278,9 @@ add_custom_command(TARGET Destiny
                    ${PROJECT_BINARY_DIR}/3rdparty/freetype/$(Configuration)/freetype.dll
                     ${PROJECT_BINARY_DIR}/$(Configuration)
                    COMMENT "Copying file freetype.dll to ${PROJECT_BINARY_DIR}/$(Configuration)")
+add_custom_command(TARGET Destiny
+                   POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy
+                   ${PROJECT_BINARY_DIR}/lib/$(Configuration)/libcurl.dll
+                    ${PROJECT_BINARY_DIR}/$(Configuration)
+                   COMMENT "Copying file curl.dll to ${PROJECT_BINARY_DIR}/$(Configuration)")

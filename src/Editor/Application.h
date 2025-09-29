@@ -23,6 +23,7 @@ private:
 	void newScene();
 	void saveScene();
 	void openScene();
+	void openSceneFromServer();
 	void clearScene();
 
 	void fileMenu();

@@ -469,6 +469,38 @@ void Application::openScene()
 	{
 		Destiny::Engine::GetInstance()->getSceneManager()->setCurrentScene(scene);
 		m_propertyPanel->onChoosedNode(nullptr);
+		LOG_INFO("Open Scene:{0} Successfully", scenePath);
+	}
+	else
+	{
+		LOG_ERROR("Open Scene:{0} Failure", scenePath);
+	}
+}
+
+void Application::openSceneFromServer()
+{
+	std::string scenePath = "http://localhost:8000/Animation.scene";
+
+	auto blobLoader = Destiny::Engine::GetInstance()->getBlobLoaderManager()->getBlobLoader(scenePath.c_str());
+	auto blobHolder = blobLoader->createBlobHolder(scenePath);
+	blobHolder->load(0);
+
+
+	std::string sceneContent((char*)blobHolder->getBlob()->getData(), blobHolder->getBlob()->getLength());
+	std::shared_ptr<Destiny::Object> object = nullptr;
+
+
+	Destiny::UnSerializer::UnSerialize(object, sceneContent);
+	auto scene = std::dynamic_pointer_cast<Destiny::Scene>(object);
+	if (scene)
+	{
+		Destiny::Engine::GetInstance()->getSceneManager()->setCurrentScene(scene);
+		m_propertyPanel->onChoosedNode(nullptr);
+		LOG_INFO("Open Scene:{0} Successfully", scenePath);
+	}
+	else
+	{
+		LOG_ERROR("Open Scene:{0} Failure", scenePath);
 	}
 }
 
@@ -485,6 +517,10 @@ void Application::fileMenu()
 		if (ImGui::MenuItem("Open", "CTRL+O"))
 		{
 			openScene();
+		}
+		if (ImGui::MenuItem("OpenFromServer", "CTRL+M"))
+		{
+			openSceneFromServer();
 		}
 		if (ImGui::MenuItem("New", "CTRL+N"))
 		{
@@ -527,6 +563,15 @@ void Application::fileMenu()
 		if (!ImGui::IsAnyItemActive() && !ImGui::IsAnyItemFocused())
 		{
 			openScene();
+		}
+	}
+	if ((ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyDown(ImGuiKey_M)) ||
+		(ImGui::IsKeyDown(ImGuiKey_RightCtrl) && ImGui::IsKeyDown(ImGuiKey_M))
+		)
+	{
+		if (!ImGui::IsAnyItemActive() && !ImGui::IsAnyItemFocused())
+		{
+			openSceneFromServer();
 		}
 	}
 	if ((ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyDown(ImGuiKey_C)) ||

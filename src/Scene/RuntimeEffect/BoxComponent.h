@@ -10,5 +10,7 @@ namespace Destiny
 	public:
 		BoxComponent();
 		virtual ~BoxComponent() = default;
+	public:
+		virtual void onUpdate(float deltaTime) override;
 	};
 }

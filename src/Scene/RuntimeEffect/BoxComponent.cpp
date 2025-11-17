@@ -10,18 +10,19 @@
 #include "Engine/BlobLoader.h"
 #include "Engine/BlobHolder.h"
 #include "Engine/BlobLoaderManager.h"
+#include "Engine/FileSystem.h"
 #include "Graphics/Texture.h"
+
 
 namespace Destiny
 {
+	static std::shared_ptr<BlobHolder> blobHolder;
 	BoxComponent::BoxComponent()
 	{
-		//auto blobLoader = Engine::GetInstance()->getBlobLoaderManager()->getBlobLoader("http://");
-		//auto blobHolder = blobLoader->createBlobHolder("http://www.baidu.com");
-		//blobHolder->load(0);
+		auto blobLoader = Engine::GetInstance()->getBlobLoaderManager()->getBlobLoader("http://");
+		blobHolder = blobLoader->createBlobHolder("http://localhost:8000/Bee.glb");
+		blobHolder->load();
 
-		//auto httpTexture = Texture::Create("http://fastly.picsum.photos/id/10/1920/1080.jpg?hmac=Hs_xUcCc7BNrD6fseq1fdN2AC_uSWaywG7V7uh_6fTY");
-		//httpTexture->load();
 
 		auto renderer = Renderer::Create("builtin://renderer/forward_pbr.hlsl");
 		renderer->load(0);
@@ -52,6 +53,16 @@ namespace Destiny
 
 		setShadowRenderPass(shadowRenderPass);
 		setShadowMesh(mesh);
+	}
+
+	void BoxComponent::onUpdate(float deltaTime)
+	{
+		static bool flag = true;
+		if(flag && blobHolder->isLoadingSucceed())
+		{
+			flag = false;
+			FileSystem::WriteBlob("D:\\C++Project\\Destiny\\build\\Debug\\builtin\\Bee.glb", blobHolder->getBlob());
+		}
 	}
 
 	RTTR_REGISTRATION

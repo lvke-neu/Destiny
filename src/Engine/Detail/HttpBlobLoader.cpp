@@ -72,6 +72,8 @@ namespace Destiny
 		blob->copyfrom((char*)readBuffer.c_str(), blob->getLength());
 
 		blobHolder->loadSucceeded__(blob);
+
+		curl_easy_cleanup(curl);
 	}
 
 	std::string HttpBlobLoader::normalizedPath(std::shared_ptr<BlobHolder> blobHolder)

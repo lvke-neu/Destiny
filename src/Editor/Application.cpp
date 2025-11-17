@@ -485,6 +485,11 @@ void Application::openSceneFromServer()
 	auto blobHolder = blobLoader->createBlobHolder(scenePath);
 	blobHolder->load(0);
 
+	if (!blobHolder->getBlob())
+	{
+		LOG_ERROR("Open Scene:{0} Failure", scenePath);
+		return;
+	}
 
 	std::string sceneContent((char*)blobHolder->getBlob()->getData(), blobHolder->getBlob()->getLength());
 	std::shared_ptr<Destiny::Object> object = nullptr;

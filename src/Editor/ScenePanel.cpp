@@ -117,6 +117,7 @@ void ScenePanel::popup()
 			{
 				m_choosedNode->removeFromParent();
 				send(ChoosedNode, nullptr);
+				m_choosedNode.reset();
 			}
 			ImGui::CloseCurrentPopup();
 		}

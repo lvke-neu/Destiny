@@ -5,15 +5,15 @@
 namespace Destiny
 {
 	Node::Node() :
-		m_name("Default Name"),
-		m_parent(nullptr)
+		m_name("Default Name")
+		//m_parent(nullptr)
 	{
 
 	}
 
 	Node::Node(const std::string& name) :
-		m_name(name),
-		m_parent(nullptr)
+		m_name(name)
+		//m_parent(nullptr)
 	{
 
 	}
@@ -40,16 +40,17 @@ namespace Destiny
 
 	void Node::removeFromParent()
 	{
-		if (!m_parent)
+		auto parent = m_parent.lock();
+		if (!parent)
 		{
 			return;
 		}
 
-		auto iter = std::find(m_parent->m_childs.begin(), m_parent->m_childs.end(), shared_from_this());
-		if (iter != m_parent->m_childs.end())
+		auto iter = std::find(parent->m_childs.begin(), parent->m_childs.end(), shared_from_this());
+		if (iter != parent->m_childs.end())
 		{
 			onLeaveScene();
-			m_parent->m_childs.erase(iter);
+			parent->m_childs.erase(iter);
 		}
 
 		m_parent.reset();
@@ -125,7 +126,7 @@ namespace Destiny
 	DirectX::XMMATRIX Node::getRootToThisWorldMatrix()
 	{
 		auto worldMatrix = m_transform.getWorldMatrix();
-		auto tmpNode = m_parent;
+		auto tmpNode = m_parent.lock();
 		while (tmpNode)
 		{
 			worldMatrix *= tmpNode->m_transform.getWorldMatrix();
@@ -160,7 +161,7 @@ namespace Destiny
 				}
 				break;
 			}
-			tmpParent = tmpParent->m_parent;
+			tmpParent = tmpParent->m_parent.lock();
 		}
 	}
 
@@ -188,7 +189,7 @@ namespace Destiny
 				}
 				break;
 			}
-			tmpParent = tmpParent->m_parent;
+			tmpParent = tmpParent->m_parent.lock();
 		}
 	}
 

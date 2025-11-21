@@ -37,14 +37,14 @@ namespace Destiny
 
 				auto visual_a = std::dynamic_pointer_cast<Visual>(a);
 				auto visual_b = std::dynamic_pointer_cast<Visual>(b);
-				if (!visual_a || !visual_b || !visual_a->getComponent() || !visual_b->getComponent())
+				if (!visual_a || !visual_b || !visual_a->getComponent().lock() || !visual_b->getComponent().lock())
 				{
 					return false;
 				}
 
-				auto node_a = visual_a->getComponent()->get_node();
-				auto node_b = visual_b->getComponent()->get_node();
-				if (!node_a || !node_b)
+				auto node_a = visual_a->getComponent().lock()->get_node();
+				auto node_b = visual_b->getComponent().lock()->get_node();
+				if (!node_a.lock() || !node_b.lock())
 				{
 					return false;
 				}
@@ -59,11 +59,11 @@ namespace Destiny
 				auto aabb_a = mesh_a->getBoundingBox();
 				auto aabb_b = mesh_b->getBoundingBox();
 
-				aabb_a.Transform(aabb_a, node_a->getWorldMatrix());
-				aabb_b.Transform(aabb_b, node_b->getWorldMatrix());
+				aabb_a.Transform(aabb_a, node_a.lock()->getWorldMatrix());
+				aabb_b.Transform(aabb_b, node_b.lock()->getWorldMatrix());
 
-				auto scene_a = std::dynamic_pointer_cast<VisualScene>(visual_a->getComponent()->get_scene());
-				auto scene_b = std::dynamic_pointer_cast<VisualScene>(visual_b->getComponent()->get_scene());
+				auto scene_a = std::dynamic_pointer_cast<VisualScene>(visual_a->getComponent().lock()->get_scene().lock());
+				auto scene_b = std::dynamic_pointer_cast<VisualScene>(visual_b->getComponent().lock()->get_scene().lock());
 				if (!scene_a || !scene_b || (scene_a != scene_b))
 				{
 					return false;

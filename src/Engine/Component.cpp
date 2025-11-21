@@ -4,8 +4,6 @@ namespace Destiny
 {
 	Component::Component() :
 		m_enable(true),
-		m_node(nullptr),
-		m_scene(nullptr),
 		m_updateCategory(UpdateCategory::update)
 	{
 

@@ -15,7 +15,7 @@ namespace Destiny
 
 	void ScriptComponent::onUpdate(float deltaTime)
 	{
-		if (!m_node || !m_enable)
+		if (!m_node.lock() || !m_enable)
 		{
 			return;
 		}
@@ -28,7 +28,7 @@ namespace Destiny
 		
 		float radian = (m_sum / m_speed) * Math::PI * 2.0f ;
 
-		auto transform = m_node->get_transform();
+		auto transform = m_node.lock()->get_transform();
 		auto translation = transform.get_translation();
 
 		switch (m_circularMotion)
@@ -56,7 +56,7 @@ namespace Destiny
 
 		
 		transform.set_translation(translation);
-		m_node->set_transform(transform);
+		m_node.lock()->set_transform(transform);
 	}
 
 	RTTR_REGISTRATION

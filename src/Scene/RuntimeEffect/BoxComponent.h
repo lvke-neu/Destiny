@@ -9,7 +9,7 @@ namespace Destiny
 		RTTR_ENABLE(VisualComponent);
 	public:
 		BoxComponent();
-		virtual ~BoxComponent() = default;
+		virtual ~BoxComponent();
 	public:
 		virtual void onUpdate(float deltaTime) override;
 	};

@@ -35,7 +35,7 @@ namespace Destiny
 	{
 		if (property == "NodeTransform")
 		{
-			m_particleUpdateCS->setConstant("emitterPosition", m_node->get_translation());
+			m_particleUpdateCS->setConstant("emitterPosition", m_node.lock()->get_translation());
 			update();
 		}
 	}

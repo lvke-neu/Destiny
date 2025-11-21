@@ -22,8 +22,8 @@ namespace Destiny
 	public:
 		GET(bool, enable);
 		void set_enable(bool enable);
-		GET(std::shared_ptr<Node>, node);
-		GET(std::shared_ptr<Scene>, scene);
+		GET(std::weak_ptr<Node>, node);
+		GET(std::weak_ptr<Scene>, scene);
 		GET_SET(UpdateCategory, updateCategory);
 	public:
 		//do not modify m_node's components int onUpdate function
@@ -35,8 +35,8 @@ namespace Destiny
 		virtual void			onPropertyChanged(const std::string& property) {};
 			
 	protected:
-		std::shared_ptr<Node>	m_node;
-		std::shared_ptr<Scene>	m_scene;
+		std::weak_ptr<Node>		m_node;
+		std::weak_ptr<Scene>	m_scene;
 		bool					m_enable;
 		UpdateCategory			m_updateCategory;
 	};

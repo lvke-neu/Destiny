@@ -44,13 +44,13 @@ namespace Destiny
 
 	void SceneStatisticsComponent::onAddToNode()
 	{
-		if (m_node)
+		if (m_node.lock())
 		{
-			m_node->addComponent(m_frameTextComponent);
-			m_node->addComponent(m_fpsTextComponent);
-			m_node->addComponent(m_drawcallCountTextComponent);
-			m_node->addComponent(m_triangleCountTextComponent);
-			m_node->addComponent(m_visualCountTextComponent);
+			m_node.lock()->addComponent(m_frameTextComponent);
+			m_node.lock()->addComponent(m_fpsTextComponent);
+			m_node.lock()->addComponent(m_drawcallCountTextComponent);
+			m_node.lock()->addComponent(m_triangleCountTextComponent);
+			m_node.lock()->addComponent(m_visualCountTextComponent);
 
 		}
 	}

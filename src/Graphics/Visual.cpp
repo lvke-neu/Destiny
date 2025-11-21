@@ -14,8 +14,8 @@ namespace Destiny
 	Visual::Visual() :
 		m_renderPass(std::make_shared<RenderPass>()),
 		m_mesh(nullptr),
+		m_material(nullptr),
 		m_drawParameters(std::make_shared<DrawParameters>()),
-		m_component(nullptr),
 		m_constantsChanged(false),
 		m_texturesChanged(false),
 		m_samplerStatesChanged(false),
@@ -28,6 +28,12 @@ namespace Destiny
 		m_enableShadow(true)
 	{
 		addDrawParameter(m_drawParameters);
+	}
+
+	Visual::~Visual()
+	{
+		int i = 0;
+		i++;
 	}
 
 	std::string Visual::get_renderer()

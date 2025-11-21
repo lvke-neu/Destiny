@@ -63,7 +63,7 @@ namespace Destiny
 			}
 		}
 
-		if (m_camera && m_cameraController && m_camera->get_node() == m_cameraNode && m_cameraController->get_node() == m_cameraNode)
+		if (m_camera && m_cameraController && m_camera->get_node().lock() == m_cameraNode && m_cameraController->get_node().lock() == m_cameraNode)
 		{
 			m_camera->onEnterScene();
 			return;

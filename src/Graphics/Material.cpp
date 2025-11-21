@@ -2,10 +2,15 @@
 
 namespace Destiny
 {
-	Material::Material() :
-		m_visual(nullptr)
+	Material::Material()
 	{
 
+	}
+
+	Material::~Material()
+	{
+		int i = 0;
+		i++;
 	}
 
 	void Material::bind(std::shared_ptr<Visual> visual)

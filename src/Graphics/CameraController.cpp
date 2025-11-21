@@ -29,7 +29,7 @@ namespace Destiny
 
 	void CameraController::onUpdateTime(void* data)
 	{
-		if (!m_node || !m_enable)
+		if (!m_node.lock() || !m_enable)
 		{
 			return;
 		}
@@ -38,22 +38,22 @@ namespace Destiny
 
 		if (Engine::GetInstance()->getEventSystem()->isKeyPressed(KeyCode::Key_W))
 		{
-			m_node->moveZAxis(m_speed * deltaTime);
+			m_node.lock()->moveZAxis(m_speed * deltaTime);
 		}
 
 		if (Engine::GetInstance()->getEventSystem()->isKeyPressed(KeyCode::Key_S))
 		{
-			m_node->moveZAxis(-m_speed * deltaTime);
+			m_node.lock()->moveZAxis(-m_speed * deltaTime);
 		}
 
 		if (Engine::GetInstance()->getEventSystem()->isKeyPressed(KeyCode::Key_A))
 		{
-			m_node->moveXAxis(-m_speed * deltaTime);
+			m_node.lock()->moveXAxis(-m_speed * deltaTime);
 		}
 
 		if (Engine::GetInstance()->getEventSystem()->isKeyPressed(KeyCode::Key_D))
 		{
-			m_node->moveXAxis(m_speed * deltaTime);
+			m_node.lock()->moveXAxis(m_speed * deltaTime);
 		}
 	}
 
@@ -90,7 +90,7 @@ namespace Destiny
 
 	void CameraController::onMouseMove(void* data)
 	{
-		if (!m_node || !m_enable)
+		if (!m_node.lock() || !m_enable)
 		{
 			return;
 		}
@@ -102,8 +102,8 @@ namespace Destiny
 			m_deltaMousePosX = mouse.x - m_oldMousePosX;
 			m_deltaMousePosY = mouse.y - m_oldMousePosY;
 
-			m_node->rotateXAxis(-m_deltaMousePosY * 0.1f);
-			m_node->rotateYAxis(-m_deltaMousePosX * 0.1f);
+			m_node.lock()->rotateXAxis(-m_deltaMousePosY * 0.1f);
+			m_node.lock()->rotateYAxis(-m_deltaMousePosX * 0.1f);
 
 			m_oldMousePosX = mouse.x;
 			m_oldMousePosY = mouse.y;

@@ -252,16 +252,16 @@ namespace Destiny
 
 	void PbrMaterial::update()
 	{
-		if (!m_visual)
+		if (!m_visual.lock())
 		{
 			return;
 		}
-		m_visual->setShaderResource("t_albedo", m_albedo);
-		m_visual->setShaderResource("t_normal", m_normal);
-		m_visual->setShaderResource("t_metallic", m_metallic);
-		m_visual->setShaderResource("t_roughness", m_roughness);
-		m_visual->setShaderResource("t_ao", m_ao);
-		m_visual->setSamplerSate("s_sampler", m_sampler);
+		m_visual.lock()->setShaderResource("t_albedo", m_albedo);
+		m_visual.lock()->setShaderResource("t_normal", m_normal);
+		m_visual.lock()->setShaderResource("t_metallic", m_metallic);
+		m_visual.lock()->setShaderResource("t_roughness", m_roughness);
+		m_visual.lock()->setShaderResource("t_ao", m_ao);
+		m_visual.lock()->setSamplerSate("s_sampler", m_sampler);
 	}
 
 	RTTR_REGISTRATION

@@ -56,16 +56,16 @@ namespace Destiny
 	{
 		VisualComponent::onAddToNode();
 
-		if (!m_node)
+		if (!m_node.lock())
 		{
 			return;
 		}
 
-		DirectX::XMFLOAT3 translation = m_node->get_translation();
+		DirectX::XMFLOAT3 translation = m_node.lock()->get_translation();
 		btVector3 btTranslation;
 		btTranslation.setValue(translation.x, translation.y, translation.z);
 
-		DirectX::XMFLOAT3 rotation = m_node->get_rotation();
+		DirectX::XMFLOAT3 rotation = m_node.lock()->get_rotation();
 		DirectX::XMFLOAT3 radianRotation{ DirectX::XMConvertToRadians(rotation.x), DirectX::XMConvertToRadians(rotation.y), DirectX::XMConvertToRadians(rotation.z) };
 		btQuaternion btRotation;
 		btRotation.setEulerZYX(radianRotation.y, radianRotation.x, radianRotation.z);
@@ -88,16 +88,16 @@ namespace Destiny
 			return;
 		}
 
-		if (!m_node)
+		if (!m_node.lock())
 		{
 			return;
 		}
 
-		DirectX::XMFLOAT3 translation = m_node->get_translation();
+		DirectX::XMFLOAT3 translation = m_node.lock()->get_translation();
 		btVector3 btTranslation;
 		btTranslation.setValue(translation.x, translation.y, translation.z);
 
-		DirectX::XMFLOAT3 rotation = m_node->get_rotation();
+		DirectX::XMFLOAT3 rotation = m_node.lock()->get_rotation();
 		DirectX::XMFLOAT3 radianRotation{ DirectX::XMConvertToRadians(rotation.x), DirectX::XMConvertToRadians(rotation.y), DirectX::XMConvertToRadians(rotation.z) };
 		btQuaternion btRotation;
 		btRotation.setEulerZYX(radianRotation.y, radianRotation.x, radianRotation.z);
@@ -113,13 +113,13 @@ namespace Destiny
 
 	void RigidBodyComponent::onUpdate(float deltaTime)
 	{
-		if (!Engine::GetInstance()->getPhysicsSystem()->get_bSimulation() ||!m_btRigidBody ||!m_node)
+		if (!Engine::GetInstance()->getPhysicsSystem()->get_bSimulation() ||!m_btRigidBody ||!m_node.lock())
 		{
 			return;
 		}
 
 		auto btTranslation = m_btRigidBody->getWorldTransform().getOrigin();
-		m_node->set_translation({ btTranslation.getX(), btTranslation.getY(), btTranslation.getZ() });
+		m_node.lock()->set_translation({ btTranslation.getX(), btTranslation.getY(), btTranslation.getZ() });
 
 		DirectX::XMFLOAT3 rotation;
 		auto btQuaternion = m_btRigidBody->getWorldTransform().getRotation();
@@ -129,7 +129,7 @@ namespace Destiny
 		rotation.y = DirectX::XMConvertToDegrees(rotation.y);
 		rotation.z = DirectX::XMConvertToDegrees(rotation.z);
 
-		m_node->set_rotation(rotation);
+		m_node.lock()->set_rotation(rotation);
 	}
 
 	void RigidBodyComponent::reConstructRigidBody()

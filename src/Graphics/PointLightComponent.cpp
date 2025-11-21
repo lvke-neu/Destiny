@@ -16,11 +16,11 @@ namespace Destiny
 	void PointLightComponent::onEnterScene()
     {
 		std::vector<PointLight> pointLights;
-		traversal(m_scene, pointLights);
+		traversal(m_scene.lock(), pointLights);
 		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
 		deferredOpaquePipeline->onRendererConstantChanged();
-		notifyVisualRendererConstantChanged(m_scene);
+		notifyVisualRendererConstantChanged(m_scene.lock());
 		setPointLightRendererConstant(pointLights);
     }
 
@@ -30,7 +30,7 @@ namespace Destiny
 		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
 		deferredOpaquePipeline->onRendererConstantChanged();
-		notifyVisualRendererConstantChanged(m_scene);
+		notifyVisualRendererConstantChanged(m_scene.lock());
 		setPointLightRendererConstant(pointLights);
 	}
 
@@ -39,11 +39,11 @@ namespace Destiny
 		if (m_enable)
 		{
 			std::vector<PointLight> pointLights;
-			traversal(m_scene, pointLights);
+			traversal(m_scene.lock(), pointLights);
 			auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
 			auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
 			deferredOpaquePipeline->onRendererConstantChanged();
-			notifyVisualRendererConstantChanged(m_scene);
+			notifyVisualRendererConstantChanged(m_scene.lock());
 			setPointLightRendererConstant(pointLights);
 		}
     }
@@ -60,11 +60,11 @@ namespace Destiny
 	{
 		m_color = color;
 		std::vector<PointLight> pointLights;
-		traversal(m_scene, pointLights);
+		traversal(m_scene.lock(), pointLights);
 		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
 		deferredOpaquePipeline->onRendererConstantChanged();
-		notifyVisualRendererConstantChanged(m_scene);
+		notifyVisualRendererConstantChanged(m_scene.lock());
 		setPointLightRendererConstant(pointLights);
 	}
 
@@ -72,11 +72,11 @@ namespace Destiny
 	{
 		m_intensity = intensity;
 		std::vector<PointLight> pointLights;
-		traversal(m_scene, pointLights);
+		traversal(m_scene.lock(), pointLights);
 		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
 		deferredOpaquePipeline->onRendererConstantChanged();
-		notifyVisualRendererConstantChanged(m_scene);
+		notifyVisualRendererConstantChanged(m_scene.lock());
 		setPointLightRendererConstant(pointLights);
 	}
 
@@ -94,9 +94,9 @@ namespace Destiny
 			{
 				continue;
 			}
-			if (plComponent && plComponent->get_enable() && plComponent->get_node())
+			if (plComponent && plComponent->get_enable() && plComponent->get_node().lock())
 			{
-				pointLights.push_back({ {plComponent->get_color()}, {plComponent->get_node()->get_translation()}, plComponent->get_intensity() });
+				pointLights.push_back({ {plComponent->get_color()}, {plComponent->get_node().lock()->get_translation()}, plComponent->get_intensity() });
 			}
 		}
 
@@ -118,7 +118,7 @@ namespace Destiny
 			auto visualComponent = std::dynamic_pointer_cast<VisualComponent>(component);
 			if (visualComponent)
 			{
-				if (m_node)
+				if (m_node.lock())
 				{
 					visualComponent->onRendererConstantChanged();
 				}

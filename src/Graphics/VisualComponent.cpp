@@ -157,12 +157,12 @@ namespace Destiny
 
 	void VisualComponent::onNodeTransformChanged()
 	{
-		if (!m_node || !m_visual)
+		if (!m_node.lock() || !m_visual)
 		{
 			return;
 		}
 
-		auto worldMatrix = m_node->getRootToThisWorldMatrix();
+		auto worldMatrix = m_node.lock()->getRootToThisWorldMatrix();
 		m_visual->setConstant("u_worldMatrix", XMMatrixTranspose(worldMatrix));
 		m_shadowVisual->setConstant("u_worldMatrix", XMMatrixTranspose(worldMatrix));
 		worldMatrix.r[3] = DirectX::g_XMIdentityR3;
@@ -175,7 +175,7 @@ namespace Destiny
 
 	void VisualComponent::onEnterScene()
 	{
-		auto visualScene = std::dynamic_pointer_cast<VisualScene>(m_scene);
+		auto visualScene = std::dynamic_pointer_cast<VisualScene>(m_scene.lock());
 		if (!visualScene || !visualScene->getCamera() || !visualScene->getCameraNode())
 		{
 			return;

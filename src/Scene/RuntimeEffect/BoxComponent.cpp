@@ -11,19 +11,14 @@
 #include "Engine/BlobHolder.h"
 #include "Engine/BlobLoaderManager.h"
 #include "Engine/FileSystem.h"
+#include "Engine/Md5.h"
 #include "Graphics/Texture.h"
 
 
 namespace Destiny
 {
-	static std::shared_ptr<BlobHolder> blobHolder;
 	BoxComponent::BoxComponent()
 	{
-		auto blobLoader = Engine::GetInstance()->getBlobLoaderManager()->getBlobLoader("http://");
-		blobHolder = blobLoader->createBlobHolder("http://localhost:8000/Bee.glb");
-		blobHolder->load();
-
-
 		auto renderer = Renderer::Create("builtin://renderer/forward_pbr.hlsl");
 		renderer->load(0);
 
@@ -55,14 +50,15 @@ namespace Destiny
 		setShadowMesh(mesh);
 	}
 
+	BoxComponent::~BoxComponent()
+	{
+		int i = 0;
+		i++;
+	}
+
 	void BoxComponent::onUpdate(float deltaTime)
 	{
-		static bool flag = true;
-		if(flag && blobHolder->isLoadingSucceed())
-		{
-			flag = false;
-			FileSystem::WriteBlob("D:\\C++Project\\Destiny\\build\\Debug\\builtin\\Bee.glb", blobHolder->getBlob());
-		}
+
 	}
 
 	RTTR_REGISTRATION

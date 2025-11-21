@@ -145,7 +145,7 @@ namespace Destiny
 	{
 		auto node = std::make_shared<Node>();
 		node->set_name("Debug");
-		node->addToParent(m_node);
+		node->addToParent(m_node.lock());
 		for (const auto& boxVisualizationComponent : m_boxVisualizationComponents)
 		{
 			node->addComponent(boxVisualizationComponent);

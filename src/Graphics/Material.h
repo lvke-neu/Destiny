@@ -10,12 +10,12 @@ namespace Destiny
 		RTTR_ENABLE(Object);
 	public:
 		Material();
-		virtual ~Material() = default;
+		virtual ~Material();
 	public:
 		void bind(std::shared_ptr<Visual> visual);
 	private:
 		virtual void update(){};
 	protected:
-		std::shared_ptr<Visual> m_visual;
+		std::weak_ptr<Visual> m_visual;
 	};
 }

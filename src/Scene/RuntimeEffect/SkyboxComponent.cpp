@@ -94,7 +94,7 @@ namespace Destiny
 		auto pipeLine = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->getDeferredOpaquePipeline();
 		std::static_pointer_cast<DeferredOpaquePipeline>(pipeLine)->onRendererTexturesChanged();
 		std::static_pointer_cast<DeferredOpaquePipeline>(pipeLine)->onRendererSamplerStatesChanged();
-		notifyVisualRendererConstantChanged(m_scene);
+		notifyVisualRendererConstantChanged(m_scene.lock());
 		
 		Renderer::SetShaderResource("t_irradianceMap", irradiance);
 		Renderer::SetShaderResource("t_prefilterMap", prefilter);

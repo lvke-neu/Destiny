@@ -45,7 +45,7 @@ namespace Destiny
 		void												onNodeTransformChanged();
 	protected:
 		std::string											m_name;
-		std::shared_ptr<Node>								m_parent;
+		std::weak_ptr<Node>									m_parent;
 		std::vector<std::shared_ptr<Node>>					m_childs;
 		std::vector<std::shared_ptr<Component>>				m_components;
 		Transform											m_transform;
@@ -53,7 +53,7 @@ namespace Destiny
 
 	inline std::shared_ptr<Node> Node::getParent()
 	{
-		return m_parent;
+		return m_parent.lock();
 	}
 
 	inline const std::vector<std::shared_ptr<Component>>& Node::getComponents()

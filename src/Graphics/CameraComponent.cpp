@@ -36,7 +36,7 @@ namespace Destiny
 		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
 		deferredOpaquePipeline->onRendererConstantChanged();
-		notifyVisualRendererConstantChanged(m_scene);
+		notifyVisualRendererConstantChanged(m_scene.lock());
 		setRendererConstant();
 	}
 
@@ -50,7 +50,7 @@ namespace Destiny
 		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
 		deferredOpaquePipeline->onRendererConstantChanged();
-		notifyVisualRendererConstantChanged(m_scene);
+		notifyVisualRendererConstantChanged(m_scene.lock());
 		setRendererConstant();
 	}
 
@@ -64,7 +64,7 @@ namespace Destiny
 		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
 		deferredOpaquePipeline->onRendererConstantChanged();
-		notifyVisualRendererConstantChanged(m_scene);
+		notifyVisualRendererConstantChanged(m_scene.lock());
 		setRendererConstant();
 	}
 
@@ -78,7 +78,7 @@ namespace Destiny
 		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
 		deferredOpaquePipeline->onRendererConstantChanged();
-		notifyVisualRendererConstantChanged(m_scene);
+		notifyVisualRendererConstantChanged(m_scene.lock());
 		setRendererConstant();
 	}
 
@@ -98,7 +98,7 @@ namespace Destiny
 		}
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
 		deferredOpaquePipeline->onRendererConstantChanged();
-		notifyVisualRendererConstantChanged(m_scene);
+		notifyVisualRendererConstantChanged(m_scene.lock());
 		setRendererConstant();
 	}
 
@@ -107,7 +107,7 @@ namespace Destiny
 		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
 		deferredOpaquePipeline->onRendererConstantChanged();
-		notifyVisualRendererConstantChanged(m_scene);
+		notifyVisualRendererConstantChanged(m_scene.lock());
 		setRendererConstant();
 	}
 
@@ -129,7 +129,7 @@ namespace Destiny
 		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
 		deferredOpaquePipeline->onRendererConstantChanged();
-		notifyVisualRendererConstantChanged(m_scene);
+		notifyVisualRendererConstantChanged(m_scene.lock());
 		setRendererConstant();
 	}
 
@@ -158,13 +158,13 @@ namespace Destiny
 
 	void CameraComponent::setRendererConstant()
 	{
-		if (!m_node)
+		if (!m_node.lock())
 		{
 			return;
 		}
 
-		const auto& cameraViewMatrix = m_node->getInvTransposeWorldMatrix();
-		const auto& cameraPos = m_node->get_translation();
+		const auto& cameraViewMatrix = m_node.lock()->getInvTransposeWorldMatrix();
+		const auto& cameraPos = m_node.lock()->get_translation();
 		const auto& cameraProjMaTrix = DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(m_fovy * Math::DEG2RAD, m_aspect, m_nearz, m_farz));
 
 		Renderer::SetConstant("g_view", cameraViewMatrix);

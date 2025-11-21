@@ -104,7 +104,7 @@ namespace Destiny
 		if (m_modelChanged && m_model && m_model->isLoadingSucceed() && m_model->getNode())
 		{
 			m_model->onDataLoaded();
-			m_model->getNode()->addToParent(m_node);
+			m_model->getNode()->addToParent(m_node.lock());
 			m_model->setEnable(m_enable);
 			m_model->setEnableShadow(m_enableShadow);
 			m_model->setRenderer(m_renderer);

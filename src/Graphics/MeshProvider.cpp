@@ -22,30 +22,30 @@ namespace Destiny
 		std::vector<PositionNormalTexcoord> vertices;
 		vertices.resize(24);
 
-		vertices[0].position = DirectX::XMFLOAT3 (10.0f + 1.0f,  10.0f + -1.0f, 10.0f + -1.0f);
-		vertices[1].position = DirectX::XMFLOAT3 (10.0f + 1.0f,  10.0f + 1.0f, 10.0f + -1.0f);
-		vertices[2].position = DirectX::XMFLOAT3 (10.0f + 1.0f,  10.0f + 1.0f, 10.0f + 1.0f);
-		vertices[3].position = DirectX::XMFLOAT3 (10.0f + 1.0f,  10.0f + -1.0f, 10.0f + 1.0f);
-		vertices[4].position = DirectX::XMFLOAT3 (10.0f + -1.0f, 10.0f + -1.0f, 10.0f + 1.0f);
-		vertices[5].position = DirectX::XMFLOAT3 (10.0f + -1.0f, 10.0f + 1.0f, 10.0f + 1.0f);
-		vertices[6].position = DirectX::XMFLOAT3 (10.0f + -1.0f, 10.0f + 1.0f, 10.0f + -1.0f);
-		vertices[7].position = DirectX::XMFLOAT3 (10.0f + -1.0f, 10.0f + -1.0f, 10.0f + -1.0f);
-		vertices[8].position = DirectX::XMFLOAT3 (10.0f + -1.0f, 10.0f + 1.0f, 10.0f + -1.0f);
-		vertices[9].position = DirectX::XMFLOAT3 (10.0f + -1.0f, 10.0f + 1.0f, 10.0f + 1.0f);
-		vertices[10].position = DirectX::XMFLOAT3(10.0f + 1.0f, 10.0f + 1.0f, 10.0f + 1.0f);
-		vertices[11].position = DirectX::XMFLOAT3(10.0f + 1.0f, 10.0f + 1.0f, 10.0f + -1.0f);
-		vertices[12].position = DirectX::XMFLOAT3(10.0f + 1.0f, 10.0f + -1.0f, 10.0f + -1.0f);
-		vertices[13].position = DirectX::XMFLOAT3(10.0f + 1.0f, 10.0f + -1.0f, 10.0f + 1.0f);
-		vertices[14].position = DirectX::XMFLOAT3(10.0f + -1.0f,10.0f +  -1.0f, 10.0f + 1.0f);
-		vertices[15].position = DirectX::XMFLOAT3(10.0f + -1.0f,10.0f +  -1.0f, 10.0f + -1.0f);
-		vertices[16].position = DirectX::XMFLOAT3(10.0f + 1.0f, 10.0f + -1.0f, 10.0f + 1.0f);
-		vertices[17].position = DirectX::XMFLOAT3(10.0f + 1.0f, 10.0f + 1.0f, 10.0f + 1.0f);
-		vertices[18].position = DirectX::XMFLOAT3(10.0f + -1.0f,10.0f +  1.0f, 10.0f + 1.0f);
-		vertices[19].position = DirectX::XMFLOAT3(10.0f + -1.0f,10.0f +  -1.0f, 10.0f + 1.0f);
-		vertices[20].position = DirectX::XMFLOAT3(10.0f + -1.0f,10.0f +  -1.0f, 10.0f + -1.0f);
-		vertices[21].position = DirectX::XMFLOAT3(10.0f + -1.0f,10.0f +  1.0f, 10.0f + -1.0f);
-		vertices[22].position = DirectX::XMFLOAT3(10.0f + 1.0f, 10.0f + 1.0f, 10.0f + -1.0f);
-		vertices[23].position = DirectX::XMFLOAT3(10.0f + 1.0f, 10.0f + -1.0f, 10.0f + -1.0f);
+		vertices[0].position = DirectX::XMFLOAT3(1.0f, -1.0f, -1.0f);
+		vertices[1].position = DirectX::XMFLOAT3(1.0f, 1.0f, -1.0f);
+		vertices[2].position = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f);
+		vertices[3].position = DirectX::XMFLOAT3(1.0f, -1.0f, 1.0f);
+		vertices[4].position = DirectX::XMFLOAT3(-1.0f, -1.0f, 1.0f);
+		vertices[5].position = DirectX::XMFLOAT3(-1.0f, 1.0f, 1.0f);
+		vertices[6].position = DirectX::XMFLOAT3(-1.0f, 1.0f, -1.0f);
+		vertices[7].position = DirectX::XMFLOAT3(-1.0f, -1.0f, -1.0f);
+		vertices[8].position = DirectX::XMFLOAT3(-1.0f, 1.0f, -1.0f);
+		vertices[9].position = DirectX::XMFLOAT3(-1.0f, 1.0f, 1.0f);
+		vertices[10].position = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f);
+		vertices[11].position = DirectX::XMFLOAT3(1.0f, 1.0f, -1.0f);
+		vertices[12].position = DirectX::XMFLOAT3(1.0f, -1.0f, -1.0f);
+		vertices[13].position = DirectX::XMFLOAT3(1.0f, -1.0f, 1.0f);
+		vertices[14].position = DirectX::XMFLOAT3(-1.0f, -1.0f, 1.0f);
+		vertices[15].position = DirectX::XMFLOAT3(-1.0f, -1.0f, -1.0f);
+		vertices[16].position = DirectX::XMFLOAT3(1.0f, -1.0f, 1.0f);
+		vertices[17].position = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f);
+		vertices[18].position = DirectX::XMFLOAT3(-1.0f, 1.0f, 1.0f);
+		vertices[19].position = DirectX::XMFLOAT3(-1.0f, -1.0f, 1.0f);
+		vertices[20].position = DirectX::XMFLOAT3(-1.0f, -1.0f, -1.0f);
+		vertices[21].position = DirectX::XMFLOAT3(-1.0f, 1.0f, -1.0f);
+		vertices[22].position = DirectX::XMFLOAT3(1.0f, 1.0f, -1.0f);
+		vertices[23].position = DirectX::XMFLOAT3(1.0f, -1.0f, -1.0f);
 		for (unsigned int i = 0; i < 4; ++i)
 		{
 			vertices[i].normal = DirectX::XMFLOAT3(1.0f, 0.0f, 0.0f);
@@ -115,7 +115,7 @@ namespace Destiny
 		vertices.push_back({ {0.5f, -0.5f, -0.5f} });
 		vertices.push_back({ {0.5f, 0.5f, -0.5f} });
 		vertices.push_back({ {-0.5f, 0.5f, -0.5f} });
-		
+
 		data.reset(new Blob(vertices.size() * sizeof(Position3)));
 		data->copyfrom(vertices.data(), vertices.size() * sizeof(Position3));
 		std::shared_ptr<VertexBuffer> vertexBuffer = std::make_shared<VertexBuffer>(InputLayout::Create_Position3(), (unsigned int)sizeof(Position3), 0, data);
@@ -123,19 +123,19 @@ namespace Destiny
 		std::vector<unsigned short> indices;
 		indices.push_back(0); indices.push_back(1); indices.push_back(2);
 		indices.push_back(0); indices.push_back(2); indices.push_back(3);
-	
+
 		indices.push_back(4); indices.push_back(5); indices.push_back(6);
 		indices.push_back(4); indices.push_back(6); indices.push_back(7);
-	
+
 		indices.push_back(4); indices.push_back(0); indices.push_back(3);
 		indices.push_back(4); indices.push_back(3); indices.push_back(7);
-	
+
 		indices.push_back(1); indices.push_back(5); indices.push_back(6);
 		indices.push_back(1); indices.push_back(6); indices.push_back(2);
-	
+
 		indices.push_back(3); indices.push_back(2); indices.push_back(6);
 		indices.push_back(3); indices.push_back(6); indices.push_back(7);
-	
+
 		indices.push_back(0); indices.push_back(1); indices.push_back(5);
 		indices.push_back(0); indices.push_back(5); indices.push_back(4);
 
@@ -226,12 +226,12 @@ namespace Destiny
 		const unsigned int slices = 20;
 
 		const unsigned int vertexCount = 2 + (levels - 1) * (slices + 1);
-	
+
 
 		unsigned int vIndex = 0, iIndex = 0;
 
 		float phi = 0.0f, theta = 0.0f;
-		float per_phi =  Math::PI/ levels;
+		float per_phi = Math::PI / levels;
 		float per_theta = 2.0f * Math::PI / slices;
 		float x, y, z;
 
@@ -350,7 +350,7 @@ namespace Destiny
 		data->copyfrom(indices.data(), indices.size() * sizeof(unsigned short));
 		std::shared_ptr<IndexBuffer> indexBuffer = std::make_shared<IndexBuffer>(IndexBuffer::IndexType::Index16, data);
 
-		DirectX::BoundingBox aabb { { 0.0f, 0.0f, 0.0f },{ FLT_MAX, FLT_MAX, FLT_MAX } };
+		DirectX::BoundingBox aabb{ { 0.0f, 0.0f, 0.0f },{ FLT_MAX, FLT_MAX, FLT_MAX } };
 		Mesh::DrawCall drawCall;
 		drawCall.drawMethod = Mesh::DrawMethod::DrawIndexed;
 		drawCall.primitiveTopology = Mesh::PrimitiveTopology::TriangleList;
@@ -381,7 +381,7 @@ namespace Destiny
 		data->copyfrom(vertices.data(), vertices.size() * sizeof(Position3));
 		std::shared_ptr<VertexBuffer> vertexBuffer = std::make_shared<VertexBuffer>(InputLayout::Create_Position3(), (unsigned int)sizeof(Position3), 0, data);
 
-	
+
 		DirectX::BoundingBox aabb{ { 0.0f, 0.0f, 0.0f },{ 1.0f, 1.0f, 1.0f } };
 		Mesh::DrawCall drawCall;
 		drawCall.drawMethod = Mesh::DrawMethod::Draw;
@@ -432,7 +432,7 @@ namespace Destiny
 		unsigned int faceCount = (m - 1) * (n - 1) * 2;
 
 		std::shared_ptr<Blob> data = nullptr;
-		
+
 		std::vector<PositionTexcoord> vertices;
 		vertices.resize(vertexCount);
 

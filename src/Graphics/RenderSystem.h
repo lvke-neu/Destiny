@@ -2,6 +2,7 @@
 #include "GraphicsSystem.h"
 #include "GraphicsPipeline/GraphicsPipeline.h"
 #include <unordered_map>
+#include <string>
 
 class GpuTimer;
 namespace Destiny

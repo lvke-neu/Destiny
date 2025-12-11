@@ -44,7 +44,7 @@ add_subdirectory("3rdparty/assimp")
      SET(ASSIMP_MSVC_VERSION "vc140")
    ELSEIF(MSVC15)
      SET(ASSIMP_MSVC_VERSION "vc141")
-   ELSEIF(MSV142)
+   ELSEIF(MSVC142)
      SET(ASSIMP_MSVC_VERSION "vc142")
    ELSEIF(MSVC143)
      SET(ASSIMP_MSVC_VERSION "vc143")
@@ -76,20 +76,28 @@ set_target_properties(freetype PROPERTIES
 )
 
 #bullet3
-set(BUILD_SHARED_LIBS ON) # 可改 ON 生成 DLL
-set(BUILD_UNIT_TESTS OFF)
-set(BUILD_EXTRAS OFF)
-set(BUILD_CPU_DEMOS OFF)
-set(BUILD_OPENCL_DEMOS OFF)
-set(BUILD_BULLET2_DEMOS OFF)
+# 【修改点2：强制设置BUILD_SHARED_LIBS并写入CMake缓存，添加BT_SHARED_LIBS到target_compile_definitions】
+add_compile_definitions(BT_SHARED_LIBS) # 全局定义导出宏
+set(BUILD_SHARED_LIBS ON CACHE BOOL "Build shared libraries (DLL)" FORCE) # 强制传递给子项目
+set(BUILD_UNIT_TESTS OFF CACHE BOOL "" FORCE)
+set(BUILD_EXTRAS OFF CACHE BOOL "" FORCE)
+set(BUILD_CPU_DEMOS OFF CACHE BOOL "" FORCE)
+set(BUILD_OPENCL_DEMOS OFF CACHE BOOL "" FORCE)
+set(BUILD_BULLET2_DEMOS OFF CACHE BOOL "" FORCE)
 add_subdirectory("3rdparty/bullet3")
+
+# 【修改点3：定义Bullet3输出目录，并设置全局库搜索路径】
 set(BULLET3_OUTPUT_DIR "${PROJECT_BINARY_DIR}/3rdparty/bullet3/$<CONFIG>")
-foreach(bullet_target LinearMath BulletCollision BulletDynamics BulletSoftBody Bullet3Common Bullet3Geometry Bullet3Dynamics)
+link_directories("${BULLET3_OUTPUT_DIR}") # 让链接器找到Bullet3的.lib文件
+
+# 【修改点4：完善Bullet3的target列表，添加WINDOWS_EXPORT_ALL_SYMBOLS确保导出符号】
+foreach(bullet_target LinearMath BulletCollision BulletDynamics BulletSoftBody Bullet3Common Bullet3Geometry Bullet3Dynamics Bullet3Collision Bullet3OpenCL_clew BulletInverseDynamics Bullet2FileLoader)
     if(TARGET ${bullet_target})
         set_target_properties(${bullet_target} PROPERTIES
             ARCHIVE_OUTPUT_DIRECTORY "${BULLET3_OUTPUT_DIR}"
             LIBRARY_OUTPUT_DIRECTORY "${BULLET3_OUTPUT_DIR}"
             RUNTIME_OUTPUT_DIRECTORY "${BULLET3_OUTPUT_DIR}"
+            WINDOWS_EXPORT_ALL_SYMBOLS ON # 强制导出所有符号，兜底方案
         )
     endif()
 endforeach()
@@ -284,3 +292,23 @@ add_custom_command(TARGET Destiny
                    ${PROJECT_BINARY_DIR}/lib/$(Configuration)/libcurl.dll
                     ${PROJECT_BINARY_DIR}/$(Configuration)
                    COMMENT "Copying file curl.dll to ${PROJECT_BINARY_DIR}/$(Configuration)")
+
+
+add_custom_command(TARGET Destiny
+                   POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy
+                   ${PROJECT_BINARY_DIR}/3rdparty/bullet3/$(Configuration)/BulletDynamics.dll
+                    ${PROJECT_BINARY_DIR}/$(Configuration)
+                   COMMENT "Copying file BulletDynamics.dll to ${PROJECT_BINARY_DIR}/$(Configuration)")
+add_custom_command(TARGET Destiny
+                   POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy
+                   ${PROJECT_BINARY_DIR}/3rdparty/bullet3/$(Configuration)/BulletCollision.dll
+                    ${PROJECT_BINARY_DIR}/$(Configuration)
+                   COMMENT "Copying file BulletCollision.dll to ${PROJECT_BINARY_DIR}/$(Configuration)")
+add_custom_command(TARGET Destiny
+                   POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy
+                   ${PROJECT_BINARY_DIR}/3rdparty/bullet3/$(Configuration)/LinearMath.dll
+                    ${PROJECT_BINARY_DIR}/$(Configuration)
+                   COMMENT "Copying file LinearMath.dll to ${PROJECT_BINARY_DIR}/$(Configuration)")

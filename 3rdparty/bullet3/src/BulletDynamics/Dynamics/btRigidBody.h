@@ -25,8 +25,14 @@ class btCollisionShape;
 class btMotionState;
 class btTypedConstraint;
 
-extern btScalar gDeactivationTime;
-extern bool gDisableDeactivation;
+#  if defined(BulletDynamics_EXPORTS)
+#    define BT_DYNAMICS_EXPORT __declspec(dllexport)
+#  else
+#    define BT_DYNAMICS_EXPORT __declspec(dllimport)
+#  endif
+
+extern BT_DYNAMICS_EXPORT btScalar gDeactivationTime;
+extern BT_DYNAMICS_EXPORT bool gDisableDeactivation;
 
 #ifdef BT_USE_DOUBLE_PRECISION
 #define btRigidBodyData btRigidBodyDoubleData

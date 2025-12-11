@@ -33,15 +33,22 @@ extern ContactAddedCallback gContactAddedCallback;
 
 //#define DEBUG_PART_INDEX 1
 
+
+#  if defined(BulletCollision_EXPORTS)
+#    define BT_COLLISION_EXPORT __declspec(dllexport)
+#  else
+#    define BT_COLLISION_EXPORT __declspec(dllimport)
+#  endif
+
 /// These callbacks are used to customize the algorith that combine restitution, friction, damping, Stiffness
 typedef btScalar (*CalculateCombinedCallback)(const btCollisionObject* body0, const btCollisionObject* body1);
 
-extern CalculateCombinedCallback gCalculateCombinedRestitutionCallback;
-extern CalculateCombinedCallback gCalculateCombinedFrictionCallback;
-extern CalculateCombinedCallback gCalculateCombinedRollingFrictionCallback;
-extern CalculateCombinedCallback gCalculateCombinedSpinningFrictionCallback;
-extern CalculateCombinedCallback gCalculateCombinedContactDampingCallback;
-extern CalculateCombinedCallback gCalculateCombinedContactStiffnessCallback;
+BT_COLLISION_EXPORT extern CalculateCombinedCallback gCalculateCombinedRestitutionCallback;
+BT_COLLISION_EXPORT extern CalculateCombinedCallback gCalculateCombinedFrictionCallback;
+BT_COLLISION_EXPORT extern CalculateCombinedCallback gCalculateCombinedRollingFrictionCallback;
+BT_COLLISION_EXPORT extern CalculateCombinedCallback gCalculateCombinedSpinningFrictionCallback;
+BT_COLLISION_EXPORT extern CalculateCombinedCallback gCalculateCombinedContactDampingCallback;
+BT_COLLISION_EXPORT extern CalculateCombinedCallback gCalculateCombinedContactStiffnessCallback;
 
 ///btManifoldResult is a helper class to manage  contact results.
 class btManifoldResult : public btDiscreteCollisionDetectorInterface::Result

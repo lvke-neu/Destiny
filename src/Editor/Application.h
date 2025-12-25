@@ -9,6 +9,7 @@ class AssetPanel;
 class DebugDeferredRenderPanel;
 class DebugShadowMapPanel;
 class GraphicsStatPanel;
+class AiPanel;
 class Application
 {
 public:
@@ -41,6 +42,7 @@ public:
 	std::shared_ptr<DebugDeferredRenderPanel>		m_debugDeferredRenderPanel;
 	std::shared_ptr<DebugShadowMapPanel>			m_debugShadowMapPanel;
 	std::shared_ptr<GraphicsStatPanel>				m_graphicsStatPanel;
+	std::shared_ptr<AiPanel>						m_aiPanel;
 };
 
 	

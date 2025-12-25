@@ -6,6 +6,7 @@
 #include "DebugDeferredRenderPanel.h"
 #include "DebugShadowMapPanel.h"
 #include "GraphicsStatPanel.h"
+#include "AiPanel.h"
 #include "FileDialog.h"
 #include "Engine/Engine.h"
 #include "Engine/BlobLoaderManager.h"
@@ -133,7 +134,8 @@ Application::Application() :
 	m_assetPanel(std::make_shared<AssetPanel>()),
 	m_debugDeferredRenderPanel(std::make_shared<DebugDeferredRenderPanel>()),
 	m_debugShadowMapPanel(std::make_shared<DebugShadowMapPanel>()),
-	m_graphicsStatPanel(std::make_shared<GraphicsStatPanel>())
+	m_graphicsStatPanel(std::make_shared<GraphicsStatPanel>()),
+	m_aiPanel(std::make_shared<AiPanel>())
 {
 	AllocConsole();
 	MetaConnect(m_scenePanel, ScenePanel::ChoosedNode, m_propertyPanel, &PropertyPanel::onChoosedNode);
@@ -222,9 +224,9 @@ void Application::run()
 
 			drawDock();
 			
-			//static bool show = true;
-			//ImGui::ShowDemoWindow(&show);
-			//ImGui::ShowMetricsWindow();
+			static bool show = true;
+			ImGui::ShowDemoWindow(&show);
+			ImGui::ShowMetricsWindow();
 
 			ImGui::Render();
 			ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
@@ -403,6 +405,7 @@ void Application::drawDock()
 	m_debugDeferredRenderPanel->update();
 	m_debugShadowMapPanel->update();
 	m_graphicsStatPanel->update();
+	m_aiPanel->update();
 
 	ImGui::End();
 }

@@ -28,7 +28,7 @@ namespace Destiny
 
 		setRenderPass(renderPass);
 		setMesh(mesh);
-		set_material(PbrMaterial::Create_Default());
+		set_material(PbrMaterial::Create_Gold());
 
 
 		auto shadowRenderer = Renderer::Create("builtin://renderer/forward_pbr_shadow.hlsl");
@@ -45,8 +45,7 @@ namespace Destiny
 
 	ConeComponent::~ConeComponent()
 	{
-		int i = 0;
-		i++;
+
 	}
 
 	void ConeComponent::onUpdate(float deltaTime)

@@ -404,11 +404,11 @@ namespace Destiny
 		return m_cache["Cone_PositionNormalTexcoord"];
 	}
 
-	const float radius = 0.5f;
-	const float height = 1.0f;
-	const unsigned int slices = 20;
+	const float radius = 1.0f;
+	const float height = 3.0f;
+	const unsigned int slices = 40;
 
-	const unsigned int vertexCount = slices + 2;
+	const unsigned int vertexCount = slices * 2 + 2;
 
 	std::shared_ptr<Blob> data = nullptr;
 	std::vector<PositionNormalTexcoord> vertices;
@@ -420,11 +420,11 @@ namespace Destiny
 	vertices[0].texcoord = DirectX::XMFLOAT2(0.5f, 0.0f);
 
 	// 底面圆心
-	vertices[slices + 1].position = DirectX::XMFLOAT3(0.0f, -height / 2.0f, 0.0f);
-	vertices[slices + 1].normal = DirectX::XMFLOAT3(0.0f, -1.0f, 0.0f);
-	vertices[slices + 1].texcoord = DirectX::XMFLOAT2(0.5f, 1.0f);
+	vertices[slices * 2 + 1].position = DirectX::XMFLOAT3(0.0f, -height / 2.0f, 0.0f);
+	vertices[slices * 2 + 1].normal = DirectX::XMFLOAT3(0.0f, -1.0f, 0.0f);
+	vertices[slices * 2 + 1].texcoord = DirectX::XMFLOAT2(0.5f, 0.5f);
 
-	// 底面圆周上的顶点
+	// 侧面的底面圆周顶点
 	float theta = 0.0f;
 	float per_theta = 2.0f * Math::PI / slices;
 	for (unsigned int i = 1; i <= slices; ++i)
@@ -442,9 +442,29 @@ namespace Destiny
 		coneDirVec = DirectX::XMVector3Normalize(coneDirVec);
 		DirectX::XMStoreFloat3(&vertices[i].normal, coneDirVec);
 
-		// 计算纹理坐标
+		// 计算侧面纹理坐标
 		float u = theta / (2.0f * Math::PI);
 		vertices[i].texcoord = DirectX::XMFLOAT2(u, 1.0f);
+	}
+
+	// 底面的底面圆周顶点（与侧面共享位置，但使用底面法线和纹理坐标）
+	for (unsigned int i = 1; i <= slices; ++i)
+	{
+		theta = per_theta * i;
+		float x = radius * cosf(theta);
+		float z = radius * sinf(theta);
+		float y = -height / 2.0f;
+
+		unsigned int bottomVertexIndex = slices + i;
+		vertices[bottomVertexIndex].position = DirectX::XMFLOAT3(x, y, z);
+
+		// 底面法线
+		vertices[bottomVertexIndex].normal = DirectX::XMFLOAT3(0.0f, -1.0f, 0.0f);
+
+		// 计算底面纹理坐标（从圆心向外辐射）
+		float u = 0.5f + 0.5f * cosf(theta);
+		float v = 0.5f + 0.5f * sinf(theta);
+		vertices[bottomVertexIndex].texcoord = DirectX::XMFLOAT2(u, v);
 	}
 
 	data.reset(new Blob(vertices.size() * sizeof(PositionNormalTexcoord)));
@@ -453,19 +473,19 @@ namespace Destiny
 
 	// 创建索引数据
 	std::vector<unsigned short> indices;
-	// 侧面三角形
+	// 侧面三角形 - 逆时针绕序 (D3D11默认前向)
 	for (unsigned int i = 1; i <= slices; ++i)
 	{
 		indices.push_back(0);
-		indices.push_back(i);
 		indices.push_back(i % slices + 1);
+		indices.push_back(i);
 	}
-	// 底面三角形
+	// 底面三角形 - 逆时针绕序 (D3D11默认前向)
 	for (unsigned int i = 1; i <= slices; ++i)
 	{
-		indices.push_back(slices + 1);
-		indices.push_back(i % slices + 1);
-		indices.push_back(i);
+		indices.push_back(slices * 2 + 1);
+		indices.push_back(slices + i);
+		indices.push_back(slices + (i % slices + 1));
 	}
 
 	data.reset(new Blob(indices.size() * sizeof(unsigned short)));
@@ -499,60 +519,110 @@ std::shared_ptr<Mesh> MeshProvider::Create_Cylinder_PositionNormalTexcoord()
 		return m_cache["Cylinder_PositionNormalTexcoord"];
 	}
 
-	const float radius = 0.5f;
-	const float height = 1.0f;
-	const unsigned int slices = 20;
+	const float radius = 1.0f;
+	const float height = 3.0f;
+	const unsigned int slices = 40;
 
-	const unsigned int vertexCount = 2 * (slices + 1); // 上下底面各有slices+1个顶点
+	// 顶点数量：上下底面中心各1个，上下底面圆周各slices个，侧面slices*2个
+	const unsigned int vertexCount = 2 + slices * 4;
 
 	std::shared_ptr<Blob> data = nullptr;
 	std::vector<PositionNormalTexcoord> vertices;
 	vertices.resize(vertexCount);
 
-	// 上底面
+	float theta = 0.0f;
+	float per_theta = 2.0f * Math::PI / slices;
+
+	// 上底面中心
 	vertices[0].position = DirectX::XMFLOAT3(0.0f, height / 2.0f, 0.0f);
 	vertices[0].normal = DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f);
 	vertices[0].texcoord = DirectX::XMFLOAT2(0.5f, 0.5f);
 
-	// 下底面
-	vertices[slices + 1].position = DirectX::XMFLOAT3(0.0f, -height / 2.0f, 0.0f);
-	vertices[slices + 1].normal = DirectX::XMFLOAT3(0.0f, -1.0f, 0.0f);
-	vertices[slices + 1].texcoord = DirectX::XMFLOAT2(0.5f, 0.5f);
+	// 下底面中心
+	vertices[1].position = DirectX::XMFLOAT3(0.0f, -height / 2.0f, 0.0f);
+	vertices[1].normal = DirectX::XMFLOAT3(0.0f, -1.0f, 0.0f);
+	vertices[1].texcoord = DirectX::XMFLOAT2(0.5f, 0.5f);
 
-	// 上底面圆周上的顶点
-	float theta = 0.0f;
-	float per_theta = 2.0f * Math::PI / slices;
-	for (unsigned int i = 1; i <= slices; ++i)
+	// 上底面圆周顶点
+	for (unsigned int i = 0; i < slices; ++i)
 	{
 		theta = per_theta * i;
 		float x = radius * cosf(theta);
 		float z = radius * sinf(theta);
 		float y = height / 2.0f;
 
-		vertices[i].position = DirectX::XMFLOAT3(x, y, z);
-		vertices[i].normal = DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f);
+		unsigned int vertexIndex = 2 + i;
+		vertices[vertexIndex].position = DirectX::XMFLOAT3(x, y, z);
+		vertices[vertexIndex].normal = DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f);
 
-		// 计算纹理坐标
+		// 上底面纹理坐标 - 从中心向外辐射
 		float u = 0.5f + 0.5f * cosf(theta);
 		float v = 0.5f + 0.5f * sinf(theta);
-		vertices[i].texcoord = DirectX::XMFLOAT2(u, v);
+		vertices[vertexIndex].texcoord = DirectX::XMFLOAT2(u, v);
 	}
 
-	// 下底面圆周上的顶点
-	for (unsigned int i = 1; i <= slices; ++i)
+	// 下底面圆周顶点
+	for (unsigned int i = 0; i < slices; ++i)
 	{
 		theta = per_theta * i;
 		float x = radius * cosf(theta);
 		float z = radius * sinf(theta);
 		float y = -height / 2.0f;
 
-		vertices[slices + 1 + i].position = DirectX::XMFLOAT3(x, y, z);
-		vertices[slices + 1 + i].normal = DirectX::XMFLOAT3(0.0f, -1.0f, 0.0f);
+		unsigned int vertexIndex = 2 + slices + i;
+		vertices[vertexIndex].position = DirectX::XMFLOAT3(x, y, z);
+		vertices[vertexIndex].normal = DirectX::XMFLOAT3(0.0f, -1.0f, 0.0f);
 
-		// 计算纹理坐标
+		// 下底面纹理坐标 - 从中心向外辐射
 		float u = 0.5f + 0.5f * cosf(theta);
 		float v = 0.5f + 0.5f * sinf(theta);
-		vertices[slices + 1 + i].texcoord = DirectX::XMFLOAT2(u, v);
+		vertices[vertexIndex].texcoord = DirectX::XMFLOAT2(u, v);
+	}
+
+	// 侧面上半部分顶点
+	for (unsigned int i = 0; i < slices; ++i)
+	{
+		theta = per_theta * i;
+		float x = radius * cosf(theta);
+		float z = radius * sinf(theta);
+		float y = height / 2.0f;
+
+		unsigned int vertexIndex = 2 + slices * 2 + i;
+		vertices[vertexIndex].position = DirectX::XMFLOAT3(x, y, z);
+
+		// 侧面法线 - 径向向外
+		DirectX::XMFLOAT3 normal = { x, 0.0f, z };
+		DirectX::XMVECTOR normalVec = DirectX::XMLoadFloat3(&normal);
+		normalVec = DirectX::XMVector3Normalize(normalVec);
+		DirectX::XMStoreFloat3(&vertices[vertexIndex].normal, normalVec);
+
+		// 侧面纹理坐标
+		float u = (float)i / (float)slices;
+		float v = 1.0f;
+		vertices[vertexIndex].texcoord = DirectX::XMFLOAT2(u, v);
+	}
+
+	// 侧面下半部分顶点
+	for (unsigned int i = 0; i < slices; ++i)
+	{
+		theta = per_theta * i;
+		float x = radius * cosf(theta);
+		float z = radius * sinf(theta);
+		float y = -height / 2.0f;
+
+		unsigned int vertexIndex = 2 + slices * 3 + i;
+		vertices[vertexIndex].position = DirectX::XMFLOAT3(x, y, z);
+
+		// 侧面法线 - 径向向外
+		DirectX::XMFLOAT3 normal = { x, 0.0f, z };
+		DirectX::XMVECTOR normalVec = DirectX::XMLoadFloat3(&normal);
+		normalVec = DirectX::XMVector3Normalize(normalVec);
+		DirectX::XMStoreFloat3(&vertices[vertexIndex].normal, normalVec);
+
+		// 侧面纹理坐标
+		float u = (float)i / (float)slices;
+		float v = 0.0f;
+		vertices[vertexIndex].texcoord = DirectX::XMFLOAT2(u, v);
 	}
 
 	data.reset(new Blob(vertices.size() * sizeof(PositionNormalTexcoord)));
@@ -561,29 +631,33 @@ std::shared_ptr<Mesh> MeshProvider::Create_Cylinder_PositionNormalTexcoord()
 
 	// 创建索引数据
 	std::vector<unsigned short> indices;
-	// 上底面三角形 - 逆时针绕序
-	for (unsigned int i = 1; i <= slices; ++i)
+
+	// 上底面三角形 - 逆时针绕序（从上往下看）
+	for (unsigned int i = 0; i < slices; ++i)
 	{
-		indices.push_back(0);
-		indices.push_back(i);
-		indices.push_back((i % slices) + 1);
+		unsigned int next = (i + 1) % slices;
+		indices.push_back(0);  // 中心
+		indices.push_back(2 + i);  // 当前顶点
+		indices.push_back(2 + next);  // 下一个顶点
 	}
 
-	// 下底面三角形 - 逆时针绕序
-	for (unsigned int i = 1; i <= slices; ++i)
+	// 下底面三角形 - 逆时针绕序（从下往上看）
+	for (unsigned int i = 0; i < slices; ++i)
 	{
-		indices.push_back(slices + 1);
-		indices.push_back(slices + 1 + ((i % slices) + 1));
-		indices.push_back(slices + 1 + i);
+		unsigned int next = (i + 1) % slices;
+		indices.push_back(1);  // 中心
+		indices.push_back(2 + slices + i);  // 当前顶点
+		indices.push_back(2 + slices + next);  // 下一个顶点
 	}
 
-	// 侧面矩形 - 逆时针绕序
-	for (unsigned int i = 1; i <= slices; ++i)
+	// 侧面矩形 - 逆时针绕序（符合DirectX 11左手坐标系）
+	for (unsigned int i = 0; i < slices; ++i)
 	{
-		unsigned short top1 = i;
-		unsigned short top2 = (i % slices) + 1;
-		unsigned short bottom1 = slices + 1 + i;
-		unsigned short bottom2 = slices + 1 + ((i % slices) + 1);
+		unsigned int next = (i + 1) % slices;
+		unsigned int top1 = 2 + slices * 2 + i;
+		unsigned int top2 = 2 + slices * 2 + next;
+		unsigned int bottom1 = 2 + slices * 3 + i;
+		unsigned int bottom2 = 2 + slices * 3 + next;
 
 		// 第一个三角形 - 逆时针绕序
 		indices.push_back(top1);
@@ -695,15 +769,15 @@ std::shared_ptr<Mesh> MeshProvider::Create_Torus_PositionNormalTexcoord()
 				nextMajorNextVertex = nextMajor * minorSegments;
 			}
 
-			// 第一个三角形 - 逆时针绕序
+			// 第一个三角形 - 逆时针绕序 (D3D11默认前向)
 			indices[indexIndex++] = (unsigned short)currentVertex;
-			indices[indexIndex++] = (unsigned short)nextVertex;
 			indices[indexIndex++] = (unsigned short)nextMajorVertex;
+			indices[indexIndex++] = (unsigned short)nextVertex;
 
-			// 第二个三角形 - 逆时针绕序
+			// 第二个三角形 - 逆时针绕序 (D3D11默认前向)
 			indices[indexIndex++] = (unsigned short)nextVertex;
-			indices[indexIndex++] = (unsigned short)nextMajorNextVertex;
 			indices[indexIndex++] = (unsigned short)nextMajorVertex;
+			indices[indexIndex++] = (unsigned short)nextMajorNextVertex;
 
 			++vertexIndex;
 		}
@@ -746,11 +820,17 @@ std::shared_ptr<Mesh> MeshProvider::Create_Capsule_PositionNormalTexcoord()
 	}
 
 	const float radius = 0.25f;  // 胶囊体半径
-	const float height = 0.5f;    // 圆柱体部分高度
+	const float height = 0.5f;    // 圆柱体部分高度（不包含两个半球）
 	const unsigned int slices = 20;   // 径向分段数
-	const unsigned int stacks = 10;   // 轴向分段数
+	const unsigned int stacks = 12;   // 轴向分段数（增加到12以确保有中间圆柱体）
 
-	const unsigned int vertexCount = (stacks + 1) * slices + 2; // 圆柱体部分 + 两个半球的顶点
+	// 计算各部分的分段数 - 确保至少有2个圆柱体分段
+	const unsigned int hemisphereStacks = (stacks - 2) / 2;
+	const unsigned int cylinderStacks = stacks - hemisphereStacks * 2;
+
+	// 计算总顶点数和索引数
+	const unsigned int totalLayers = (hemisphereStacks + 1) + cylinderStacks + (hemisphereStacks + 1);
+	const unsigned int vertexCount = totalLayers * slices;
 	const unsigned int indexCount = stacks * slices * 6;
 
 	std::shared_ptr<Blob> data = nullptr;
@@ -763,17 +843,18 @@ std::shared_ptr<Mesh> MeshProvider::Create_Capsule_PositionNormalTexcoord()
 	unsigned int vertexIndex = 0;
 	unsigned int indexIndex = 0;
 
-	// 生成圆柱体部分的顶点（包括上下两个半球的连接部分）
+	// 生成顶点数据
 	float theta = 0.0f;
 	float per_theta = 2.0f * Math::PI / slices;
-	float per_height = height / stacks;
+	float cylinderPerHeight = height / cylinderStacks;
 
-	// 上半球顶点
-	for (unsigned int i = 0; i <= stacks / 2; ++i)
+	// 1. 上半球顶点 - 从圆柱体顶部(y=height/2)到半球顶点(y=height/2+radius)
+	for (unsigned int i = 0; i <= hemisphereStacks; ++i)
 	{
-		float phi = Math::PI / 2.0f - Math::PI / stacks * i;
-		float y = height / 2.0f + radius * cosf(phi);
-		float r = radius * sinf(phi);
+		// phi角从0（与圆柱体连接的赤道）到π/2（顶部）
+		float phi = (Math::PI / 2.0f / hemisphereStacks) * i;
+		float y = height / 2.0f + radius * sinf(phi);
+		float r = radius * cosf(phi);
 
 		for (unsigned int j = 0; j < slices; ++j)
 		{
@@ -782,19 +863,39 @@ std::shared_ptr<Mesh> MeshProvider::Create_Capsule_PositionNormalTexcoord()
 			float z = r * sinf(theta);
 
 			vertices[vertexIndex].position = DirectX::XMFLOAT3(x, y, z);
-			vertices[vertexIndex].normal = DirectX::XMFLOAT3(x / radius, cosf(phi), z / radius);
-			vertices[vertexIndex].texcoord = DirectX::XMFLOAT2((float)j / slices, (float)i / (stacks / 2));
+			vertices[vertexIndex].normal = DirectX::XMFLOAT3(x / radius, sinf(phi), z / radius);
+			vertices[vertexIndex].texcoord = DirectX::XMFLOAT2((float)j / slices, 1.0f - (float)i / stacks);
 
 			++vertexIndex;
 		}
 	}
 
-	// 下半球顶点
-	for (unsigned int i = stacks / 2 + 1; i <= stacks; ++i)
+	// 2. 中间圆柱体顶点 - 从y=height/2到底y=-height/2
+	for (unsigned int i = 0; i < cylinderStacks; ++i)
 	{
-		float phi = -Math::PI / 2.0f + Math::PI / stacks * (i - stacks / 2);
-		float y = -height / 2.0f + radius * cosf(phi);
-		float r = radius * sinf(phi);
+		float y = height / 2.0f - cylinderPerHeight * (i + 1);
+
+		for (unsigned int j = 0; j < slices; ++j)
+		{
+			theta = per_theta * j;
+			float x = radius * cosf(theta);
+			float z = radius * sinf(theta);
+
+			vertices[vertexIndex].position = DirectX::XMFLOAT3(x, y, z);
+			vertices[vertexIndex].normal = DirectX::XMFLOAT3(x / radius, 0.0f, z / radius);
+			vertices[vertexIndex].texcoord = DirectX::XMFLOAT2((float)j / slices, 1.0f - (float)(hemisphereStacks + 1 + i) / stacks);
+
+			++vertexIndex;
+		}
+	}
+
+	// 3. 下半球顶点 - 从圆柱体底部(y=-height/2)到半球顶点(y=-height/2-radius)
+	for (unsigned int i = 0; i <= hemisphereStacks; ++i)
+	{
+		// phi角从0（与圆柱体连接的赤道）到π/2（底部）
+		float phi = (Math::PI / 2.0f / hemisphereStacks) * i;
+		float y = -height / 2.0f - radius * sinf(phi);
+		float r = radius * cosf(phi);
 
 		for (unsigned int j = 0; j < slices; ++j)
 		{
@@ -803,8 +904,8 @@ std::shared_ptr<Mesh> MeshProvider::Create_Capsule_PositionNormalTexcoord()
 			float z = r * sinf(theta);
 
 			vertices[vertexIndex].position = DirectX::XMFLOAT3(x, y, z);
-			vertices[vertexIndex].normal = DirectX::XMFLOAT3(x / radius, cosf(phi), z / radius);
-			vertices[vertexIndex].texcoord = DirectX::XMFLOAT2((float)j / slices, 1.0f - (float)(i - stacks / 2) / (stacks / 2));
+			vertices[vertexIndex].normal = DirectX::XMFLOAT3(x / radius, -sinf(phi), z / radius);
+			vertices[vertexIndex].texcoord = DirectX::XMFLOAT2((float)j / slices, 1.0f - (float)(hemisphereStacks + cylinderStacks + 1 + i) / stacks);
 
 			++vertexIndex;
 		}
@@ -820,15 +921,15 @@ std::shared_ptr<Mesh> MeshProvider::Create_Capsule_PositionNormalTexcoord()
 			unsigned int currentNext = i * slices + ((j + 1) % slices);
 			unsigned int nextNext = (i + 1) * slices + ((j + 1) % slices);
 
-			// 第一个三角形 - 逆时针绕序
+			// 第一个三角形 - 顺时针绕序 (D3D11默认前向)
 			indices.push_back((unsigned short)current);
-			indices.push_back((unsigned short)currentNext);
 			indices.push_back((unsigned short)next);
+			indices.push_back((unsigned short)currentNext);
 
-			// 第二个三角形 - 逆时针绕序
+			// 第二个三角形 - 顺时针绕序 (D3D11默认前向)
 			indices.push_back((unsigned short)currentNext);
-			indices.push_back((unsigned short)nextNext);
 			indices.push_back((unsigned short)next);
+			indices.push_back((unsigned short)nextNext);
 		}
 	}
 

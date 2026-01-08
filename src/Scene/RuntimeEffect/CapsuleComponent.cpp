@@ -1,4 +1,4 @@
-#include "BoxComponent.h"
+#include "CapsuleComponent.h"
 #include "Graphics/Renderer.h"
 #include "Graphics/RenderStates.h"
 #include "Graphics/RenderPass.h"
@@ -7,17 +7,10 @@
 #include "Graphics/MeshProvider.h"
 #include "Graphics/PbrMaterial.h"
 
-#include "Engine/BlobLoader.h"
-#include "Engine/BlobHolder.h"
-#include "Engine/BlobLoaderManager.h"
-#include "Engine/FileSystem.h"
-#include "Engine/Md5.h"
-#include "Graphics/Texture.h"
-
 
 namespace Destiny
 {
-	BoxComponent::BoxComponent()
+	CapsuleComponent::CapsuleComponent()
 	{
 		auto renderer = Renderer::Create("builtin://renderer/forward_pbr.hlsl");
 		renderer->load(0);
@@ -30,7 +23,7 @@ namespace Destiny
 		renderPass->setRenderer(renderer);
 		renderPass->setRenderStates(renderStates);
 
-		auto mesh = MeshProvider::Create_Box_PositionNormalTexcoord();
+		auto mesh = MeshProvider::Create_Capsule_PositionNormalTexcoord();
 		mesh->load();
 
 		setRenderPass(renderPass);
@@ -50,19 +43,19 @@ namespace Destiny
 		setShadowMesh(mesh);
 	}
 
-	BoxComponent::~BoxComponent()
+	CapsuleComponent::~CapsuleComponent()
 	{
 
 	}
 
-	void BoxComponent::onUpdate(float deltaTime)
+	void CapsuleComponent::onUpdate(float deltaTime)
 	{
-
+		VisualComponent::onUpdate(deltaTime);
 	}
 
 	RTTR_REGISTRATION
 	{
-		rttr::registration::class_<BoxComponent>("BoxComponent")
+		rttr::registration::class_<CapsuleComponent>("CapsuleComponent")
 			.constructor<>();
 	}
 }

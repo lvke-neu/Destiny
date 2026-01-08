@@ -166,8 +166,8 @@ void Application::initialize(HINSTANCE hInstance)
 	}
 
 	// Compute window rectangle dimensions based on requested client area dimensions.
-	const unsigned int width = 1000;
-	const unsigned int height = 500;
+	const unsigned int width = 2000;
+	const unsigned int height = 1000;
 
 	RECT R = { 0, 0, width, height };
 	AdjustWindowRect(&R, WS_OVERLAPPEDWINDOW, false);
@@ -224,9 +224,9 @@ void Application::run()
 
 			drawDock();
 			
-			static bool show = true;
-			ImGui::ShowDemoWindow(&show);
-			ImGui::ShowMetricsWindow();
+			//static bool show = true;
+			//ImGui::ShowDemoWindow(&show);
+			//ImGui::ShowMetricsWindow();
 
 			ImGui::Render();
 			ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
@@ -405,7 +405,7 @@ void Application::drawDock()
 	m_debugDeferredRenderPanel->update();
 	m_debugShadowMapPanel->update();
 	m_graphicsStatPanel->update();
-	m_aiPanel->update();
+	//m_aiPanel->update();
 
 	ImGui::End();
 }

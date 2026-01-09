@@ -28,7 +28,7 @@ namespace Destiny
 
 		setRenderPass(renderPass);
 		setMesh(mesh);
-		set_material(PbrMaterial::Create_Rusted_Iron());
+		set_material(PbrMaterial::Create_Gold());
 
 
 		auto shadowRenderer = Renderer::Create("builtin://renderer/forward_pbr_shadow.hlsl");

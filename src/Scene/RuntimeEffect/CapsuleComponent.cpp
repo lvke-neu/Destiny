@@ -50,7 +50,7 @@ namespace Destiny
 
 	void CapsuleComponent::onUpdate(float deltaTime)
 	{
-		VisualComponent::onUpdate(deltaTime);
+
 	}
 
 	RTTR_REGISTRATION

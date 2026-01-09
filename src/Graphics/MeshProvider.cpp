@@ -826,13 +826,16 @@ std::shared_ptr<Mesh> MeshProvider::Create_Capsule_PositionNormalTexcoord()
 
 	// 确保stacks至少为4，以保证有足够的层数
 	const unsigned int safeStacks = std::max(4U, stacks);
-	
+
 	// 计算各部分的分段数 - 确保至少有2个圆柱体分段
 	const unsigned int hemisphereStacks = std::max(1U, (safeStacks - 2) / 2);
 	const unsigned int cylinderStacks = std::max(2U, safeStacks - hemisphereStacks * 2);
 
 	// 计算总顶点数和索引数
-	const unsigned int totalLayers = (hemisphereStacks + 1) + cylinderStacks + (hemisphereStacks + 1);
+	// 上半球: hemisphereStacks + 1 层
+	// 圆柱体: cylinderStacks - 1 层（排除与上半球重叠的第一层）
+	// 下半球: hemisphereStacks + 1 层
+	const unsigned int totalLayers = (hemisphereStacks + 1) + (cylinderStacks - 1) + (hemisphereStacks + 1);
 	const unsigned int vertexCount = totalLayers * slices;
 	const unsigned int indexCount = (totalLayers - 1) * slices * 6;
 
@@ -844,17 +847,18 @@ std::shared_ptr<Mesh> MeshProvider::Create_Capsule_PositionNormalTexcoord()
 	indices.reserve(indexCount);
 
 	unsigned int vertexIndex = 0;
-	
+
 	// 生成顶点数据
 	float theta = 0.0f;
 	float per_theta = 2.0f * Math::PI / slices;
 	float cylinderPerHeight = height / cylinderStacks;
 
-	// 1. 上半球顶点 - 从圆柱体顶部(y=height/2)到半球顶点(y=height/2+radius)
+	// 1. 上半球顶点 - 从顶点(y=height/2+radius)到圆柱体顶部(y=height/2)
+	// 注意：必须从上到下生成，以匹配索引生成的顺序
 	for (unsigned int i = 0; i <= hemisphereStacks; ++i)
 	{
-		// phi角从0（与圆柱体连接的赤道）到π/2（顶部）
-		float phi = (Math::PI / 2.0f / hemisphereStacks) * i;
+		// phi角从π/2（顶部）到0（与圆柱体连接的赤道）
+		float phi = Math::PI / 2.0f - (Math::PI / 2.0f / hemisphereStacks) * i;
 		float y = height / 2.0f + radius * sinf(phi);
 		float r = radius * cosf(phi);
 
@@ -866,16 +870,17 @@ std::shared_ptr<Mesh> MeshProvider::Create_Capsule_PositionNormalTexcoord()
 
 			vertices[vertexIndex].position = DirectX::XMFLOAT3(x, y, z);
 			vertices[vertexIndex].normal = DirectX::XMFLOAT3(x / radius, sinf(phi), z / radius);
-			vertices[vertexIndex].texcoord = DirectX::XMFLOAT2((float)j / slices, 1.0f - (float)i / (hemisphereStacks + cylinderStacks + hemisphereStacks));
+			vertices[vertexIndex].texcoord = DirectX::XMFLOAT2((float)j / slices, (float)i / (hemisphereStacks + cylinderStacks + hemisphereStacks));
 
 			++vertexIndex;
 		}
 	}
 
 	// 2. 中间圆柱体顶点 - 从y=height/2到底y=-height/2
-	for (unsigned int i = 0; i < cylinderStacks; ++i)
+	// 注意：从i=1开始，因为i=0的层（y=height/2）已经由上半球最后一层生成
+	for (unsigned int i = 1; i < cylinderStacks; ++i)
 	{
-		float y = height / 2.0f - cylinderPerHeight * (i + 1);
+		float y = height / 2.0f - cylinderPerHeight * i;
 
 		for (unsigned int j = 0; j < slices; ++j)
 		{
@@ -885,7 +890,7 @@ std::shared_ptr<Mesh> MeshProvider::Create_Capsule_PositionNormalTexcoord()
 
 			vertices[vertexIndex].position = DirectX::XMFLOAT3(x, y, z);
 			vertices[vertexIndex].normal = DirectX::XMFLOAT3(x / radius, 0.0f, z / radius);
-			vertices[vertexIndex].texcoord = DirectX::XMFLOAT2((float)j / slices, 1.0f - (float)(hemisphereStacks + 1 + i) / (hemisphereStacks + cylinderStacks + hemisphereStacks));
+			vertices[vertexIndex].texcoord = DirectX::XMFLOAT2((float)j / slices, (float)(hemisphereStacks + i) / (hemisphereStacks + cylinderStacks + hemisphereStacks));
 
 			++vertexIndex;
 		}
@@ -907,7 +912,7 @@ std::shared_ptr<Mesh> MeshProvider::Create_Capsule_PositionNormalTexcoord()
 
 			vertices[vertexIndex].position = DirectX::XMFLOAT3(x, y, z);
 			vertices[vertexIndex].normal = DirectX::XMFLOAT3(x / radius, -sinf(phi), z / radius);
-			vertices[vertexIndex].texcoord = DirectX::XMFLOAT2((float)j / slices, 1.0f - (float)(hemisphereStacks + cylinderStacks + 1 + i) / (hemisphereStacks + cylinderStacks + hemisphereStacks));
+			vertices[vertexIndex].texcoord = DirectX::XMFLOAT2((float)j / slices, (float)(hemisphereStacks + cylinderStacks + i) / (hemisphereStacks + cylinderStacks + hemisphereStacks));
 
 			++vertexIndex;
 		}

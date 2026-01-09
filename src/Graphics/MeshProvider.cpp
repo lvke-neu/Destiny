@@ -473,14 +473,14 @@ namespace Destiny
 
 	// 创建索引数据
 	std::vector<unsigned short> indices;
-	// 侧面三角形 - 逆时针绕序 (D3D11默认前向)
+	// 侧面三角形 - 修正为DX11顺时针绕序
 	for (unsigned int i = 1; i <= slices; ++i)
 	{
 		indices.push_back(0);
 		indices.push_back(i % slices + 1);
 		indices.push_back(i);
 	}
-	// 底面三角形 - 逆时针绕序 (D3D11默认前向)
+	// 底面三角形 - 修正为DX11顺时针绕序
 	for (unsigned int i = 1; i <= slices; ++i)
 	{
 		indices.push_back(slices * 2 + 1);
@@ -632,7 +632,7 @@ std::shared_ptr<Mesh> MeshProvider::Create_Cylinder_PositionNormalTexcoord()
 	// 创建索引数据
 	std::vector<unsigned short> indices;
 
-	// 上底面三角形 - 逆时针绕序（从上往下看）
+	// 上底面三角形 - 修正为DX11顺时针绕序（从上往下看）
 	for (unsigned int i = 0; i < slices; ++i)
 	{
 		unsigned int next = (i + 1) % slices;
@@ -641,16 +641,16 @@ std::shared_ptr<Mesh> MeshProvider::Create_Cylinder_PositionNormalTexcoord()
 		indices.push_back(2 + next);  // 下一个顶点
 	}
 
-	// 下底面三角形 - 逆时针绕序（从下往上看）
+	// 下底面三角形 - 修正为DX11顺时针绕序（从下往上看）
 	for (unsigned int i = 0; i < slices; ++i)
 	{
 		unsigned int next = (i + 1) % slices;
 		indices.push_back(1);  // 中心
-		indices.push_back(2 + slices + i);  // 当前顶点
 		indices.push_back(2 + slices + next);  // 下一个顶点
+		indices.push_back(2 + slices + i);  // 当前顶点
 	}
 
-	// 侧面矩形 - 逆时针绕序（符合DirectX 11左手坐标系）
+	// 侧面矩形 - 修正为DX11顺时针绕序（从外部看）
 	for (unsigned int i = 0; i < slices; ++i)
 	{
 		unsigned int next = (i + 1) % slices;
@@ -659,12 +659,12 @@ std::shared_ptr<Mesh> MeshProvider::Create_Cylinder_PositionNormalTexcoord()
 		unsigned int bottom1 = 2 + slices * 3 + i;
 		unsigned int bottom2 = 2 + slices * 3 + next;
 
-		// 第一个三角形 - 逆时针绕序
+		// 第一个三角形 - 顺时针绕序
 		indices.push_back(top1);
 		indices.push_back(bottom1);
 		indices.push_back(top2);
 
-		// 第二个三角形 - 逆时针绕序
+		// 第二个三角形 - 顺时针绕序
 		indices.push_back(top2);
 		indices.push_back(bottom1);
 		indices.push_back(bottom2);
@@ -769,12 +769,12 @@ std::shared_ptr<Mesh> MeshProvider::Create_Torus_PositionNormalTexcoord()
 				nextMajorNextVertex = nextMajor * minorSegments;
 			}
 
-			// 第一个三角形 - 逆时针绕序 (D3D11默认前向)
+			// 第一个三角形 - 顺时针绕序 (D3D11默认前向)
 			indices[indexIndex++] = (unsigned short)currentVertex;
 			indices[indexIndex++] = (unsigned short)nextMajorVertex;
 			indices[indexIndex++] = (unsigned short)nextVertex;
 
-			// 第二个三角形 - 逆时针绕序 (D3D11默认前向)
+			// 第二个三角形 - 顺时针绕序 (D3D11默认前向)
 			indices[indexIndex++] = (unsigned short)nextVertex;
 			indices[indexIndex++] = (unsigned short)nextMajorVertex;
 			indices[indexIndex++] = (unsigned short)nextMajorNextVertex;
@@ -822,16 +822,19 @@ std::shared_ptr<Mesh> MeshProvider::Create_Capsule_PositionNormalTexcoord()
 	const float radius = 0.25f;  // 胶囊体半径
 	const float height = 0.5f;    // 圆柱体部分高度（不包含两个半球）
 	const unsigned int slices = 20;   // 径向分段数
-	const unsigned int stacks = 12;   // 轴向分段数（增加到12以确保有中间圆柱体）
+	const unsigned int stacks = 12;   // 轴向分段数
 
+	// 确保stacks至少为4，以保证有足够的层数
+	const unsigned int safeStacks = std::max(4U, stacks);
+	
 	// 计算各部分的分段数 - 确保至少有2个圆柱体分段
-	const unsigned int hemisphereStacks = (stacks - 2) / 2;
-	const unsigned int cylinderStacks = stacks - hemisphereStacks * 2;
+	const unsigned int hemisphereStacks = std::max(1U, (safeStacks - 2) / 2);
+	const unsigned int cylinderStacks = std::max(2U, safeStacks - hemisphereStacks * 2);
 
 	// 计算总顶点数和索引数
 	const unsigned int totalLayers = (hemisphereStacks + 1) + cylinderStacks + (hemisphereStacks + 1);
 	const unsigned int vertexCount = totalLayers * slices;
-	const unsigned int indexCount = stacks * slices * 6;
+	const unsigned int indexCount = (totalLayers - 1) * slices * 6;
 
 	std::shared_ptr<Blob> data = nullptr;
 	std::vector<PositionNormalTexcoord> vertices;
@@ -841,8 +844,7 @@ std::shared_ptr<Mesh> MeshProvider::Create_Capsule_PositionNormalTexcoord()
 	indices.reserve(indexCount);
 
 	unsigned int vertexIndex = 0;
-	unsigned int indexIndex = 0;
-
+	
 	// 生成顶点数据
 	float theta = 0.0f;
 	float per_theta = 2.0f * Math::PI / slices;
@@ -864,7 +866,7 @@ std::shared_ptr<Mesh> MeshProvider::Create_Capsule_PositionNormalTexcoord()
 
 			vertices[vertexIndex].position = DirectX::XMFLOAT3(x, y, z);
 			vertices[vertexIndex].normal = DirectX::XMFLOAT3(x / radius, sinf(phi), z / radius);
-			vertices[vertexIndex].texcoord = DirectX::XMFLOAT2((float)j / slices, 1.0f - (float)i / stacks);
+			vertices[vertexIndex].texcoord = DirectX::XMFLOAT2((float)j / slices, 1.0f - (float)i / (hemisphereStacks + cylinderStacks + hemisphereStacks));
 
 			++vertexIndex;
 		}
@@ -883,7 +885,7 @@ std::shared_ptr<Mesh> MeshProvider::Create_Capsule_PositionNormalTexcoord()
 
 			vertices[vertexIndex].position = DirectX::XMFLOAT3(x, y, z);
 			vertices[vertexIndex].normal = DirectX::XMFLOAT3(x / radius, 0.0f, z / radius);
-			vertices[vertexIndex].texcoord = DirectX::XMFLOAT2((float)j / slices, 1.0f - (float)(hemisphereStacks + 1 + i) / stacks);
+			vertices[vertexIndex].texcoord = DirectX::XMFLOAT2((float)j / slices, 1.0f - (float)(hemisphereStacks + 1 + i) / (hemisphereStacks + cylinderStacks + hemisphereStacks));
 
 			++vertexIndex;
 		}
@@ -905,14 +907,14 @@ std::shared_ptr<Mesh> MeshProvider::Create_Capsule_PositionNormalTexcoord()
 
 			vertices[vertexIndex].position = DirectX::XMFLOAT3(x, y, z);
 			vertices[vertexIndex].normal = DirectX::XMFLOAT3(x / radius, -sinf(phi), z / radius);
-			vertices[vertexIndex].texcoord = DirectX::XMFLOAT2((float)j / slices, 1.0f - (float)(hemisphereStacks + cylinderStacks + 1 + i) / stacks);
+			vertices[vertexIndex].texcoord = DirectX::XMFLOAT2((float)j / slices, 1.0f - (float)(hemisphereStacks + cylinderStacks + 1 + i) / (hemisphereStacks + cylinderStacks + hemisphereStacks));
 
 			++vertexIndex;
 		}
 	}
 
-	// 生成索引
-	for (unsigned int i = 0; i < stacks; ++i)
+	// 生成索引 - 使用totalLayers-1而不是stacks
+	for (unsigned int i = 0; i < totalLayers - 1; ++i)
 	{
 		for (unsigned int j = 0; j < slices; ++j)
 		{
@@ -923,12 +925,12 @@ std::shared_ptr<Mesh> MeshProvider::Create_Capsule_PositionNormalTexcoord()
 
 			// 第一个三角形 - 顺时针绕序 (D3D11默认前向)
 			indices.push_back((unsigned short)current);
-			indices.push_back((unsigned short)next);
 			indices.push_back((unsigned short)currentNext);
+			indices.push_back((unsigned short)next);
 
 			// 第二个三角形 - 顺时针绕序 (D3D11默认前向)
-			indices.push_back((unsigned short)currentNext);
 			indices.push_back((unsigned short)next);
+			indices.push_back((unsigned short)currentNext);
 			indices.push_back((unsigned short)nextNext);
 		}
 	}

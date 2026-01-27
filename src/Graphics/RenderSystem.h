@@ -23,6 +23,7 @@ namespace Destiny
 		void									commitVisual(std::shared_ptr<Visual> visual);
 		std::shared_ptr<GraphicsPipeline>       getDeferredOpaquePipeline();
 		std::shared_ptr<GraphicsPipeline>       getForwardOpaquePipeline();
+		std::shared_ptr<GraphicsPipeline>		getSsrPipeline();
 		std::shared_ptr<GraphicsPipeline>		getShadowMapPipeline();
 		std::shared_ptr<RenderTargetView>		getRenderTargetView();
 		void									addBeforePipelineCommand(std::shared_ptr<GraphicsCommand> graphicsCommand);
@@ -31,6 +32,9 @@ namespace Destiny
 		void									removeBeforePipelineCommandList(const std::wstring& debugName, std::shared_ptr<GraphicsCommandList> graphicsCommandList);
 	public:
 		std::shared_ptr<BindRenderTargets>		m_bindRenderTargets;
+	public:
+		bool getSsr();
+		void setSsr(bool bSsr);
 	private:
 		void onResize(void* data);
 	private:
@@ -39,6 +43,7 @@ namespace Destiny
 		std::shared_ptr<GraphicsPipeline>		m_deferredOpaquePipeline;
 		std::shared_ptr<GraphicsPipeline>		m_transparentPipeline;
 		std::shared_ptr<GraphicsPipeline>		m_guiPipeline;
+		std::shared_ptr<GraphicsPipeline>		m_ssrPipeline;
 		std::shared_ptr<GraphicsPipeline>		m_postProcessingPipeline;
 
 		std::vector<std::pair<std::wstring, std::shared_ptr<GraphicsCommandList>>> m_beforePipelineCommandLists;
@@ -47,6 +52,7 @@ namespace Destiny
 		std::shared_ptr<ClearRenderTarget>		m_clearRenderTarget;
 
 		std::shared_ptr<GpuTimer>				m_gpuTimer;
+		bool m_bSsr;
 	};
 
 	inline std::shared_ptr<GraphicsPipeline> RenderSystem::getDeferredOpaquePipeline()
@@ -62,5 +68,20 @@ namespace Destiny
 	inline std::shared_ptr<GraphicsPipeline> RenderSystem::getShadowMapPipeline()
 	{
 		return m_shadowMapPipeline;
+	}
+
+	inline std::shared_ptr<GraphicsPipeline> RenderSystem::getSsrPipeline()
+	{
+		return m_ssrPipeline;
+	}
+
+	inline bool RenderSystem::getSsr()
+	{
+		return m_bSsr;
+	}
+
+	inline void RenderSystem::setSsr(bool bSsr)
+	{
+		m_bSsr = bSsr;
 	}
 }

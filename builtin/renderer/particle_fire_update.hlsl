@@ -15,11 +15,13 @@ cbuffer cbParticleUpdate : register(b0)
 {
     float deltaTime;
     float3 emitterPosition;
+    float totalTime; // Added for randomness
+    float3 padding;
 };
 
 RWStructuredBuffer<Particle> particles : register(u0);
 
-// 随机数生成函数
+// Random function
 float rand(float2 co)
 {
     return frac(sin(dot(co.xy, float2(12.9898, 78.233))) * 43758.5453);
@@ -31,69 +33,80 @@ void CS(uint3 dispatchThreadID : SV_DispatchThreadID)
     uint index = dispatchThreadID.x;
     Particle p = particles[index];
 
-    // 更新生命周期
+    // Update lifetime
     p.lifetime -= deltaTime;
 
-    // 如果粒子已过期，重置它
+    // Respawn logic
     if (p.lifetime <= 0.0f)
     {
-        // 重置到发射器位置附近
-        p.position = emitterPosition + float3(
-            rand(float2(index, 0.1)) * 0.2f - 0.1f,
-            rand(float2(index, 0.2)) * 0.2f - 0.1f,
-            rand(float2(index, 0.3)) * 0.2f - 0.1f
-            );
+        // Use totalTime to vary the random seed over time
+        float seed = index + totalTime * 10.0f;
 
-        // 随机初始速度(向上为主，模拟火焰)
+        // Reset position at emitter with small sphere offset
+        float3 randomOffset = float3(
+            rand(float2(seed, 0.1)) * 2.0 - 1.0,
+            rand(float2(seed, 0.2)) * 2.0 - 1.0,
+            rand(float2(seed, 0.3)) * 2.0 - 1.0
+        );
+        p.position = emitterPosition + normalize(randomOffset) * (rand(float2(seed, 0.9)) * 0.2); // 0.2 radius sphere
+
+        // Reset velocity (Upwards cone)
         p.velocity = float3(
-            rand(float2(index, 0.4)) * 0.5f - 0.25f,
-            1.0f + rand(float2(index, 0.5)) * 0.5f,
-            rand(float2(index, 0.6)) * 0.5f - 0.25f
-            );
+            rand(float2(seed, 0.4)) * 1.0 - 0.5, // -0.5 to 0.5
+            1.5f + rand(float2(seed, 0.5)) * 1.5, // 1.5 to 3.0
+            rand(float2(seed, 0.6)) * 1.0 - 0.5  // -0.5 to 0.5
+        );
 
-        // 加速度
-        p.acceleration = float3(0.0f, 0.5f, 0.0f);
+        // Reset acceleration (Buoyancy)
+        p.acceleration = float3(0.0f, 1.0f, 0.0f);
 
-        // 重置生命周期
-        p.maxLifetime = 0.5f + rand(float2(index, 0.7)) * 1.5f;
+        // Reset lifetime
+        p.maxLifetime = 1.0f + rand(float2(seed, 0.7)) * 1.0f;
         p.lifetime = p.maxLifetime;
 
-        // 随机大小
-        p.size = 0.1f + rand(float2(index, 0.8)) * 0.4f;
+        // Reset size
+        p.size = 0.2f + rand(float2(seed, 0.8)) * 0.3f;
+        
+        // Initial color (Yellow core)
+        p.color = float3(1.0f, 0.8f, 0.2f); 
     }
     else
     {
-        // 更新粒子物理
+        // Physics update
         p.velocity += p.acceleration * deltaTime;
         p.position += p.velocity * deltaTime;
 
-        // 添加一些随机扰动，使火焰更自然
-        p.position.x += (rand(float2(p.lifetime, index)) * 2.0f - 1.0f) * deltaTime * 0.3f;
-        p.position.z += (rand(float2(index, p.lifetime)) * 2.0f - 1.0f) * deltaTime * 0.3f;
+        // Turbulence (Simulate wind/heat distortion)
+        float3 noise = float3(
+            rand(float2(p.position.y, totalTime)) * 2.0 - 1.0,
+            0.0f,
+            rand(float2(p.position.z, totalTime)) * 2.0 - 1.0
+        );
+        p.position += noise * deltaTime * 0.5f;
     }
 
-    // 更新颜色 - 随生命周期变化，模拟火焰从黄色变为红色再到透明
+    // Color over lifetime logic
     float lifeRatio = p.lifetime / p.maxLifetime;
-
-    if (lifeRatio > 0.7f)
+    
+    // Gradient: Yellow -> Orange -> Red -> Dark Smoke
+    if (lifeRatio > 0.8)
     {
-        // 初期 - 明亮的黄色
-        p.color = float3(1.0f, 1.0f, 0.3f);
+        p.color = lerp(float3(1.0, 0.5, 0.0), float3(1.0, 1.0, 0.5), (lifeRatio - 0.8) * 5.0);
     }
-    else if (lifeRatio > 0.3f)
+    else if (lifeRatio > 0.4)
     {
-        // 中期 - 橙色到红色过渡
-        p.color = float3(1.0f, lifeRatio * 2.0f, 0.0f);
+        p.color = lerp(float3(0.8, 0.1, 0.0), float3(1.0, 0.5, 0.0), (lifeRatio - 0.4) * 2.5);
     }
     else
     {
-        // 末期 - 红色并逐渐透明
-        p.color = float3(1.0f, 0.0f, 0.0f) * lifeRatio * 3.0f;
+        p.color = lerp(float3(0.1, 0.1, 0.1), float3(0.8, 0.1, 0.0), lifeRatio * 2.5);
     }
 
-    // 粒子随时间变大
-    p.size += deltaTime * 0.1f;
+    // Size over lifetime (Grow then shrink)
+    if (lifeRatio > 0.5)
+        p.size += deltaTime * 0.2f;
+    else
+        p.size -= deltaTime * 0.1f;
 
-    // 将更新后的粒子写回缓冲区
     particles[index] = p;
 }

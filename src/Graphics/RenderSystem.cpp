@@ -7,6 +7,7 @@
 #include "ForwardOpaquePipeline.h"
 #include "TransparentPipeline.h"
 #include "GuiPipeline.h"
+#include "SsrPipeline.h"
 #include "PostProcessingPipeline.h"
 #include "BindRenderTargets.h"
 #include "ClearRenderTarget.h"
@@ -28,7 +29,8 @@ namespace Destiny
 		m_beforePipelineCommandList(std::make_shared<GraphicsCommandList>()),
 		m_bindRenderTargets(std::make_shared<BindRenderTargets>()),
 		m_clearRenderTarget(std::make_shared<ClearRenderTarget>()),
-		m_gpuTimer(std::make_shared<GpuTimer>())
+		m_gpuTimer(std::make_shared<GpuTimer>()),
+		m_bSsr(false)
 	{
 		m_commonRenderTargetCommandList->addGraphicsCommand(m_bindRenderTargets);
 		m_commonRenderTargetCommandList->addGraphicsCommand(m_clearRenderTarget);
@@ -48,6 +50,7 @@ namespace Destiny
 		m_forwardOpaquePipeline = std::make_shared<ForwardOpaquePipeline>(shared_from_this());
 		m_transparentPipeline = std::make_shared<TransparentPipeline>(shared_from_this());
 		m_guiPipeline = std::make_shared<GuiPipeline>(shared_from_this());
+		m_ssrPipeline = std::make_shared<SsrPipeline>(shared_from_this());
 		m_postProcessingPipeline = std::make_shared<PostProcessingPipeline>(shared_from_this());
 
 		m_gpuTimer->Init(getDevice(), getImmediateContext());
@@ -92,6 +95,13 @@ namespace Destiny
 		m_transparentPipeline->execute(deviceContext);
 		endEvent();
 
+		if (m_bSsr)
+		{
+			beginEvent(L"SSR Pass");
+			m_ssrPipeline->execute(deviceContext);
+			endEvent();
+		}
+
 		beginEvent(L"Gui Pass");
 		m_guiPipeline->execute(deviceContext);
 		endEvent();
@@ -117,6 +127,7 @@ namespace Destiny
 		m_deferredOpaquePipeline->syncState();
 		m_forwardOpaquePipeline->syncState();
 		m_transparentPipeline->syncState();
+		m_ssrPipeline->syncState();
 		m_guiPipeline->syncState();
 		m_postProcessingPipeline->syncState();
 	}
@@ -245,7 +256,7 @@ namespace Destiny
 			return;
 		}
 
-		auto renderTargetView = std::make_shared<RenderTargetView>(wrd.width, wrd.height);
+		auto renderTargetView = std::make_shared<RenderTargetView>(wrd.width, wrd.height, 2);
 		renderTargetView->load(0);
 
 		auto depthStencilView = std::make_shared<DepthStencilView>(wrd.width, wrd.height);

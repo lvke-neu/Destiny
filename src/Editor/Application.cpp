@@ -14,6 +14,7 @@
 #include "Engine/BlobHolder.h"
 #include "Engine/EventSystem.h"
 #include "Graphics/GraphicsSystem.h"
+#include "Graphics/RenderSystem.h"
 #include "Graphics/VisualScene.h"
 #include "Graphics/Texture.h"
 #include "Scene/SceneManager.h"
@@ -659,6 +660,12 @@ void Application::settingMenu()
 		if (ImGui::Combo("GzimoType", &current_item, items, IM_ARRAYSIZE(items)))
 		{
 			m_viewPortPanel->setGzimoType(current_item - 1);
+		}
+
+		static bool bSsr = false;
+		if (ImGui::Checkbox("SSR", &bSsr))
+		{
+			std::static_pointer_cast<Destiny::RenderSystem>(Destiny::Engine::GetInstance()->getGraphicsSystem())->setSsr(bSsr);
 		}
 
 		ImGui::EndMenu();

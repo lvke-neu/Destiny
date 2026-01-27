@@ -30,7 +30,7 @@ namespace Destiny
 		}
 	}
 
-	void EventSystem::dispatchEvent(EventType type, void* data)
+	void EventSystem::dispatchEventUnsafe(EventType type, void* data)
 	{
 		if (type == EventType::KeyPressed)
 		{

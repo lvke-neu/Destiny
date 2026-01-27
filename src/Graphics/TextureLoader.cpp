@@ -135,12 +135,15 @@ namespace Destiny
 			CD3D11_TEXTURE2D_DESC textureDesc((DXGI_FORMAT)creationParam->format, creationParam->width, creationParam->height, 1, 1);
 	
 			D3D11_SUBRESOURCE_DATA data;
-			data.pSysMem = creationParam->data->getData();
-			data.SysMemPitch = creationParam->pitch;
-			data.SysMemSlicePitch = creationParam->slicePitch;
+			if (creationParam->data)
+			{
+				data.pSysMem = creationParam->data->getData();
+				data.SysMemPitch = creationParam->pitch;
+				data.SysMemSlicePitch = creationParam->slicePitch;
+			}
 
 			ID3D11Texture2D* texture2d = nullptr;
-			HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateTexture2D(&textureDesc, &data, &texture2d);
+			HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateTexture2D(&textureDesc, creationParam->data ? &data : nullptr, &texture2d);
 			std::static_pointer_cast<Texture>(asset)->m_resource = texture2d;
 			if (SUCCEEDED(hr))
 			{

@@ -6,6 +6,7 @@
 #include "DeferredOpaquePipeline.h"
 #include "Math/Math.h"
 #include "BindRenderTargets.h"
+#include "SsrPipeline.h"
 #include "Graphics/Renderer.h"
 
 namespace Destiny
@@ -36,6 +37,8 @@ namespace Destiny
 		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
 		deferredOpaquePipeline->onRendererConstantChanged();
+		auto ssrPipeline = std::static_pointer_cast<SsrPipeline>(renderSystem->getSsrPipeline());
+		ssrPipeline->onRendererConstantChanged();
 		notifyVisualRendererConstantChanged(m_scene.lock());
 		setRendererConstant();
 	}
@@ -50,6 +53,8 @@ namespace Destiny
 		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
 		deferredOpaquePipeline->onRendererConstantChanged();
+		auto ssrPipeline = std::static_pointer_cast<SsrPipeline>(renderSystem->getSsrPipeline());
+		ssrPipeline->onRendererConstantChanged();
 		notifyVisualRendererConstantChanged(m_scene.lock());
 		setRendererConstant();
 	}
@@ -64,6 +69,8 @@ namespace Destiny
 		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
 		deferredOpaquePipeline->onRendererConstantChanged();
+		auto ssrPipeline = std::static_pointer_cast<SsrPipeline>(renderSystem->getSsrPipeline());
+		ssrPipeline->onRendererConstantChanged();
 		notifyVisualRendererConstantChanged(m_scene.lock());
 		setRendererConstant();
 	}
@@ -78,6 +85,8 @@ namespace Destiny
 		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
 		deferredOpaquePipeline->onRendererConstantChanged();
+		auto ssrPipeline = std::static_pointer_cast<SsrPipeline>(renderSystem->getSsrPipeline());
+		ssrPipeline->onRendererConstantChanged();
 		notifyVisualRendererConstantChanged(m_scene.lock());
 		setRendererConstant();
 	}
@@ -98,6 +107,8 @@ namespace Destiny
 		}
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
 		deferredOpaquePipeline->onRendererConstantChanged();
+		auto ssrPipeline = std::static_pointer_cast<SsrPipeline>(renderSystem->getSsrPipeline());
+		ssrPipeline->onRendererConstantChanged();
 		notifyVisualRendererConstantChanged(m_scene.lock());
 		setRendererConstant();
 	}
@@ -107,6 +118,8 @@ namespace Destiny
 		auto renderSystem = std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem());
 		auto deferredOpaquePipeline = std::static_pointer_cast<DeferredOpaquePipeline>(renderSystem->getDeferredOpaquePipeline());
 		deferredOpaquePipeline->onRendererConstantChanged();
+		auto ssrPipeline = std::static_pointer_cast<SsrPipeline>(renderSystem->getSsrPipeline());
+		ssrPipeline->onRendererConstantChanged();
 		notifyVisualRendererConstantChanged(m_scene.lock());
 		setRendererConstant();
 	}

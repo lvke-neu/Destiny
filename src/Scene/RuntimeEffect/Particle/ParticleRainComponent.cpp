@@ -1,4 +1,4 @@
-#include "ParticleFireComponent.h"
+#include "ParticleRainComponent.h"
 #include "Graphics/Renderer.h"
 #include "Graphics/RenderStates.h"
 #include "Graphics/RenderPass.h"
@@ -19,46 +19,44 @@
 
 namespace Destiny
 {
-	ParticleFireComponent::ParticleFireComponent() :
-		m_maxParticlesCount(10000), // Increased particle count for better fire
+	ParticleRainComponent::ParticleRainComponent() :
+		m_maxParticlesCount(10000), // Lots of rain drops
 		m_totalTime(0.0f),
+		m_rainAreaSize({ 20.0f, 20.0f, 20.0f }), // 20m box
+		m_fallSpeed(15.0f),
+		m_dropLength(0.5f),
 		m_particleUpdateCS(std::make_shared<ComputerCommand>())
 	{
-		// Setup Compute Shader
-		m_particleUpdateCS->setComputerEffectPath("builtin://renderer/particle_fire_update.hlsl");
-		m_particleUpdateCS->setDebugName(L"ParticleUpdate");
+		m_particleUpdateCS->setComputerEffectPath("builtin://renderer/particle_rain_update.hlsl");
+		m_particleUpdateCS->setDebugName(L"ParticleRainUpdate");
 		std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->addBeforePipelineCommand(m_particleUpdateCS);
 
 		initResources();
 	}
 
-	ParticleFireComponent::~ParticleFireComponent()
+	ParticleRainComponent::~ParticleRainComponent()
 	{
-		// Cleanup if necessary (Smart pointers usually handle this, but good to be explicit if registered somewhere)
-		// std::static_pointer_cast<RenderSystem>(Engine::GetInstance()->getGraphicsSystem())->removeBeforePipelineCommand(m_particleUpdateCS);
 	}
 
-	void ParticleFireComponent::initResources()
+	void ParticleRainComponent::initResources()
 	{
-		// 1. Create Structured Buffer (Shared between CS and VS)
-		// Use sizeof(Particle) strictly
+		// 1. Buffer
 		m_particlesBuffer = Texture::CreateStructured(sizeof(Particle), m_maxParticlesCount * sizeof(Particle));
 		m_particlesBuffer->load();
 
-		// 2. Setup Compute Shader bindings
+		// 2. CS Bindings
 		unsigned int numGroups = (m_maxParticlesCount + 63) / 64;
 		std::vector<std::shared_ptr<Texture>> uavs = { m_particlesBuffer };
 		m_particleUpdateCS->setUnorderedAccessViews(uavs, { 0 });
 		m_particleUpdateCS->setThreadGroupCount(numGroups, 1, 1);
 
-		// 3. Setup Render (Visual) Pipeline
-		auto renderer = Renderer::Create("builtin://renderer/particle_fire_render.hlsl");
+		// 3. Render Pipeline
+		auto renderer = Renderer::Create("builtin://renderer/particle_rain_render.hlsl");
 		renderer->load(0);
 		
-		// Bind the same buffer as SRV for rendering
 		setShaderResource("particles", m_particlesBuffer);
-		
-		// Load Fire Texture (Use flare texture which is common for particles)
+		// Rain shader doesn't strictly need a texture if we draw lines/streaks, but keeping slot 1 filled is safe
+		// Or we can use a streak texture.
 		auto particleTexture = Texture::Create("builtin://texture/flarealpha.dds"); 
 		particleTexture->load();
 		setShaderResource("particleTexture", particleTexture);
@@ -67,28 +65,27 @@ namespace Destiny
 		samplerState->load();
 		setSamplerSate("samplerState", samplerState);
 
-		// 4. Create Dummy Mesh for DrawCall (VertexID based)
-		// We don't need actual vertex data, just the vertex count.
-		DirectX::BoundingBox aabb{ { -10.0f, 0.0f, -10.0f },{ 10.0f, 20.0f, 10.0f } }; // Approximate bounds
+		// 4. Mesh
+		DirectX::BoundingBox aabb{ { -10.0f, 0.0f, -10.0f },{ 10.0f, 20.0f, 10.0f } };
 		Mesh::DrawCall drawCall;
 		drawCall.drawMethod = Mesh::DrawMethod::Draw;
 		drawCall.primitiveTopology = Mesh::PrimitiveTopology::PointList;
 		drawCall.indexCount = 0;
-		drawCall.vertexCount = m_maxParticlesCount; // Draw N points, expanded by GS
+		drawCall.vertexCount = m_maxParticlesCount;
 
 		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(aabb, drawCall, nullptr, nullptr);
 		mesh->load();
 		setMesh(mesh);
 
-		// 5. Setup Render States (Additive Blending)
+		// 5. Render States
 		std::shared_ptr<RenderStates> renderStates = std::make_shared<RenderStates>();
-		renderStates->getRasterizerStateDesc()->CullMode = D3D11_CULL_NONE; // Double sided
-		renderStates->getDepthStencilStateDesc()->DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO; // Don't write depth
+		renderStates->getRasterizerStateDesc()->CullMode = D3D11_CULL_NONE;
+		renderStates->getDepthStencilStateDesc()->DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO; 
 		
-		// Additive Blend: SrcAlpha + One
+		// Alpha Blending
 		renderStates->getBlendStateDesc()->RenderTarget[0].BlendEnable = true;
 		renderStates->getBlendStateDesc()->RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-		renderStates->getBlendStateDesc()->RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+		renderStates->getBlendStateDesc()->RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
 		renderStates->getBlendStateDesc()->RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
 		renderStates->getBlendStateDesc()->RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO;
 		renderStates->getBlendStateDesc()->RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
@@ -97,46 +94,67 @@ namespace Destiny
 		renderStates->load();
 
 		std::shared_ptr<RenderPass> renderPass = std::make_shared<RenderPass>();
-		renderPass->setRendererCategory(RendererCategory::Transparent); // Render in transparent pass
+		renderPass->setRendererCategory(RendererCategory::Transparent);
 		renderPass->setRenderer(renderer);
 		renderPass->setRenderStates(renderStates);
 
 		setRenderPass(renderPass);
+		
+		updateConstants();
 	}
 
-	void ParticleFireComponent::onUpdate(float deltaTime)
+	void ParticleRainComponent::onUpdate(float deltaTime)
 	{
 		m_totalTime += deltaTime;
 		m_particleUpdateCS->setConstant("deltaTime", deltaTime);
 		m_particleUpdateCS->setConstant("totalTime", m_totalTime);
 		
-		// Ensure emitter position follows the node
 		if (auto node = m_node.lock())
 		{
 			m_particleUpdateCS->setConstant("emitterPosition", node->get_translation());
 		}
+		
+		updateConstants();
 	}
 
-	void ParticleFireComponent::onEnterScene()
+	void ParticleRainComponent::updateConstants()
+	{
+		m_particleUpdateCS->setConstant("rainAreaSize", m_rainAreaSize);
+		m_particleUpdateCS->setConstant("fallSpeed", m_fallSpeed);
+		m_particleUpdateCS->setConstant("dropLength", m_dropLength);
+	}
+
+	void ParticleRainComponent::onEnterScene()
 	{
 		VisualComponent::onEnterScene();
 		if (auto node = m_node.lock())
 		{
 			m_particleUpdateCS->setConstant("emitterPosition", node->get_translation());
 		}
+		updateConstants();
 	}
 
-	void ParticleFireComponent::onPropertyChanged(const std::string& property)
+	void ParticleRainComponent::onPropertyChanged(const std::string& property)
 	{
-		if (property == "NodeTransform")
-		{
-			// Position update is handled in onUpdate now for smoother movement
-		}
 	}
+	
+	void ParticleRainComponent::set_maxParticlesCount(unsigned int maxParticlesCount)
+	{
+		m_maxParticlesCount = maxParticlesCount;
+		initResources();
+	}
+
+	void ParticleRainComponent::set_rainAreaSize(DirectX::XMFLOAT3 rainAreaSize) { m_rainAreaSize = rainAreaSize; }
+	void ParticleRainComponent::set_fallSpeed(float fallSpeed) { m_fallSpeed = fallSpeed; }
+	void ParticleRainComponent::set_dropLength(float dropLength) { m_dropLength = dropLength; }
 
 	RTTR_REGISTRATION
 	{
-		rttr::registration::class_<ParticleFireComponent>("ParticleFireComponent")
-			.constructor<>();
+		rttr::registration::class_<ParticleRainComponent>("ParticleRainComponent")
+			.constructor<>()
+			.property("maxParticlesCount", &ParticleRainComponent::get_maxParticlesCount, &ParticleRainComponent::set_maxParticlesCount)
+			.property("rainAreaSize", &ParticleRainComponent::get_rainAreaSize, &ParticleRainComponent::set_rainAreaSize)
+			.property("fallSpeed", &ParticleRainComponent::get_fallSpeed, &ParticleRainComponent::set_fallSpeed)
+			.property("dropLength", &ParticleRainComponent::get_dropLength, &ParticleRainComponent::set_dropLength);
 	}
 }

@@ -10,7 +10,7 @@ namespace Destiny
         DirectX::XMFLOAT3 acceleration;
         float lifetime;       
         float maxLifetime;    
-        DirectX::XMFLOAT3 color;
+        DirectX::XMFLOAT4 color;
         float size;           
     };
 

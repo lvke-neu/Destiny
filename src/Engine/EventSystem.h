@@ -2,6 +2,10 @@
 #include <functional>
 #include <unordered_map>
 #include <vector>
+#include <typeindex>
+#include <typeinfo>
+#include <cassert>
+#include <iostream>
 
 namespace Destiny
 {
@@ -564,13 +568,41 @@ namespace Destiny
 	public:
 		void    registerEvent(EventType type, Event event);
 		void    unRegisterEvent(EventType type, Event event);
-		void    dispatchEvent(EventType type, void* data);
+
+        // Type-safe dispatch event
+        template<typename T>
+        void dispatchEvent(EventType type, T* data)
+        {
+#ifdef _DEBUG
+            static const std::unordered_map<EventType, std::type_index> typeRegistry = {
+                {EventType::WindowResize, typeid(WindowResizeData)},
+                {EventType::KeyPressed, typeid(KeyCode)},
+                {EventType::KeyReleased, typeid(KeyCode)},
+                {EventType::Update, typeid(float)},
+                {EventType::MousePressed, typeid(Mouse)},
+                {EventType::MouseReleased, typeid(Mouse)},
+                {EventType::MouseMoved, typeid(Mouse)}
+            };
+
+            auto it = typeRegistry.find(type);
+            if (it != typeRegistry.end())
+            {
+                if (it->second != std::type_index(typeid(T)))
+                {
+                    std::cerr << "Event Type Mismatch! Expected: " << it->second.name() << ", Got: " << typeid(T).name() << std::endl;
+                    assert(false && "Event Type Mismatch");
+                }
+            }
+#endif
+            dispatchEventUnsafe(type, (void*)data);
+        }
 
         bool    isKeyPressed(KeyCode keyCode);
         bool    isMousePressed(MouseCode mouseCode);
 
         void    setViewportHovered(bool hovered);
 	private:
+        void    dispatchEventUnsafe(EventType type, void* data);
 		std::unordered_map<EventType, std::vector<Event>>   m_events;
         std::unordered_map<KeyCode, bool>                   m_keyTriggers;
         std::unordered_map<MouseCode, bool>                 m_MouseTriggers;

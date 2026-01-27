@@ -24,45 +24,6 @@ namespace Destiny
 
 	}
 
-    void PhysicsSystem::set_bSimulation(bool bSimulation)
-    {
-        if (m_bSimulation != bSimulation)
-        {
-            m_bSimulation = bSimulation;
-            
-            auto scene = Engine::GetInstance()->getSceneManager()->getCurrentScene();
-            if (scene)
-            {
-                std::queue<std::shared_ptr<Node>> nodes;
-                nodes.push(scene);
-                while (!nodes.empty())
-                {
-                    auto topNode = nodes.front();
-                    nodes.pop();
-                    if (topNode)
-                    {
-                        for (const auto& component : topNode->getComponents())
-                        {
-                            auto rigidBodyComponent = std::dynamic_pointer_cast<RigidBodyComponent>(component);
-                            if (m_bSimulation)
-                            {
-                                addRigidBody(rigidBodyComponent);
-                            }
-                            else
-                            {
-                                removeRigidBody(rigidBodyComponent);
-                            }
-                        }
-                        for (const auto& node : topNode->getChilds())
-                        {
-                            nodes.push(node);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     void PhysicsSystem::initialize()
 	{
         m_btDefaultCollisionConfiguration = std::make_shared<btDefaultCollisionConfiguration>();
@@ -133,9 +94,33 @@ namespace Destiny
 
 	void PhysicsSystem::update(float deltaTime)
 	{
-        if (m_bSimulation)
+        if (!m_bSimulation)
         {
-            m_btDiscreteDynamicsWorld->stepSimulation(deltaTime, 10);
+            return;
+        }
+        m_btDiscreteDynamicsWorld->stepSimulation(deltaTime, 10);
+        for(const auto& rigidBodyComponent : m_rigidBodyComponents)
+        {
+            if (!rigidBodyComponent || 
+                !rigidBodyComponent->getRigidBody() || !rigidBodyComponent->getRigidBody()->getCollisionShape() ||
+                rigidBodyComponent->getRigidBody()->getCollisionShape()->getShapeType() == 28 ||
+                !rigidBodyComponent->get_node().lock())
+            {
+                continue;
+            }
+            
+            auto btTranslation = rigidBodyComponent->getRigidBody()->getWorldTransform().getOrigin();
+            rigidBodyComponent->get_node().lock()->set_translation({ btTranslation.getX(), btTranslation.getY(), btTranslation.getZ() });
+
+            DirectX::XMFLOAT3 rotation;
+            auto btQuaternion = rigidBodyComponent->getRigidBody()->getWorldTransform().getRotation();
+            btQuaternion.getEulerZYX(rotation.z, rotation.y, rotation.x);
+
+            rotation.x = DirectX::XMConvertToDegrees(rotation.x);
+            rotation.y = DirectX::XMConvertToDegrees(rotation.y);
+            rotation.z = DirectX::XMConvertToDegrees(rotation.z);
+
+            rigidBodyComponent->get_node().lock()->set_rotation(rotation);
         }
 	}
 
@@ -146,7 +131,8 @@ namespace Destiny
             return;
         }
         
-        m_btDiscreteDynamicsWorld->addRigidBody(rigidBodyComponent->getRigidBody().get());
+        m_btDiscreteDynamicsWorld->addRigidBody(rigidBodyComponent->getRigidBody());
+        m_rigidBodyComponents.insert(rigidBodyComponent);
     }
 
     void PhysicsSystem::removeRigidBody(std::shared_ptr<RigidBodyComponent> rigidBodyComponent)
@@ -156,6 +142,7 @@ namespace Destiny
             return;
         }
 
-        m_btDiscreteDynamicsWorld->removeRigidBody(rigidBodyComponent->getRigidBody().get());
+        m_btDiscreteDynamicsWorld->removeRigidBody(rigidBodyComponent->getRigidBody());
+        m_rigidBodyComponents.erase(rigidBodyComponent);
     }
 }

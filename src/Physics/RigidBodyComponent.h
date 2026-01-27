@@ -1,43 +1,18 @@
 #pragma once
-#include "Graphics/VisualComponent.h"
+#include "Engine/Component.h"
 #include "Engine/Utility.h"
-#include <DirectXMath.h>
+#include <DirectXMath.h>>
 
 class btRigidBody;
-class btCollisionShape;
-class btMotionState;
 namespace Destiny
 {
-	class RigidBodyComponent : public VisualComponent
+	class RigidBodyComponent : public Component
 	{
-		RTTR_ENABLE(VisualComponent);
+		RTTR_ENABLE(Component);
 	public:
-		RigidBodyComponent();
-		virtual ~RigidBodyComponent();
+		RigidBodyComponent() = default;
+		virtual ~RigidBodyComponent() = default;
 	public:
-		GET(float, mass);
-		void set_mass(float mass);
-		GET(float, restitution);
-		void set_restitution(float restitution);
-	public:
-		virtual void onAddToNode() override;
-		virtual void onNodeTransformChanged() override;
-		virtual void onUpdate(float deltaTime) override;
-	public:
-		std::shared_ptr<btRigidBody> getRigidBody() const;
-	protected:
-		void reConstructRigidBody();
-	protected:
-		std::shared_ptr<btRigidBody> m_btRigidBody;
-		std::shared_ptr<btMotionState> m_btMotionState;
-		std::shared_ptr<btCollisionShape> m_btCollisionShape;
-
-		float m_mass;
-		float m_restitution;
+		virtual btRigidBody* getRigidBody() = 0;
 	};
-
-	inline std::shared_ptr<btRigidBody> RigidBodyComponent::getRigidBody() const
-	{
-		return m_btRigidBody;
-	}
 }

@@ -31,6 +31,7 @@ private:
 	void viewMenu();
 	void toolMenu();
 	void settingMenu();
+	void simulationMenu();
 private:
 	HWND										m_hwnd;
 	HINSTANCE									m_hInstance;

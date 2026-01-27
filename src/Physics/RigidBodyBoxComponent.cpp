@@ -12,135 +12,140 @@
 #include "Graphics/VertexBuffer.h"
 #include "Graphics/IndexBuffer.h"
 #include "Physics/PhysicsSystem.h"
+#include "RigidBodyVisual/RigidBodyBoxVisualComponent.h"
 #include <btBulletDynamicsCommon.h>
 
 namespace Destiny
 {
-	RigidBodyBoxComponent::RigidBodyBoxComponent() :
-		m_boxHalfExtents({ 0.5f, 0.5f, 0.5f })
+	RigidBodyBoxComponent::RigidBodyBoxComponent() 
 	{
-		m_btCollisionShape = std::make_shared<btBoxShape>(btVector3(m_boxHalfExtents.x, m_boxHalfExtents.y, m_boxHalfExtents.z));
-	
-		auto renderer = Renderer::Create("builtin://renderer/box_visualization.hlsl");
-		renderer->load(0);
+		m_btMotionState = new btDefaultMotionState();
+		m_btCollisionShape = new btBoxShape(btVector3(0.5f, 0.5f, 0.5f));
+		btVector3 localInertia(0, 0, 0);
+		m_btCollisionShape->calculateLocalInertia(1.0f, localInertia);
+		m_btRigidBody = new btRigidBody(1.0f, m_btMotionState, m_btCollisionShape, localInertia);
+		//m_btRigidBody->setRestitution(1.0f);
+		//m_btRigidBody->setFriction(0.5f);
+		//m_btRigidBody->activate(true);
 
-		std::shared_ptr<RenderStates> renderStates = std::make_shared<RenderStates>();
-		renderStates->load();
+		m_restitution = 0.0f;
+		m_friction = 0.0f;
+		m_mass = 1.0f;
+		m_boxHalfExtents = { 0.5f, 0.5f, 0.5f };
 
-		std::shared_ptr<RenderPass> renderPass = std::make_shared<RenderPass>();
-		renderPass->setRendererCategory(RendererCategory::Gui);
-		renderPass->setRenderer(renderer);
-		renderPass->setRenderStates(renderStates);
-
-		setRenderPass(renderPass);
+		m_rigidBodyBoxVisualComponent = std::make_shared<RigidBodyBoxVisualComponent>();
+		m_rigidBodyBoxVisualComponent->modifyMesh(m_boxHalfExtents);
 	}
 
 	RigidBodyBoxComponent::~RigidBodyBoxComponent()
 	{
-
+		SAFE_DELETE(m_btRigidBody);
+		SAFE_DELETE(m_btMotionState);
+		SAFE_DELETE(m_btCollisionShape);
 	}
 
-	void RigidBodyBoxComponent::set_boxHalfExtents(DirectX::XMFLOAT3 boxHalfExtents)
+	void RigidBodyBoxComponent::onAddToNode()
 	{
-		if (Engine::GetInstance()->getPhysicsSystem()->get_bSimulation())
+		updateRigidBodyTransform();
+		if (m_node.lock())
+		{
+			m_node.lock()->addComponent(m_rigidBodyBoxVisualComponent);
+		}
+	}
+
+	void RigidBodyBoxComponent::onNodeTransformChanged()
+	{
+		updateRigidBodyTransform();
+	}
+
+	void RigidBodyBoxComponent::onEnterScene()
+	{
+		Engine::GetInstance()->getPhysicsSystem()->addRigidBody(shared_from_this());
+	}
+
+	void RigidBodyBoxComponent::onLeaveScene()
+	{
+		Engine::GetInstance()->getPhysicsSystem()->removeRigidBody(shared_from_this());
+	}
+
+	void RigidBodyBoxComponent::set_restitution(float restitution)
+	{
+		m_restitution = restitution;
+		if (m_btRigidBody)
+		{
+			m_btRigidBody->setRestitution(m_restitution);
+		}
+	}
+
+	void RigidBodyBoxComponent::set_mass(float mass)
+	{
+		if (mass < 0)
 		{
 			return;
 		}
 
-		m_boxHalfExtents = boxHalfExtents;
-		m_btCollisionShape = std::make_shared<btBoxShape>(btVector3(boxHalfExtents.x, boxHalfExtents.y, boxHalfExtents.z));
-		
-		reConstructRigidBody();
-		modifyMesh();
+		m_mass = mass;
+		btVector3 localInertia(0, 0, 0);
+		m_btCollisionShape->calculateLocalInertia(1.0f, localInertia);
+
+		m_btRigidBody->setMassProps(m_mass, localInertia);
 	}
 
-	void RigidBodyBoxComponent::modifyMesh()
+	void RigidBodyBoxComponent::set_friction(float friction)
 	{
-		auto mesh = getMesh();
-		if (!mesh)
+		m_friction = friction;
+		if (m_btRigidBody)
 		{
-			std::shared_ptr<Blob> data = nullptr;
-			std::vector<Position3> vertices;
-			vertices.resize(8);
-
-			DirectX::XMFLOAT3 min = { -m_boxHalfExtents.x, -m_boxHalfExtents.y, -m_boxHalfExtents.z };
-			DirectX::XMFLOAT3 max = { m_boxHalfExtents.x, m_boxHalfExtents.y, m_boxHalfExtents.z };
-
-			vertices[0].position = DirectX::XMFLOAT3(min.x, min.y, min.z);
-			vertices[1].position = DirectX::XMFLOAT3(max.x, min.y, min.z);
-			vertices[2].position = DirectX::XMFLOAT3(max.x, max.y, min.z);
-			vertices[3].position = DirectX::XMFLOAT3(min.x, max.y, min.z);
-			vertices[4].position = DirectX::XMFLOAT3(min.x, min.y, max.z);
-			vertices[5].position = DirectX::XMFLOAT3(max.x, min.y, max.z);
-			vertices[6].position = DirectX::XMFLOAT3(max.x, max.y, max.z);
-			vertices[7].position = DirectX::XMFLOAT3(min.x, max.y, max.z);
-
-
-			data.reset(new Blob(vertices.size() * sizeof(Position3)));
-			data->copyfrom(vertices.data(), vertices.size() * sizeof(Position3));
-			std::shared_ptr<VertexBuffer> vertexBuffer = std::make_shared<VertexBuffer>(InputLayout::Create_Position3(), (unsigned int)sizeof(Position3), 0, data);
-
-			std::vector<unsigned short> indices =
-			{
-				0, 1, 1, 2, 2, 3, 3, 0,
-				4, 5, 5, 6, 6, 7, 7, 4,
-				0, 4, 1, 5, 2, 6, 3, 7
-			};
-
-			data.reset(new Blob(indices.size() * sizeof(unsigned short)));
-			data->copyfrom(indices.data(), indices.size() * sizeof(unsigned short));
-			std::shared_ptr<IndexBuffer> indexBuffer = std::make_shared<IndexBuffer>(IndexBuffer::IndexType::Index16, data);
-
-			Mesh::DrawCall drawCall;
-			drawCall.drawMethod = Mesh::DrawMethod::DrawIndexed;
-			drawCall.primitiveTopology = Mesh::PrimitiveTopology::LineList;
-			drawCall.vertexCount = (unsigned int)vertices.size();
-			drawCall.indexCount = (unsigned int)indices.size();
-
-
-			DirectX::BoundingBox box;
-			box.Center = { 0.0f, 0.0f, 0.0f };
-			box.Extents = { m_boxHalfExtents.x, m_boxHalfExtents.y, m_boxHalfExtents.z };
-			std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(box, drawCall, vertexBuffer, indexBuffer);
-			mesh->load(0);
-			setMesh(mesh);
+			m_btRigidBody->setFriction(m_friction);
 		}
-		else
+	}
+
+	void RigidBodyBoxComponent::set_boxHalfExtents(DirectX::XMFLOAT3 boxHalfExtents)
+	{
+		m_boxHalfExtents = boxHalfExtents;
+		SAFE_DELETE(m_btCollisionShape);
+		m_btCollisionShape = new btBoxShape(btVector3(m_boxHalfExtents.x, m_boxHalfExtents.y, m_boxHalfExtents.z));
+		m_btRigidBody->setCollisionShape(m_btCollisionShape);
+		set_mass(m_mass);
+
+		m_rigidBodyBoxVisualComponent->modifyMesh(boxHalfExtents);
+	}
+
+	void RigidBodyBoxComponent::updateRigidBodyTransform()
+	{
+		if (Engine::GetInstance()->getPhysicsSystem()->getSimulation() || !m_btRigidBody || !m_node.lock())
 		{
-			std::shared_ptr<Blob> data = nullptr;
-			std::vector<Position3> vertices;
-			vertices.resize(8);
-
-			DirectX::XMFLOAT3 min = { -m_boxHalfExtents.x, -m_boxHalfExtents.y, -m_boxHalfExtents.z };
-			DirectX::XMFLOAT3 max = { m_boxHalfExtents.x, m_boxHalfExtents.y, m_boxHalfExtents.z };
-
-			vertices[0].position = DirectX::XMFLOAT3(min.x, min.y, min.z);
-			vertices[1].position = DirectX::XMFLOAT3(max.x, min.y, min.z);
-			vertices[2].position = DirectX::XMFLOAT3(max.x, max.y, min.z);
-			vertices[3].position = DirectX::XMFLOAT3(min.x, max.y, min.z);
-			vertices[4].position = DirectX::XMFLOAT3(min.x, min.y, max.z);
-			vertices[5].position = DirectX::XMFLOAT3(max.x, min.y, max.z);
-			vertices[6].position = DirectX::XMFLOAT3(max.x, max.y, max.z);
-			vertices[7].position = DirectX::XMFLOAT3(min.x, max.y, max.z);
-
-
-			data.reset(new Blob(vertices.size() * sizeof(Position3)));
-			data->copyfrom(vertices.data(), vertices.size() * sizeof(Position3));
-			std::shared_ptr<VertexBuffer> vertexBuffer = std::make_shared<VertexBuffer>(InputLayout::Create_Position3(), (unsigned int)sizeof(Position3), 0, data);
-
-			DirectX::BoundingBox box;
-			box.Center = { 0.0f, 0.0f, 0.0f };
-			box.Extents = {m_boxHalfExtents.x, m_boxHalfExtents.y, m_boxHalfExtents.z };
-
-			mesh->modifyVertexBuffer(vertexBuffer);
-			mesh->modifyBoundingBox(box);
+			return;
 		}
+
+		DirectX::XMFLOAT3 translation = m_node.lock()->get_translation();
+		btVector3 btTranslation;
+		btTranslation.setValue(translation.x, translation.y, translation.z);
+
+		DirectX::XMFLOAT3 rotation = m_node.lock()->get_rotation();
+		DirectX::XMFLOAT3 radianRotation{ DirectX::XMConvertToRadians(rotation.x), DirectX::XMConvertToRadians(rotation.y), DirectX::XMConvertToRadians(rotation.z) };
+		btQuaternion btRotation;
+		btRotation.setEulerZYX(radianRotation.z, radianRotation.y, radianRotation.x);
+
+		btTransform transform;
+		transform.setOrigin(btTranslation);
+		transform.setRotation(btRotation);
+
+		//reset 
+		m_btRigidBody->setLinearVelocity(btVector3(0, 0, 0));
+		m_btRigidBody->setAngularVelocity(btVector3(0, 0, 0));
+		m_btRigidBody->clearForces();
+		m_btRigidBody->setWorldTransform(transform);
+		m_btRigidBody->activate(true);
 	}
 
 	RTTR_REGISTRATION
 	{
 		rttr::registration::class_<RigidBodyBoxComponent>("RigidBodyBoxComponent")
 			.constructor<>()
+			.property("restitution", &RigidBodyBoxComponent::get_restitution, &RigidBodyBoxComponent::set_restitution)
+			.property("friction", &RigidBodyBoxComponent::get_friction, &RigidBodyBoxComponent::set_friction)
+			.property("mass", &RigidBodyBoxComponent::get_mass, &RigidBodyBoxComponent::set_mass)
 			.property("boxHalfExtents", &RigidBodyBoxComponent::get_boxHalfExtents, &RigidBodyBoxComponent::set_boxHalfExtents);
 	}
 }

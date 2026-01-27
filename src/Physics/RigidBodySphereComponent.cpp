@@ -1,282 +1,150 @@
 #include "RigidBodySphereComponent.h"
 #include "Engine/Node.h"
 #include "Engine/Engine.h"
-#include "Graphics/Renderer.h"
-#include "Graphics/RenderStates.h"
-#include "Graphics/RenderPass.h"
-#include "Graphics/InputLayout.h"
-#include "Graphics/Mesh.h"
-#include "Graphics/MeshProvider.h"
-#include "Graphics/PbrMaterial.h"
-#include "Graphics/VertexDefine.h"
-#include "Graphics/VertexBuffer.h"
-#include "Graphics/IndexBuffer.h"
 #include "Physics/PhysicsSystem.h"
+#include "RigidBodyVisual/RigidBodySphereVisualComponent.h"
 #include <btBulletDynamicsCommon.h>
 
 namespace Destiny
 {
-	RigidBodySphereComponent::RigidBodySphereComponent() :
-		m_sphereRadius(0.5f)
+	RigidBodySphereComponent::RigidBodySphereComponent()
 	{
-		m_btCollisionShape = std::make_shared<btSphereShape>(m_sphereRadius);
+		m_radius = 1.0f;
+		m_btMotionState = new btDefaultMotionState();
+		m_btCollisionShape = new btSphereShape(m_radius);
+		
+		m_mass = 1.0f;
+		btVector3 localInertia(0, 0, 0);
+		m_btCollisionShape->calculateLocalInertia(m_mass, localInertia);
+		
+		m_btRigidBody = new btRigidBody(m_mass, m_btMotionState, m_btCollisionShape, localInertia);
 
-		auto renderer = Renderer::Create("builtin://renderer/box_visualization.hlsl");
-		renderer->load(0);
+		m_restitution = 0.0f;
+		m_friction = 0.0f;
 
-		std::shared_ptr<RenderStates> renderStates = std::make_shared<RenderStates>();
-		renderStates->load();
-
-		std::shared_ptr<RenderPass> renderPass = std::make_shared<RenderPass>();
-		renderPass->setRendererCategory(RendererCategory::Gui);
-		renderPass->setRenderer(renderer);
-		renderPass->setRenderStates(renderStates);
-
-		setRenderPass(renderPass);
+		m_rigidBodySphereVisualComponent = std::make_shared<RigidBodySphereVisualComponent>();
 	}
 
 	RigidBodySphereComponent::~RigidBodySphereComponent()
 	{
-
+		SAFE_DELETE(m_btRigidBody);
+		SAFE_DELETE(m_btMotionState);
+		SAFE_DELETE(m_btCollisionShape);
 	}
 
-	void RigidBodySphereComponent::set_sphereRadius(float sphereRadius)
+	void RigidBodySphereComponent::onAddToNode()
 	{
-		if (Engine::GetInstance()->getPhysicsSystem()->get_bSimulation())
+		updateRigidBodyTransform();
+
+		if(m_node.lock())
+		{
+			m_node.lock()->addComponent(m_rigidBodySphereVisualComponent);
+			m_rigidBodySphereVisualComponent->modifyMesh(m_radius);
+		}
+	}
+
+	void RigidBodySphereComponent::onNodeTransformChanged()
+	{
+		updateRigidBodyTransform();
+	}
+
+	void RigidBodySphereComponent::onEnterScene()
+	{
+		Engine::GetInstance()->getPhysicsSystem()->addRigidBody(shared_from_this());
+	}
+
+	void RigidBodySphereComponent::onLeaveScene()
+	{
+		Engine::GetInstance()->getPhysicsSystem()->removeRigidBody(shared_from_this());
+	}
+
+	void RigidBodySphereComponent::set_restitution(float restitution)
+	{
+		m_restitution = restitution;
+		if (m_btRigidBody)
+		{
+			m_btRigidBody->setRestitution(m_restitution);
+		}
+	}
+
+	void RigidBodySphereComponent::set_mass(float mass)
+	{
+		if (mass < 0)
 		{
 			return;
 		}
 
-		m_sphereRadius = sphereRadius;
-		m_btCollisionShape = std::make_shared<btSphereShape>(m_sphereRadius);
+		m_mass = mass;
+		btVector3 localInertia(0, 0, 0);
+		m_btCollisionShape->calculateLocalInertia(m_mass, localInertia);
 
-		reConstructRigidBody();
-		modifyMesh();
+		m_btRigidBody->setMassProps(m_mass, localInertia);
 	}
 
-	void RigidBodySphereComponent::modifyMesh()
+	void RigidBodySphereComponent::set_friction(float friction)
 	{
-        auto mesh = getMesh();
-        if (!mesh)
-        {
-            std::shared_ptr<Blob> data = nullptr;
-            std::vector<Position3> vertices;
+		m_friction = friction;
+		if (m_btRigidBody)
+		{
+			m_btRigidBody->setFriction(m_friction);
+		}
+	}
 
-            const int latLines = 8;
-            const int lonLines = 16;
-            float radius = m_sphereRadius;
+	void RigidBodySphereComponent::set_radius(float radius)
+	{
+		if (radius <= 0)
+			return;
 
+		m_radius = radius;
+		// Recreate shape if radius changes, as btSphereShape radius is not dynamic
+		SAFE_DELETE(m_btCollisionShape);
+		m_btCollisionShape = new btSphereShape(m_radius);
+		
+		// Recalculate inertia
+		btVector3 localInertia(0, 0, 0);
+		m_btCollisionShape->calculateLocalInertia(m_mass, localInertia);
+		
+		m_btRigidBody->setCollisionShape(m_btCollisionShape);
+		m_btRigidBody->setMassProps(m_mass, localInertia);
 
-            int totalVertices = 2 + latLines * lonLines;
-            vertices.resize(totalVertices);
+		m_rigidBodySphereVisualComponent->modifyMesh(m_radius);
+	}
 
-            vertices[0].position = DirectX::XMFLOAT3(0.0f, radius, 0.0f);
-            vertices[1].position = DirectX::XMFLOAT3(0.0f, -radius, 0.0f);
+	void RigidBodySphereComponent::updateRigidBodyTransform()
+	{
+		if (Engine::GetInstance()->getPhysicsSystem()->getSimulation() || !m_btRigidBody || !m_node.lock())
+		{
+			return;
+		}
 
+		DirectX::XMFLOAT3 translation = m_node.lock()->get_translation();
+		btVector3 btTranslation;
+		btTranslation.setValue(translation.x, translation.y, translation.z);
 
-            int vertexIndex = 2;
-            float latStep = DirectX::XM_PI / (latLines + 1);
-            float lonStep = 2.0f * DirectX::XM_PI / lonLines;
+		DirectX::XMFLOAT3 rotation = m_node.lock()->get_rotation();
+		DirectX::XMFLOAT3 radianRotation{ DirectX::XMConvertToRadians(rotation.x), DirectX::XMConvertToRadians(rotation.y), DirectX::XMConvertToRadians(rotation.z) };
+		btQuaternion btRotation;
+		btRotation.setEulerZYX(radianRotation.z, radianRotation.y, radianRotation.x);
 
-            for (int lat = 1; lat <= latLines; ++lat)
-            {
-                float latitude = DirectX::XM_PIDIV2 - lat * latStep;
-                float sinLat = sinf(latitude);
-                float cosLat = cosf(latitude);
+		btTransform transform;
+		transform.setOrigin(btTranslation);
+		transform.setRotation(btRotation);
 
-                for (int lon = 0; lon < lonLines; ++lon)
-                {
-                    float longitude = lon * lonStep;
-                    float sinLon = sinf(longitude);
-                    float cosLon = cosf(longitude);
-
-
-                    vertices[vertexIndex].position = DirectX::XMFLOAT3(
-                        radius * cosLat * cosLon,
-                        radius * sinLat,
-                        radius * cosLat * sinLon
-                    );
-                    vertexIndex++;
-                }
-            }
-
-            data.reset(new Blob(vertices.size() * sizeof(Position3)));
-            data->copyfrom(vertices.data(), vertices.size() * sizeof(Position3));
-            std::shared_ptr<VertexBuffer> vertexBuffer = std::make_shared<VertexBuffer>(
-                InputLayout::Create_Position3(),
-                (unsigned int)sizeof(Position3),
-                0,
-                data
-                );
-
-
-            std::vector<unsigned short> indices;
-
-            for (int lon = 0; lon < lonLines; ++lon)
-            {
-                indices.push_back(0);
-                indices.push_back(2 + lon);
-
-                for (int lat = 0; lat < latLines - 1; ++lat)
-                {
-                    int current = 2 + lat * lonLines + lon;
-                    int next = 2 + (lat + 1) * lonLines + lon;
-                    indices.push_back(current);
-                    indices.push_back(next);
-                }
-
-                indices.push_back(2 + (latLines - 1) * lonLines + lon);
-                indices.push_back(1);
-            }
-
-            for (int lat = 0; lat < latLines; ++lat)
-            {
-                for (int lon = 0; lon < lonLines; ++lon)
-                {
-                    int current = 2 + lat * lonLines + lon;
-                    int next = 2 + lat * lonLines + ((lon + 1) % lonLines);
-                    indices.push_back(current);
-                    indices.push_back(next);
-                }
-            }
-
-
-            data.reset(new Blob(indices.size() * sizeof(unsigned short)));
-            data->copyfrom(indices.data(), indices.size() * sizeof(unsigned short));
-            std::shared_ptr<IndexBuffer> indexBuffer = std::make_shared<IndexBuffer>(
-                IndexBuffer::IndexType::Index16,
-                data
-                );
-
-
-            Mesh::DrawCall drawCall;
-            drawCall.drawMethod = Mesh::DrawMethod::DrawIndexed;
-            drawCall.primitiveTopology = Mesh::PrimitiveTopology::LineList;
-            drawCall.vertexCount = (unsigned int)vertices.size();
-            drawCall.indexCount = (unsigned int)indices.size();
-
-
-            DirectX::BoundingBox box;
-            box.Center = { 0.0f, 0.0f, 0.0f };
-            box.Extents = { radius, radius, radius };
-
-
-            std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(box, drawCall, vertexBuffer, indexBuffer);
-            mesh->load(0);
-            setMesh(mesh);
-        }
-        else
-        {
-            std::shared_ptr<Blob> data = nullptr;
-            std::vector<Position3> vertices;
-
-            const int latLines = 8;
-            const int lonLines = 16;
-            float radius = m_sphereRadius;
-
-
-            int totalVertices = 2 + latLines * lonLines;
-            vertices.resize(totalVertices);
-
-            vertices[0].position = DirectX::XMFLOAT3(0.0f, radius, 0.0f);
-            vertices[1].position = DirectX::XMFLOAT3(0.0f, -radius, 0.0f);
-
-
-            int vertexIndex = 2;
-            float latStep = DirectX::XM_PI / (latLines + 1);
-            float lonStep = 2.0f * DirectX::XM_PI / lonLines;
-
-            for (int lat = 1; lat <= latLines; ++lat)
-            {
-                float latitude = DirectX::XM_PIDIV2 - lat * latStep;
-                float sinLat = sinf(latitude);
-                float cosLat = cosf(latitude);
-
-                for (int lon = 0; lon < lonLines; ++lon)
-                {
-                    float longitude = lon * lonStep;
-                    float sinLon = sinf(longitude);
-                    float cosLon = cosf(longitude);
-
-
-                    vertices[vertexIndex].position = DirectX::XMFLOAT3(
-                        radius * cosLat * cosLon,
-                        radius * sinLat,
-                        radius * cosLat * sinLon
-                    );
-                    vertexIndex++;
-                }
-            }
-
-            data.reset(new Blob(vertices.size() * sizeof(Position3)));
-            data->copyfrom(vertices.data(), vertices.size() * sizeof(Position3));
-            std::shared_ptr<VertexBuffer> vertexBuffer = std::make_shared<VertexBuffer>(
-                InputLayout::Create_Position3(),
-                (unsigned int)sizeof(Position3),
-                0,
-                data
-                );
-
-
-            std::vector<unsigned short> indices;
-
-            for (int lon = 0; lon < lonLines; ++lon)
-            {
-                indices.push_back(0);
-                indices.push_back(2 + lon);
-
-                for (int lat = 0; lat < latLines - 1; ++lat)
-                {
-                    int current = 2 + lat * lonLines + lon;
-                    int next = 2 + (lat + 1) * lonLines + lon;
-                    indices.push_back(current);
-                    indices.push_back(next);
-                }
-
-                indices.push_back(2 + (latLines - 1) * lonLines + lon);
-                indices.push_back(1);
-            }
-
-            for (int lat = 0; lat < latLines; ++lat)
-            {
-                for (int lon = 0; lon < lonLines; ++lon)
-                {
-                    int current = 2 + lat * lonLines + lon;
-                    int next = 2 + lat * lonLines + ((lon + 1) % lonLines);
-                    indices.push_back(current);
-                    indices.push_back(next);
-                }
-            }
-
-
-            data.reset(new Blob(indices.size() * sizeof(unsigned short)));
-            data->copyfrom(indices.data(), indices.size() * sizeof(unsigned short));
-            std::shared_ptr<IndexBuffer> indexBuffer = std::make_shared<IndexBuffer>(
-                IndexBuffer::IndexType::Index16,
-                data
-                );
-
-
-            Mesh::DrawCall drawCall;
-            drawCall.drawMethod = Mesh::DrawMethod::DrawIndexed;
-            drawCall.primitiveTopology = Mesh::PrimitiveTopology::LineList;
-            drawCall.vertexCount = (unsigned int)vertices.size();
-            drawCall.indexCount = (unsigned int)indices.size();
-
-
-            DirectX::BoundingBox box;
-            box.Center = { 0.0f, 0.0f, 0.0f };
-            box.Extents = { radius, radius, radius };
-
-            mesh->modifyVertexBuffer(vertexBuffer);
-            mesh->modifyBoundingBox(box);
-        }
+		//reset 
+		m_btRigidBody->setLinearVelocity(btVector3(0, 0, 0));
+		m_btRigidBody->setAngularVelocity(btVector3(0, 0, 0));
+		m_btRigidBody->clearForces();
+		m_btRigidBody->setWorldTransform(transform);
+		m_btRigidBody->activate(true);
 	}
 
 	RTTR_REGISTRATION
 	{
 		rttr::registration::class_<RigidBodySphereComponent>("RigidBodySphereComponent")
 			.constructor<>()
-			.property("sphereRadius", &RigidBodySphereComponent::get_sphereRadius, &RigidBodySphereComponent::set_sphereRadius);
+			.property("restitution", &RigidBodySphereComponent::get_restitution, &RigidBodySphereComponent::set_restitution)
+			.property("friction", &RigidBodySphereComponent::get_friction, &RigidBodySphereComponent::set_friction)
+			.property("mass", &RigidBodySphereComponent::get_mass, &RigidBodySphereComponent::set_mass)
+			.property("radius", &RigidBodySphereComponent::get_radius, &RigidBodySphereComponent::set_radius);
 	}
 }

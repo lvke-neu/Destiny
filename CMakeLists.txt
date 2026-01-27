@@ -211,6 +211,7 @@ file(GLOB SRC_SCENE_RUNTIMEEFFECT_PARTICLE src/Scene/RuntimeEffect/Particle/*)
 file(GLOB SRC_SCENE_RUNTIMEEFFECT_GPUBVH2BUILDER src/Scene/RuntimeEffect/GpuBvh2Builder/*)
 file(GLOB SRC_SCENE_MODEL src/Scene/Model/*)
 file(GLOB SRC_PHYSICS src/Physics/*)
+file(GLOB SRC_PHYSICS_RIGIDBODYVISUAL src/Physics/RigidBodyVisual/*)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -230,6 +231,7 @@ source_group("Scene\\RuntimeEffect\\Particle" FILES ${SRC_SCENE_RUNTIMEEFFECT_PA
 source_group("Scene\\RuntimeEffect\\GpuBvh2Builder" FILES ${SRC_SCENE_RUNTIMEEFFECT_GPUBVH2BUILDER})
 source_group("Scene\\Model" FILES ${SRC_SCENE_MODEL})
 source_group("Physice" FILES ${SRC_PHYSICS})
+source_group("Physice\\RigidBodyVisual" FILES ${SRC_PHYSICS_RIGIDBODYVISUAL})
 
 add_executable(
     Destiny WIN32 ${SRC_MAIN} 
@@ -248,6 +250,7 @@ add_executable(
     ${SRC_SCENE_RUNTIMEEFFECT_GPUBVH2BUILDER}
     ${SRC_SCENE_MODEL}
     ${SRC_PHYSICS}
+    ${SRC_PHYSICS_RIGIDBODYVISUAL}
 )
 
 target_link_libraries(Destiny

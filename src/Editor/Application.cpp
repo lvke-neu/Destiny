@@ -394,6 +394,7 @@ void Application::drawDock()
 		viewMenu();
 		toolMenu();
 		settingMenu();
+		simulationMenu();
 
 		ImGui::EndMenuBar();
 	}
@@ -660,12 +661,18 @@ void Application::settingMenu()
 			m_viewPortPanel->setGzimoType(current_item - 1);
 		}
 
-		bool bSimulation = Destiny::Engine::GetInstance()->getPhysicsSystem()->get_bSimulation();
-		ImGui::Text("Physics Simulation");
-		ImGui::SameLine();
-		if (ImGui::Checkbox("##Physics Simulation", &bSimulation))
+		ImGui::EndMenu();
+	}
+}
+
+void Application::simulationMenu()
+{
+	static bool bSimulation = false;
+	if (ImGui::BeginMenu("Physics"))
+	{
+		if (ImGui::Checkbox("Simulation", &bSimulation))
 		{
-			Destiny::Engine::GetInstance()->getPhysicsSystem()->set_bSimulation(bSimulation);
+			Destiny::Engine::GetInstance()->getPhysicsSystem()->setSimulation(bSimulation);
 		}
 
 		ImGui::EndMenu();

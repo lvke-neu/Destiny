@@ -22,24 +22,11 @@ DebugShadowMapPanel::DebugShadowMapPanel() :
 
 void DebugShadowMapPanel::update()
 {
+#if 0
 	if (m_open)
-	{
-		const float width = 500.0f;
-		const float height = 200.0f;
-
-		ImGui::Begin("DebugShadowMapPanel");
-
-		auto shadowMapPipeline = std::static_pointer_cast<Destiny::ShadowMapPipeline>(std::static_pointer_cast<Destiny::RenderSystem>(Destiny::Engine::GetInstance()->getGraphicsSystem())->getShadowMapPipeline());
-		std::shared_ptr<Destiny::DepthStencilView> dsv = nullptr;
-
-		dsv = shadowMapPipeline->m_bindRenderTargets->getDepthStencilViews(0);
-		if (dsv && dsv->isLoadingSucceed())
-		{
-			ImGui::Image(*(dsv->getShaderResourceView()), { width, height });
-		}
-
-		ImGui::End();
-	}
+    // ...
+    // ...
+#endif
 }
 
 void DebugShadowMapPanel::setOpen(bool open)

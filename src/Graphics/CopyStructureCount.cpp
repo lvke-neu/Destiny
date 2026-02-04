@@ -41,8 +41,9 @@ namespace Destiny
 		m_srcTexture = srcTexture;
 	}
 
-	void CopyStructureCount::execute(ID3D11DeviceContext* deviceContext)
+	void CopyStructureCount::execute(std::shared_ptr<GraphicsContext> deviceContext)
 	{
+#if 0
 		if (!m_dstTexture || !m_srcTexture)
 		{
 			return;
@@ -52,5 +53,6 @@ namespace Destiny
 		ID3D11UnorderedAccessView* pSrcView = *m_srcTexture->getUnorderedAccessView();
 
 		deviceContext->CopyStructureCount(pDstBuffer, 0, pSrcView);
+#endif
 	}
 }

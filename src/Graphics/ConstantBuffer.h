@@ -43,7 +43,7 @@ namespace Destiny
 		std::unordered_map<std::string, ConstantBufferVariable>		m_variables;
 		std::unordered_map<ConstantBufferBindFlag, bool>			m_constantBufferBindFlag;
 		std::shared_ptr<Blob>										m_backData;
-		ID3D11Buffer*												m_constantBuffer;
+		void*														m_constantBuffer;
 	};
 
 }

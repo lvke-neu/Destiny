@@ -44,7 +44,7 @@ namespace Destiny
 		initData.pSysMem = m_data->getData();
 
 		
-		HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateBuffer(&ibd, &initData, &m_indirectBuffer);
+		HRESULT hr = (HRESULT)Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateBuffer(&ibd, &initData, (void**)&m_indirectBuffer);
 		
 		if (SUCCEEDED(hr))
 		{

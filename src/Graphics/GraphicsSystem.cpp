@@ -2,21 +2,13 @@
 #include "GraphicsSystem.h"
 #include "Engine/Utility.h"
 #include "Math/Color.h"
-#include <d3d11_1.h>
+#include "RHI/Vulkan/VulkanDevice.h"
+#include "RHI/Vulkan/VulkanSwapChain.h"
+#include <windows.h>
 
 namespace Destiny
 {
 	GraphicsSystem::GraphicsSystem() :
-		m_pD3D11Device(nullptr),
-		m_pD3D11ImmediateDeviceContext(nullptr),
-		m_pD3D11DeferredDeviceContext(nullptr),
-		m_pD3DUserDefinedAnnotation(nullptr),
-		m_pDXGISwapChain(nullptr),
-		m_pRenderTargetView(nullptr),
-		m_pDepthStencilBuffer(nullptr),
-		m_pDepthStencilView(nullptr),
-		m_4xMsaaQuality(0),
-		m_viewPort(std::make_shared<D3D11_VIEWPORT>()),
 		m_graphicsStat({ 0,0,0 })
 	{
 
@@ -24,27 +16,23 @@ namespace Destiny
 
 	GraphicsSystem::~GraphicsSystem()
 	{
-		m_pD3D11ImmediateDeviceContext->ClearState();
-		SAFE_RELEASE(m_pD3D11Device);
-		SAFE_RELEASE(m_pD3D11ImmediateDeviceContext);
-		SAFE_RELEASE(m_pD3D11DeferredDeviceContext);
-		SAFE_RELEASE(m_pD3DUserDefinedAnnotation);
-		SAFE_RELEASE(m_pDXGISwapChain);
-		SAFE_RELEASE(m_pRenderTargetView);
-		SAFE_RELEASE(m_pDepthStencilBuffer);
-		SAFE_RELEASE(m_pDepthStencilView);
 	}
 
 	void GraphicsSystem::initialize(long long hwnd)
 	{
-		createDeviceAndContext();
-		createSwapChain(hwnd);
-		onResize_(0, 0);
+		createDeviceAndContext((void*)hwnd);
+		createSwapChain((void*)hwnd);
+		// onResize_(0, 0);
 		createPipeline();
 	}
 
 	void GraphicsSystem::uninitialize()
 	{
+	}
+
+	void GraphicsSystem::render()
+	{
+		// ... render loop implementation ...
 	}
 
 	void GraphicsSystem::update()
@@ -60,151 +48,53 @@ namespace Destiny
 			return;
 		}
 
-		SAFE_RELEASE(m_pRenderTargetView);
-		SAFE_RELEASE(m_pDepthStencilBuffer);
-		SAFE_RELEASE(m_pDepthStencilView);
-
-		ID3D11Texture2D* backBuffer{ nullptr };
-		m_pDXGISwapChain->ResizeBuffers(1, width, height, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
-		m_pDXGISwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer));
-		if (backBuffer)
+		if (m_swapChain)
 		{
-			m_pD3D11Device->CreateRenderTargetView(backBuffer, nullptr, &m_pRenderTargetView);
+			m_swapChain->resize(width, height);
 		}
-		SAFE_RELEASE(backBuffer);
-
-		D3D11_TEXTURE2D_DESC depthStencilDesc;
-		depthStencilDesc.Width = width;
-		depthStencilDesc.Height = height;
-		depthStencilDesc.MipLevels = 1;
-		depthStencilDesc.ArraySize = 1;
-		depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-		depthStencilDesc.SampleDesc.Count = 4;
-		depthStencilDesc.SampleDesc.Quality = m_4xMsaaQuality - 1;
-		depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
-		depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-		depthStencilDesc.CPUAccessFlags = 0;
-		depthStencilDesc.MiscFlags = 0;
-
-		m_pD3D11Device->CreateTexture2D(&depthStencilDesc, nullptr, &m_pDepthStencilBuffer);
-		if (m_pDepthStencilBuffer)
-		{
-			m_pD3D11Device->CreateDepthStencilView(m_pDepthStencilBuffer, nullptr, &m_pDepthStencilView);
-		}
-
-		m_viewPort->TopLeftX = 0.0f;
-		m_viewPort->TopLeftY = 0.0f;
-		m_viewPort->Width = (float)width;
-		m_viewPort->Height = (float)height;
-		m_viewPort->MinDepth = 0.0f;
-		m_viewPort->MaxDepth = 1.0f;
 	}
 
 	void GraphicsSystem::beginEvent(const wchar_t* name)
 	{
-#ifdef _DEBUG
-		if (m_pD3DUserDefinedAnnotation)
-		{
-			m_pD3DUserDefinedAnnotation->BeginEvent(name);
-		}
-#endif 
+		// TODO: Vulkan debug markers
 	}
 
 	void GraphicsSystem::endEvent()
 	{
-#ifdef _DEBUG
-		if (m_pD3DUserDefinedAnnotation)
-		{
-			m_pD3DUserDefinedAnnotation->EndEvent();
-		}
-#endif
+		// TODO: Vulkan debug markers
 	}
 
-	void GraphicsSystem::createDeviceAndContext()
+	void GraphicsSystem::createDeviceAndContext(void* hwnd)
 	{
-		HRESULT hr = S_OK;
-
-		UINT createDeviceFlags = 0;
-#ifdef _DEBUG
-		createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
-#endif
-
-		D3D_FEATURE_LEVEL featureLevels[] =
-		{
-			D3D_FEATURE_LEVEL_11_0
-		};
-		D3D_FEATURE_LEVEL featureLevel;
-		hr = D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, createDeviceFlags, featureLevels, ARRAYSIZE(featureLevels),
-			D3D11_SDK_VERSION, &m_pD3D11Device, &featureLevel, &m_pD3D11ImmediateDeviceContext);
-
-		if (FAILED(hr))
-		{
-			LOG_ERROR("D3D11CreateDevice Failed.");
-			return;
-		}
-
-		if (featureLevel != D3D_FEATURE_LEVEL_11_0)
-		{
-			LOG_ERROR("Direct3D Feature Level 11_0 unsupported.");
-			return;
-		}
-		
-		m_pD3D11Device->CreateDeferredContext(0, &m_pD3D11DeferredDeviceContext);
-		m_pD3D11ImmediateDeviceContext->QueryInterface(__uuidof(ID3DUserDefinedAnnotation), (void**)&m_pD3DUserDefinedAnnotation);
-
+		m_device = std::make_shared<VulkanDevice>();
+		m_device->initialize(hwnd);
 	}
 
-	void GraphicsSystem::createSwapChain(long long hwnd)
+	void GraphicsSystem::createSwapChain(void* hwnd)
 	{
-		m_pD3D11Device->CheckMultisampleQualityLevels(
-			DXGI_FORMAT_R8G8B8A8_UNORM, 4, &m_4xMsaaQuality);
+		RECT rect;
+		GetClientRect((HWND)hwnd, &rect);
+		int width = rect.right - rect.left;
+		int height = rect.bottom - rect.top;
+		if (width == 0) width = 800;
+		if (height == 0) height = 600;
 
-		IDXGIDevice* dxgiDevice{ nullptr };
-		IDXGIAdapter* dxgiAdapter{ nullptr };
-		IDXGIFactory* dxgiFactory{ nullptr };
-
-		m_pD3D11Device->QueryInterface(__uuidof(IDXGIDevice), (void**)&dxgiDevice);
-		dxgiDevice->GetParent(__uuidof(IDXGIAdapter), (void**)&dxgiAdapter);
-		dxgiAdapter->GetParent(__uuidof(IDXGIFactory), (void**)&dxgiFactory);
-
-		DXGI_SWAP_CHAIN_DESC sd;
-		ZeroMemory(&sd, sizeof(sd));
-		sd.BufferDesc.Width = 0;
-		sd.BufferDesc.Height = 0;
-		sd.BufferDesc.RefreshRate.Numerator = 60;
-		sd.BufferDesc.RefreshRate.Denominator = 1;
-		sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-		sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-		sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-		sd.SampleDesc.Count = 4;
-		sd.SampleDesc.Quality = m_4xMsaaQuality - 1;
-		sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-		sd.BufferCount = 1;
-		sd.OutputWindow = (HWND)hwnd;
-		sd.Windowed = TRUE;
-		sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-		sd.Flags = 0;
-
-		dxgiFactory->CreateSwapChain(m_pD3D11Device, &sd, &m_pDXGISwapChain);
-
-		SAFE_RELEASE(dxgiDevice);
-		SAFE_RELEASE(dxgiAdapter);
-		SAFE_RELEASE(dxgiFactory);
+		m_swapChain = m_device->createSwapChain(hwnd, width, height);
 	}
 
 	void GraphicsSystem::bindEditorRenderTarget()
 	{
-		Destiny::Engine::GetInstance()->getGraphicsSystem()->beginEvent(L"Imgui Pass");
-
-		m_pD3D11ImmediateDeviceContext->RSSetViewports(1, m_viewPort.get());
-		m_pD3D11ImmediateDeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
-		static Color color{ 0.0f, 0.0f, 0.0f, 1.0f };
-		m_pD3D11ImmediateDeviceContext->ClearRenderTargetView(m_pRenderTargetView, (float*)&color);
-		m_pD3D11ImmediateDeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+		if (m_device->getImmediateContext())
+		{
+			m_device->getImmediateContext()->clearRenderTarget(0.0f, 0.0f, 0.0f, 1.0f);
+		}
 	}
 
-	void GraphicsSystem::present()
+	void GraphicsSystem::present(std::function<void(void*)> callback)
 	{
-		m_pDXGISwapChain->Present(0, 0);
+		if (m_swapChain)
+		{
+			m_swapChain->present(callback);
+		}
 	}
 }

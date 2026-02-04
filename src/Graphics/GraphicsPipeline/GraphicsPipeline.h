@@ -11,7 +11,7 @@ namespace Destiny
 		virtual ~GraphicsPipeline() = default;
 	public:
 		virtual void syncState();
-		virtual void execute(ID3D11DeviceContext* deviceContext) override;
+		virtual void execute(std::shared_ptr<GraphicsContext> deviceContext) override;
 	protected:
 		std::shared_ptr<RenderSystem> m_renderSystem;
 	};

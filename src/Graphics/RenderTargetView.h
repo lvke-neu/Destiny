@@ -16,32 +16,32 @@ namespace Destiny
 	public:
 		virtual void					doLoad() override;
 		std::shared_ptr<Texture>		getTexture();
-		ID3D11Texture2D*				getTexture2D();
-		ID3D11RenderTargetView**		getRenderTargetView();
-		ID3D11ShaderResourceView**		getShaderResourceView();
+		void*							getTexture2D();
+		void**							getRenderTargetView();
+		void**							getShaderResourceView();
 		unsigned int					getWidth();
 		unsigned int					getHeight();
 		void setDebugObjectName(const std::string& name);
 	private:
-		ID3D11Texture2D*				m_texture;
-		ID3D11RenderTargetView*			m_renderTargetView;
-		ID3D11ShaderResourceView*		m_shaderResourceView;
+		void*							m_texture;
+		void*							m_renderTargetView;
+		void*							m_shaderResourceView;
 		unsigned int					m_width;
 		unsigned int					m_height;
 		unsigned int					m_format;
 	};
 
-	inline ID3D11Texture2D* RenderTargetView::getTexture2D()
+	inline void* RenderTargetView::getTexture2D()
 	{
 		return m_texture;
 	}
 
-	inline ID3D11RenderTargetView** RenderTargetView::getRenderTargetView()
+	inline void** RenderTargetView::getRenderTargetView()
 	{
 		return &m_renderTargetView;
 	}
 
-	inline ID3D11ShaderResourceView** RenderTargetView::getShaderResourceView()
+	inline void** RenderTargetView::getShaderResourceView()
 	{
 		return &m_shaderResourceView;
 	}

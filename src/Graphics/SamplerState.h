@@ -12,7 +12,8 @@ namespace Destiny
 		BindPS,
 		BindGS,
 		BindHS,
-		BindDS
+		BindDS,
+        BindCS
 	};
 
 	struct SamplerStateDesc
@@ -26,7 +27,8 @@ namespace Destiny
 				{SamplerStateBindFlag::BindPS, false },
 				{SamplerStateBindFlag::BindGS, false },
 				{SamplerStateBindFlag::BindHS, false },
-				{SamplerStateBindFlag::BindDS, false }
+				{SamplerStateBindFlag::BindDS, false },
+                {SamplerStateBindFlag::BindCS, false }
 			};
 		}
 		std::unordered_map<SamplerStateBindFlag, bool> samplerStateBindFlag;
@@ -45,7 +47,7 @@ namespace Destiny
 		void unBind(std::shared_ptr<SamplerStateDesc> desc);
 		std::shared_ptr<D3D11_SAMPLER_DESC> getSamplerDesc();
 	private:
-		ID3D11SamplerState* m_samplerState;
+		void* m_samplerState;
 		std::shared_ptr<D3D11_SAMPLER_DESC> m_samplerDesc;
 	};
 

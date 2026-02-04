@@ -459,12 +459,12 @@ namespace Destiny
 	{
 		if (m_currentScene)
 		{
-			m_currentScene->uninitialize();
+			std::static_pointer_cast<Node>(m_currentScene)->uninitialize();
 		}
 		m_currentScene = currentScene;
 		if (m_currentScene)
 		{
-			m_currentScene->initialize();
+			std::static_pointer_cast<Node>(m_currentScene)->initialize();
 		}
 	}
 }

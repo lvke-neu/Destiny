@@ -1,6 +1,8 @@
 #pragma once
+#include <memory>
+#include "../RHI/GraphicsContext.h"
 
-struct ID3D11DeviceContext;
+// struct ID3D11DeviceContext;
 namespace Destiny
 {
 	class GraphicsCommand
@@ -8,6 +10,6 @@ namespace Destiny
 	public:
 		virtual ~GraphicsCommand() = default;
 	public:
-		virtual void execute(ID3D11DeviceContext* deviceContext) = 0;
+		virtual void execute(std::shared_ptr<GraphicsContext> deviceContext) = 0;
 	};
 }

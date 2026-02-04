@@ -66,8 +66,9 @@ namespace Destiny
 		Engine::GetInstance()->getEventSystem()->unRegisterEvent(EventType::WindowResize, std::bind(&DeferredOpaquePipeline::onResize, this, std::placeholders::_1));
 	}
 
-	void DeferredOpaquePipeline::execute(ID3D11DeviceContext* deviceContext)
+	void DeferredOpaquePipeline::execute(std::shared_ptr<GraphicsContext> deviceContext)
 	{
+#if 0
 		//GBuffer
 		m_bindRenderTargets->execute(deviceContext);
 		m_clearRenderTarget0->execute(deviceContext);
@@ -117,6 +118,7 @@ namespace Destiny
 		
 		m_fullScreenTriangle->updateDrawParameters();
 		m_fullScreenTriangle->execute(deviceContext);
+#endif
 	}
 
 	void DeferredOpaquePipeline::onRendererConstantChanged()

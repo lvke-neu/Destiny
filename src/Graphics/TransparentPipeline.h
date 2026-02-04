@@ -9,7 +9,7 @@ namespace Destiny
 		TransparentPipeline(std::shared_ptr<RenderSystem> renderSystem);
 		virtual ~TransparentPipeline();
 	public:
-		virtual void execute(ID3D11DeviceContext* deviceContext) override;
+		virtual void execute(std::shared_ptr<GraphicsContext> deviceContext) override;
 	private:
 		void sort();
 	};

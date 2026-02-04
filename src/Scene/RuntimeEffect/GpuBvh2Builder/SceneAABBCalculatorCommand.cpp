@@ -23,8 +23,9 @@ namespace Destiny
 
 	}
 
-	void SceneAABBCalculatorCommand::execute(ID3D11DeviceContext* deviceContext)
+	void SceneAABBCalculatorCommand::execute(std::shared_ptr<GraphicsContext> deviceContext)
 	{
+#if 0
 		if (!m_calculateSceneAABBFromBVHs || !m_calculateSceneAABBFromAABBs || !m_scratchBuffers[0] || !m_scratchBuffers[1])
 		{
 			return;
@@ -84,6 +85,7 @@ namespace Destiny
 				bCalculateSceneAABBFromAABB = true;
 			}
 		}
+#endif
 	}
 
 	void SceneAABBCalculatorCommand::setParam(unsigned int numElements, std::shared_ptr<Texture> aabbBuffer, std::shared_ptr<Texture> outputBuffer, std::shared_ptr<ComputerCommand> calculateSceneAABBFromBVHs, std::shared_ptr<ComputerCommand> calculateSceneAABBFromAABBs)

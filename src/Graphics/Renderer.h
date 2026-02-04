@@ -42,6 +42,7 @@ namespace Destiny
 		static std::unordered_map<std::string, std::shared_ptr<Blob>> s_cache_constant;
 		static std::unordered_map<std::string, std::shared_ptr<Texture>> s_cache_shaderResource;
 		static std::unordered_map<std::string, std::shared_ptr<SamplerState>> s_cache_samplerSate;
+		static void ClearCache();
 	public:
 		std::shared_ptr<Blob>			getInputSignatureBlob();
 		void							fillDrawParameters(std::shared_ptr<DrawParameters> drawParameters);
@@ -70,11 +71,11 @@ namespace Destiny
 		void							collectReflectionTextureInfo(ID3D11ShaderReflection* shaderReflection, short flag);
 		void							collectReflectionSamplerStateInfo(ID3D11ShaderReflection* shaderReflection, short flag);
 	private:
-		ID3D11VertexShader*				m_vertexShader;
-		ID3D11PixelShader*				m_pixelShader;
-		ID3D11GeometryShader*			m_geometryShader;
-		ID3D11HullShader*				m_hullShader;
-		ID3D11DomainShader*				m_domainShader;
+		void*							m_vertexShader;
+		void*							m_pixelShader;
+		void*							m_geometryShader;
+		void*							m_hullShader;
+		void*							m_domainShader;
 		std::shared_ptr<Blob>			m_inputSignatureBlob;
 		std::shared_ptr<BlobHolder>		m_blobHolder;
 		ID3D10Blob*						m_vsCompiledBlob;

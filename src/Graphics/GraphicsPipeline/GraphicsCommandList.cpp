@@ -29,7 +29,7 @@ namespace Destiny
 		}
 	}
 
-	void GraphicsCommandList::execute(ID3D11DeviceContext* deviceContext)
+	void GraphicsCommandList::execute(std::shared_ptr<GraphicsContext> deviceContext)
 	{
 		for (const auto& graphicsCommand : m_graphicsCommandList)
 		{

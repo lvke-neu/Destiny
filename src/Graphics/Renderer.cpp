@@ -7,6 +7,9 @@
 #include "Engine/BlobHolder.h"
 #include "Engine/BlobLoader.h"
 #include "Engine/BlobLoaderManager.h"
+#include "RHI/Vulkan/VulkanDevice.h"
+#include "RHI/Vulkan/ShaderCompiler.h"
+#include "RHI/Vulkan/VulkanShader.h"
 #include <d3d11.h>
 #include <d3dcompiler.h>
 
@@ -40,11 +43,42 @@ namespace Destiny
 
 	Renderer::~Renderer()
 	{
-		SAFE_RELEASE(m_vertexShader);
-		SAFE_RELEASE(m_pixelShader);
-		SAFE_RELEASE(m_geometryShader);
-		SAFE_RELEASE(m_hullShader);
-		SAFE_RELEASE(m_domainShader);
+		auto engine = Engine::GetInstance();
+		if (engine && engine->getGraphicsSystem())
+		{
+			auto graphicsSystem = engine->getGraphicsSystem();
+			// Check if device is valid (not 0xdddddddd or null)
+			// std::shared_ptr handles null checks, but 0xdddddddd implies released memory in debug mode
+			// We can try to catch exceptions or rely on engine state
+			
+			// Safer approach: Only destroy Vulkan objects if we are sure engine is running
+			// Or check a static flag?
+			
+			// For now, let's just check the pointer itself if possible, but 0xdddddddd is a raw pointer pattern
+			// shared_ptr shouldn't be 0xdddddddd unless memory corruption or use-after-free of the container
+			
+			auto device = graphicsSystem->getDevice();
+			if (device) // shared_ptr operator bool
+			{
+				if (std::dynamic_pointer_cast<VulkanDevice>(device))
+				{
+					if (m_vertexShader) delete (VulkanVertexShader*)m_vertexShader;
+					if (m_pixelShader) delete (VulkanPixelShader*)m_pixelShader;
+				}
+				else
+				{
+					if (m_vertexShader) ((ID3D11VertexShader*)m_vertexShader)->Release();
+					if (m_pixelShader) ((ID3D11PixelShader*)m_pixelShader)->Release();
+					if (m_geometryShader) ((ID3D11GeometryShader*)m_geometryShader)->Release();
+					if (m_hullShader) ((ID3D11HullShader*)m_hullShader)->Release();
+					if (m_domainShader) ((ID3D11DomainShader*)m_domainShader)->Release();
+				}
+			}
+		}
+		// If we can't access the device safely, we leak the Vulkan shader objects (CPU side wrappers),
+		// but the GPU/Driver resources are tied to the VkDevice which is likely being destroyed anyway.
+		// For DX11, we should ideally still Release(), but without a way to know if it's safe...
+		
 		SAFE_RELEASE(m_vsCompiledBlob);
 		SAFE_RELEASE(m_psCompiledBlob);
 		SAFE_RELEASE(m_gsCompiledBlob);
@@ -188,6 +222,14 @@ namespace Destiny
 		m_changedSamplerStateNames.insert(name);
 	}
 
+	void Renderer::ClearCache()
+	{
+		s_cache.clear();
+		s_cache_constant.clear();
+		s_cache_shaderResource.clear();
+		s_cache_samplerSate.clear();
+	}
+
 	std::string Renderer::getPath() 
 	{
 		if (m_blobHolder)
@@ -204,6 +246,33 @@ namespace Destiny
 		auto blob = m_blobHolder->getBlob();
 		auto normalizedPath = m_blobHolder->getBlobLoader()->normalizedPath(m_blobHolder);
 
+        auto device = Engine::GetInstance()->getGraphicsSystem()->getDevice();
+        if (std::dynamic_pointer_cast<VulkanDevice>(device))
+        {
+            // Vulkan Path
+            std::string source((char*)blob->getData(), blob->getLength());
+            std::vector<uint32_t> spirv;
+            
+            // Assume "main" as entry point for now, or extract from somewhere?
+            // DX11 path uses "VS".
+            if (!ShaderCompiler::CompileToSpirv(normalizedPath, "VS", "vs_6_0", spirv))
+            {
+                LOG_ERROR("CompileVertexShader (Vulkan) {0} failed", normalizedPath);
+                return false;
+            }
+
+            HRESULT hr = (HRESULT)device->CreateVertexShader(spirv.data(), spirv.size() * sizeof(uint32_t), nullptr, (void**)&m_vertexShader);
+            if (FAILED(hr))
+            {
+                LOG_ERROR("CreateVertexShader (Vulkan) {0} failed", normalizedPath);
+                return false;
+            }
+
+            // TODO: Implement SPIR-V Reflection for Input Layout and Constants
+            return true;
+        }
+
+        // DX11 Path
 		unsigned int flag = D3DCOMPILE_ENABLE_STRICTNESS;
 
 #ifdef _DEBUG
@@ -227,7 +296,7 @@ namespace Destiny
 			return false;
 		}
 		
-		hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateVertexShader(m_vsCompiledBlob->GetBufferPointer(), m_vsCompiledBlob->GetBufferSize(), 0, &m_vertexShader);
+		hr = (HRESULT)Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateVertexShader(m_vsCompiledBlob->GetBufferPointer(), m_vsCompiledBlob->GetBufferSize(), nullptr, (void**)&m_vertexShader);
 		if (FAILED(hr))
 		{
 			
@@ -256,6 +325,29 @@ namespace Destiny
 		auto blob = m_blobHolder->getBlob();
 		auto normalizedPath = m_blobHolder->getBlobLoader()->normalizedPath(m_blobHolder);
 
+        auto device = Engine::GetInstance()->getGraphicsSystem()->getDevice();
+        if (std::dynamic_pointer_cast<VulkanDevice>(device))
+        {
+            // Vulkan Path
+            std::vector<uint32_t> spirv;
+            
+            // Assume "PS" as entry point for now
+            if (!ShaderCompiler::CompileToSpirv(normalizedPath, "PS", "ps_6_0", spirv))
+            {
+                LOG_ERROR("CompilePixelShader (Vulkan) {0} failed", normalizedPath);
+                return false;
+            }
+
+            HRESULT hr = (HRESULT)device->CreatePixelShader(spirv.data(), spirv.size() * sizeof(uint32_t), nullptr, (void**)&m_pixelShader);
+            if (FAILED(hr))
+            {
+                LOG_ERROR("CreatePixelShader (Vulkan) {0} failed", normalizedPath);
+                return false;
+            }
+            return true;
+        }
+
+        // DX11 Path
 		unsigned int flag = D3DCOMPILE_ENABLE_STRICTNESS;
 
 #ifdef _DEBUG
@@ -279,7 +371,7 @@ namespace Destiny
 			return false;
 		}
 		
-		hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreatePixelShader(m_psCompiledBlob->GetBufferPointer(), m_psCompiledBlob->GetBufferSize(), 0, &m_pixelShader);
+		hr = (HRESULT)Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreatePixelShader(m_psCompiledBlob->GetBufferPointer(), m_psCompiledBlob->GetBufferSize(), nullptr, (void**)&m_pixelShader);
 		if (FAILED(hr))
 		{
 			
@@ -327,7 +419,7 @@ namespace Destiny
 			return false;
 		}
 		
-		hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateGeometryShader(m_gsCompiledBlob->GetBufferPointer(), m_gsCompiledBlob->GetBufferSize(), 0, &m_geometryShader);
+		hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateGeometryShader(m_gsCompiledBlob->GetBufferPointer(), m_gsCompiledBlob->GetBufferSize(), 0, (void**)&m_geometryShader);
 		if (FAILED(hr))
 		{
 			
@@ -375,7 +467,7 @@ namespace Destiny
 			return false;
 		}
 
-		hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateHullShader(m_hsCompiledBlob->GetBufferPointer(), m_hsCompiledBlob->GetBufferSize(), 0, &m_hullShader);
+		hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateHullShader(m_hsCompiledBlob->GetBufferPointer(), m_hsCompiledBlob->GetBufferSize(), 0, (void**)&m_hullShader);
 		if (FAILED(hr))
 		{
 
@@ -423,7 +515,7 @@ namespace Destiny
 			return false;
 		}
 
-		hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateDomainShader(m_dsCompiledBlob->GetBufferPointer(), m_dsCompiledBlob->GetBufferSize(), 0, &m_domainShader);
+		hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateDomainShader(m_dsCompiledBlob->GetBufferPointer(), m_dsCompiledBlob->GetBufferSize(), 0, (void**)&m_domainShader);
 		if (FAILED(hr))
 		{
 
@@ -593,6 +685,7 @@ namespace Destiny
 			drawParameters->geometryShader = m_geometryShader;
 			drawParameters->hullShader = m_hullShader;
 			drawParameters->domainShader = m_domainShader;
+			drawParameters->inputSignature = m_inputSignatureBlob;
 		}
 		else
 		{

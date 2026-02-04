@@ -87,7 +87,7 @@ namespace Destiny
 			drawParameters->vertexBuffer_stride = m_vertexBuffer->m_stride;
 			drawParameters->vertexBuffer_offset = m_vertexBuffer->m_offset;
 			
-			if (m_vertexBuffer->m_inputLayout)
+			if (m_vertexBuffer->m_inputLayout && inputSignatureBlob)
 			{
 				drawParameters->inputLayout = m_vertexBuffer->m_inputLayout->getInputLayout(inputSignatureBlob);
 			}

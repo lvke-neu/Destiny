@@ -3,7 +3,10 @@
 #include "Engine/Utility.h"
 #include "Engine/Engine.h"
 #include "GraphicsSystem.h"
+#include "RHI/Vulkan/VulkanDevice.h"
+#include "RHI/Vulkan/VulkanBuffer.h"
 #include <d3d11.h>
+#include <thread>
 
 namespace Destiny
 {
@@ -19,7 +22,20 @@ namespace Destiny
 
 	VertexBuffer::~VertexBuffer()
 	{
-		SAFE_RELEASE(m_vertexBuffer);
+		auto engine = Engine::GetInstance();
+		if (engine && engine->getGraphicsSystem())
+		{
+			auto device = engine->getGraphicsSystem()->getDevice();
+			if (device && std::dynamic_pointer_cast<VulkanDevice>(device))
+			{
+				if (m_vertexBuffer) delete (VulkanBuffer*)m_vertexBuffer;
+			}
+			else
+			{
+				if (m_vertexBuffer) ((ID3D11Buffer*)m_vertexBuffer)->Release();
+			}
+		}
+		// m_vertexBuffer = nullptr; // Not strictly needed in destructor
 	}
 
 	void VertexBuffer::doLoad()
@@ -31,7 +47,17 @@ namespace Destiny
 			return;
 		}
 
-		SAFE_RELEASE(m_vertexBuffer);
+		// Cleanup existing buffer
+		auto device = Engine::GetInstance()->getGraphicsSystem()->getDevice();
+		if (std::dynamic_pointer_cast<VulkanDevice>(device))
+		{
+			if (m_vertexBuffer) delete (VulkanBuffer*)m_vertexBuffer;
+		}
+		else
+		{
+			if (m_vertexBuffer) ((ID3D11Buffer*)m_vertexBuffer)->Release();
+		}
+		m_vertexBuffer = nullptr;
 
 		D3D11_BUFFER_DESC ibd;
 		ZeroMemory(&ibd, sizeof(ibd));
@@ -44,7 +70,7 @@ namespace Destiny
 		ZeroMemory(&InitData, sizeof(InitData));
 		InitData.pSysMem = m_data->getData();
 		
-		HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateBuffer(&ibd, &InitData, &m_vertexBuffer);
+		HRESULT hr = (HRESULT)device->CreateBuffer(&ibd, &InitData, (void**)&m_vertexBuffer);
 		
 		if (SUCCEEDED(hr))
 		{

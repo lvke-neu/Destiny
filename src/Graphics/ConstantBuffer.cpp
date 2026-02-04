@@ -24,7 +24,7 @@ namespace Destiny
 		cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 		cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		
-		HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateBuffer(&cbd, nullptr, &m_constantBuffer);
+		HRESULT hr = (HRESULT)Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateBuffer(&cbd, nullptr, (void**)&m_constantBuffer);
 		if (FAILED(hr))
 		{
 			
@@ -37,7 +37,9 @@ namespace Destiny
 
 	ConstantBuffer::~ConstantBuffer()
 	{
-		SAFE_RELEASE(m_constantBuffer);
+		// SAFE_RELEASE(m_constantBuffer);
+        Engine::GetInstance()->getGraphicsSystem()->getDevice()->DestroyBuffer(m_constantBuffer);
+        m_constantBuffer = nullptr;
 	}
 
 	void ConstantBuffer::setVariable(const std::string& name, std::shared_ptr<Blob> data)
@@ -82,22 +84,22 @@ namespace Destiny
 				switch (constantBufferBindFlag.first)
 				{
 				case ConstantBufferBindFlag::BindVS :
-					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->VSSetConstantBuffers(m_startSlot, 1, &m_constantBuffer);
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->VSSetConstantBuffers(m_startSlot, 1, (void* const*)&m_constantBuffer);
 					break;
 				case ConstantBufferBindFlag::BindPS:
-					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetConstantBuffers(m_startSlot, 1, &m_constantBuffer);
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetConstantBuffers(m_startSlot, 1, (void* const*)&m_constantBuffer);
 					break;
 				case ConstantBufferBindFlag::BindGS:
-					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->GSSetConstantBuffers(m_startSlot, 1, &m_constantBuffer);
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->GSSetConstantBuffers(m_startSlot, 1, (void* const*)&m_constantBuffer);
 					break;
 				case ConstantBufferBindFlag::BindHS:
-					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->HSSetConstantBuffers(m_startSlot, 1, &m_constantBuffer);
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->HSSetConstantBuffers(m_startSlot, 1, (void* const*)&m_constantBuffer);
 					break;
 				case ConstantBufferBindFlag::BindDS:
-					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->DSSetConstantBuffers(m_startSlot, 1, &m_constantBuffer);
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->DSSetConstantBuffers(m_startSlot, 1, (void* const*)&m_constantBuffer);
 					break;
 				case ConstantBufferBindFlag::BindCS:
-					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->CSSetConstantBuffers(m_startSlot, 1, &m_constantBuffer);
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->CSSetConstantBuffers(m_startSlot, 1, (void* const*)&m_constantBuffer);
 					break;
 				}
 			}
@@ -114,22 +116,22 @@ namespace Destiny
 				switch (constantBufferBindFlag.first)
 				{
 				case ConstantBufferBindFlag::BindVS:
-					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->VSSetConstantBuffers(m_startSlot, 1, &buffer);
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->VSSetConstantBuffers(m_startSlot, 1, (void* const*)&buffer);
 					break;
 				case ConstantBufferBindFlag::BindPS:
-					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetConstantBuffers(m_startSlot, 1, &buffer);
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetConstantBuffers(m_startSlot, 1, (void* const*)&buffer);
 					break;
 				case ConstantBufferBindFlag::BindGS:
-					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->GSSetConstantBuffers(m_startSlot, 1, &buffer);
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->GSSetConstantBuffers(m_startSlot, 1, (void* const*)&buffer);
 					break;
 				case ConstantBufferBindFlag::BindHS:
-					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->HSSetConstantBuffers(m_startSlot, 1, &buffer);
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->HSSetConstantBuffers(m_startSlot, 1, (void* const*)&buffer);
 					break;
 				case ConstantBufferBindFlag::BindDS:
-					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->DSSetConstantBuffers(m_startSlot, 1, &buffer);
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->DSSetConstantBuffers(m_startSlot, 1, (void* const*)&buffer);
 					break;
 				case ConstantBufferBindFlag::BindCS:
-					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->CSSetConstantBuffers(m_startSlot, 1, &buffer);
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->CSSetConstantBuffers(m_startSlot, 1, (void* const*)&buffer);
 					break;
 				}
 			}

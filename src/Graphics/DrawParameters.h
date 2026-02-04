@@ -2,6 +2,7 @@
 #include <string>
 #include <memory>
 #include <unordered_map>
+#include <vector>
 
 struct ID3D11Buffer;
 struct ID3D11InputLayout;
@@ -15,6 +16,7 @@ struct ID3D11DepthStencilState;
 struct ID3D11BlendState;
 namespace Destiny
 {
+	class  Blob;
 	class  ConstantBuffer;
 	class  Texture;
 	struct TextureDesc;
@@ -23,32 +25,33 @@ namespace Destiny
 	class DrawParameters
 	{
 	public:
-		ID3D11Buffer* vertexBuffer									 = nullptr;
+		void* vertexBuffer									 = nullptr;
 		unsigned int vertexBuffer_stride							 = 0;
 		unsigned int vertexBuffer_offset							 = 0;
 																	 
-		ID3D11Buffer* instanceBuffer								 = nullptr;
+		void* instanceBuffer								 = nullptr;
 		unsigned int instanceBuffer_stride							 = 0;
 		unsigned int instanceBuffer_offset							 = 0;
 		unsigned int instanceCount									 = 0;
 																	 
-		ID3D11Buffer* indexBuffer									 = nullptr;
+		void* indexBuffer									 = nullptr;
 		short format												 = 0;
 		short primitiveTopology										 = 0;
-		ID3D11InputLayout* inputLayout								 = nullptr;
+		void* inputLayout								             = nullptr;
+		std::shared_ptr<Blob> inputSignature;
 
-		ID3D11Buffer* indirectBuffer								 = nullptr;
+		void* indirectBuffer								 = nullptr;
 		std::vector<std::pair<short, unsigned int>>		drawIndirectMethod_indirectBufferOffsets;
 																	 
-		ID3D11VertexShader* vertexShader							 = nullptr;
-		ID3D11PixelShader* pixelShader								 = nullptr;
-		ID3D11GeometryShader* geometryShader						 = nullptr;
-		ID3D11HullShader* hullShader						         = nullptr;
-		ID3D11DomainShader* domainShader						     = nullptr;
+		void* vertexShader							 = nullptr;
+		void* pixelShader								 = nullptr;
+		void* geometryShader						 = nullptr;
+		void* hullShader						         = nullptr;
+		void* domainShader						     = nullptr;
 																	  
-		ID3D11RasterizerState* rasterizerState						 = nullptr;
-		ID3D11DepthStencilState* depthStencilState					 = nullptr;
-		ID3D11BlendState* blendState								 = nullptr;
+		void* rasterizerState						 = nullptr;
+		void* depthStencilState					 = nullptr;
+		void* blendState								 = nullptr;
 																	 
 		short drawType												 = 0;
 		unsigned int indexCount										 = 0;

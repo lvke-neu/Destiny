@@ -12,7 +12,7 @@ namespace Destiny
 		ShadowMapPipeline(std::shared_ptr<RenderSystem> renderSystem);
 		virtual ~ShadowMapPipeline();
 	public:
-		virtual void execute(ID3D11DeviceContext* deviceContext) override;
+		virtual void execute(std::shared_ptr<GraphicsContext> deviceContext) override;
 	public:
 		void onResize(float viewPortWidth, float viewPortHeight);
 	public:

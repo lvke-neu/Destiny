@@ -28,6 +28,9 @@ namespace Destiny
 		DirectX::XMMATRIX									getRootToThisWorldMatrix();
 		DirectX::XMMATRIX									getInvTransposeWorldMatrix();
 		DirectX::XMMATRIX									getWorldMatrix();
+		
+		virtual void										initialize() {}
+		virtual void										uninitialize() {}
 	public:
 		GET_SET(std::string, name);
 		GET(Transform, transform);

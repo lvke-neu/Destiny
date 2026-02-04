@@ -13,7 +13,7 @@ namespace Destiny
 		PostProcessingPipeline(std::shared_ptr<RenderSystem> renderSystem);
 		virtual ~PostProcessingPipeline();
 	public:
-		virtual void execute(ID3D11DeviceContext* deviceContext) override;
+		virtual void execute(std::shared_ptr<GraphicsContext> deviceContext) override;
 	public:
 		std::shared_ptr<BindRenderTargets>		m_bindRenderTargets;
 	private:

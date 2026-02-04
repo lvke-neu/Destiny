@@ -21,8 +21,9 @@ namespace Destiny
 
 	}
 
-	void BitonicOuterAndInnerCommand::execute(ID3D11DeviceContext* deviceContext)
+	void BitonicOuterAndInnerCommand::execute(std::shared_ptr<GraphicsContext> deviceContext)
 	{
+#if 0
 		if (!m_outerSortCS || !m_innerSortCS)
 		{
 			return;
@@ -50,6 +51,7 @@ namespace Destiny
 			IndirectArgsOffset += m_cIndirectArgStride;
 			//Engine::GetInstance()->getGraphicsSystem()->endEvent();
 		}
+#endif
 	}
 
 	void BitonicOuterAndInnerCommand::setParam

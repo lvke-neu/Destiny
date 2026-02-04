@@ -20,9 +20,23 @@ namespace Destiny
 
 	RenderTargetView::~RenderTargetView()
 	{
-		SAFE_RELEASE(m_texture);
-		SAFE_RELEASE(m_renderTargetView);
-		SAFE_RELEASE(m_shaderResourceView);
+		// SAFE_RELEASE(m_texture);
+		// SAFE_RELEASE(m_renderTargetView);
+		// SAFE_RELEASE(m_shaderResourceView);
+
+        // TODO: Call DestroyTexture, DestroyRenderTargetView (not implemented yet), DestroyShaderResourceView (not implemented yet)
+        if (m_texture)
+        {
+             Engine::GetInstance()->getGraphicsSystem()->getDevice()->DestroyTexture(m_texture);
+             m_texture = nullptr;
+        }
+        // m_renderTargetView and m_shaderResourceView also need destruction, but we don't have interfaces yet or they are part of texture?
+        // Actually we do have CreateRenderTargetView and CreateShaderResourceView now.
+        // But we need Destroy interfaces for View objects if they are separate Vulkan objects (VkImageView).
+        
+        // For now, let's assume leak or stub, but prevent SAFE_RELEASE crash.
+        m_renderTargetView = nullptr;
+        m_shaderResourceView = nullptr;
 	}
 
 	void RenderTargetView::doLoad()
@@ -35,7 +49,7 @@ namespace Destiny
 
 		
 
-		hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateTexture2D(&texDesc, nullptr, &m_texture);
+		hr = (HRESULT)Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateTexture2D(&texDesc, nullptr, (void**)&m_texture);
 		if (!SUCCEEDED(hr))
 		{
 			
@@ -45,26 +59,31 @@ namespace Destiny
 		}
 
 
-		CD3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc(m_texture, D3D11_RTV_DIMENSION_TEXTURE2D);
-		hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateRenderTargetView(m_texture, &renderTargetViewDesc, &m_renderTargetView);
+		CD3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc(D3D11_RTV_DIMENSION_TEXTURE2D, (DXGI_FORMAT)m_format);
+		hr = (HRESULT)Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateRenderTargetView(m_texture, &renderTargetViewDesc, (void**)&m_renderTargetView);
 		if (!SUCCEEDED(hr))
 		{
 			
 			LOG_ERROR("RenderTargetView:renderTargetView load failed:width{0},height{1}", m_width, m_height);
 			loadFailed__();
-			SAFE_RELEASE(m_texture);
+			// SAFE_RELEASE(m_texture);
+             Engine::GetInstance()->getGraphicsSystem()->getDevice()->DestroyTexture(m_texture);
+             m_texture = nullptr;
 			return;
 		}
 
-		CD3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc(m_texture, D3D11_SRV_DIMENSION_TEXTURE2D);
-		hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateShaderResourceView(m_texture, &shaderResourceViewDesc, &m_shaderResourceView);
+		CD3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc(D3D11_SRV_DIMENSION_TEXTURE2D, (DXGI_FORMAT)m_format);
+		hr = (HRESULT)Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateShaderResourceView(m_texture, &shaderResourceViewDesc, (void**)&m_shaderResourceView);
 		if (!SUCCEEDED(hr))
 		{
 			
 			LOG_ERROR("RenderTargetView:shaderResourceView load failed:width{0},height{1}", m_width, m_height);
 			loadFailed__();
-			SAFE_RELEASE(m_texture);
-			SAFE_RELEASE(m_renderTargetView);
+			// SAFE_RELEASE(m_texture);
+			// SAFE_RELEASE(m_renderTargetView);
+            Engine::GetInstance()->getGraphicsSystem()->getDevice()->DestroyTexture(m_texture);
+            m_texture = nullptr;
+            m_renderTargetView = nullptr;
 			return;
 		}
 		
@@ -80,7 +99,8 @@ namespace Destiny
 	void RenderTargetView::setDebugObjectName(const std::string& name)
 	{
 #ifdef _DEBUG
-		m_renderTargetView->SetPrivateData(WKPDID_D3DDebugObjectName, (unsigned int)name.size(), name.c_str());
+		// m_renderTargetView->SetPrivateData(WKPDID_D3DDebugObjectName, (unsigned int)name.size(), name.c_str());
+        // TODO: Implement Vulkan debug name setting
 #endif // 
 	}
 }

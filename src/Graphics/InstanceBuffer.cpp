@@ -21,7 +21,7 @@ namespace Destiny
 		cbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 		cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		
-		HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateBuffer(&cbd, nullptr, &m_instanceBuffer);
+		HRESULT hr = (HRESULT)Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateBuffer(&cbd, nullptr, (void**)&m_instanceBuffer);
 		if (FAILED(hr))
 		{
 			

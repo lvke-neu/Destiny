@@ -8,6 +8,7 @@
 #include "Graphics/Texture.h"
 #include "ComputerEffectLoader.h"
 #include <d3d11.h>
+#include <d3dcompiler.h>
 
 namespace Destiny
 {
@@ -31,8 +32,9 @@ namespace Destiny
 		SAFE_RELEASE(m_csCompiledBlob);
 	}
 
-	void ComputerCommand::execute(ID3D11DeviceContext* deviceContext)
+	void ComputerCommand::execute(std::shared_ptr<GraphicsContext> deviceContext)
 	{
+#if 0
 		////clear append type structed uav
 		//UINT clearValues[4] = { 0, 0, 0, 0xffffffff };
 		//for (int i = 0; i < m_uavs.size(); i++)
@@ -133,6 +135,7 @@ namespace Destiny
 		{
 			Engine::GetInstance()->getGraphicsSystem()->endEvent();
 		}
+#endif
 	}
 
 	void ComputerCommand::setDebugName(const std::wstring& debugName)
@@ -190,5 +193,52 @@ namespace Destiny
 		m_bIndirectMode = bIndirectMode;
 		m_indirectTexture = indirectTexture;
 		m_indirectOffsets = indirectOffsets;
+	}
+
+	void ComputerCommand::doLoad()
+	{
+		auto blobHolder = std::dynamic_pointer_cast<BlobHolder>(m_creationParam);
+		if (!blobHolder)
+		{
+			loadFailed__();
+			return;
+		}
+
+		ID3DBlob* errorBlob = nullptr;
+
+		auto blob = blobHolder->getBlob();
+		auto normalizedPath = blobHolder->getBlobLoader()->normalizedPath(blobHolder);
+
+		unsigned int flag = D3DCOMPILE_ENABLE_STRICTNESS;
+
+#ifdef _DEBUG
+		flag |= D3DCOMPILE_DEBUG;
+		flag |= D3DCOMPILE_SKIP_OPTIMIZATION;
+#endif // 
+
+		HRESULT hr = D3DCompile(blob->getData(), blob->getLength(), normalizedPath.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "CS", "cs_5_0",
+			flag, 0, &m_csCompiledBlob, &errorBlob);
+		if (FAILED(hr))
+		{
+			if (errorBlob != nullptr)
+			{
+				LOG_ERROR("ComputerCommand:compile error:{0}", (char*)errorBlob->GetBufferPointer());
+			}
+			loadFailed__();
+			SAFE_RELEASE(errorBlob);
+			return;
+		}
+
+		hr = (HRESULT)Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateComputeShader(m_csCompiledBlob->GetBufferPointer(), m_csCompiledBlob->GetBufferSize(), nullptr, (void**)&m_computeShader);
+		if (FAILED(hr))
+		{
+			LOG_ERROR("ComputerCommand:create compute shader failed");
+			loadFailed__();
+			SAFE_RELEASE(errorBlob);
+			return;
+		}
+
+		loadSucceeded__();
+		SAFE_RELEASE(errorBlob);
 	}
 }

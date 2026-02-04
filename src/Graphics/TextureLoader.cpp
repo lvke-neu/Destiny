@@ -1,7 +1,7 @@
 #include "TextureLoader.h"
 #include "Texture.h"
-#include "DDSTextureLoader.h"
-#include "WICTextureLoader.h"
+// #include "DDSTextureLoader.h"
+// #include "WICTextureLoader.h"
 #include "HDRTextureLoader.h"
 #include "GraphicsSystem.h"
 #include "Engine/Engine.h"
@@ -15,7 +15,7 @@ namespace Destiny
 {
 	TextureLoader::TextureLoader()
 	{
-		DirectX::WIC_INIT();
+		// DirectX::WIC_INIT();
 	}
 
 	TextureLoader::~TextureLoader()
@@ -80,23 +80,61 @@ namespace Destiny
 		HRESULT hr = 0;
 		auto normalizedPath = creationParam->getBlobLoader()->normalizedPath(creationParam);
 
-		if (normalizedPath.find(".dds") != std::string::npos)
-		{
-			hr = DirectX::CreateDDSTextureFromMemory(Engine::GetInstance()->getGraphicsSystem()->getDevice(), (unsigned char*)blob->getData(), blob->getLength(), (ID3D11Resource**)&std::static_pointer_cast<Texture>(asset)->m_resource, &std::static_pointer_cast<Texture>(asset)->m_shaderResourceView);
-		}
-		else
-		{
-			hr = DirectX::CreateWICTextureFromMemory(Engine::GetInstance()->getGraphicsSystem()->getDevice(), (unsigned char*)blob->getData(), blob->getLength(), (ID3D11Resource**)&std::static_pointer_cast<Texture>(asset)->m_resource, &std::static_pointer_cast<Texture>(asset)->m_shaderResourceView);
-		}
+        DirectX::ScratchImage image;
+        if (normalizedPath.find(".dds") != std::string::npos)
+        {
+            hr = DirectX::LoadFromDDSMemory(blob->getData(), blob->getLength(), DirectX::DDS_FLAGS_NONE, nullptr, image);
+        }
+        else
+        {
+            hr = DirectX::LoadFromWICMemory(blob->getData(), blob->getLength(), DirectX::WIC_FLAGS_NONE, nullptr, image);
+        }
 
-		if (SUCCEEDED(hr))
-		{
-			asset->getCreationParam().reset();
-			asset->loadSucceeded__();
-		}
+        if (SUCCEEDED(hr))
+        {
+            const DirectX::Image* img = image.GetImage(0, 0, 0);
+            D3D11_TEXTURE2D_DESC desc = {};
+            desc.Width = static_cast<UINT>(img->width);
+            desc.Height = static_cast<UINT>(img->height);
+            desc.MipLevels = 1; 
+            desc.ArraySize = 1;
+            desc.Format = img->format;
+            desc.SampleDesc.Count = 1;
+            desc.Usage = D3D11_USAGE_DEFAULT;
+            desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+            desc.CPUAccessFlags = 0;
+            desc.MiscFlags = 0;
+
+            D3D11_SUBRESOURCE_DATA initData = {};
+            initData.pSysMem = img->pixels;
+            initData.SysMemPitch = static_cast<UINT>(img->rowPitch);
+            initData.SysMemSlicePitch = static_cast<UINT>(img->slicePitch);
+
+            void* texture = nullptr;
+            // Assuming CreateTexture2D handles format conversion or Vulkan supports the format
+            long res = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateTexture2D(&desc, &initData, &texture);
+            
+            if (res == 0 && texture != nullptr)
+            {
+                std::static_pointer_cast<Texture>(asset)->m_resource = texture;
+                std::static_pointer_cast<Texture>(asset)->m_resourceType = Texture::ResourceType::Texture;
+                
+                // Create SRV Stub
+                // CD3D11_SHADER_RESOURCE_VIEW_DESC srvDesc(D3D11_SRV_DIMENSION_TEXTURE2D, desc.Format);
+                // Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateShaderResourceView(texture, &srvDesc, (void**)&std::static_pointer_cast<Texture>(asset)->m_shaderResourceView);
+                
+                asset->getCreationParam().reset();
+                asset->loadSucceeded__();
+            }
+            else
+            {
+                LOG_ERROR("Texture load failed (Vulkan CreateTexture2D): {0}", normalizedPath);
+                asset->loadFailed__();
+            }
+        }
 		else
 		{
-			LOG_ERROR("Texture load failed : {0}", normalizedPath);
+			LOG_ERROR("Texture load failed (DirectXTex Load): {0}", normalizedPath);
 			asset->loadFailed__();
 		}
 	}
@@ -117,10 +155,11 @@ namespace Destiny
 			bufferDesc.StructureByteStride = 0;
 
 			ID3D11Buffer* pBuffer = nullptr;
-			HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateBuffer(&bufferDesc, nullptr, &pBuffer);
+			HRESULT hr = (HRESULT)Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateBuffer(&bufferDesc, nullptr, (void**)&pBuffer);
 			if (SUCCEEDED(hr))
 			{
 				std::static_pointer_cast<Texture>(asset)->m_resource = pBuffer;
+                std::static_pointer_cast<Texture>(asset)->m_resourceType = Texture::ResourceType::Buffer;
 			}
 			else
 			{
@@ -143,13 +182,14 @@ namespace Destiny
 			}
 
 			ID3D11Texture2D* texture2d = nullptr;
-			HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateTexture2D(&textureDesc, creationParam->data ? &data : nullptr, &texture2d);
+			HRESULT hr = (HRESULT)Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateTexture2D(&textureDesc, creationParam->data ? &data : nullptr, (void**)&texture2d);
 			std::static_pointer_cast<Texture>(asset)->m_resource = texture2d;
+            std::static_pointer_cast<Texture>(asset)->m_resourceType = Texture::ResourceType::Texture;
 			if (SUCCEEDED(hr))
 			{
 				CD3D11_SHADER_RESOURCE_VIEW_DESC srvDesc(D3D11_SRV_DIMENSION_TEXTURE2D, (DXGI_FORMAT)creationParam->format);
 
-				hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateShaderResourceView(std::static_pointer_cast<Texture>(asset)->m_resource, &srvDesc, &std::static_pointer_cast<Texture>(asset)->m_shaderResourceView);
+				hr = (HRESULT)Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateShaderResourceView(std::static_pointer_cast<Texture>(asset)->m_resource, &srvDesc, (void**)&std::static_pointer_cast<Texture>(asset)->m_shaderResourceView);
 				if (SUCCEEDED(hr))
 				{
 					asset->getCreationParam().reset();
@@ -175,14 +215,14 @@ namespace Destiny
 			textureDesc.BindFlags |= D3D11_BIND_UNORDERED_ACCESS;
 
 			ID3D11Texture2D* texture2d = nullptr;
-			HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateTexture2D(&textureDesc, nullptr, &texture2d);
+			HRESULT hr = (HRESULT)Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateTexture2D(&textureDesc, nullptr, (void**)&texture2d);
 			std::static_pointer_cast<Texture>(asset)->m_resource = texture2d;
 			if (SUCCEEDED(hr))
 			{
 				
 				CD3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc(D3D11_UAV_DIMENSION_TEXTURE2D, (DXGI_FORMAT)creationParam->format);
 
-				hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateUnorderedAccessView(std::static_pointer_cast<Texture>(asset)->m_resource, &uavDesc, &std::static_pointer_cast<Texture>(asset)->m_unorderedAccessView);
+				hr = (HRESULT)Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateUnorderedAccessView(std::static_pointer_cast<Texture>(asset)->m_resource, &uavDesc, (void**)&std::static_pointer_cast<Texture>(asset)->m_unorderedAccessView);
 				if (SUCCEEDED(hr))
 				{
 
@@ -195,7 +235,7 @@ namespace Destiny
 				}
 
 				CD3D11_SHADER_RESOURCE_VIEW_DESC srvDesc(D3D11_SRV_DIMENSION_TEXTURE2D, (DXGI_FORMAT)creationParam->format);
-				hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateShaderResourceView(std::static_pointer_cast<Texture>(asset)->m_resource, &srvDesc, &std::static_pointer_cast<Texture>(asset)->m_shaderResourceView);
+				hr = (HRESULT)Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateShaderResourceView(std::static_pointer_cast<Texture>(asset)->m_resource, &srvDesc, (void**)&std::static_pointer_cast<Texture>(asset)->m_shaderResourceView);
 				if (SUCCEEDED(hr))
 				{
 					asset->loadSucceeded__();
@@ -229,7 +269,7 @@ namespace Destiny
 			initData.pSysMem = creationParam->data ? initData.pSysMem = creationParam->data->getData() : nullptr;
 
 			ID3D11Buffer* pBuffer = nullptr;
-			HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateBuffer(&bufferDesc, creationParam->data ? &initData : nullptr, &pBuffer);
+			HRESULT hr = (HRESULT)Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateBuffer(&bufferDesc, creationParam->data ? &initData : nullptr, (void**)&pBuffer);
 			if (SUCCEEDED(hr))
 			{
 				std::static_pointer_cast<Texture>(asset)->m_resource = pBuffer;
@@ -240,7 +280,7 @@ namespace Destiny
 				uavDesc.Buffer.NumElements = creationParam->structuredBufferByteWidth / creationParam->structuredBufferByteStride;
 				uavDesc.Buffer.Flags = (int)creationParam->createStructuredType;
 
-				hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateUnorderedAccessView(std::static_pointer_cast<Texture>(asset)->m_resource, &uavDesc, &std::static_pointer_cast<Texture>(asset)->m_unorderedAccessView);
+				hr = (HRESULT)Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateUnorderedAccessView(std::static_pointer_cast<Texture>(asset)->m_resource, &uavDesc, (void**)&std::static_pointer_cast<Texture>(asset)->m_unorderedAccessView);
 				if (SUCCEEDED(hr))
 				{
 
@@ -258,7 +298,7 @@ namespace Destiny
 				srvDesc.Buffer.NumElements = creationParam->structuredBufferByteWidth / creationParam->structuredBufferByteStride;
 				srvDesc.Buffer.FirstElement = 0;
 
-				hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateShaderResourceView(std::static_pointer_cast<Texture>(asset)->m_resource, &srvDesc, &std::static_pointer_cast<Texture>(asset)->m_shaderResourceView);
+				hr = (HRESULT)Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateShaderResourceView(std::static_pointer_cast<Texture>(asset)->m_resource, &srvDesc, (void**)&std::static_pointer_cast<Texture>(asset)->m_shaderResourceView);
 				if (SUCCEEDED(hr))
 				{
 					asset->loadSucceeded__();
@@ -291,7 +331,7 @@ namespace Destiny
 			initData.pSysMem = creationParam->data ? initData.pSysMem = creationParam->data->getData() : nullptr;
 
 			ID3D11Buffer* pBuffer = nullptr;
-			HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateBuffer(&bufferDesc, creationParam->data ? &initData : nullptr, &pBuffer);
+			HRESULT hr = (HRESULT)Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateBuffer(&bufferDesc, creationParam->data ? &initData : nullptr, (void**)&pBuffer);
 			if (SUCCEEDED(hr))
 			{
 				std::static_pointer_cast<Texture>(asset)->m_resource = pBuffer;
@@ -302,7 +342,7 @@ namespace Destiny
 				uavDesc.Buffer.NumElements = creationParam->typedBufferByteWidth / creationParam->structuredBufferByteStride;
 				uavDesc.Buffer.Flags = 0;
 				//D3D11_BUFFER_UAV_FLAG_APPEND
-				hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateUnorderedAccessView(std::static_pointer_cast<Texture>(asset)->m_resource, &uavDesc, &std::static_pointer_cast<Texture>(asset)->m_unorderedAccessView);
+				hr = (HRESULT)Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateUnorderedAccessView(std::static_pointer_cast<Texture>(asset)->m_resource, &uavDesc, (void**)&std::static_pointer_cast<Texture>(asset)->m_unorderedAccessView);
 				if (SUCCEEDED(hr))
 				{
 
@@ -320,7 +360,7 @@ namespace Destiny
 				srvDesc.Buffer.NumElements = creationParam->typedBufferByteWidth / creationParam->structuredBufferByteStride;
 				srvDesc.Buffer.FirstElement = 0;
 
-				hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateShaderResourceView(std::static_pointer_cast<Texture>(asset)->m_resource, &srvDesc, &std::static_pointer_cast<Texture>(asset)->m_shaderResourceView);
+				hr = (HRESULT)Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateShaderResourceView(std::static_pointer_cast<Texture>(asset)->m_resource, &srvDesc, (void**)&std::static_pointer_cast<Texture>(asset)->m_shaderResourceView);
 				if (SUCCEEDED(hr))
 				{
 					asset->loadSucceeded__();
@@ -358,7 +398,7 @@ namespace Destiny
 			initData.pSysMem = creationParam->data ? initData.pSysMem = creationParam->data->getData() : nullptr;
 
 			ID3D11Buffer* pBuffer = nullptr;
-			HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateBuffer(&bufferDesc, creationParam->data ? &initData : nullptr, &pBuffer);
+			HRESULT hr = (HRESULT)Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateBuffer(&bufferDesc, creationParam->data ? &initData : nullptr, (void**)&pBuffer);
 			if (SUCCEEDED(hr))
 			{
 				std::static_pointer_cast<Texture>(asset)->m_resource = pBuffer;
@@ -369,7 +409,7 @@ namespace Destiny
 				uavDesc.Buffer.NumElements = creationParam->rawBufferWidth / 4;
 				uavDesc.Buffer.Flags = D3D11_BUFFER_UAV_FLAG_RAW;
 				//D3D11_BUFFER_UAV_FLAG_APPEND
-				hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateUnorderedAccessView(std::static_pointer_cast<Texture>(asset)->m_resource, &uavDesc, &std::static_pointer_cast<Texture>(asset)->m_unorderedAccessView);
+				hr = (HRESULT)Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateUnorderedAccessView(std::static_pointer_cast<Texture>(asset)->m_resource, &uavDesc, (void**)&std::static_pointer_cast<Texture>(asset)->m_unorderedAccessView);
 				if (SUCCEEDED(hr))
 				{
 
@@ -387,7 +427,7 @@ namespace Destiny
 				srvDesc.Buffer.NumElements = creationParam->rawBufferWidth / 4;
 				srvDesc.Buffer.FirstElement = 0;
 
-				hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateShaderResourceView(std::static_pointer_cast<Texture>(asset)->m_resource, &srvDesc, &std::static_pointer_cast<Texture>(asset)->m_shaderResourceView);
+				hr = (HRESULT)Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateShaderResourceView(std::static_pointer_cast<Texture>(asset)->m_resource, &srvDesc, (void**)&std::static_pointer_cast<Texture>(asset)->m_shaderResourceView);
 				if (SUCCEEDED(hr))
 				{
 					asset->loadSucceeded__();

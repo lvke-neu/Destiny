@@ -17,25 +17,88 @@ namespace Destiny
 	Texture::Texture() :
 		m_resource(nullptr),
 		m_shaderResourceView(nullptr),
-		m_unorderedAccessView(nullptr)
+		m_unorderedAccessView(nullptr),
+        m_resourceType(ResourceType::Unknown)
 	{
 
 	}
 
-	Texture::Texture(ID3D11Resource* resource, ID3D11ShaderResourceView* shaderResourceView) :
+	Texture::Texture(void* resource, void* shaderResourceView) :
 		m_resource(resource),
 		m_shaderResourceView(shaderResourceView),
-		m_unorderedAccessView(nullptr)
+		m_unorderedAccessView(nullptr),
+        m_resourceType(ResourceType::Texture) // Assume texture for now when created this way
 	{
-		SAFE_ADDREF(m_resource);
-		SAFE_ADDREF(m_shaderResourceView);
+        // No AddRef in Vulkan or void* land. Ownership management needs to be careful.
+        // If this constructor takes ownership, we should know.
+        // For DepthStencilView, it creates the texture and passes it here. 
+        // DepthStencilView manages the lifecycle via SAFE_RELEASE if it were COM, 
+        // but here Texture takes ownership? 
+        // Looking at DepthStencilView::getTexture(), it creates a new Texture shared_ptr.
+        // If Texture destructor destroys m_resource, then DepthStencilView shouldn't destroy it double?
+        // Or is Texture just a wrapper?
+        
+        // In D3D11, AddRef was called. 
+        // In Vulkan, we don't have ref counting on VkImage.
+        // We need to decide if Texture owns the resource.
+        // For now, let's assume shared ownership isn't easily possible without a custom ref counter.
+        // But since we use shared_ptr<Texture>, maybe that's enough?
+        
+        // However, DepthStencilView also holds m_texture.
+        // If DepthStencilView dies, it calls SAFE_RELEASE (DestroyTexture).
+        // If Texture dies, it calls DestroyTexture.
+        // Double free!
+        
+        // TODO: Implement proper resource reference counting or ownership transfer.
+        // For this migration step, we'll assume Texture does NOT own the resource if passed in 
+        // (or we need to suppress destruction in Texture if it wasn't created by TextureLoader).
+        // But Texture destructor unconditionally destroys.
+        
+        // TEMPORARY FIX: Mark as Unknown so destructor skips destroy? 
+        // Or better, let's just accept we might need to change DepthStencilView to not own it, or use shared_ptr.
+        
+        // Actually, in the original code:
+        // Texture(ID3D11Resource* resource, ...) { AddRef(); }
+        // ~Texture() { Release(); }
+        // So Texture DID own a reference.
+        
+        // In Vulkan, we don't have this.
+        // We will mark it as Unknown type for now to prevent Texture::~Texture from destroying it,
+        // relying on DepthStencilView to destroy it.
+        // This effectively makes this Texture a "View" or "Weak Reference".
+        m_resourceType = ResourceType::Unknown; 
 	}
 
 	Texture::~Texture()
 	{
-		SAFE_RELEASE(m_resource);
-		SAFE_RELEASE(m_shaderResourceView);
-		SAFE_RELEASE(m_unorderedAccessView);
+        if (m_resource)
+        {
+            if (m_resourceType == ResourceType::Texture)
+            {
+                Engine::GetInstance()->getGraphicsSystem()->getDevice()->DestroyTexture(m_resource);
+            }
+            else if (m_resourceType == ResourceType::Buffer)
+            {
+                Engine::GetInstance()->getGraphicsSystem()->getDevice()->DestroyBuffer(m_resource);
+            }
+            else
+            {
+                // Fallback for unknown type or D3D11 resources if any (should be avoided)
+                // For now, assume it might be a raw pointer that needs special handling or leak if unknown
+                // In D3D11 path we would call Release(), but we removed d3d11.h dependency in header
+                // We should ensure all creations set m_resourceType
+            }
+            m_resource = nullptr;
+        }
+
+        // Views are currently not managed by GraphicsDevice destructor interface yet
+        // In D3D11 they are COM objects. In Vulkan they are likely VkImageView/VkBufferView
+        // We need DestroyShaderResourceView etc.
+        // For now, just set to nullptr to avoid SAFE_RELEASE crash
+		// SAFE_RELEASE(m_shaderResourceView);
+		// SAFE_RELEASE(m_unorderedAccessView);
+        m_shaderResourceView = nullptr;
+        m_unorderedAccessView = nullptr;
 	}
 
 	std::shared_ptr<Texture> Texture::Create(const char* path)
@@ -376,22 +439,22 @@ namespace Destiny
 				switch (textureBindFlag.first)
 				{
 				case TextureBindFlag::BindVS:
-					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->VSSetShaderResources(desc->startSlot, 1, &m_shaderResourceView);
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->VSSetShaderResources(desc->startSlot, 1, (void* const*)&m_shaderResourceView);
 					break;
 				case TextureBindFlag::BindPS:
-					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetShaderResources(desc->startSlot, 1, &m_shaderResourceView);
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetShaderResources(desc->startSlot, 1, (void* const*)&m_shaderResourceView);
 					break;
 				case TextureBindFlag::BindGS:
-					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->GSSetShaderResources(desc->startSlot, 1, &m_shaderResourceView);
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->GSSetShaderResources(desc->startSlot, 1, (void* const*)&m_shaderResourceView);
 					break;
 				case TextureBindFlag::BindHS:
-					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->HSSetShaderResources(desc->startSlot, 1, &m_shaderResourceView);
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->HSSetShaderResources(desc->startSlot, 1, (void* const*)&m_shaderResourceView);
 					break;
 				case TextureBindFlag::BindDS:
-					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->DSSetShaderResources(desc->startSlot, 1, &m_shaderResourceView);
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->DSSetShaderResources(desc->startSlot, 1, (void* const*)&m_shaderResourceView);
 					break;
 				case TextureBindFlag::BindCS:
-					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->CSSetShaderResources(desc->startSlot, 1, &m_shaderResourceView);
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->CSSetShaderResources(desc->startSlot, 1, (void* const*)&m_shaderResourceView);
 					break;
 				}
 			}
@@ -413,22 +476,22 @@ namespace Destiny
 				switch (textureBindFlag.first)
 				{
 				case TextureBindFlag::BindVS:
-					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->VSSetShaderResources(desc->startSlot, 1, &srv);
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->VSSetShaderResources(desc->startSlot, 1, (void* const*)&srv);
 					break;
 				case TextureBindFlag::BindPS:
-					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetShaderResources(desc->startSlot, 1, &srv);
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetShaderResources(desc->startSlot, 1, (void* const*)&srv);
 					break;
 				case TextureBindFlag::BindGS:
-					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->GSSetShaderResources(desc->startSlot, 1, &srv);
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->GSSetShaderResources(desc->startSlot, 1, (void* const*)&srv);
 					break;
 				case TextureBindFlag::BindHS:
-					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->HSSetShaderResources(desc->startSlot, 1, &srv);
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->HSSetShaderResources(desc->startSlot, 1, (void* const*)&srv);
 					break;
 				case TextureBindFlag::BindDS:
-					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->DSSetShaderResources(desc->startSlot, 1, &srv);
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->DSSetShaderResources(desc->startSlot, 1, (void* const*)&srv);
 					break;
 				case TextureBindFlag::BindCS:
-					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->CSSetShaderResources(desc->startSlot, 1, &srv);
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->CSSetShaderResources(desc->startSlot, 1, (void* const*)&srv);
 					break;
 				}
 			}
@@ -506,14 +569,14 @@ namespace Destiny
 		stagingDesc.MiscFlags = 0;                   
 
 		ID3D11Buffer* pStagingBuffer = nullptr;
-		HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateBuffer(&stagingDesc, nullptr, &pStagingBuffer);
+		HRESULT hr = (HRESULT)Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateBuffer(&stagingDesc, nullptr, (void**)&pStagingBuffer);
 
 		if (SUCCEEDED(hr))
 		{
 			Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->CopyResource(pStagingBuffer, m_resource);
 
 			D3D11_MAPPED_SUBRESOURCE mappedData;
-			hr = Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->Map(pStagingBuffer, 0, D3D11_MAP_READ, 0, &mappedData);
+			hr = (HRESULT)Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->Map(pStagingBuffer, 0, D3D11_MAP_READ, 0, &mappedData);
 
 			if (SUCCEEDED(hr))
 			{

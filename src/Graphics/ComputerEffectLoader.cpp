@@ -67,7 +67,7 @@ namespace Destiny
 			return;
 		}
 		
-		hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateComputeShader(computerCommand->m_csCompiledBlob->GetBufferPointer(), computerCommand->m_csCompiledBlob->GetBufferSize(), 0, &computerCommand->m_computeShader);
+		hr = (HRESULT)Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateComputeShader(computerCommand->m_csCompiledBlob->GetBufferPointer(), computerCommand->m_csCompiledBlob->GetBufferSize(), 0, (void**)&computerCommand->m_computeShader);
 		if (FAILED(hr))
 		{
 

@@ -51,8 +51,9 @@ namespace Destiny
 		Engine::GetInstance()->getEventSystem()->unRegisterEvent(EventType::WindowResize, std::bind(&SsrPipeline::onResize, this, std::placeholders::_1));
 	}
 
-	void SsrPipeline::execute(ID3D11DeviceContext* deviceContext)
+	void SsrPipeline::execute(std::shared_ptr<GraphicsContext> deviceContext)
 	{
+#if 0
 		if (!m_renderSystem || !m_renderSystem->m_bindRenderTargets) return;
 
 		auto sceneColorRTV = m_renderSystem->m_bindRenderTargets->getRenderTargetViews(0);
@@ -87,6 +88,7 @@ namespace Destiny
 
 		m_fullScreenTriangle->updateDrawParameters();
 		m_fullScreenTriangle->execute(deviceContext);
+#endif
 	}
 
 	void SsrPipeline::onRendererConstantChanged()

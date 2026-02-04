@@ -7,6 +7,7 @@
 #include "Graphics/RenderSystem.h"
 #include "Scene/SceneManager.h"
 #include "Physics/PhysicsSystem.h"
+#include "Graphics/Renderer.h"
 
 namespace Destiny
 {
@@ -38,6 +39,10 @@ namespace Destiny
 		m_logManager->uninitialize();
 		m_eventSystem->uninitialize();
 		m_dataLoadThreadPool->uninitialize();
+
+        // Clear Renderer cache before destroying GraphicsSystem to avoid crash
+        Renderer::ClearCache();
+
 		m_graphicsSystem->uninitialize();
 		m_sceneManager->uninitialize();
 		m_physicsSystem->uninitialize();

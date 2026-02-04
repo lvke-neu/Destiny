@@ -18,6 +18,8 @@ public:
 public:
 	void update();
 	void setGzimoType(int gzimoType);
+	unsigned int getWidth() const { return m_width; }
+	unsigned int getHeight() const { return m_height; }
 public slots:
 	void onChoosedNode(void* parameter);
 private:

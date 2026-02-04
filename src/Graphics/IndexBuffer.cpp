@@ -3,7 +3,10 @@
 #include "Engine/Utility.h"
 #include "Engine/Engine.h"
 #include "GraphicsSystem.h"
+#include "RHI/Vulkan/VulkanDevice.h"
+#include "RHI/Vulkan/VulkanBuffer.h"
 #include <d3d11.h>
+#include <thread>
 
 namespace Destiny
 {
@@ -17,7 +20,20 @@ namespace Destiny
 
 	IndexBuffer::~IndexBuffer()
 	{
-		SAFE_RELEASE(m_indexBuffer);
+		auto engine = Engine::GetInstance();
+		if (engine && engine->getGraphicsSystem())
+		{
+			auto device = engine->getGraphicsSystem()->getDevice();
+			if (device && std::dynamic_pointer_cast<VulkanDevice>(device))
+			{
+				if (m_indexBuffer) delete (VulkanBuffer*)m_indexBuffer;
+			}
+			else
+			{
+				if (m_indexBuffer) ((ID3D11Buffer*)m_indexBuffer)->Release();
+			}
+		}
+		// m_indexBuffer = nullptr;
 	}
 
 	void IndexBuffer::doLoad()
@@ -28,6 +44,18 @@ namespace Destiny
 			LOG_ERROR("Thread {0}, IndexBuffer load failed", std::to_string((*(uint32_t*)&std::this_thread::get_id())));
 			return;
 		}
+
+		// Cleanup
+		auto device = Engine::GetInstance()->getGraphicsSystem()->getDevice();
+		if (std::dynamic_pointer_cast<VulkanDevice>(device))
+		{
+			if (m_indexBuffer) delete (VulkanBuffer*)m_indexBuffer;
+		}
+		else
+		{
+			if (m_indexBuffer) ((ID3D11Buffer*)m_indexBuffer)->Release();
+		}
+		m_indexBuffer = nullptr;
 		
 		D3D11_BUFFER_DESC ibd;
 		ZeroMemory(&ibd, sizeof(ibd));
@@ -41,7 +69,7 @@ namespace Destiny
 		InitData.pSysMem = m_data->getData();
 
 		
-		HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateBuffer(&ibd, &InitData, &m_indexBuffer);
+		HRESULT hr = (HRESULT)device->CreateBuffer(&ibd, &InitData, (void**)&m_indexBuffer);
 		
 		if (SUCCEEDED(hr))
 		{

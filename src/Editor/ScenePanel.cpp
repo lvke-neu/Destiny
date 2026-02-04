@@ -2,10 +2,11 @@
 #include "Imgui/imgui.h"
 #include "Engine/Engine.h"
 #include "Engine/Node.h"
+#include "Engine/Scene.h"
 #include "Engine/Component.h"
 #include "Engine/Serializer.h"
 #include "Engine/UnSerializer.h"
-#include "Graphics/VisualScene.h"
+// #include "Graphics/VisualScene.h"
 #include "Scene/SceneManager.h"
 #include <queue>
 #include <rttr/registration>
@@ -97,12 +98,14 @@ void ScenePanel::popup()
 			if (m_choosedNode)
 			{
 				auto scene = Destiny::Engine::GetInstance()->getSceneManager()->getCurrentScene();
+#if 0
 				if (scene)
 				{
 					Destiny::Transform transform;
 					transform.set_translation(m_choosedNode->get_translation());
 					scene->locate(transform);
 				}
+#endif
 			}
 		}
 		if (ImGui::Button("AddNode")) 
@@ -188,7 +191,10 @@ void ScenePanel::update()
 
 	ImGui::Begin("SceneNode");
 
-	traversal(Destiny::Engine::GetInstance()->getSceneManager()->getCurrentScene());
+	if (Destiny::Engine::GetInstance()->getSceneManager()->getCurrentScene())
+	{
+		traversal(std::static_pointer_cast<Destiny::Node>(Destiny::Engine::GetInstance()->getSceneManager()->getCurrentScene()));
+	}
 
 	ImGui::End();
 

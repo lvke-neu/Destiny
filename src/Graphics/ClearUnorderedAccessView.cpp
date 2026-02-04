@@ -16,8 +16,9 @@ namespace Destiny
 		
 	}
 
-	void ClearUnorderedAccessView::execute(ID3D11DeviceContext* deviceContext)
+	void ClearUnorderedAccessView::execute(std::shared_ptr<GraphicsContext> deviceContext)
 	{
+#if 0
 		if (!deviceContext || !m_texture)
 		{
 			return;
@@ -40,6 +41,7 @@ namespace Destiny
 		{
 			deviceContext->ClearUnorderedAccessViewUint(uav, clearValuesU);
 		}
+#endif
 	}
 
 	void ClearUnorderedAccessView::setParam(ClearType clearType, std::shared_ptr<Texture> texture)

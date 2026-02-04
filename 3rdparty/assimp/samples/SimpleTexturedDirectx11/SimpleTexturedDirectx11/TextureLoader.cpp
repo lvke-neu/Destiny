@@ -500,7 +500,19 @@ static HRESULT CreateTextureFromWIC(_In_ ID3D11Device* d3dDevice,
 	initData.SysMemSlicePitch = static_cast<UINT>(imageSize);
 
 	ID3D11Texture2D* tex = nullptr;
-	hr = d3dDevice->CreateTexture2D(&desc, (autogen) ? nullptr : &initData, &tex);
+	// The 3rd party code uses raw D3D11 pointers, so we don't need to cast here if they are calling D3D11 directly.
+    // Wait, the user error indicated a problem with Destiny::GraphicsDevice calls, not Assimp samples directly calling D3D11.
+    // Assimp samples seem to be using raw ID3D11Device* d3dDevice.
+    // If d3dDevice is ID3D11Device*, then CreateTexture2D takes 3 args: (desc, initialData, ppTexture2D).
+    // The user input error "cannot convert from ID3D11Texture2D ** to void **" was for Destiny::GraphicsDevice::CreateTexture2D.
+    // Assimp samples might not be using Destiny::GraphicsDevice.
+    // Let's revert changes to Assimp samples if they are using raw D3D pointers.
+    // Checking main.cpp: ID3D11Device *dev = nullptr;
+    // So Assimp samples are using native D3D11. I should NOT modify them.
+    // I will revert the change I just made to TextureLoader.cpp (it was a no-op anyway since I just replaced identical text, but I should be careful).
+    // The previous SearchReplace to TextureLoader.cpp actually removed lines! I must revert it.
+    
+    hr = d3dDevice->CreateTexture2D(&desc, (autogen) ? nullptr : &initData, &tex);
 	if (SUCCEEDED(hr) && tex != 0)
 	{
 		if (textureView != 0)

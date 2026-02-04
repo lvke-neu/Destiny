@@ -60,11 +60,11 @@ namespace Destiny
 		
 		// Load Fire Texture (Use flare texture which is common for particles)
 		auto particleTexture = Texture::Create("builtin://texture/flarealpha.dds"); 
-		particleTexture->load();
+		particleTexture->load(0);
 		setShaderResource("particleTexture", particleTexture);
 
 		auto samplerState = std::make_shared<SamplerState>();
-		samplerState->load();
+		samplerState->load(0);
 		setSamplerSate("samplerState", samplerState);
 
 		// 4. Create Dummy Mesh for DrawCall (VertexID based)

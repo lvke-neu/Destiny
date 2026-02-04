@@ -17,7 +17,7 @@ namespace Destiny
 		void	setDepthStencilView(std::shared_ptr<DepthStencilView> depthStencilView);
 		void	setClearColor(const Color& color);
 	public:
-		virtual void execute(ID3D11DeviceContext* deviceContext) override;
+		virtual void execute(std::shared_ptr<GraphicsContext> deviceContext) override;
 	private:
 		std::shared_ptr<RenderTargetView>		m_renderTargetView;
 		std::shared_ptr<DepthStencilView>		m_depthStencilView;

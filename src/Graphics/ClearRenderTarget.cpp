@@ -33,8 +33,9 @@ namespace Destiny
 		m_clearColor = color;
 	}
 
-	void ClearRenderTarget::execute(ID3D11DeviceContext* deviceContext)
+	void ClearRenderTarget::execute(std::shared_ptr<GraphicsContext> deviceContext)
 	{
+#if 0
 		if (!deviceContext)
 		{
 			return;
@@ -45,5 +46,6 @@ namespace Destiny
 			deviceContext->ClearRenderTargetView(*m_renderTargetView->getRenderTargetView(), (float*)&m_clearColor);
 			deviceContext->ClearDepthStencilView(m_depthStencilView->getDepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 		}
+#endif
 	}
 }

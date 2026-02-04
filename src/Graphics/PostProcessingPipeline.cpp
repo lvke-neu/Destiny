@@ -63,8 +63,9 @@ namespace Destiny
 		Engine::GetInstance()->getEventSystem()->unRegisterEvent(EventType::WindowResize, std::bind(&PostProcessingPipeline::onResize, this, std::placeholders::_1));
 	}
 
-	void PostProcessingPipeline::execute(ID3D11DeviceContext* deviceContext)
+	void PostProcessingPipeline::execute(std::shared_ptr<GraphicsContext> deviceContext)
 	{
+#if 0
 		m_bindRenderTargets->execute(deviceContext);
 		m_clearRenderTarget->execute(deviceContext);
 
@@ -83,6 +84,7 @@ namespace Destiny
 
 		m_fullScreenTriangle->updateDrawParameters();
 		m_fullScreenTriangle->execute(deviceContext);
+#endif
 	}
 
 	void PostProcessingPipeline::onResize(void* data)

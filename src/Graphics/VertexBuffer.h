@@ -19,7 +19,7 @@ namespace Destiny
 		std::shared_ptr<InputLayout>	m_inputLayout;
 		unsigned int					m_stride;
 		unsigned int					m_offset;
-		ID3D11Buffer*					m_vertexBuffer;
+		void*					        m_vertexBuffer;
 		std::shared_ptr<Blob>			m_data;
 	};
 }

@@ -8,8 +8,9 @@
 
 namespace Destiny
 {
-	void DrawCommand::execute(ID3D11DeviceContext* deviceContext)
+	void DrawCommand::execute(std::shared_ptr<GraphicsContext> deviceContext)
 	{
+#if 0
 		for (const auto& drawParameters : m_drawParameters)
 		{
 			if (!drawParameters)
@@ -144,6 +145,7 @@ namespace Destiny
 				}
 			}
 		}
+#endif
 	}
 
 	void DrawCommand::addDrawParameter(std::shared_ptr<DrawParameters> drawParameters)

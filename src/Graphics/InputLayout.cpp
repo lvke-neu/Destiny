@@ -16,10 +16,20 @@ namespace Destiny
 
 	InputLayout::~InputLayout()
 	{
-		SAFE_RELEASE(m_inputLayout);
+		// SAFE_RELEASE(m_inputLayout);
+        if (m_inputLayout)
+        {
+             // InputLayout in Vulkan is part of Pipeline, but maybe we have a separate object for caching?
+             // Or CreateInputLayout returns a wrapper.
+             // If CreateInputLayout returns something allocated, we should destroy it.
+             // Currently VulkanDevice::CreateInputLayout returns 0 and does nothing? 
+             // Let's assume we need a DestroyInputLayout eventually.
+             // Engine::GetInstance()->getGraphicsSystem()->getDevice()->DestroyInputLayout(m_inputLayout);
+             m_inputLayout = nullptr;
+        }
 	}
 
-	ID3D11InputLayout* InputLayout::getInputLayout(std::shared_ptr<Blob> inputSignatureBlob)
+	void* InputLayout::getInputLayout(std::shared_ptr<Blob> inputSignatureBlob)
 	{
 		if (m_inputLayout)
 		{
@@ -33,11 +43,11 @@ namespace Destiny
 
 		m_inputLayout = nullptr;
 		
-		HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateInputLayout
+		HRESULT hr = (HRESULT)Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateInputLayout
 		(
 			(D3D11_INPUT_ELEMENT_DESC*)m_inputLayoutDesc->getData(),(UINT) m_inputLayoutDesc->getLength() / sizeof(D3D11_INPUT_ELEMENT_DESC),
 			inputSignatureBlob->getData(), inputSignatureBlob->getLength(),
-			&m_inputLayout
+			(void**)&m_inputLayout
 		);
 		
 		if (FAILED(hr))

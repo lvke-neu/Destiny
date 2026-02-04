@@ -45,12 +45,14 @@ namespace Destiny
 		
 	}
 
-	void ShadowMapPipeline::execute(ID3D11DeviceContext* deviceContext)
+	void ShadowMapPipeline::execute(std::shared_ptr<GraphicsContext> deviceContext)
 	{
+#if 0
 		m_bindRenderTargets->execute(deviceContext);
 		m_clearRenderTarget->execute(deviceContext);
 
 		GraphicsCommandList::execute(deviceContext);
+#endif
 	}
 
 	void ShadowMapPipeline::onResize(float viewPortWidth, float viewPortHeight)

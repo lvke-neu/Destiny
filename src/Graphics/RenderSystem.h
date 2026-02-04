@@ -20,6 +20,30 @@ namespace Destiny
 		virtual void							createPipeline() override;
 		virtual void							render() override;
 		virtual void							syncState() override;
+		
+		// Stubs for missing members
+		void									commitVisual(std::shared_ptr<Visual> visual) {}
+		std::shared_ptr<GraphicsPipeline>       getDeferredOpaquePipeline() { return nullptr; }
+		std::shared_ptr<GraphicsPipeline>       getForwardOpaquePipeline() { return nullptr; }
+		std::shared_ptr<GraphicsPipeline>		getSsrPipeline() { return nullptr; }
+		std::shared_ptr<GraphicsPipeline>		getShadowMapPipeline() { return nullptr; }
+		std::shared_ptr<RenderTargetView>		getRenderTargetView() { return nullptr; }
+		void									addBeforePipelineCommand(std::shared_ptr<GraphicsCommand> graphicsCommand) {}
+		void									removeBeforePipelineCommand(std::shared_ptr<GraphicsCommand> graphicsCommand) {}
+		void									addBeforePipelineCommandList(const std::wstring& debugName, std::shared_ptr<GraphicsCommandList> graphicsCommandList) {}
+		void									removeBeforePipelineCommandList(const std::wstring& debugName, std::shared_ptr<GraphicsCommandList> graphicsCommandList) {}
+		
+		bool getSsr() { return false; }
+		void setSsr(bool bSsr) {}
+
+		void* getViewportTextureID() { return m_viewportTextureID; }
+		void setViewportTextureID(void* id) { m_viewportTextureID = id; }
+
+		std::shared_ptr<BindRenderTargets>		m_bindRenderTargets;
+	private:
+		void* m_viewportTextureID = nullptr;
+
+#if 0
 		void									commitVisual(std::shared_ptr<Visual> visual);
 		std::shared_ptr<GraphicsPipeline>       getDeferredOpaquePipeline();
 		std::shared_ptr<GraphicsPipeline>       getForwardOpaquePipeline();
@@ -53,8 +77,10 @@ namespace Destiny
 
 		std::shared_ptr<GpuTimer>				m_gpuTimer;
 		bool m_bSsr;
+#endif
 	};
 
+#if 0
 	inline std::shared_ptr<GraphicsPipeline> RenderSystem::getDeferredOpaquePipeline()
 	{
 		return m_deferredOpaquePipeline;
@@ -84,4 +110,5 @@ namespace Destiny
 	{
 		m_bSsr = bSsr;
 	}
+#endif
 }

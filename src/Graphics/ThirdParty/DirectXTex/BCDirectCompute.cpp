@@ -146,21 +146,21 @@ HRESULT GPUCompressBC::Initialize(ID3D11Device* pDevice)
     //--- Create compute shader library: BC6H -----------------------------------------
 
     // Modes 11-14
-    auto blob = (fl >= D3D_FEATURE_LEVEL_11_0) ? cs5::BC6HEncode_TryModeG10CS : cs4::BC6HEncode_TryModeG10CS;
+    auto blob = (fl >= D3D_FEATURE_LEVEL_11_0) ? static_cast<const void*>(cs5::BC6HEncode_TryModeG10CS) : static_cast<const void*>(cs4::BC6HEncode_TryModeG10CS);
     auto blobSize = (fl >= D3D_FEATURE_LEVEL_11_0) ? sizeof(cs5::BC6HEncode_TryModeG10CS) : sizeof(cs4::BC6HEncode_TryModeG10CS);
     HRESULT hr = pDevice->CreateComputeShader(blob, blobSize, nullptr, m_BC6H_tryModeG10CS.ReleaseAndGetAddressOf());
     if (FAILED(hr))
         return hr;
 
     // Modes 1-10
-    blob = (fl >= D3D_FEATURE_LEVEL_11_0) ? cs5::BC6HEncode_TryModeLE10CS : cs4::BC6HEncode_TryModeLE10CS;
+    blob = (fl >= D3D_FEATURE_LEVEL_11_0) ? static_cast<const void*>(cs5::BC6HEncode_TryModeLE10CS) : static_cast<const void*>(cs4::BC6HEncode_TryModeLE10CS);
     blobSize = (fl >= D3D_FEATURE_LEVEL_11_0) ? sizeof(cs5::BC6HEncode_TryModeLE10CS) : sizeof(cs4::BC6HEncode_TryModeLE10CS);
     hr = pDevice->CreateComputeShader(blob, blobSize, nullptr, m_BC6H_tryModeLE10CS.ReleaseAndGetAddressOf());
     if (FAILED(hr))
         return hr;
 
     // Encode
-    blob = (fl >= D3D_FEATURE_LEVEL_11_0) ? cs5::BC6HEncode_EncodeBlockCS : cs4::BC6HEncode_EncodeBlockCS;
+    blob = (fl >= D3D_FEATURE_LEVEL_11_0) ? static_cast<const void*>(cs5::BC6HEncode_EncodeBlockCS) : static_cast<const void*>(cs4::BC6HEncode_EncodeBlockCS);
     blobSize = (fl >= D3D_FEATURE_LEVEL_11_0) ? sizeof(cs5::BC6HEncode_EncodeBlockCS) : sizeof(cs4::BC6HEncode_EncodeBlockCS);
     hr = pDevice->CreateComputeShader(blob, blobSize, nullptr, m_BC6H_encodeBlockCS.ReleaseAndGetAddressOf());
     if (FAILED(hr))
@@ -169,28 +169,28 @@ HRESULT GPUCompressBC::Initialize(ID3D11Device* pDevice)
     //--- Create compute shader library: BC7 ------------------------------------------
 
     // Modes 4, 5, 6
-    blob = (fl >= D3D_FEATURE_LEVEL_11_0) ? cs5::BC7Encode_TryMode456CS : cs4::BC7Encode_TryMode456CS;
+    blob = (fl >= D3D_FEATURE_LEVEL_11_0) ? static_cast<const void*>(cs5::BC7Encode_TryMode456CS) : static_cast<const void*>(cs4::BC7Encode_TryMode456CS);
     blobSize = (fl >= D3D_FEATURE_LEVEL_11_0) ? sizeof(cs5::BC7Encode_TryMode456CS) : sizeof(cs4::BC7Encode_TryMode456CS);
     hr = pDevice->CreateComputeShader(blob, blobSize, nullptr, m_BC7_tryMode456CS.ReleaseAndGetAddressOf());
     if (FAILED(hr))
         return hr;
 
     // Modes 1, 3, 7
-    blob = (fl >= D3D_FEATURE_LEVEL_11_0) ? cs5::BC7Encode_TryMode137CS : cs4::BC7Encode_TryMode137CS;
+    blob = (fl >= D3D_FEATURE_LEVEL_11_0) ? static_cast<const void*>(cs5::BC7Encode_TryMode137CS) : static_cast<const void*>(cs4::BC7Encode_TryMode137CS);
     blobSize = (fl >= D3D_FEATURE_LEVEL_11_0) ? sizeof(cs5::BC7Encode_TryMode137CS) : sizeof(cs4::BC7Encode_TryMode137CS);
     hr = pDevice->CreateComputeShader(blob, blobSize, nullptr, m_BC7_tryMode137CS.ReleaseAndGetAddressOf());
     if (FAILED(hr))
         return hr;
 
     // Modes 0, 2
-    blob = (fl >= D3D_FEATURE_LEVEL_11_0) ? cs5::BC7Encode_TryMode02CS : cs4::BC7Encode_TryMode02CS;
+    blob = (fl >= D3D_FEATURE_LEVEL_11_0) ? static_cast<const void*>(cs5::BC7Encode_TryMode02CS) : static_cast<const void*>(cs4::BC7Encode_TryMode02CS);
     blobSize = (fl >= D3D_FEATURE_LEVEL_11_0) ? sizeof(cs5::BC7Encode_TryMode02CS) : sizeof(cs4::BC7Encode_TryMode02CS);
     hr = pDevice->CreateComputeShader(blob, blobSize, nullptr, m_BC7_tryMode02CS.ReleaseAndGetAddressOf());
     if (FAILED(hr))
         return hr;
 
     // Encode
-    blob = (fl >= D3D_FEATURE_LEVEL_11_0) ? cs5::BC7Encode_EncodeBlockCS : cs4::BC7Encode_EncodeBlockCS;
+    blob = (fl >= D3D_FEATURE_LEVEL_11_0) ? static_cast<const void*>(cs5::BC7Encode_EncodeBlockCS) : static_cast<const void*>(cs4::BC7Encode_EncodeBlockCS);
     blobSize = (fl >= D3D_FEATURE_LEVEL_11_0) ? sizeof(cs5::BC7Encode_EncodeBlockCS) : sizeof(cs4::BC7Encode_EncodeBlockCS);
     hr = pDevice->CreateComputeShader(blob, blobSize, nullptr, m_BC7_encodeBlockCS.ReleaseAndGetAddressOf());
     if (FAILED(hr))

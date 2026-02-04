@@ -19,9 +19,27 @@ namespace Destiny
 
 	RenderStates::~RenderStates()
 	{
-		SAFE_RELEASE(m_rasterizerState);
-		SAFE_RELEASE(m_depthStencilState);
-		SAFE_RELEASE(m_blendState);
+		// SAFE_RELEASE(m_rasterizerState);
+		// SAFE_RELEASE(m_depthStencilState);
+		// SAFE_RELEASE(m_blendState);
+
+        if (m_rasterizerState)
+        {
+             Engine::GetInstance()->getGraphicsSystem()->getDevice()->DestroyRasterizerState(m_rasterizerState);
+             m_rasterizerState = nullptr;
+        }
+
+        if (m_depthStencilState)
+        {
+             Engine::GetInstance()->getGraphicsSystem()->getDevice()->DestroyDepthStencilState(m_depthStencilState);
+             m_depthStencilState = nullptr;
+        }
+
+        if (m_blendState)
+        {
+             Engine::GetInstance()->getGraphicsSystem()->getDevice()->DestroyBlendState(m_blendState);
+             m_blendState = nullptr;
+        }
 	}
 
 	void RenderStates::doLoad()
@@ -38,9 +56,9 @@ namespace Destiny
 			return;
 		}
 
-		HRESULT hrRS = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateRasterizerState(m_rasterizerStateDesc.get(), &m_rasterizerState);
-		HRESULT hrDSS = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateDepthStencilState(m_depthStencilStateDesc.get(), &m_depthStencilState);
-		HRESULT hrBS = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateBlendState(m_blendStateDesc.get(), &m_blendState);
+		HRESULT hrRS = (HRESULT)Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateRasterizerState(m_rasterizerStateDesc.get(), (void**)&m_rasterizerState);
+		HRESULT hrDSS = (HRESULT)Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateDepthStencilState(m_depthStencilStateDesc.get(), (void**)&m_depthStencilState);
+		HRESULT hrBS = (HRESULT)Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateBlendState(m_blendStateDesc.get(), (void**)&m_blendState);
 		
 		if (FAILED(hrRS))
 		{

@@ -14,7 +14,7 @@ namespace Destiny
 		virtual ~SsrPipeline();
 
 	public:
-		virtual void execute(ID3D11DeviceContext* deviceContext) override;
+		virtual void execute(std::shared_ptr<GraphicsContext> deviceContext) override;
 		void onRendererConstantChanged();
 
 	private:

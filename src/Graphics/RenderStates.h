@@ -30,9 +30,9 @@ namespace Destiny
 		std::shared_ptr<D3D11_RASTERIZER_DESC>		m_rasterizerStateDesc;
 		std::shared_ptr<D3D11_DEPTH_STENCIL_DESC>	m_depthStencilStateDesc;
 		std::shared_ptr<D3D11_BLEND_DESC>			m_blendStateDesc;
-		ID3D11RasterizerState*						m_rasterizerState;
-		ID3D11DepthStencilState*					m_depthStencilState;
-		ID3D11BlendState*							m_blendState;
+		void*										m_rasterizerState;
+		void*										m_depthStencilState;
+		void*										m_blendState;
 	};
 
 	inline std::shared_ptr<D3D11_RASTERIZER_DESC> RenderStates::getRasterizerStateDesc()

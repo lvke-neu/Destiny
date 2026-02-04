@@ -14,7 +14,12 @@ namespace Destiny
 
 	SamplerState::~SamplerState()
 	{
-		SAFE_RELEASE(m_samplerState);
+		// SAFE_RELEASE(m_samplerState);
+        if (m_samplerState)
+        {
+             Engine::GetInstance()->getGraphicsSystem()->getDevice()->DestroySamplerState(m_samplerState);
+             m_samplerState = nullptr;
+        }
 	}
 
 	void SamplerState::doLoad()
@@ -22,7 +27,7 @@ namespace Destiny
 		if (m_samplerDesc)
 		{
 			
-			HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateSamplerState(m_samplerDesc.get(), &m_samplerState);
+			HRESULT hr = (HRESULT)Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateSamplerState(m_samplerDesc.get(), (void**)&m_samplerState);
 			
 			if (SUCCEEDED(hr))
 			{
@@ -53,19 +58,22 @@ namespace Destiny
 				switch (samplerStateBindFlag.first)
 				{
 				case SamplerStateBindFlag::BindVS:
-					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->VSSetSamplers(desc->startSlot, 1, &m_samplerState);
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->VSSetSamplers(desc->startSlot, 1, (void* const*)&m_samplerState);
 					break;
 				case SamplerStateBindFlag::BindPS:
-					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetSamplers(desc->startSlot, 1, &m_samplerState);
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetSamplers(desc->startSlot, 1, (void* const*)&m_samplerState);
 					break;
 				case SamplerStateBindFlag::BindGS:
-					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->GSSetSamplers(desc->startSlot, 1, &m_samplerState);
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->GSSetSamplers(desc->startSlot, 1, (void* const*)&m_samplerState);
 					break;
 				case SamplerStateBindFlag::BindHS:
-					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->HSSetSamplers(desc->startSlot, 1, &m_samplerState);
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->HSSetSamplers(desc->startSlot, 1, (void* const*)&m_samplerState);
 					break;
 				case SamplerStateBindFlag::BindDS:
-					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->DSSetSamplers(desc->startSlot, 1, &m_samplerState);
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->DSSetSamplers(desc->startSlot, 1, (void* const*)&m_samplerState);
+					break;
+				case SamplerStateBindFlag::BindCS:
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->CSSetSamplers(desc->startSlot, 1, (void* const*)&m_samplerState);
 					break;
 				}
 			}
@@ -79,7 +87,7 @@ namespace Destiny
 			return;
 		}
 
-		ID3D11SamplerState* sampler = nullptr;
+		void* sampler = nullptr;
 		for (const auto& samplerStateBindFlag : desc->samplerStateBindFlag)
 		{
 			if (samplerStateBindFlag.second)
@@ -87,19 +95,19 @@ namespace Destiny
 				switch (samplerStateBindFlag.first)
 				{
 				case SamplerStateBindFlag::BindVS:
-					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->VSSetSamplers(desc->startSlot, 1, &sampler);
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->VSSetSamplers(desc->startSlot, 1, (void* const*)&sampler);
 					break;
 				case SamplerStateBindFlag::BindPS:
-					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetSamplers(desc->startSlot, 1, &sampler);
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetSamplers(desc->startSlot, 1, (void* const*)&sampler);
 					break;
 				case SamplerStateBindFlag::BindGS:
-					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->GSSetSamplers(desc->startSlot, 1, &sampler);
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->GSSetSamplers(desc->startSlot, 1, (void* const*)&sampler);
 					break;
 				case SamplerStateBindFlag::BindHS:
-					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->HSSetSamplers(desc->startSlot, 1, &sampler);
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->HSSetSamplers(desc->startSlot, 1, (void* const*)&sampler);
 					break;
 				case SamplerStateBindFlag::BindDS:
-					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->DSSetSamplers(desc->startSlot, 1, &sampler);
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->DSSetSamplers(desc->startSlot, 1, (void* const*)&sampler);
 					break;
 				}
 			}

@@ -11,7 +11,7 @@ namespace Destiny
 		CopyStructureCount();
 		virtual ~CopyStructureCount() = default;
 	public:
-		virtual void execute(ID3D11DeviceContext* deviceContext) override;
+		virtual void execute(std::shared_ptr<GraphicsContext> deviceContext) override;
 	public:
 		void setDstAndSrcTexture(std::shared_ptr<Texture> dstTexture, std::shared_ptr<Texture> srcTexture);
 	private:

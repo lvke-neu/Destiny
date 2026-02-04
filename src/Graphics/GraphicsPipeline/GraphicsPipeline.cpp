@@ -15,7 +15,7 @@ namespace Destiny
 		clearGraphicsCommand();
 	}
 
-	void GraphicsPipeline::execute(ID3D11DeviceContext* deviceContext)
+	void GraphicsPipeline::execute(std::shared_ptr<GraphicsContext> deviceContext)
 	{
 		if (m_renderSystem && m_renderSystem->m_bindRenderTargets)
 		{

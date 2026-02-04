@@ -21,7 +21,8 @@ namespace Destiny
 	public:
 		static std::shared_ptr<ComputerEffectLoader> s_computerEffectLoader;
 	public:
-		virtual void execute(ID3D11DeviceContext* deviceContext) override;
+		virtual void execute(std::shared_ptr<GraphicsContext> deviceContext) override;
+		virtual void doLoad() override;
 	public:
 		void setDebugName(const std::wstring& debugName);
 		void setComputerEffectPath(const char* path);

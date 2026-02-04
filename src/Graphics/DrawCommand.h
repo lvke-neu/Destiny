@@ -11,7 +11,7 @@ namespace Destiny
 	public:
 		virtual ~DrawCommand() = default;
 	public:
-		virtual void execute(ID3D11DeviceContext* deviceContext) override;
+		virtual void execute(std::shared_ptr<GraphicsContext> deviceContext) override;
 	public:
 		void addDrawParameter(std::shared_ptr<DrawParameters> drawParameters);
 		void clearDrawParameter();

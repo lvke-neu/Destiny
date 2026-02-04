@@ -18,7 +18,7 @@ namespace Destiny
 		
 	}
 
-	void TransparentPipeline::execute(ID3D11DeviceContext* deviceContext)
+	void TransparentPipeline::execute(std::shared_ptr<GraphicsContext> deviceContext)
 	{
 		sort();
 		GraphicsPipeline::execute(deviceContext);

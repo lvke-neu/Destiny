@@ -142,8 +142,15 @@ namespace Destiny
 		friend class TextureLoader;
 		friend class ComputerCommand;
 	public:
+        enum class ResourceType
+        {
+            Unknown,
+            Texture,
+            Buffer
+        };
+	public:
 		Texture();
-		Texture(ID3D11Resource* resource, ID3D11ShaderResourceView* shaderResourceView);
+		Texture(void* resource, void* shaderResourceView);
 		virtual ~Texture();
 	public:
 		static std::shared_ptr<TextureLoader> s_textureLoader;
@@ -166,28 +173,29 @@ namespace Destiny
 	public:
 		void bind(std::shared_ptr<TextureDesc> desc);
 		void unBind(std::shared_ptr<TextureDesc> desc);
-		ID3D11Resource* getResource();
-		ID3D11ShaderResourceView* getShaderResourceView();
-		ID3D11UnorderedAccessView** getUnorderedAccessView();
+		void* getResource();
+		void* getShaderResourceView();
+		void** getUnorderedAccessView();
 		void updateBuffer(std::shared_ptr<Blob> data);
 		bool getBuffer(std::shared_ptr<Blob>& data);
 	private:
-		ID3D11Resource* m_resource;
-		ID3D11ShaderResourceView* m_shaderResourceView;
-		ID3D11UnorderedAccessView* m_unorderedAccessView;
+		void* m_resource;
+		void* m_shaderResourceView;
+		void* m_unorderedAccessView;
+        ResourceType m_resourceType;
 	};
 
-	inline ID3D11Resource* Texture::getResource()
+	inline void* Texture::getResource()
 	{
 		return m_resource;
 	}
 
-	inline ID3D11ShaderResourceView* Texture::getShaderResourceView()
+	inline void* Texture::getShaderResourceView()
 	{
 		return m_shaderResourceView;
 	}
 
-	inline ID3D11UnorderedAccessView** Texture::getUnorderedAccessView()
+	inline void** Texture::getUnorderedAccessView()
 	{
 		return &m_unorderedAccessView;
 	}

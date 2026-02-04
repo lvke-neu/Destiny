@@ -22,6 +22,7 @@ ENDIF()
 
 
 #spdlog
+find_package(Vulkan REQUIRED)
 include_directories("3rdparty/spdlog/include")
 
 #rapidjson
@@ -141,7 +142,9 @@ add_subdirectory("3rdparty/curl")
 
 
 # include
-include_directories("3rdparty/curl/include")
+# include_directories("3rdparty/curl/include")
+include_directories("3rdparty/assimp/include")
+include_directories("3rdparty/assimp/code")
 
 
 
@@ -162,7 +165,7 @@ endif()
 
 
 if(MSVC)
-    set_property(TARGET assimp PROPERTY FOLDER "ThirdParty")
+    # set_property(TARGET assimp PROPERTY FOLDER "ThirdParty")
     set_property(TARGET rttr_core PROPERTY FOLDER "ThirdParty")
     set_property(TARGET freetype PROPERTY FOLDER "ThirdParty")
 
@@ -200,10 +203,27 @@ file(GLOB SRC_ENGINE_DETAIL src/Engine/Detail/*)
 file(GLOB SRC_EDITOR src/Editor/*)
 file(GLOB SRC_EDITOR_IMGUI src/Editor/ImGui/*)
 file(GLOB SRC_GRAPHICS src/Graphics/*)
+# set(SRC_GRAPHICS 
+#     src/Graphics/GraphicsSystem.cpp
+#     src/Graphics/GraphicsSystem.h
+#     src/Graphics/RenderSystem.cpp
+#     src/Graphics/RenderSystem.h
+#     src/Graphics/GraphicsDefine.cpp
+#     src/Graphics/GraphicsDefine.h
+# )
+file(GLOB SRC_GRAPHICS_RHI src/Graphics/RHI/*.cpp src/Graphics/RHI/*.h)
+file(GLOB SRC_GRAPHICS_RHI_VULKAN src/Graphics/RHI/Vulkan/*.cpp src/Graphics/RHI/Vulkan/*.h)
+
 file(GLOB SRC_GRAPHICS_GRAPHICPIPELINE src/Graphics/GraphicsPipeline/*)
+# set(SRC_GRAPHICS_GRAPHICPIPELINE "")
+
 file(GLOB SRC_GRAPHICS_GUI src/Graphics/Gui/*)
+# set(SRC_GRAPHICS_GUI "")
+
 file(GLOB SRC_GRAPHICS_THIRDPARTY_STBIMAGE src/Graphics/ThirdParty/stb_image/*)
 file(GLOB SRC_GRAPHICS_THIRDPARTY_DIRECTXTEX src/Graphics/ThirdParty/DirectXTex/*)
+# set(SRC_GRAPHICS_THIRDPARTY_DIRECTXTEX "")
+
 file(GLOB SRC_Math src/Math/*)
 file(GLOB SRC_SCENE src/Scene/*)
 file(GLOB SRC_SCENE_RUNTIMEEFFECT src/Scene/RuntimeEffect/*)
@@ -220,6 +240,8 @@ source_group("Engine\\Detail" FILES ${SRC_ENGINE_DETAIL})
 source_group("Editor" FILES ${SRC_EDITOR})
 source_group("Editor\\ImGui" FILES ${SRC_EDITOR_IMGUI})
 source_group("Graphics" FILES ${SRC_GRAPHICS})
+source_group("Graphics\\RHI" FILES ${SRC_GRAPHICS_RHI})
+source_group("Graphics\\RHI\\Vulkan" FILES ${SRC_GRAPHICS_RHI_VULKAN})
 source_group("Graphics\\GraphicsPipeline" FILES ${SRC_GRAPHICS_GRAPHICPIPELINE})
 source_group("Graphics\\Gui" FILES ${SRC_GRAPHICS_GUI})
 source_group("Graphics\\ThirdParty\\stb_image" FILES ${SRC_GRAPHICS_THIRDPARTY_STBIMAGE})
@@ -237,7 +259,7 @@ add_executable(
     Destiny WIN32 ${SRC_MAIN} 
     ${SRC_ENGINE} ${SRC_ENGINE_DETAIL} 
     ${SRC_EDITOR} ${SRC_EDITOR_IMGUI} 
-    ${SRC_GRAPHICS} 
+    ${SRC_GRAPHICS} ${SRC_GRAPHICS_RHI} ${SRC_GRAPHICS_RHI_VULKAN}
     ${SRC_GRAPHICS_GRAPHICPIPELINE} 
     ${SRC_GRAPHICS_MODEL} 
     ${SRC_GRAPHICS_GUI} 
@@ -262,6 +284,7 @@ target_link_libraries(Destiny
     LinearMath
     libcurl
     d3d11.lib dxgi.lib dxguid.lib D3DCompiler.lib d2d1.lib dwrite.lib winmm.lib
+    Vulkan::Vulkan
 )
 
 
@@ -274,7 +297,7 @@ add_custom_command(TARGET Destiny
 add_custom_command(TARGET Destiny
                    POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy
-                   ${PROJECT_BINARY_DIR}/3rdparty/assimp/bin/$(Configuration)/assimp-${ASSIMP_MSVC_VERSION}-mt.dll
+                   ${PROJECT_BINARY_DIR}/3rdparty/assimp/bin/$(Configuration)/assimp-${ASSIMP_MSVC_VERSION}-mt$<$<CONFIG:Debug>:_Debug>.dll
                     ${PROJECT_BINARY_DIR}/$(Configuration)
                    COMMENT "Copying file assimp-${ASSIMP_MSVC_VERSION}-mt.dll to ${PROJECT_BINARY_DIR}/$(Configuration)")
 add_custom_command(TARGET Destiny
@@ -286,13 +309,13 @@ add_custom_command(TARGET Destiny
 add_custom_command(TARGET Destiny
                    POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy
-                   ${PROJECT_BINARY_DIR}/3rdparty/freetype/$(Configuration)/freetype.dll
+                   ${PROJECT_BINARY_DIR}/3rdparty/freetype/$(Configuration)/freetype$<$<CONFIG:Debug>:_Debug>.dll
                     ${PROJECT_BINARY_DIR}/$(Configuration)
                    COMMENT "Copying file freetype.dll to ${PROJECT_BINARY_DIR}/$(Configuration)")
 add_custom_command(TARGET Destiny
                    POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy
-                   ${PROJECT_BINARY_DIR}/lib/$(Configuration)/libcurl.dll
+                   ${PROJECT_BINARY_DIR}/lib/$(Configuration)/libcurl$<$<CONFIG:Debug>:_Debug>.dll
                     ${PROJECT_BINARY_DIR}/$(Configuration)
                    COMMENT "Copying file curl.dll to ${PROJECT_BINARY_DIR}/$(Configuration)")
 
@@ -300,18 +323,18 @@ add_custom_command(TARGET Destiny
 add_custom_command(TARGET Destiny
                    POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy
-                   ${PROJECT_BINARY_DIR}/3rdparty/bullet3/$(Configuration)/BulletDynamics.dll
+                   ${PROJECT_BINARY_DIR}/3rdparty/bullet3/$(Configuration)/BulletDynamics$<$<CONFIG:Debug>:_Debug>.dll
                     ${PROJECT_BINARY_DIR}/$(Configuration)
                    COMMENT "Copying file BulletDynamics.dll to ${PROJECT_BINARY_DIR}/$(Configuration)")
 add_custom_command(TARGET Destiny
                    POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy
-                   ${PROJECT_BINARY_DIR}/3rdparty/bullet3/$(Configuration)/BulletCollision.dll
+                   ${PROJECT_BINARY_DIR}/3rdparty/bullet3/$(Configuration)/BulletCollision$<$<CONFIG:Debug>:_Debug>.dll
                     ${PROJECT_BINARY_DIR}/$(Configuration)
                    COMMENT "Copying file BulletCollision.dll to ${PROJECT_BINARY_DIR}/$(Configuration)")
 add_custom_command(TARGET Destiny
                    POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy
-                   ${PROJECT_BINARY_DIR}/3rdparty/bullet3/$(Configuration)/LinearMath.dll
+                   ${PROJECT_BINARY_DIR}/3rdparty/bullet3/$(Configuration)/LinearMath$<$<CONFIG:Debug>:_Debug>.dll
                     ${PROJECT_BINARY_DIR}/$(Configuration)
                    COMMENT "Copying file LinearMath.dll to ${PROJECT_BINARY_DIR}/$(Configuration)")

@@ -174,7 +174,7 @@ namespace Destiny
 		LOG_TRACE("===================End=====================================");
 	}
 
-	void HDRTextureLoader::ConvertCubeImageToTexture(bool& loadSucceed, ID3D11Resource*& resource, ID3D11ShaderResourceView*& shaderResourceView, const DirectX::ScratchImage& cubeImage)
+	void HDRTextureLoader::ConvertCubeImageToTexture(bool& loadSucceed, void*& resource, void*& shaderResourceView, const DirectX::ScratchImage& cubeImage)
 	{
 		const auto& cubeMetadata = cubeImage.GetMetadata();
 		CD3D11_TEXTURE2D_DESC textureDesc(cubeMetadata.format, (unsigned int)cubeMetadata.width, (unsigned int)cubeMetadata.height, 6, 1, D3D11_BIND_SHADER_RESOURCE, D3D11_USAGE_DEFAULT, 0, 1, 0, D3D11_RESOURCE_MISC_TEXTURECUBE);
@@ -196,12 +196,12 @@ namespace Destiny
 		}
 
 		HRESULT hr = 0;
-		ID3D11Texture2D* texture2d = nullptr;
-		hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateTexture2D(&textureDesc, initData.data(), &texture2d);
+		void* texture2d = nullptr;
+		hr = (HRESULT)Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateTexture2D(&textureDesc, initData.data(), (void**)&texture2d);
 		if (SUCCEEDED(hr))
 		{
 			CD3D11_SHADER_RESOURCE_VIEW_DESC srvDesc(D3D11_SRV_DIMENSION_TEXTURECUBE, cubeMetadata.format, 0, 1);
-			hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateShaderResourceView(texture2d, &srvDesc, &shaderResourceView);
+			hr = (HRESULT)Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateShaderResourceView(texture2d, &srvDesc, (void**)&shaderResourceView);
 			if (SUCCEEDED(hr))
 			{
 				resource = texture2d;
@@ -486,7 +486,7 @@ namespace Destiny
 		LOG_TRACE("===================End=====================================");
 	}
 
-	void HDRTextureLoader::ConvertIrradianceImageToTexture(bool& loadSucceed, ID3D11Resource*& resource, ID3D11ShaderResourceView*& shaderResourceView, const DirectX::ScratchImage& irradianceImage)
+	void HDRTextureLoader::ConvertIrradianceImageToTexture(bool& loadSucceed, void*& resource, void*& shaderResourceView, const DirectX::ScratchImage& irradianceImage)
 	{
 		const auto& irradianceMetadata = irradianceImage.GetMetadata();
 		CD3D11_TEXTURE2D_DESC textureDesc(irradianceMetadata.format, (unsigned int)irradianceMetadata.width, (unsigned int)irradianceMetadata.height, 6, 1, D3D11_BIND_SHADER_RESOURCE, D3D11_USAGE_DEFAULT, 0, 1, 0, D3D11_RESOURCE_MISC_TEXTURECUBE);
@@ -508,12 +508,12 @@ namespace Destiny
 		}
 
 		HRESULT hr = 0;
-		ID3D11Texture2D* texture2d = nullptr;
-		hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateTexture2D(&textureDesc, initData.data(), &texture2d);
+		void* texture2d = nullptr;
+		hr = (HRESULT)Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateTexture2D(&textureDesc, initData.data(), (void**)&texture2d);
 		if (SUCCEEDED(hr))
 		{
 			CD3D11_SHADER_RESOURCE_VIEW_DESC srvDesc(D3D11_SRV_DIMENSION_TEXTURECUBE, irradianceMetadata.format, 0, 1);
-			hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateShaderResourceView(texture2d, &srvDesc, &shaderResourceView);
+			hr = (HRESULT)Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateShaderResourceView(texture2d, &srvDesc, (void**)&shaderResourceView);
 			if (SUCCEEDED(hr))
 			{
 				resource = texture2d;
@@ -1100,7 +1100,7 @@ namespace Destiny
         LOG_TRACE("Finished generating prefilter map");
     }
 
-	void HDRTextureLoader::ConvertPrefilterImageToTexture(bool& loadSucceed, ID3D11Resource*& resource, ID3D11ShaderResourceView*& shaderResourceView, const DirectX::ScratchImage& prefilterImage)
+	void HDRTextureLoader::ConvertPrefilterImageToTexture(bool& loadSucceed, void*& resource, void*& shaderResourceView, const DirectX::ScratchImage& prefilterImage)
 	{
 		const auto& prefilterMetadata = prefilterImage.GetMetadata();
 		CD3D11_TEXTURE2D_DESC textureDesc(prefilterMetadata.format, (unsigned int)prefilterMetadata.width, (unsigned int)prefilterMetadata.height, 6, 1, D3D11_BIND_SHADER_RESOURCE, D3D11_USAGE_DEFAULT, 0, 1, 0, D3D11_RESOURCE_MISC_TEXTURECUBE);
@@ -1122,12 +1122,12 @@ namespace Destiny
 		}
 
 		HRESULT hr = 0;
-		ID3D11Texture2D* texture2d = nullptr;
-		hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateTexture2D(&textureDesc, initData.data(), &texture2d);
+		void* texture2d = nullptr;
+		hr = (HRESULT)Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateTexture2D(&textureDesc, initData.data(), (void**)&texture2d);
 		if (SUCCEEDED(hr))
 		{
 			CD3D11_SHADER_RESOURCE_VIEW_DESC srvDesc(D3D11_SRV_DIMENSION_TEXTURECUBE, prefilterMetadata.format, 0, 1);
-			hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateShaderResourceView(texture2d, &srvDesc, &shaderResourceView);
+			hr = (HRESULT)Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateShaderResourceView(texture2d, &srvDesc, (void**)&shaderResourceView);
 			if (SUCCEEDED(hr))
 			{
 				resource = texture2d;

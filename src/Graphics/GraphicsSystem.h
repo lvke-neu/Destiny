@@ -1,15 +1,10 @@
 #pragma once
 #include <memory>
+#include <functional>
+#include "RHI/GraphicsDevice.h"
+#include "RHI/GraphicsContext.h"
+#include "RHI/SwapChain.h"
 
-struct ID3D11Device;
-struct ID3D11DeviceContext;
-struct ID3DUserDefinedAnnotation;
-struct ID3D11RenderTargetView;
-struct ID3D11DepthStencilView;
-struct ID3D11Device;
-struct IDXGISwapChain;
-struct ID3D11Texture2D;
-struct D3D11_VIEWPORT;
 namespace Destiny
 {
 	class GraphicsSystem
@@ -33,13 +28,11 @@ namespace Destiny
 		void						uninitialize();
 		void						update();
 		GraphicsStat				getGraphicsStat();
-		void						present();
+		void						present(std::function<void(void*)> callback = nullptr);
 	public:
-		ID3D11Device*				getDevice();
-		ID3D11DeviceContext*		getImmediateContext();
-		ID3D11DeviceContext*		getDeferredContext();
-		ID3D11RenderTargetView**	getRenderTargetView();
-		ID3D11DepthStencilView*		getDepthStencilView();
+		std::shared_ptr<GraphicsDevice> getDevice();
+		std::shared_ptr<GraphicsContext> getImmediateContext();
+		std::shared_ptr<SwapChain> getSwapChain();
 	public:
 		//for window resize
 		void						onResize_(unsigned int width, unsigned int height);
@@ -47,50 +40,31 @@ namespace Destiny
 	public:
 		void beginEvent(const wchar_t* name);
 		void endEvent();
-	private:
-		void						createDeviceAndContext();
-		void						createSwapChain(long long hwnd);
+	public:
+		void						createDeviceAndContext(void* hwnd);
+		void						createSwapChain(void* hwnd);
 		void						bindEditorRenderTarget();
 		virtual void				createPipeline() = 0;
 		virtual void				render() = 0;
 	protected:
 		GraphicsStat				m_graphicsStat;
-	private:
-		ID3D11Device*				m_pD3D11Device;
-		ID3D11DeviceContext*		m_pD3D11ImmediateDeviceContext;
-		ID3D11DeviceContext*		m_pD3D11DeferredDeviceContext;
-		IDXGISwapChain*				m_pDXGISwapChain;
-		ID3DUserDefinedAnnotation*  m_pD3DUserDefinedAnnotation;
-		ID3D11RenderTargetView*		m_pRenderTargetView;
-		ID3D11Texture2D*			m_pDepthStencilBuffer;
-		ID3D11DepthStencilView*		m_pDepthStencilView;
-		unsigned int				m_4xMsaaQuality;
-		std::shared_ptr<D3D11_VIEWPORT>			m_viewPort;
+		std::shared_ptr<GraphicsDevice> m_device;
+		std::shared_ptr<SwapChain> m_swapChain;
 	};
 
-	inline ID3D11Device* GraphicsSystem::getDevice()
+	inline std::shared_ptr<GraphicsDevice> GraphicsSystem::getDevice()
 	{
-		return m_pD3D11Device;
+		return m_device;
 	}
 
-	inline ID3D11DeviceContext* GraphicsSystem::getImmediateContext()
+	inline std::shared_ptr<GraphicsContext> GraphicsSystem::getImmediateContext()
 	{
-		return m_pD3D11ImmediateDeviceContext;
+		return m_device ? m_device->getImmediateContext() : nullptr;
 	}
 
-	inline ID3D11DeviceContext* GraphicsSystem::getDeferredContext()
+	inline std::shared_ptr<SwapChain> GraphicsSystem::getSwapChain()
 	{
-		return m_pD3D11DeferredDeviceContext;
-	}
-
-	inline ID3D11RenderTargetView** GraphicsSystem::getRenderTargetView()
-	{
-		return &m_pRenderTargetView;
-	}
-
-	inline ID3D11DepthStencilView* GraphicsSystem::getDepthStencilView()
-	{
-		return m_pDepthStencilView;
+		return m_swapChain;
 	}
 
 	inline GraphicsSystem::GraphicsStat GraphicsSystem::getGraphicsStat()

@@ -26,13 +26,13 @@ Destiny 是一款基于 C++ 和 Direct3D 11 开发的 3D 渲染 Demo。主要用
 
 ## 运行效果
 
-[1](screenshots/screenshot1.png)
+![1](screenshots/screenshot1.png)
 
-[2](screenshots/screenshot2.png)
+![2](screenshots/screenshot2.png)
 
-[3](screenshots/screenshot3.png)
+![3](screenshots/screenshot3.png)
 
-[4](screenshots/screenshot4.png)
+![4](screenshots/screenshot4.png)
 
 ## 项目结构
 

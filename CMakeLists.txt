@@ -56,13 +56,16 @@ endif()
 
 
 #rttr
-set(BUILD_UNIT_TESTS OFF)
-set(BUILD_EXAMPLES OFF)
-set(BUILD_DOCUMENTATION OFF)
-set(BUILD_INSTALLER OFF)
-set(BUILD_PACKAGE OFF)
-set(USE_PCH OFF)
-set(CUSTOM_DOXYGEN_STYLE OFF)
+# RTTR defines these switches with option(), so keep them in the cache to
+# prevent the embedded project from re-enabling tests, examples and CPack.
+set(BUILD_UNIT_TESTS OFF CACHE BOOL "Build RTTR unit tests" FORCE)
+set(BUILD_BENCHMARKS OFF CACHE BOOL "Build RTTR benchmarks" FORCE)
+set(BUILD_EXAMPLES OFF CACHE BOOL "Build RTTR examples" FORCE)
+set(BUILD_DOCUMENTATION OFF CACHE BOOL "Build RTTR documentation" FORCE)
+set(BUILD_INSTALLER OFF CACHE BOOL "Build RTTR installer" FORCE)
+set(BUILD_PACKAGE OFF CACHE BOOL "Build RTTR package" FORCE)
+set(USE_PCH OFF CACHE BOOL "Use RTTR precompiled headers" FORCE)
+set(CUSTOM_DOXYGEN_STYLE OFF CACHE BOOL "Use custom RTTR Doxygen style" FORCE)
 add_subdirectory("3rdparty/rttr")
 
 #freetype

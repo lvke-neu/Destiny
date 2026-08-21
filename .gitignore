@@ -7,6 +7,8 @@ x64/
 build/
 backup/
 lib/
+!3rdparty/curl/lib/
+!3rdparty/curl/lib/**
 *.cso
 *.mbo
 *.ilk

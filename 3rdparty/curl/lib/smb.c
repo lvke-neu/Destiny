@@ -654,10 +654,9 @@ static CURLcode smb_send_negotiate(struct Curl_easy *data,
                                    struct smb_conn *smbc,
                                    struct smb_request *req)
 {
-  static const char msg[] = "\x00\x0c\x00\x02NT LM 0.12";
+  const char *msg = "\x00\x0c\x00\x02NT LM 0.12";
 
-  return smb_send_message(data, smbc, req, SMB_COM_NEGOTIATE, msg,
-                          sizeof(msg));
+  return smb_send_message(data, smbc, req, SMB_COM_NEGOTIATE, msg, 15);
 }
 
 static CURLcode smb_send_setup(struct Curl_easy *data)
@@ -679,7 +678,7 @@ static CURLcode smb_send_setup(struct Curl_easy *data)
 
   byte_count = sizeof(lm) + sizeof(nt) +
     strlen(smbc->user) + strlen(smbc->domain) +
-    CURL_CSTRLEN(CURL_OS) + CURL_CSTRLEN(CLIENTNAME) + 4; /* 4 null chars */
+    strlen(CURL_OS) + strlen(CLIENTNAME) + 4; /* 4 null chars */
   if(byte_count > sizeof(msg.bytes))
     return CURLE_FILESIZE_EXCEEDED;
 
@@ -725,7 +724,7 @@ static CURLcode smb_send_tree_connect(struct Curl_easy *data,
   char *p = msg.bytes;
   const size_t byte_count = strlen(conn->origin->hostname) +
     strlen(smbc->share) +
-    CURL_CSTRLEN(SERVICENAME) + 5; /* 2 nulls and 3 backslashes */
+    strlen(SERVICENAME) + 5; /* 2 nulls and 3 backslashes */
 
   if(byte_count > sizeof(msg.bytes))
     return CURLE_FILESIZE_EXCEEDED;
@@ -913,8 +912,7 @@ static CURLcode smb_connection_state(struct Curl_easy *data, bool *done)
 
     result = smb_send_negotiate(data, smbc, req);
     if(result) {
-      CURL_TRC_M(data, "SMB: failed to send negotiate message");
-      connclose(conn);
+      connclose(conn, "SMB: failed to send negotiate message");
       return result;
     }
 
@@ -924,8 +922,7 @@ static CURLcode smb_connection_state(struct Curl_easy *data, bool *done)
   /* Send the previous message and check for a response */
   result = smb_send_and_recv(data, smbc, &msg);
   if(result && result != CURLE_AGAIN) {
-    CURL_TRC_M(data, "SMB: failed to communicate");
-    connclose(conn);
+    connclose(conn, "SMB: failed to communicate");
     return result;
   }
 
@@ -938,8 +935,7 @@ static CURLcode smb_connection_state(struct Curl_easy *data, bool *done)
   case SMB_NEGOTIATE:
     if((smbc->got < sizeof(*nrsp) + sizeof(smbc->challenge) - 1) ||
        h->status) {
-      CURL_TRC_M(data, "SMB: negotiation failed");
-      connclose(conn);
+      connclose(conn, "SMB: negotiation failed");
       return CURLE_COULDNT_CONNECT;
     }
     nrsp = msg;
@@ -956,8 +952,7 @@ static CURLcode smb_connection_state(struct Curl_easy *data, bool *done)
     smbc->session_key = smb_swap32(nrsp->session_key);
     result = smb_send_setup(data);
     if(result) {
-      CURL_TRC_M(data, "SMB: failed to send setup message");
-      connclose(conn);
+      connclose(conn, "SMB: failed to send setup message");
       return result;
     }
     conn_state(data, smbc, SMB_SETUP);
@@ -965,8 +960,7 @@ static CURLcode smb_connection_state(struct Curl_easy *data, bool *done)
 
   case SMB_SETUP:
     if(h->status) {
-      CURL_TRC_M(data, "SMB: authentication failed");
-      connclose(conn);
+      connclose(conn, "SMB: authentication failed");
       return CURLE_LOGIN_DENIED;
     }
     smbc->uid = smb_swap16(h->uid);
@@ -1031,8 +1025,7 @@ static CURLcode smb_request_state(struct Curl_easy *data, bool *done)
   if(req->state == SMB_REQUESTING) {
     result = smb_send_tree_connect(data, smbc, req);
     if(result) {
-      CURL_TRC_M(data, "SMB: failed to send tree connect message");
-      connclose(conn);
+      connclose(conn, "SMB: failed to send tree connect message");
       return result;
     }
 
@@ -1042,8 +1035,7 @@ static CURLcode smb_request_state(struct Curl_easy *data, bool *done)
   /* Send the previous message and check for a response */
   result = smb_send_and_recv(data, smbc, &msg);
   if(result && result != CURLE_AGAIN) {
-    CURL_TRC_M(data, "SMB: failed to communicate");
-    connclose(conn);
+    connclose(conn, "SMB: failed to communicate");
     return result;
   }
 
@@ -1188,8 +1180,7 @@ static CURLcode smb_request_state(struct Curl_easy *data, bool *done)
   }
 
   if(result) {
-    CURL_TRC_M(data, "SMB: failed to send message");
-    connclose(conn);
+    connclose(conn, "SMB: failed to send message");
     return result;
   }
 

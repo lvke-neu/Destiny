@@ -73,7 +73,6 @@ static void free_urlhandle(struct Curl_URL *u)
 {
   curlx_free(u->scheme);
   curlx_free(u->user);
-  curlx_strzero(u->password);
   curlx_free(u->password);
   curlx_free(u->options);
   curlx_free(u->host);
@@ -326,7 +325,6 @@ UNITTEST CURLUcode parse_hostname_login(struct Curl_URL *u,
   }
 
   if(passwdp) {
-    curlx_strzero(u->password);
     curlx_free(u->password);
     u->password = passwdp;
   }
@@ -343,11 +341,9 @@ UNITTEST CURLUcode parse_hostname_login(struct Curl_URL *u,
 out:
 
   curlx_free(userp);
-  curlx_strzero(passwdp);
   curlx_free(passwdp);
   curlx_free(optionsp);
   curlx_safefree(u->user);
-  curlx_strzero(u->password);
   curlx_safefree(u->password);
   curlx_safefree(u->options);
 
@@ -386,7 +382,6 @@ UNITTEST CURLUcode parse_port(struct Curl_URL *u, struct dynbuf *host,
   if(portptr) {
     curl_off_t port;
     size_t keep = portptr - hostname;
-    int rc;
 
     /* Browser behavior adaptation. If there is a colon with no digits after,
        cut off the name there which makes us ignore the colon and use the
@@ -398,14 +393,8 @@ UNITTEST CURLUcode parse_port(struct Curl_URL *u, struct dynbuf *host,
     portptr++;
     if(!*portptr)
       return has_scheme ? CURLUE_OK : CURLUE_BAD_PORT_NUMBER;
-    if(*portptr == '\\')
-      return CURLUE_BACKSLASH;
-    rc = curlx_str_number(&portptr, &port, 0xffff);
-    if(rc)
-      return CURLUE_BAD_PORT_NUMBER;
-    else if(*portptr == '\\')
-      return CURLUE_BACKSLASH;
-    else if(*portptr)
+
+    if(curlx_str_number(&portptr, &port, 0xffff) || *portptr)
       return CURLUE_BAD_PORT_NUMBER;
 
     u->portnum = (uint16_t)port;
@@ -467,7 +456,7 @@ UNITTEST CURLUcode ipv6_parse(struct Curl_URL *u, char *hostname,
     hostname[hlen] = 0; /* end the address there */
     if(curlx_inet_pton(AF_INET6, hostname, dest) != 1)
       return CURLUE_BAD_IPV6;
-    if(!curlx_inet_ntop(AF_INET6, dest, hostname, hlen + 1)) {
+    if(curlx_inet_ntop(AF_INET6, dest, hostname, hlen + 1)) {
       hlen = strlen(hostname); /* might be shorter now */
       hostname[hlen + 1] = 0;
     }
@@ -677,11 +666,12 @@ static CURLUcode parse_authority(struct Curl_URL *u,
   }
 
   uc = parse_port(u, host, has_scheme);
+  if(uc)
+    return uc;
 
   if(!curlx_dyn_len(host))
-    /* this makes no-host errors override port number problems */
     uc = CURLUE_NO_HOST;
-  if(!uc)
+  else
     uc = urldecode_host(host);
   if(uc)
     return uc;
@@ -750,29 +740,6 @@ static bool is_dot(const char **str, size_t *clen)
 
 #define ISSLASH(x) ((x) == '/')
 
-/* prescan the string to see if it needs work */
-static bool needs_dedotdot(const char *p, size_t pn)
-{
-  /* a single byte path cannot be cleaned up */
-  if(pn < 2)
-    return FALSE;
-  while(pn) {
-    if(is_dot(&p, &pn)) {
-      /* "./" or dot before end of string */
-      if(!pn || ISSLASH(*p))
-        return TRUE;
-      /* "../" or ".." before end of string */
-      else if(is_dot(&p, &pn) && (!pn || ISSLASH(*p)))
-        return TRUE;
-    }
-    else {
-      p++;
-      pn--;
-    }
-  }
-  return FALSE;
-}
-
 /*
  * dedotdotify()
  *
@@ -784,8 +751,7 @@ static bool needs_dedotdot(const char *p, size_t pn)
  *
  * RETURNS
  *
- * Zero for success and 'out' set to an allocated string (or NULL if there's
- * nothing to do).
+ * Zero for success and 'out' set to an allocated dedotdotified string.
  *
  * @unittest 1395
  */
@@ -800,7 +766,8 @@ UNITTEST int dedotdotify(const char *input, size_t clen, char **outp)
   size_t dlen = clen;
 
   *outp = NULL;
-  if(!needs_dedotdot(input, clen))
+  /* a single byte path cannot be cleaned up */
+  if(clen < 2)
     return 0;
 
   curlx_dyn_init(&out, clen + 1);
@@ -1835,7 +1802,6 @@ static CURLUcode urlset_clear(CURLU *u, CURLUPart what)
     curlx_safefree(u->user);
     break;
   case CURLUPART_PASSWORD:
-    curlx_strzero(u->password);
     curlx_safefree(u->password);
     break;
   case CURLUPART_OPTIONS:
@@ -2112,8 +2078,6 @@ CURLUcode curl_url_set(CURLU *u, CURLUPart what,
     if(status)
       return status;
 
-    if(what == CURLUPART_PASSWORD)
-      curlx_strzero(*storep);
     curlx_free(*storep);
     *storep = (char *)CURL_UNCONST(newp);
   }

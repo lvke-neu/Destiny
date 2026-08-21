@@ -32,9 +32,9 @@
 #include "curlx/fopen.h"
 #include "curlx/strerr.h"
 #include "urldata.h"
+#include "cf-dns.h"
 #include "curl_trc.h"
-#include "vdns/cf-dns.h"
-#include "vdns/httpsrr.h"
+#include "httpsrr.h"
 #include "vtls/vtls.h"
 #include "vtls/vtls_int.h"
 #include "vtls/rustls.h"
@@ -517,11 +517,11 @@ static void cr_keylog_log_cb(struct rustls_str label,
                              size_t secret_len)
 {
   char clabel[KEYLOG_LABEL_MAXLEN];
+  (void)client_random_len;
   DEBUGASSERT(client_random_len == CLIENT_RANDOM_SIZE);
   /* Turning a "rustls_str" into a null delimited "c" string */
   curl_msnprintf(clabel, sizeof(clabel), "%.*s", (int)label.len, label.data);
-  Curl_tls_keylog_write(clabel, client_random, client_random_len,
-                        secret, secret_len);
+  Curl_tls_keylog_write(clabel, client_random, secret, secret_len);
 }
 
 static CURLcode

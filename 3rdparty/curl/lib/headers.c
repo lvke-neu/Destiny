@@ -59,84 +59,62 @@ CURLHcode curl_easy_header(CURL *curl,
                            int request,
                            struct curl_header **hout)
 {
-  struct Curl_eapi_guard guard;
-  CURLHcode hresult = CURLHE_OK;
-  CURLcode result;
+  struct Curl_llist_node *e;
+  struct Curl_llist_node *e_pick = NULL;
+  struct Curl_easy *data = curl;
+  size_t match = 0;
+  size_t amount = 0;
+  struct Curl_header_store *hs = NULL;
+  struct Curl_header_store *pick = NULL;
+  if(!name || !hout || !data ||
+     (origin > (CURLH_HEADER | CURLH_TRAILER | CURLH_CONNECT | CURLH_1XX |
+                CURLH_PSEUDO)) || !origin || (request < -1))
+    return CURLHE_BAD_ARGUMENT;
+  if(!Curl_llist_count(&data->state.httphdrs))
+    return CURLHE_NOHEADERS; /* no headers available */
+  if(request > data->state.requests)
+    return CURLHE_NOREQUEST;
+  if(request == -1)
+    request = data->state.requests;
 
-  if(CURL_EAPI_ENTER(&guard, curl, easy_header, &result)) {
-    struct Curl_easy *data = curl;
-    struct Curl_llist_node *e;
-    struct Curl_llist_node *e_pick = NULL;
-    size_t match = 0;
-    size_t amount = 0;
-    struct Curl_header_store *hs = NULL;
-    struct Curl_header_store *pick = NULL;
-    if(!name || !hout || !data ||
-       (origin > (CURLH_HEADER | CURLH_TRAILER | CURLH_CONNECT | CURLH_1XX |
-                  CURLH_PSEUDO)) || !origin || (request < -1)) {
-      hresult = CURLHE_BAD_ARGUMENT;
-      goto out;
+  /* we need a first round to count amount of this header */
+  for(e = Curl_llist_head(&data->state.httphdrs); e; e = Curl_node_next(e)) {
+    hs = Curl_node_elem(e);
+    if(curl_strequal(hs->name, name) &&
+       (hs->type & origin) &&
+       (hs->request == request)) {
+      amount++;
+      pick = hs;
+      e_pick = e;
     }
-    if(!Curl_llist_count(&data->state.httphdrs)) {
-      hresult = CURLHE_NOHEADERS; /* no headers available */
-      goto out;
-    }
-    if(request > data->state.requests) {
-      hresult = CURLHE_NOREQUEST;
-      goto out;
-    }
-    if(request == -1)
-      request = data->state.requests;
+  }
+  if(!amount)
+    return CURLHE_MISSING;
+  else if(nameindex >= amount)
+    return CURLHE_BADINDEX;
 
-    /* we need a first round to count amount of this header */
+  if(nameindex == amount - 1)
+    /* if the last or only occurrence is what's asked for, then we know it */
+    hs = pick;
+  else {
     for(e = Curl_llist_head(&data->state.httphdrs); e; e = Curl_node_next(e)) {
       hs = Curl_node_elem(e);
       if(curl_strequal(hs->name, name) &&
          (hs->type & origin) &&
-         (hs->request == request)) {
-        amount++;
-        pick = hs;
+         (hs->request == request) &&
+         (match++ == nameindex)) {
         e_pick = e;
+        break;
       }
     }
-    if(!amount)
-      hresult = CURLHE_MISSING;
-    else if(nameindex >= amount)
-      hresult = CURLHE_BADINDEX;
-    if(hresult)
-      goto out;
-
-    if(nameindex == amount - 1)
-      /* if the last or only occurrence is what's asked for, then we know it */
-      hs = pick;
-    else {
-      for(e = Curl_llist_head(&data->state.httphdrs); e;
-          e = Curl_node_next(e)) {
-        hs = Curl_node_elem(e);
-        if(curl_strequal(hs->name, name) &&
-           (hs->type & origin) &&
-           (hs->request == request) &&
-           (match++ == nameindex)) {
-          e_pick = e;
-          break;
-        }
-      }
-      if(!e) { /* this should not happen */
-        hresult = CURLHE_MISSING;
-        goto out;
-      }
-    }
-    /* this is the name we want */
-    copy_header_external(hs, nameindex, amount, e_pick,
-                         &data->state.headerout[0]);
-    *hout = &data->state.headerout[0];
-    hresult = CURLHE_OK;
+    if(!e) /* this should not happen */
+      return CURLHE_MISSING;
   }
-out:
-  CURL_EAPI_LEAVE(&guard);
-  if(result)
-    hresult = Curl_eapi_hcode(result);
-  return hresult;
+  /* this is the name we want */
+  copy_header_external(hs, nameindex, amount, e_pick,
+                       &data->state.headerout[0]);
+  *hout = &data->state.headerout[0];
+  return CURLHE_OK;
 }
 
 /* public API */
@@ -145,68 +123,59 @@ struct curl_header *curl_easy_nextheader(CURL *curl,
                                          int request,
                                          struct curl_header *prev)
 {
-  struct Curl_eapi_guard guard;
-  struct curl_header *hd = NULL;
-  CURLcode result;
+  struct Curl_easy *data = curl;
+  struct Curl_llist_node *pick;
+  struct Curl_llist_node *e;
+  struct Curl_header_store *hs;
+  size_t amount = 0;
+  size_t index = 0;
 
-  if(CURL_EAPI_ENTER(&guard, curl, easy_nextheader, &result)) {
-    struct Curl_easy *data = curl;
-    struct Curl_llist_node *pick;
-    struct Curl_llist_node *e;
-    struct Curl_header_store *hs;
-    size_t amount = 0;
-    size_t index = 0;
+  if(request > data->state.requests)
+    return NULL;
+  if(request == -1)
+    request = data->state.requests;
 
-    if(request > data->state.requests)
-      goto out;
-    if(request == -1)
-      request = data->state.requests;
-
-    if(prev) {
-      pick = prev->anchor;
-      if(!pick)
-        /* something is wrong */
-        goto out;
-      pick = Curl_node_next(pick);
-    }
-    else
-      pick = Curl_llist_head(&data->state.httphdrs);
-
-    if(pick) {
-      /* make sure it is the next header of the desired type */
-      do {
-        hs = Curl_node_elem(pick);
-        if((hs->type & origin) && (hs->request == request))
-          break;
-        pick = Curl_node_next(pick);
-      } while(pick);
-    }
-
+  if(prev) {
+    pick = prev->anchor;
     if(!pick)
-      /* no more headers available */
-      goto out;
-
-    hs = Curl_node_elem(pick);
-
-    /* count number of occurrences of this name within the mask and figure out
-       the index for the currently selected entry */
-    for(e = Curl_llist_head(&data->state.httphdrs); e; e = Curl_node_next(e)) {
-      struct Curl_header_store *check = Curl_node_elem(e);
-      if(curl_strequal(hs->name, check->name) &&
-         (check->request == request) &&
-         (check->type & origin))
-        amount++;
-      if(e == pick)
-        index = amount - 1;
-    }
-
-    copy_header_external(hs, index, amount, pick,
-                         &data->state.headerout[1]);
-    hd = &data->state.headerout[1];
+      /* something is wrong */
+      return NULL;
+    pick = Curl_node_next(pick);
   }
-out:
-  CURL_EAPI_LEAVE(&guard);
-  return hd;
+  else
+    pick = Curl_llist_head(&data->state.httphdrs);
+
+  if(pick) {
+    /* make sure it is the next header of the desired type */
+    do {
+      hs = Curl_node_elem(pick);
+      if((hs->type & origin) && (hs->request == request))
+        break;
+      pick = Curl_node_next(pick);
+    } while(pick);
+  }
+
+  if(!pick)
+    /* no more headers available */
+    return NULL;
+
+  hs = Curl_node_elem(pick);
+
+  /* count number of occurrences of this name within the mask and figure out
+     the index for the currently selected entry */
+  for(e = Curl_llist_head(&data->state.httphdrs); e; e = Curl_node_next(e)) {
+    struct Curl_header_store *check = Curl_node_elem(e);
+    if(curl_strequal(hs->name, check->name) &&
+       (check->request == request) &&
+       (check->type & origin))
+      amount++;
+    if(e == pick)
+      index = amount - 1;
+  }
+
+  copy_header_external(hs, index, amount, pick,
+                       &data->state.headerout[1]);
+  return &data->state.headerout[1];
 }
 
 static CURLcode namevalue(char *header, size_t hlen, unsigned int type,
@@ -302,6 +271,7 @@ CURLcode Curl_headers_push(struct Curl_easy *data, const char *header,
 
     /* insert this node into the list of headers */
     Curl_llist_append(&data->state.httphdrs, hs, &hs->node);
+    data->state.prevhead = hs;
   }
   else {
     failf(data, "Invalid response header");
@@ -316,6 +286,7 @@ CURLcode Curl_headers_push(struct Curl_easy *data, const char *header,
 static void headers_reset(struct Curl_easy *data)
 {
   Curl_llist_init(&data->state.httphdrs, NULL);
+  data->state.prevhead = NULL;
 }
 
 struct hds_cw_collect_ctx {
@@ -344,7 +315,6 @@ static CURLcode hds_cw_collect_write(struct Curl_easy *data,
 static const struct Curl_cwtype hds_cw_collect = {
   "hds-collect",
   NULL,
-  0,
   Curl_cwriter_def_init,
   hds_cw_collect_write,
   Curl_cwriter_def_flush,

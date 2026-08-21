@@ -136,8 +136,7 @@ CURLcode Curl_auth_create_gssapi_user_message(struct Curl_easy *data,
                                            &input_token,
                                            &output_token,
                                            mutual_auth,
-                                           NULL,
-                                           GSS_C_NO_CREDENTIAL);
+                                           NULL);
 
   if(GSS_ERROR(major_status)) {
     if(output_token.value)

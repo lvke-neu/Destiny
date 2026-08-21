@@ -307,9 +307,6 @@ extern struct curl_trc_feat Curl_trc_feat_multi;
 extern struct curl_trc_feat Curl_trc_feat_read;
 extern struct curl_trc_feat Curl_trc_feat_write;
 extern struct curl_trc_feat Curl_trc_feat_dns;
-#ifndef CURL_DISABLE_DOH
-extern struct curl_trc_feat Curl_trc_feat_doh;
-#endif
 extern struct curl_trc_feat Curl_trc_feat_timer;
 #ifdef USE_THREADS
 extern struct curl_trc_feat Curl_trc_feat_threads;

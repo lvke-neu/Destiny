@@ -40,8 +40,13 @@
 
 #include "curl_setup.h"
 
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h>
+#endif
+
 #include "urldata.h"
 #include "cfilters.h"
+#include "cf-dns.h"
 
 #include "vtls/vtls.h" /* generic SSL protos etc */
 #include "vtls/vtls_int.h"
@@ -67,7 +72,6 @@
 #include "connect.h"
 #include "select.h"
 #include "setopt.h"
-#include "vdns/cf-dns.h"
 #include "curlx/strdup.h"
 #include "curlx/strcopy.h"
 
@@ -215,7 +219,7 @@ static void cf_ctx_free(struct ssl_connect_data *ctx)
   }
 }
 
-CURLcode Curl_ssl_get_channel_binding(struct Curl_easy *data, int8_t sockindex,
+CURLcode Curl_ssl_get_channel_binding(struct Curl_easy *data, int sockindex,
                                       struct dynbuf *binding)
 {
   if(Curl_ssl->get_channel_binding)
@@ -483,8 +487,8 @@ CURLcode Curl_pin_peer_pubkey(struct Curl_easy *data,
 
     pinned_hash = pinnedpubkey;
     while(pinned_hash &&
-          !strncmp(pinned_hash, "sha256//", CURL_CSTRLEN("sha256//"))) {
-      pinned_hash = pinned_hash + CURL_CSTRLEN("sha256//");
+          !strncmp(pinned_hash, "sha256//", (sizeof("sha256//") - 1))) {
+      pinned_hash = pinned_hash + (sizeof("sha256//") - 1);
       end_pos = strchr(pinned_hash, ';');
       pinned_hash_len = end_pos ?
                         (size_t)(end_pos - pinned_hash) : strlen(pinned_hash);
@@ -1064,10 +1068,7 @@ static CURLcode ssl_cf_connect_deferred(struct Curl_cfilter *cf,
   result = ssl_cf_connect(cf, data, done);
 
   if(!result && *done) {
-    if(!connssl->stats_reported && (cf->cft == &Curl_cft_ssl)) {
-      Curl_pgrsTimeWas(data, TIMER_APPCONNECT, connssl->handshake_done);
-      connssl->stats_reported = TRUE;
-    }
+    Curl_pgrsTimeWas(data, TIMER_APPCONNECT, connssl->handshake_done);
     switch(connssl->earlydata_state) {
     case ssl_earlydata_none:
       break;
@@ -1235,6 +1236,12 @@ static CURLcode ssl_cf_query(struct Curl_cfilter *cf,
   struct ssl_connect_data *connssl = cf->ctx;
 
   switch(query) {
+  case CF_QUERY_TIMER_APPCONNECT: {
+    struct curltime *when = pres2;
+    if(cf->connected && !Curl_ssl_cf_is_proxy(cf))
+      *when = connssl->handshake_done;
+    return CURLE_OK;
+  }
   case CF_QUERY_SSL_INFO:
   case CF_QUERY_SSL_CTX_INFO:
     if(!Curl_ssl_cf_is_proxy(cf)) {
@@ -1282,14 +1289,6 @@ static CURLcode ssl_cf_cntrl(struct Curl_cfilter *cf,
         cf->conn->httpversion_seen = 20;
       else if(!strcmp("h3", connssl->negotiated.alpn))
         cf->conn->httpversion_seen = 30;
-    }
-    break;
-  case CF_CTRL_REPORT_STATS:
-    if(cf->connected && !connssl->stats_reported &&
-       (cf->cft == &Curl_cft_ssl) &&
-       (connssl->handshake_done.tv_sec || connssl->handshake_done.tv_usec)) {
-      Curl_pgrsTimeWas(data, TIMER_APPCONNECT, connssl->handshake_done);
-      connssl->stats_reported = TRUE;
     }
     break;
   }
@@ -1395,7 +1394,7 @@ static CURLcode cf_ssl_peer_init(struct Curl_cfilter *cf,
 CURLcode Curl_ssl_cfilter_add(struct Curl_easy *data,
                               struct Curl_peer *origin,
                               struct connectdata *conn,
-                              int8_t sockindex)
+                              int sockindex)
 {
   struct Curl_cfilter *cf;
   struct Curl_peer *peer = (sockindex == SECONDARYSOCKET) ?
@@ -1557,7 +1556,7 @@ out:
 }
 
 CURLcode Curl_ssl_cfilter_remove(struct Curl_easy *data,
-                                 int8_t sockindex, bool send_shutdown)
+                                 int sockindex, bool send_shutdown)
 {
   struct Curl_cfilter *cf, *head;
   CURLcode result = CURLE_OK;
@@ -1784,7 +1783,7 @@ CURLcode Curl_on_session_reuse(struct Curl_cfilter *cf,
 
 struct Curl_ssl_session *Curl_ssl_get_cf_session(struct Curl_easy *data,
                                                  const struct Curl_cftype *cft,
-                                                 int8_t sockindex)
+                                                 int sockindex)
 {
   if(data->conn &&
 #ifndef CURL_DISABLE_PROXY

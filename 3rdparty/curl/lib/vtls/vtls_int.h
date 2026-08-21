@@ -132,7 +132,6 @@ struct ssl_connect_data {
   BIT(peer_closed);                 /* peer has closed connection */
   BIT(prefs_checked);               /* SSL preferences have been checked */
   BIT(input_pending);               /* data for SSL_read() may be available */
-  BIT(stats_reported);              /* connect times have been reported */
 };
 
 /* Definitions for SSL Implementations */
@@ -185,7 +184,7 @@ struct Curl_ssl {
   CURLcode (*send_plain)(struct Curl_cfilter *cf, struct Curl_easy *data,
                          const void *mem, size_t len, size_t *pnwritten);
 
-  CURLcode (*get_channel_binding)(struct Curl_easy *data, int8_t sockindex,
+  CURLcode (*get_channel_binding)(struct Curl_easy *data, int sockindex,
                                   struct dynbuf *binding);
 };
 
@@ -210,7 +209,7 @@ CURLcode Curl_on_session_reuse(struct Curl_cfilter *cf,
  * data's connection at `sockindex` or NULL if not found/available. */
 struct Curl_ssl_session *Curl_ssl_get_cf_session(struct Curl_easy *data,
                                                  const struct Curl_cftype *cft,
-                                                 int8_t sockindex);
+                                                 int sockindex);
 
 #endif /* USE_SSL */
 

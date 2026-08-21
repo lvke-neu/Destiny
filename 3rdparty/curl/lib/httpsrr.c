@@ -26,9 +26,9 @@
 #ifdef USE_HTTPSRR
 
 #include "urldata.h"
+#include "httpsrr.h"
 #include "connect.h"
 #include "curl_trc.h"
-#include "vdns/httpsrr.h"
 #include "curlx/strdup.h"
 #include "curlx/inet_ntop.h"
 
@@ -82,7 +82,7 @@ static CURLcode httpsrr_print_addr(struct dynbuf *dyn,
   CURLcode result = CURLE_OK;
 
   for(i = 0; (i < (total_len / alen)) && !result; ++i) {
-    if(curlx_inet_ntop(ai_family, addr + (i * alen), buf, sizeof(buf)))
+    if(!curlx_inet_ntop(ai_family, addr + (i * alen), buf, sizeof(buf)))
       result = curlx_dyn_add(dyn, "<error parsing address>");
     else
       result = curlx_dyn_addf(dyn, "%s%s", sep, buf);
@@ -98,15 +98,15 @@ void Curl_httpsrr_trace(struct Curl_easy *data,
   CURLcode result;
 
   if(!rr) {
-    CURL_TRC_DNS(data, "[HTTPS] no record available");
+    CURL_TRC_DNS(data, "[HTTPS-RR] not available");
     return;
   }
   curlx_dyn_init(&tmp, 1024);
   result = Curl_httpsrr_print(&tmp, rr);
   if(!result)
-    CURL_TRC_DNS(data, "[HTTPS] record: %s", curlx_dyn_ptr(&tmp));
+    CURL_TRC_DNS(data, "HTTPS-RR: %s", curlx_dyn_ptr(&tmp));
   else
-    CURL_TRC_DNS(data, "[HTTPS] error printing information");
+    CURL_TRC_DNS(data, "Error printing HTTPS-RR information");
   curlx_dyn_free(&tmp);
 }
 

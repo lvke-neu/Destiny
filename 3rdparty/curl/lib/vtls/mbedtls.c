@@ -268,7 +268,7 @@ static uint16_t mbed_cipher_suite_walk_str(const char **str, const char **end)
   static const char ecjpake_suite[] = "TLS_ECJPAKE_WITH_AES_128_CCM_8";
 
   if(!id) {
-    if((len == CURL_CSTRLEN(ecjpake_suite)) &&
+    if((len == sizeof(ecjpake_suite) - 1) &&
        curl_strnequal(ecjpake_suite, *str, len))
       id = MBEDTLS_TLS_ECJPAKE_WITH_AES_128_CCM_8;
   }
@@ -453,11 +453,9 @@ static int mbed_verify_cb(void *ptr, mbedtls_x509_crt *crt,
       mbed_extract_certinfo(data, crt);
   }
 
-  /* `verifypeer` and `verifyhost` are independent, so clear the flags of a
-     disabled check only. The name mismatch belongs to `verifyhost`. */
   if(!conn_config->verifypeer)
-    *flags &= MBEDTLS_X509_BADCERT_CN_MISMATCH;
-  if(!conn_config->verifyhost)
+    *flags = 0;
+  else if(!conn_config->verifyhost)
     *flags &= ~MBEDTLS_X509_BADCERT_CN_MISMATCH;
 
   if(*flags) {

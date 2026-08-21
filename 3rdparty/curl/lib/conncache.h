@@ -34,7 +34,7 @@ struct Curl_multi;
 struct Curl_share;
 
 /**
- * Close and destroy the connection.
+ * Terminate the connection, e.g. close and destroy.
  * If the connection is in a cpool, remove it.
  * If a `cshutdn` is available (e.g. data has a multi handle),
  * pass the connection to that for controlled shutdown.
@@ -42,9 +42,9 @@ struct Curl_share;
  * Takes ownership of `conn`.
  * `data` should not be attached to a connection.
  */
-void Curl_conn_close(struct Curl_easy *data,
-                     struct connectdata *conn,
-                     bool aborted);
+void Curl_conn_terminate(struct Curl_easy *data,
+                         struct connectdata *conn,
+                         bool aborted);
 
 struct cpool {
   /* the pooled connections, bundled per destination */
@@ -53,24 +53,22 @@ struct cpool {
   curl_off_t next_connection_id;
   curl_off_t next_easy_id;
   struct curltime last_cleanup;
+  struct Curl_easy *idata; /* internal handle for maintenance */
   struct Curl_share *share; /* != NULL if pool belongs to share */
   BIT(locked);
   BIT(initialized);
 };
 
-/* Get connection pool instance for data or NULL if none exists */
-struct cpool *Curl_cpool_get_instance(struct Curl_easy *data);
-
 /* Init the pool, pass multi only if pool is owned by it.
  * Cannot fail.
  */
 void Curl_cpool_init(struct cpool *cpool,
+                     struct Curl_easy *idata,
                      struct Curl_share *share,
                      size_t size);
 
 /* Destroy all connections and free all members */
-void Curl_cpool_destroy(struct cpool *cpool,
-                        struct Curl_easy *admin);
+void Curl_cpool_destroy(struct cpool *cpool);
 
 /* Init the transfer to be used within its connection pool.
  * Assigns `data->id`. */
@@ -128,12 +126,13 @@ bool Curl_cpool_conn_now_idle(struct Curl_easy *data,
                               struct connectdata *conn);
 
 /**
- * Scans the connection pool for half-open/dead
+ * This function scans the data's connection pool for half-open/dead
  * connections, closes and removes them.
  * The cleanup is done at most once per second.
+ *
+ * When called, this transfer has no connection attached.
  */
-void Curl_cpool_prune_dead(struct cpool *cpool,
-                           struct Curl_easy *data);
+void Curl_cpool_prune_dead(struct Curl_easy *data);
 
 /**
  * Perform upkeep actions on connections in the transfer's pool.
@@ -143,6 +142,14 @@ CURLcode Curl_cpool_upkeep(struct Curl_easy *data);
 typedef void Curl_cpool_conn_do_cb(struct connectdata *conn,
                                    struct Curl_easy *data,
                                    void *cbdata);
+
+/**
+ * Invoke the callback on the pool's connection with the
+ * given connection id (if it exists).
+ */
+void Curl_cpool_do_by_id(struct Curl_easy *data,
+                         curl_off_t conn_id,
+                         Curl_cpool_conn_do_cb *cb, void *cbdata);
 
 /**
  * Invoked the callback for the given data + connection under the
@@ -155,12 +162,6 @@ void Curl_cpool_do_locked(struct Curl_easy *data,
                           Curl_cpool_conn_do_cb *cb, void *cbdata);
 
 /* Close all unused connections, prevent reuse of existing ones. */
-void Curl_cpool_nw_changed(struct cpool *cpool, struct Curl_easy *admin);
-
-/* Return TRUE iff the given connection is considered healthy, e.g.
- * usable for more transfers. */
-bool Curl_cpool_conn_seems_healthy(struct connectdata *conn,
-                                   struct Curl_easy *data,
-                                   const struct curltime *pnow);
+void Curl_cpool_nw_changed(struct Curl_easy *data);
 
 #endif /* HEADER_CURL_CONNCACHE_H */

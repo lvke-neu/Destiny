@@ -48,7 +48,7 @@ bool Curl_auth_is_spnego_supported(void)
 
   /* Query the security package for Negotiate */
   status = Curl_pSecFn->QuerySecurityPackageInfo(
-                                CURL_UNCONST(TEXT(SP_NAME_NEGOTIATE)),
+                                (TCHAR *)CURL_UNCONST(TEXT(SP_NAME_NEGOTIATE)),
                                 &SecurityPackage);
 
   /* Release the package buffer as it is not required anymore */
@@ -114,7 +114,7 @@ CURLcode Curl_auth_decode_spnego_message(struct Curl_easy *data,
   if(!nego->output_token) {
     /* Query the security package for Negotiate */
     nego->status = Curl_pSecFn->QuerySecurityPackageInfo(
-                                CURL_UNCONST(TEXT(SP_NAME_NEGOTIATE)),
+                                (TCHAR *)CURL_UNCONST(TEXT(SP_NAME_NEGOTIATE)),
                                 &SecurityPackage);
     if(nego->status != SEC_E_OK) {
       failf(data, "SSPI: could not get auth info");
@@ -148,30 +148,6 @@ CURLcode Curl_auth_decode_spnego_message(struct Curl_easy *data,
       /* Use the current Windows user */
       nego->p_identity = NULL;
 
-    /* Exclude NTLM from SPNEGO negotiation via the PackageList field */
-    if(!nego->p_identity) {
-      memset(&nego->identity, 0, sizeof(nego->identity));
-      nego->identity.Version = SEC_WINNT_AUTH_IDENTITY_VERSION;
-      nego->identity.Length = sizeof(nego->identity);
-      nego->identity.Flags =
-#ifdef UNICODE
-        SEC_WINNT_AUTH_IDENTITY_UNICODE;
-#else
-        SEC_WINNT_AUTH_IDENTITY_ANSI;
-#endif
-      nego->p_identity = &nego->identity;
-    }
-
-    /* Use the special name "!ntlm" to prevent NTLM from being used:
-     * https://learn.microsoft.com/windows/win32/api/sspi/ns-sspi-sec_winnt_auth_identity_exa
-     */
-#ifdef UNICODE
-    nego->identity.PackageList = CURL_UNCONST(TEXT("!ntlm"));
-#else
-    nego->identity.PackageList = CURL_UNCONST(TEXT("!ntlm"));
-#endif
-    nego->identity.PackageListLength = 5;
-
     /* Allocate our credentials handle */
     nego->credentials = curlx_calloc(1, sizeof(CredHandle));
     if(!nego->credentials)
@@ -179,7 +155,7 @@ CURLcode Curl_auth_decode_spnego_message(struct Curl_easy *data,
 
     /* Acquire our credentials handle */
     nego->status = Curl_pSecFn->AcquireCredentialsHandle(NULL,
-                                CURL_UNCONST(TEXT(SP_NAME_NEGOTIATE)),
+                                (TCHAR *)CURL_UNCONST(TEXT(SP_NAME_NEGOTIATE)),
                                 SECPKG_CRED_OUTBOUND, NULL,
                                 nego->p_identity, NULL, NULL,
                                 nego->credentials, NULL);

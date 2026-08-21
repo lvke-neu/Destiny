@@ -452,34 +452,34 @@ const char *curl_url_strerror(CURLUcode error)
     return "An unknown part ID was passed to a URL API function";
 
   case CURLUE_NO_SCHEME:
-    return "No scheme present";
+    return "No scheme part in the URL";
 
   case CURLUE_NO_USER:
-    return "No user present";
+    return "No user part in the URL";
 
   case CURLUE_NO_PASSWORD:
-    return "No password present";
+    return "No password part in the URL";
 
   case CURLUE_NO_OPTIONS:
-    return "No options present";
+    return "No options part in the URL";
 
   case CURLUE_NO_HOST:
-    return "No host present";
+    return "No host part in the URL";
 
   case CURLUE_NO_PORT:
-    return "No port number present";
+    return "No port part in the URL";
 
   case CURLUE_NO_QUERY:
-    return "No query present";
+    return "No query part in the URL";
 
   case CURLUE_NO_FRAGMENT:
-    return "No fragment present";
+    return "No fragment part in the URL";
 
   case CURLUE_NO_ZONEID:
-    return "No zoneid present";
+    return "No zoneid part in the URL";
 
   case CURLUE_BAD_LOGIN:
-    return "Bad login";
+    return "Bad login part";
 
   case CURLUE_BAD_IPV6:
     return "Bad IPv6 address";
@@ -516,9 +516,6 @@ const char *curl_url_strerror(CURLUcode error)
 
   case CURLUE_TOO_LARGE:
     return "A value or data field is larger than allowed";
-
-  case CURLUE_BACKSLASH:
-    return "Found a backslash where a forward slash was expected";
 
   case CURLUE_LAST:
     break;

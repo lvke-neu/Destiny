@@ -176,8 +176,7 @@ static CURLcode socks5_gss_auth_loop(struct Curl_cfilter *cf,
                                                  gss_token,
                                                  &gss_send_token,
                                                  TRUE,
-                                                 gss_ret_flags,
-                                                 GSS_C_NO_CREDENTIAL);
+                                                 gss_ret_flags);
 
     if(gss_token != GSS_C_NO_BUFFER) {
       curlx_safefree(gss_recv_token.value);

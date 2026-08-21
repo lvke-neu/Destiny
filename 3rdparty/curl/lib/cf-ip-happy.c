@@ -49,6 +49,7 @@
 #include "urldata.h"
 #include "connect.h"
 #include "cfilters.h"
+#include "cf-dns.h"
 #include "cf-ip-happy.h"
 #include "curl_addrinfo.h"
 #include "curl_trc.h"
@@ -56,7 +57,6 @@
 #include "progress.h"
 #include "select.h"
 #include "sockaddr.h"
-#include "vdns/cf-dns.h"
 #include "vquic/vquic.h" /* for quic cfilters */
 
 
@@ -568,7 +568,8 @@ out:
     next_expire_ms = Curl_timeleft_ms(data);
     if(next_expire_ms < 0) {
       failf(data, "Connection timeout after %" FMT_OFF_T " ms",
-            Curl_pgrs_since_ms(data, NULL, TIMER_STARTSINGLE));
+            curlx_ptimediff_ms(Curl_pgrs_now(data),
+                               &data->progress.t_startsingle));
       return CURLE_OPERATION_TIMEDOUT;
     }
 
@@ -643,6 +644,24 @@ static bool cf_ip_ballers_pending(struct cf_ip_ballers *bs,
       return TRUE;
   }
   return FALSE;
+}
+
+static struct curltime cf_ip_ballers_max_time(struct cf_ip_ballers *bs,
+                                              struct Curl_easy *data,
+                                              int query)
+{
+  struct curltime t, tmax;
+  struct cf_ip_attempt *a;
+
+  memset(&tmax, 0, sizeof(tmax));
+  for(a = bs->running; a; a = a->next) {
+    memset(&t, 0, sizeof(t));
+    if(a->cf && !a->cf->cft->query(a->cf, data, query, NULL, &t)) {
+      if((t.tv_sec || t.tv_usec) && curlx_ptimediff_us(&t, &tmax) > 0)
+        tmax = t;
+    }
+  }
+  return tmax;
 }
 
 static int cf_ip_ballers_min_reply_ms(struct cf_ip_ballers *bs,
@@ -722,7 +741,8 @@ static CURLcode is_connected(struct Curl_cfilter *cf,
           proxy_peer ? "over proxy " : "",
           proxy_peer ? proxy_peer->hostname : "",
           proxy_peer ? " " : "",
-          Curl_pgrs_since_ms(data, NULL, TIMER_STARTSINGLE),
+          curlx_ptimediff_ms(Curl_pgrs_now(data),
+                             &data->progress.t_startsingle),
           curl_easy_strerror(result));
 
 #ifdef SOCKETIMEDOUT
@@ -884,7 +904,7 @@ static CURLcode cf_ip_happy_connect(struct Curl_cfilter *cf,
       }
 #endif
       cf_ip_happy_ctx_clear(ctx, data);
-      Curl_expire_clear(data, EXPIRE_HAPPY_EYEBALLS);
+      Curl_expire_done(data, EXPIRE_HAPPY_EYEBALLS);
       /* whatever errors were reported by ballers, clear our errorbuf */
       Curl_reset_fail(data);
       data->info.numconnects++; /* to track the # of connections made */
@@ -920,6 +940,18 @@ static CURLcode cf_ip_happy_query(struct Curl_cfilter *cf,
     case CF_QUERY_CONNECT_REPLY_MS: {
       *pres1 = cf_ip_ballers_min_reply_ms(&ctx->ballers, data);
       CURL_TRC_CF(data, cf, "query connect reply: %dms", *pres1);
+      return CURLE_OK;
+    }
+    case CF_QUERY_TIMER_CONNECT: {
+      struct curltime *when = pres2;
+      *when = cf_ip_ballers_max_time(&ctx->ballers, data,
+                                     CF_QUERY_TIMER_CONNECT);
+      return CURLE_OK;
+    }
+    case CF_QUERY_TIMER_APPCONNECT: {
+      struct curltime *when = pres2;
+      *when = cf_ip_ballers_max_time(&ctx->ballers, data,
+                                     CF_QUERY_TIMER_APPCONNECT);
       return CURLE_OK;
     }
     default:

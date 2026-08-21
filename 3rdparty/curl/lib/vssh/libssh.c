@@ -45,6 +45,7 @@
 #include "urldata.h"
 #include "sendf.h"
 #include "curl_trc.h"
+#include "hostip.h"
 #include "progress.h"
 #include "transfer.h"
 #include "vssh/ssh.h"
@@ -1760,7 +1761,7 @@ static int myssh_in_SFTP_QUOTE_STAT(struct Curl_easy *data,
   return SSH_NO_ERROR;
 }
 
-static void conn_forget_socket(struct Curl_easy *data, int8_t sockindex)
+static void conn_forget_socket(struct Curl_easy *data, int sockindex)
 {
   struct connectdata *conn = data->conn;
   if(conn && CONN_SOCK_IDX_VALID(sockindex)) {
@@ -2237,7 +2238,7 @@ static CURLcode myssh_in_SESSION_FREE(struct Curl_easy *data,
   /* the code we are about to return */
   result = sshc->actualcode;
   memset(sshc, 0, sizeof(struct ssh_conn));
-  connclose(data->conn);
+  connclose(data->conn, "SSH session free");
   sshc->state = SSH_SESSION_FREE;   /* current */
   sshc->nextstate = SSH_NO_STATE;
   myssh_to(data, sshc, SSH_STOP);
@@ -2778,7 +2779,7 @@ static CURLcode scp_done(struct Curl_easy *data, CURLcode status,
   return myssh_done(data, sshc, status);
 }
 
-static CURLcode scp_send(struct Curl_easy *data, int8_t sockindex,
+static CURLcode scp_send(struct Curl_easy *data, int sockindex,
                          const uint8_t *mem, size_t len, bool eos,
                          size_t *pnwritten)
 {
@@ -2812,7 +2813,7 @@ static CURLcode scp_send(struct Curl_easy *data, int8_t sockindex,
   return CURLE_OK;
 }
 
-static CURLcode scp_recv(struct Curl_easy *data, int8_t sockindex,
+static CURLcode scp_recv(struct Curl_easy *data, int sockindex,
                          char *mem, size_t len, size_t *pnread)
 {
   struct connectdata *conn = data->conn;
@@ -2938,7 +2939,7 @@ static CURLcode sftp_done(struct Curl_easy *data, CURLcode status,
 }
 
 /* return number of sent bytes */
-static CURLcode sftp_send(struct Curl_easy *data, int8_t sockindex,
+static CURLcode sftp_send(struct Curl_easy *data, int sockindex,
                           const uint8_t *mem, size_t len, bool eos,
                           size_t *pnwritten)
 {
@@ -3019,7 +3020,7 @@ static CURLcode sftp_send(struct Curl_easy *data, int8_t sockindex,
  * Return number of received (decrypted) bytes
  * or <0 on error
  */
-static CURLcode sftp_recv(struct Curl_easy *data, int8_t sockindex,
+static CURLcode sftp_recv(struct Curl_easy *data, int sockindex,
                           char *mem, size_t len, size_t *pnread)
 {
   struct connectdata *conn = data->conn;

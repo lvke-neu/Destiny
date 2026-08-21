@@ -33,20 +33,20 @@ struct Curl_share;
 struct Curl_sigpipe_ctx;
 
 /* Run the shutdown of the connection once.
- * Shortly attach/detach the admin handle to `conn` while doing so.
+ * Shortly attach/detach `data` to `conn` while doing so.
  * `done` will be set TRUE if any error was encountered or if
  * the connection was shut down completely. */
-void Curl_conn_shutdown_once(struct Curl_easy *admin,
-                             struct connectdata *conn,
-                             bool *done);
+void Curl_cshutdn_run_once(struct Curl_easy *data,
+                           struct connectdata *conn,
+                           bool *done);
 
 /* Terminates the connection, e.g. closes and destroys it.
  * If `do_shutdown` is TRUE, the shutdown will be run once before
  * terminating it.
  * Takes ownership of `conn`. */
-void Curl_conn_terminate(struct Curl_easy *admin,
-                         struct connectdata *conn,
-                         bool do_shutdown);
+void Curl_cshutdn_terminate(struct Curl_easy *data,
+                            struct connectdata *conn,
+                            bool do_shutdown);
 
 /* A `cshutdown` is always owned by a multi handle to maintain
  * the connections to be shut down. It registers timers and
@@ -57,28 +57,25 @@ struct cshutdn {
   BIT(initialized);
 };
 
-/* Get the cshutdn instance relevant for `data` or NULL if there is none */
-struct cshutdn *Curl_cshutdn_get(struct Curl_easy *data);
-
 /* Init as part of the given multi handle. */
 int Curl_cshutdn_init(struct cshutdn *cshutdn,
                       struct Curl_multi *multi);
 
 /* Terminate all remaining connections and free resources. */
 void Curl_cshutdn_destroy(struct cshutdn *cshutdn,
-                          struct Curl_easy *admin);
+                          struct Curl_easy *data);
 
 /* Number of connections being shut down. */
-size_t Curl_cshutdn_count(struct cshutdn *cshutdn);
+size_t Curl_cshutdn_count(struct Curl_easy *data);
 
 /* Number of connections to the destination being shut down. */
-size_t Curl_cshutdn_dest_count(struct cshutdn *cshutdn,
+size_t Curl_cshutdn_dest_count(struct Curl_easy *data,
                                const char *destination);
 
 /* Close the oldest connection in shutdown to destination or,
  * when destination is NULL for any destination.
  * Return TRUE if a connection has been closed. */
-bool Curl_cshutdn_close_oldest(struct cshutdn *cshutdn,
+bool Curl_cshutdn_close_oldest(struct Curl_easy *data,
                                const char *destination);
 
 /* Add a connection to have it shut down. Terminate the oldest
@@ -89,17 +86,21 @@ void Curl_cshutdn_add(struct cshutdn *cshutdn,
 
 /* Add sockets and POLLIN/OUT flags for connections being shut down. */
 CURLcode Curl_cshutdn_add_pollfds(struct cshutdn *cshutdn,
+                                  struct Curl_easy *data,
                                   struct curl_pollfds *cpfds);
 
 unsigned int Curl_cshutdn_add_waitfds(struct cshutdn *cshutdn,
+                                      struct Curl_easy *data,
                                       struct Curl_waitfds *cwfds);
 
 void Curl_cshutdn_setfds(struct cshutdn *cshutdn,
+                         struct Curl_easy *data,
                          fd_set *read_fd_set, fd_set *write_fd_set,
                          int *maxfd);
 
 /* Run maintenance on all connections. */
 void Curl_cshutdn_perform(struct cshutdn *cshutdn,
+                          struct Curl_easy *data,
                           struct Curl_sigpipe_ctx *sigpipe_ctx);
 
 #endif /* HEADER_CURL_CSHUTDN_H */

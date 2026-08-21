@@ -207,7 +207,6 @@ static CURLcode cw_pause_write(struct Curl_easy *data,
 const struct Curl_cwtype Curl_cwt_pause = {
   "cw-pause",
   NULL,
-  0,
   cw_pause_init,
   cw_pause_write,
   cw_pause_flush,

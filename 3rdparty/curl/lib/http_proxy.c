@@ -132,7 +132,7 @@ static CURLcode dynhds_add_custom(struct Curl_easy *data,
       /* trim surrounding whitespace so a padded field name (e.g.
          `Authorization :`) cannot slip past the Authorization/Cookie check */
       curlx_str_trimblanks(&name);
-      if(data->state.http_host &&
+      if(data->state.aptr.host &&
          /* a Host: header was sent already, do not pass on any custom Host:
             header as that will produce *two* in the same request! */
          curlx_str_casecompare(&name, "Host"))
@@ -215,7 +215,7 @@ static CURLcode http_proxy_create_CONNECT(struct httpreq **preq,
     goto out;
   }
 
-  result = Curl_http_req_make(&req, "CONNECT", CURL_CSTRLEN("CONNECT"),
+  result = Curl_http_req_make(&req, "CONNECT", sizeof("CONNECT") - 1,
                               NULL, 0, authority, strlen(authority),
                               NULL, 0);
   if(result)
@@ -340,7 +340,7 @@ static CURLcode http_proxy_create_CONNECTUDP(struct httpreq **preq,
   }
 
   if(ver == PROXY_HTTP_V1) {
-    result = Curl_http_req_make(&req, "GET", CURL_CSTRLEN("GET"),
+    result = Curl_http_req_make(&req, "GET", sizeof("GET")-1,
                                 proxy_scheme, strlen(proxy_scheme),
                                 authority, strlen(authority),
                                 path, strlen(path));
@@ -348,7 +348,7 @@ static CURLcode http_proxy_create_CONNECTUDP(struct httpreq **preq,
       goto out;
   }
   else if(ver == PROXY_HTTP_V2 || ver == PROXY_HTTP_V3) {
-    result = Curl_http_req_make(&req, "CONNECT", CURL_CSTRLEN("CONNECT"),
+    result = Curl_http_req_make(&req, "CONNECT", sizeof("CONNECT") - 1,
                                 proxy_scheme, strlen(proxy_scheme),
                                 authority, strlen(authority),
                                 path, strlen(path));

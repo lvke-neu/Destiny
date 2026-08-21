@@ -297,7 +297,6 @@ static void deflate_do_close(struct Curl_easy *data,
 static const struct Curl_cwtype deflate_encoding = {
   "deflate",
   NULL,
-  CURL_CW_FLAG_BLOWUP,
   deflate_do_init,
   deflate_do_write,
   Curl_cwriter_def_flush,
@@ -360,7 +359,6 @@ static void gzip_do_close(struct Curl_easy *data,
 static const struct Curl_cwtype gzip_encoding = {
   "gzip",
   "x-gzip",
-  CURL_CW_FLAG_BLOWUP,
   gzip_do_init,
   gzip_do_write,
   Curl_cwriter_def_flush,
@@ -495,7 +493,6 @@ static void brotli_do_close(struct Curl_easy *data,
 static const struct Curl_cwtype brotli_encoding = {
   "br",
   NULL,
-  CURL_CW_FLAG_BLOWUP,
   brotli_do_init,
   brotli_do_write,
   Curl_cwriter_def_flush,
@@ -610,7 +607,6 @@ static void zstd_do_close(struct Curl_easy *data,
 static const struct Curl_cwtype zstd_encoding = {
   "zstd",
   NULL,
-  CURL_CW_FLAG_BLOWUP,
   zstd_do_init,
   zstd_do_write,
   Curl_cwriter_def_flush,
@@ -623,7 +619,6 @@ static const struct Curl_cwtype zstd_encoding = {
 static const struct Curl_cwtype identity_encoding = {
   "identity",
   "none",
-  0,
   Curl_cwriter_def_init,
   Curl_cwriter_def_write,
   Curl_cwriter_def_flush,
@@ -712,7 +707,6 @@ static void error_do_close(struct Curl_easy *data,
 static const struct Curl_cwtype error_writer = {
   "ce-error",
   NULL,
-  0,
   error_do_init,
   error_do_write,
   Curl_cwriter_def_flush,
@@ -783,8 +777,7 @@ CURLcode Curl_build_unencoding_stack(struct Curl_easy *data,
        * Exception is "chunked" transfer-encoding which always must happen */
       if((is_transfer && !data->set.http_transfer_encoding && !is_chunked) ||
          (!is_transfer && data->set.http_ce_skip)) {
-        bool is_identity = (namelen == 8) &&
-                           curl_strnequal(name, "identity", 8);
+        bool is_identity = curl_strnequal(name, "identity", 8);
         /* not requested, ignore */
         CURL_TRC_WRITE(data, "decoder not requested, ignored: %.*s",
                        (int)namelen, name);

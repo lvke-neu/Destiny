@@ -291,9 +291,9 @@ static CURLcode set_ssl_ciphers(SCHANNEL_CRED *schannel_cred, char *ciphers,
     if(alg)
       algIds[algCount++] = (ALG_ID)alg;
     else if(!strncmp(startCur, "USE_STRONG_CRYPTO",
-                     CURL_CSTRLEN("USE_STRONG_CRYPTO")) ||
+                     sizeof("USE_STRONG_CRYPTO") - 1) ||
             !strncmp(startCur, "SCH_USE_STRONG_CRYPTO",
-                     CURL_CSTRLEN("SCH_USE_STRONG_CRYPTO")))
+                     sizeof("SCH_USE_STRONG_CRYPTO") - 1))
       schannel_cred->dwFlags |= SCH_USE_STRONG_CRYPTO;
     else
       return CURLE_SSL_CIPHER;
@@ -441,13 +441,12 @@ static CURLcode get_client_cert(struct Curl_cfilter *cf,
       if(fInCert) {
         long cert_tell = 0;
         bool continue_reading = fseek(fInCert, 0, SEEK_END) == 0;
-        if(continue_reading) {
+        if(continue_reading)
           cert_tell = ftell(fInCert);
-          if(cert_tell < 0)
-            continue_reading = FALSE;
-          else
-            certsize = (size_t)cert_tell;
-        }
+        if(cert_tell < 0)
+          continue_reading = FALSE;
+        else
+          certsize = (size_t)cert_tell;
         if(continue_reading)
           continue_reading = fseek(fInCert, 0, SEEK_SET) == 0;
         if(continue_reading && (certsize < CURL_MAX_INPUT_LENGTH))
@@ -627,7 +626,8 @@ static CURLcode acquire_sspi_handle(struct Curl_cfilter *cf,
     }
 
     sspi_status =
-      Curl_pSecFn->AcquireCredentialsHandle(NULL, CURL_UNCONST(UNISP_NAME),
+      Curl_pSecFn->AcquireCredentialsHandle(NULL,
+                                            (TCHAR *)CURL_UNCONST(UNISP_NAME),
                                             SECPKG_CRED_OUTBOUND, NULL,
                                             &credentials, NULL, NULL,
                                             &backend->cred->cred_handle, NULL);
@@ -676,7 +676,8 @@ static CURLcode acquire_sspi_handle(struct Curl_cfilter *cf,
     }
 
     sspi_status =
-      Curl_pSecFn->AcquireCredentialsHandle(NULL, CURL_UNCONST(UNISP_NAME),
+      Curl_pSecFn->AcquireCredentialsHandle(NULL,
+                                            (TCHAR *)CURL_UNCONST(UNISP_NAME),
                                             SECPKG_CRED_OUTBOUND, NULL,
                                             &schannel_cred, NULL, NULL,
                                             &backend->cred->cred_handle, NULL);
@@ -919,7 +920,7 @@ static CURLcode schannel_connect_step1(struct Curl_cfilter *cf,
 
     /* The first four bytes is an unsigned int indicating number
        of bytes of data in the rest of the buffer. */
-    extension_len = (unsigned int *)(void *)&alpn_buffer[cur];
+    extension_len = (unsigned int *)(void *)(&alpn_buffer[cur]);
     cur += (int)sizeof(unsigned int);
 
     /* The next four bytes are an indicator that this buffer contains
@@ -930,7 +931,7 @@ static CURLcode schannel_connect_step1(struct Curl_cfilter *cf,
 
     /* The next two bytes is an unsigned short indicating the number
        of bytes used to list the preferred protocols. */
-    list_len = (unsigned short *)(void *)&alpn_buffer[cur];
+    list_len = (unsigned short *)(void *)(&alpn_buffer[cur]);
     cur += (int)sizeof(unsigned short);
 
     list_start_index = cur;
@@ -1367,7 +1368,7 @@ static CURLcode schannel_connect_step2(struct Curl_cfilter *cf,
       /* check if the handshake needs to be continued */
       result = CURLE_OK;
       for(i = 0; i < 3; i++) {
-        /* search for handshake tokens that need to be sent */
+        /* search for handshake tokens that need to be send */
         if(outbuf[i].BufferType == SECBUFFER_TOKEN && outbuf[i].cbBuffer > 0) {
           size_t written = 0;
           DEBUGF(infof(data, "schannel: sending next handshake data: "
@@ -1994,18 +1995,13 @@ static CURLcode schannel_send(struct Curl_cfilter *cf, struct Curl_easy *data,
     len = backend->stream_sizes.cbMaximumMessage;
   }
 
-  /* calculate the complete message length and prepare the send buffer */
+  /* calculate the complete message length and allocate a buffer for it */
   data_len = backend->stream_sizes.cbHeader + len +
     backend->stream_sizes.cbTrailer;
-  if(data_len > backend->send_buffer_len) {
-    ptr = curlx_realloc(backend->send_buffer, data_len);
-    if(!ptr)
-      return CURLE_OUT_OF_MEMORY;
-    backend->send_buffer = ptr;
-    backend->send_buffer_len = data_len;
+  ptr = curlx_malloc(data_len);
+  if(!ptr) {
+    return CURLE_OUT_OF_MEMORY;
   }
-  else
-    ptr = backend->send_buffer;
 
   /* setup output buffers (header, data, trailer, empty) */
   InitSecBuffer(&outbuf[0], SECBUFFER_STREAM_HEADER,
@@ -2093,6 +2089,8 @@ static CURLcode schannel_send(struct Curl_cfilter *cf, struct Curl_easy *data,
   else {
     result = CURLE_SEND_ERROR;
   }
+
+  curlx_safefree(ptr);
 
   if(len == *pnwritten)
     /* Encrypted message including header, data and trailer entirely sent.
@@ -2568,10 +2566,6 @@ static void schannel_close(struct Curl_cfilter *cf, struct Curl_easy *data)
     backend->cred = NULL;
   }
 
-  /* free the buffer used to encrypt outgoing data */
-  curlx_safefree(backend->send_buffer);
-  backend->send_buffer_len = 0;
-
   /* free internal buffer for received encrypted data */
   if(backend->encdata.buffer) {
     curlx_safefree(backend->encdata.buffer);
@@ -2742,7 +2736,7 @@ HCERTSTORE Curl_schannel_get_cached_cert_store(struct Curl_cfilter *cf,
 
   share = Curl_hash_pick(&multi->proto_hash,
                          CURL_UNCONST(MPROTO_SCHANNEL_CERT_SHARE_KEY),
-                         CURL_CSTRLEN(MPROTO_SCHANNEL_CERT_SHARE_KEY));
+                         sizeof(MPROTO_SCHANNEL_CERT_SHARE_KEY) - 1);
   if(!share || !share->cert_store) {
     return NULL;
   }
@@ -2791,7 +2785,7 @@ HCERTSTORE Curl_schannel_get_cached_cert_store(struct Curl_cfilter *cf,
 static void schannel_cert_share_free(void *key, size_t key_len, void *p)
 {
   struct schannel_cert_share *share = p;
-  DEBUGASSERT(key_len == CURL_CSTRLEN(MPROTO_SCHANNEL_CERT_SHARE_KEY));
+  DEBUGASSERT(key_len == (sizeof(MPROTO_SCHANNEL_CERT_SHARE_KEY) - 1));
   DEBUGASSERT(!memcmp(MPROTO_SCHANNEL_CERT_SHARE_KEY, key, key_len));
   (void)key;
   (void)key_len;
@@ -2834,7 +2828,7 @@ bool Curl_schannel_set_cached_cert_store(struct Curl_cfilter *cf,
 
   share = Curl_hash_pick(&multi->proto_hash,
                          CURL_UNCONST(MPROTO_SCHANNEL_CERT_SHARE_KEY),
-                         CURL_CSTRLEN(MPROTO_SCHANNEL_CERT_SHARE_KEY));
+                         sizeof(MPROTO_SCHANNEL_CERT_SHARE_KEY) - 1);
   if(!share) {
     share = curlx_calloc(1, sizeof(*share));
     if(!share) {
@@ -2843,7 +2837,7 @@ bool Curl_schannel_set_cached_cert_store(struct Curl_cfilter *cf,
     }
     if(!Curl_hash_add2(&multi->proto_hash,
                        CURL_UNCONST(MPROTO_SCHANNEL_CERT_SHARE_KEY),
-                       CURL_CSTRLEN(MPROTO_SCHANNEL_CERT_SHARE_KEY),
+                       sizeof(MPROTO_SCHANNEL_CERT_SHARE_KEY) - 1,
                        share, schannel_cert_share_free)) {
       curlx_free(share);
       curlx_free(CAfile);

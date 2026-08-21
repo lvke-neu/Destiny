@@ -44,6 +44,7 @@
 #include "urldata.h"
 #include "sendf.h"
 #include "curl_trc.h"
+#include "hostip.h"
 #include "progress.h"
 #include "transfer.h"
 #include "vssh/ssh.h"
@@ -372,8 +373,8 @@ static CURLcode ssh_knownhost(struct Curl_easy *data,
                                           (conn->origin->port != PORT_SSH) ?
                                           conn->origin->port : -1,
                                           remotekey, keylen,
-                                          LIBSSH2_KNOWNHOST_TYPE_PLAIN |
-                                          LIBSSH2_KNOWNHOST_KEYENC_RAW |
+                                          LIBSSH2_KNOWNHOST_TYPE_PLAIN|
+                                          LIBSSH2_KNOWNHOST_KEYENC_RAW|
                                           keybit,
                                           &host);
 
@@ -1767,7 +1768,7 @@ static CURLcode ssh_state_sftp_realpath(struct Curl_easy *data,
     return CURLE_FAILED_INIT;
 
   rc = libssh2_sftp_symlink_ex(sshc->sftp_session, ".",
-                               curlx_uztoui(CURL_CSTRLEN(".")),
+                               curlx_uztoui(strlen(".")),
                                sshp->readdir_filename, CURL_PATH_MAX,
                                LIBSSH2_SFTP_REALPATH);
   if(rc == LIBSSH2_ERROR_EAGAIN)
@@ -2849,7 +2850,7 @@ static CURLcode ssh_state_session_free(struct Curl_easy *data,
   if(result)
     return result;
   memset(sshc, 0, sizeof(struct ssh_conn));
-  connclose(conn);
+  connclose(conn, "SSH session free");
   sshc->state = SSH_SESSION_FREE; /* current */
   myssh_to(data, sshc, SSH_STOP);
   return CURLE_OK;
@@ -3278,7 +3279,7 @@ static ssize_t ssh_tls_recv(libssh2_socket_t sock, void *buffer,
                             size_t length, int flags, void **abstract)
 {
   struct Curl_easy *data = (struct Curl_easy *)*abstract;
-  int8_t sockindex = Curl_conn_sockindex(data, sock);
+  int sockindex = Curl_conn_sockindex(data, sock);
   size_t nread;
   CURLcode result;
   struct connectdata *conn = data->conn;
@@ -3306,7 +3307,7 @@ static ssize_t ssh_tls_send(libssh2_socket_t sock, const void *buffer,
                             size_t length, int flags, void **abstract)
 {
   struct Curl_easy *data = (struct Curl_easy *)*abstract;
-  int8_t sockindex = Curl_conn_sockindex(data, sock);
+  int sockindex = Curl_conn_sockindex(data, sock);
   size_t nwrite;
   CURLcode result;
   struct connectdata *conn = data->conn;
@@ -3614,7 +3615,7 @@ static CURLcode scp_done(struct Curl_easy *data, CURLcode status,
   return ssh_done(data, status);
 }
 
-static CURLcode scp_send(struct Curl_easy *data, int8_t sockindex,
+static CURLcode scp_send(struct Curl_easy *data, int sockindex,
                          const uint8_t *mem, size_t len, bool eos,
                          size_t *pnwritten)
 {
@@ -3646,7 +3647,7 @@ static CURLcode scp_send(struct Curl_easy *data, int8_t sockindex,
   return result;
 }
 
-static CURLcode scp_recv(struct Curl_easy *data, int8_t sockindex,
+static CURLcode scp_recv(struct Curl_easy *data, int sockindex,
                          char *mem, size_t len, size_t *pnread)
 {
   struct connectdata *conn = data->conn;
@@ -3772,7 +3773,7 @@ static CURLcode sftp_done(struct Curl_easy *data, CURLcode status,
 }
 
 /* return number of sent bytes */
-static CURLcode sftp_send(struct Curl_easy *data, int8_t sockindex,
+static CURLcode sftp_send(struct Curl_easy *data, int sockindex,
                           const uint8_t *mem, size_t len, bool eos,
                           size_t *pnwritten)
 {
@@ -3803,7 +3804,7 @@ static CURLcode sftp_send(struct Curl_easy *data, int8_t sockindex,
  * Return number of received (decrypted) bytes
  * or <0 on error
  */
-static CURLcode sftp_recv(struct Curl_easy *data, int8_t sockindex,
+static CURLcode sftp_recv(struct Curl_easy *data, int sockindex,
                           char *mem, size_t len, size_t *pnread)
 {
   struct connectdata *conn = data->conn;

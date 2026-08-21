@@ -28,16 +28,16 @@
 #include "urldata.h"
 #include "curl_trc.h"
 #include "cfilters.h"
+#include "cf-dns.h"
 #include "cf-setup.h"
 #include "connect.h"
+#include "hostip.h"
+#include "httpsrr.h"
 #include "multiif.h"
 #include "cf-https-connect.h"
 #include "http2.h"
 #include "progress.h"
 #include "select.h"
-#include "vdns/cf-dns.h"
-#include "vdns/hostip.h"
-#include "vdns/httpsrr.h"
 #include "vquic/vquic.h"
 
 typedef enum {
@@ -652,6 +652,26 @@ static bool cf_hc_data_pending(struct Curl_cfilter *cf,
   return FALSE;
 }
 
+static struct curltime cf_get_max_baller_time(struct Curl_cfilter *cf,
+                                              struct Curl_easy *data,
+                                              int query)
+{
+  struct cf_hc_ctx *ctx = cf->ctx;
+  struct curltime t, tmax;
+  size_t i;
+
+  memset(&tmax, 0, sizeof(tmax));
+  for(i = 0; i < ctx->baller_count; i++) {
+    struct Curl_cfilter *cfb = ctx->ballers[i].cf;
+    memset(&t, 0, sizeof(t));
+    if(cfb && !cfb->cft->query(cfb, data, query, NULL, &t)) {
+      if((t.tv_sec || t.tv_usec) && curlx_ptimediff_us(&t, &tmax) > 0)
+        tmax = t;
+    }
+  }
+  return tmax;
+}
+
 static CURLcode cf_hc_query(struct Curl_cfilter *cf,
                             struct Curl_easy *data,
                             int query, int *pres1, void *pres2)
@@ -661,6 +681,16 @@ static CURLcode cf_hc_query(struct Curl_cfilter *cf,
 
   if(!cf->connected) {
     switch(query) {
+    case CF_QUERY_TIMER_CONNECT: {
+      struct curltime *when = pres2;
+      *when = cf_get_max_baller_time(cf, data, CF_QUERY_TIMER_CONNECT);
+      return CURLE_OK;
+    }
+    case CF_QUERY_TIMER_APPCONNECT: {
+      struct curltime *when = pres2;
+      *when = cf_get_max_baller_time(cf, data, CF_QUERY_TIMER_APPCONNECT);
+      return CURLE_OK;
+    }
     case CF_QUERY_NEED_FLUSH: {
       for(i = 0; i < ctx->baller_count; i++)
         if(cf_hc_baller_needs_flush(&ctx->ballers[i], data)) {
@@ -687,26 +717,12 @@ static CURLcode cf_hc_cntrl(struct Curl_cfilter *cf,
   size_t i;
 
   if(!cf->connected) {
-    switch(event) {
-    case CF_CTRL_REPORT_STATS:
-      for(i = 0; i < ctx->baller_count; i++) {
-        /* Make the first baller that connected at network level report */
-        if(Curl_conn_cf_is_ip_connected(ctx->ballers[i].cf, data)) {
-          Curl_conn_cf_cntrl(ctx->ballers[i].cf, data, TRUE,
-                             event, arg1, arg2);
-          break;
-        }
-      }
-      break;
-    default:
-      for(i = 0; i < ctx->baller_count; i++) {
-        result = cf_hc_baller_cntrl(&ctx->ballers[i], data, event, arg1, arg2);
-        if(result && (result != CURLE_AGAIN))
-          goto out;
-      }
-      result = CURLE_OK;
-      break;
+    for(i = 0; i < ctx->baller_count; i++) {
+      result = cf_hc_baller_cntrl(&ctx->ballers[i], data, event, arg1, arg2);
+      if(result && (result != CURLE_AGAIN))
+        goto out;
     }
+    result = CURLE_OK;
   }
 out:
   return result;
@@ -770,7 +786,7 @@ out:
 static CURLcode cf_hc_add(struct Curl_easy *data,
                           struct Curl_peer *destination,
                           struct connectdata *conn,
-                          int8_t sockindex,
+                          int sockindex,
                           uint8_t def_transport)
 {
   struct Curl_cfilter *cf;
@@ -793,7 +809,7 @@ out:
 CURLcode Curl_cf_https_setup(struct Curl_easy *data,
                              struct Curl_peer *destination,
                              struct connectdata *conn,
-                             int8_t sockindex)
+                             int sockindex)
 {
   CURLcode result = CURLE_OK;
 

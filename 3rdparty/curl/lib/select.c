@@ -23,6 +23,10 @@
  ***************************************************************************/
 #include "curl_setup.h"
 
+#if !defined(HAVE_SELECT) && !defined(HAVE_POLL)
+#error "We cannot compile without select() or poll() support."
+#endif
+
 #ifdef HAVE_SYS_SELECT_H
 #include <sys/select.h>
 #elif defined(HAVE_UNISTD_H)
@@ -36,7 +40,7 @@
 #include "curlx/timediff.h"
 #include "curlx/wait.h"
 
-#ifndef HAVE_POLL  /* use select() */
+#ifndef HAVE_POLL
 /*
  * This is a wrapper around select() to aid in Windows compatibility. A
  * negative timeout value makes this function wait indefinitely, unless no

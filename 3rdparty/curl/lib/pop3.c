@@ -58,6 +58,7 @@
 
 #include "sendf.h"
 #include "curl_trc.h"
+#include "hostip.h"
 #include "progress.h"
 #include "transfer.h"
 #include "escape.h"
@@ -1406,7 +1407,7 @@ static const struct SASLproto saslpop3 = {
   pop3_continue_auth,   /* Send authentication continuation */
   pop3_cancel_auth,     /* Send authentication cancellation */
   pop3_get_message,     /* Get SASL response message */
-  255 - 8,              /* Max line len - strlen("AUTH ") - 1 space - CRLF */
+  255 - 8,              /* Max line len - strlen("AUTH ") - 1 space - crlf */
   '*',                  /* Code received when continuation is expected */
   '+',                  /* Code to receive upon authentication success */
   SASL_AUTH_DEFAULT,    /* Default mechanisms */
@@ -1477,8 +1478,7 @@ static CURLcode pop3_done(struct Curl_easy *data, CURLcode status,
     return CURLE_OK;
 
   if(status) {
-    CURL_TRC_M(data, "POP3 done with bad status");
-    connclose(data->conn);
+    connclose(data->conn, "POP3 done with bad status");
     result = status;         /* use the already set error code */
   }
 

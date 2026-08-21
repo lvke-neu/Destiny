@@ -60,6 +60,7 @@
 
 #include "sendf.h"
 #include "curl_trc.h"
+#include "hostip.h"
 #include "progress.h"
 #include "transfer.h"
 #include "escape.h"
@@ -1656,7 +1657,7 @@ static const struct SASLproto saslsmtp = {
   smtp_continue_auth,   /* Send authentication continuation */
   smtp_cancel_auth,     /* Cancel authentication */
   smtp_get_message,     /* Get SASL response message */
-  512 - 8,              /* Max line len - strlen("AUTH ") - 1 space - CRLF */
+  512 - 8,              /* Max line len - strlen("AUTH ") - 1 space - crlf */
   334,                  /* Code received when continuation is expected */
   235,                  /* Code to receive upon authentication success */
   SASL_AUTH_DEFAULT,    /* Default mechanisms */
@@ -1738,8 +1739,7 @@ static CURLcode smtp_done(struct Curl_easy *data, CURLcode status,
   curlx_safefree(smtp->custom);
 
   if(status) {
-    CURL_TRC_M(data, "SMTP done with bad status");
-    connclose(conn); /* marked for closure */
+    connclose(conn, "SMTP done with bad status"); /* marked for closure */
     result = status;         /* use the already set error code */
   }
   else if(!data->set.connect_only && data->set.mail_rcpt &&

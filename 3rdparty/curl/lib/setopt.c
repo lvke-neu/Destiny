@@ -41,6 +41,7 @@
 #include "curl_share.h"
 #include "vtls/vtls.h"
 #include "curl_trc.h"
+#include "hostip.h"
 #include "setopt.h"
 #include "altsvc.h"
 #include "hsts.h"
@@ -153,7 +154,6 @@ static CURLcode setstropt_userpwd(const char *option, char **userp,
   curlx_free(*userp);
   *userp = user;
 
-  curlx_strzero(*passwdp);
   curlx_free(*passwdp);
   *passwdp = passwd;
 
@@ -355,10 +355,46 @@ static CURLcode setopt_RTSP_REQUEST(struct Curl_easy *data, long arg)
    * Set the RTSP request method (OPTIONS, SETUP, PLAY, etc...) Would this be
    * better if the RTSPREQ_* were moved into here?
    */
-  if((arg <= CURL_RTSPREQ_NONE) || (arg >= CURL_RTSPREQ_LAST))
+  Curl_RtspReq rtspreq = RTSPREQ_NONE;
+  switch(arg) {
+  case CURL_RTSPREQ_OPTIONS:
+    rtspreq = RTSPREQ_OPTIONS;
+    break;
+  case CURL_RTSPREQ_DESCRIBE:
+    rtspreq = RTSPREQ_DESCRIBE;
+    break;
+  case CURL_RTSPREQ_ANNOUNCE:
+    rtspreq = RTSPREQ_ANNOUNCE;
+    break;
+  case CURL_RTSPREQ_SETUP:
+    rtspreq = RTSPREQ_SETUP;
+    break;
+  case CURL_RTSPREQ_PLAY:
+    rtspreq = RTSPREQ_PLAY;
+    break;
+  case CURL_RTSPREQ_PAUSE:
+    rtspreq = RTSPREQ_PAUSE;
+    break;
+  case CURL_RTSPREQ_TEARDOWN:
+    rtspreq = RTSPREQ_TEARDOWN;
+    break;
+  case CURL_RTSPREQ_GET_PARAMETER:
+    rtspreq = RTSPREQ_GET_PARAMETER;
+    break;
+  case CURL_RTSPREQ_SET_PARAMETER:
+    rtspreq = RTSPREQ_SET_PARAMETER;
+    break;
+  case CURL_RTSPREQ_RECORD:
+    rtspreq = RTSPREQ_RECORD;
+    break;
+  case CURL_RTSPREQ_RECEIVE:
+    rtspreq = RTSPREQ_RECEIVE;
+    break;
+  default:
     return CURLE_BAD_FUNCTION_ARGUMENT;
+  }
 
-  data->set.rtspreq = (unsigned char)arg;
+  data->set.rtspreq = rtspreq;
   return CURLE_OK;
 }
 #endif /* !CURL_DISABLE_RTSP */
@@ -1062,23 +1098,10 @@ static CURLcode setopt_long_http(struct Curl_easy *data, CURLoption option,
   case CURLOPT_STREAM_WEIGHT:
 #if defined(USE_HTTP2) || defined(USE_HTTP3)
     if((arg >= 1) && (arg <= 256))
-      s->weight = (int)arg;
+      s->priority.weight = (int)arg;
     break;
 #else
     result = CURLE_NOT_BUILT_IN;
-    break;
-#endif
-#ifndef CURL_DISABLE_HTTPSIG
-  case CURLOPT_HTTPSIG_ALGORITHM:
-    if(arg != CURLHTTPSIG_NONE &&
-       arg != CURLHTTPSIG_ED25519 &&
-       arg != CURLHTTPSIG_HMAC_SHA256)
-      return CURLE_BAD_FUNCTION_ARGUMENT;
-    s->httpsig_algorithm = (uint8_t)arg;
-    if(arg)
-      s->httpauth = (uint32_t)CURLAUTH_HTTPSIG;
-    else
-      s->httpauth &= ~(uint32_t)CURLAUTH_HTTPSIG;
     break;
 #endif
   default:
@@ -1527,9 +1550,7 @@ static CURLcode cookielist(struct Curl_easy *data, const char *ptr)
   }
   else if(curl_strequal(ptr, "RELOAD")) {
     /* reload cookies from file */
-    return Curl_cookie_loadfiles(data, COOKIE_NOPSL |
-                                 (data->set.cookiesession ?
-                                  COOKIE_NOSESSION : 0));
+    return Curl_cookie_loadfiles(data);
   }
   else {
     if(!data->cookies) {
@@ -1544,20 +1565,15 @@ static CURLcode cookielist(struct Curl_easy *data, const char *ptr)
     if(strlen(ptr) > CURL_MAX_INPUT_LENGTH)
       return CURLE_BAD_FUNCTION_ARGUMENT;
 
-    /* Adding these cookies without the PSL check, because the PSL is not
-       initialized until *perform() time, and this might be called before
-       that */
     Curl_share_lock(data, CURL_LOCK_DATA_COOKIE, CURL_LOCK_ACCESS_SINGLE);
     if(checkprefix("Set-Cookie:", ptr))
       /* HTTP Header format line */
-      result = Curl_cookie_add(data, data->cookies, ptr + 11,
-                               NULL, NULL,
-                               COOKIE_HTTPHEADER | COOKIE_SECURE |
-                               COOKIE_NOPSL);
+      result = Curl_cookie_add(data, data->cookies, TRUE, FALSE, ptr + 11,
+                               NULL, NULL, TRUE);
     else
       /* Netscape format line */
-      result = Curl_cookie_add(data, data->cookies, ptr, NULL,
-                               NULL, COOKIE_SECURE | COOKIE_NOPSL);
+      result = Curl_cookie_add(data, data->cookies, FALSE, FALSE, ptr, NULL,
+                               NULL, TRUE);
     Curl_share_unlock(data, CURL_LOCK_DATA_COOKIE);
   }
   return result;
@@ -1639,7 +1655,6 @@ static CURLcode setopt_cptr_proxy(struct Curl_easy *data, CURLoption option,
       result = Curl_urldecode(p, 0, &s->str[STRING_PROXYPASSWORD], NULL,
                               REJECT_ZERO);
     curlx_free(u);
-    curlx_strzero(p);
     curlx_free(p);
     break;
   }
@@ -2065,17 +2080,6 @@ static CURLcode setopt_cptr_http_mqtt(struct Curl_easy *data,
      */
     if(s->str[STRING_AWS_SIGV4])
       s->httpauth = CURLAUTH_AWS_SIGV4;
-    break;
-#endif
-#ifndef CURL_DISABLE_HTTPSIG
-  case CURLOPT_HTTPSIG_KEY:
-    result = Curl_setstropt(&s->str[STRING_HTTPSIG_KEY], ptr);
-    break;
-  case CURLOPT_HTTPSIG_KEYID:
-    result = Curl_setstropt(&s->str[STRING_HTTPSIG_KEYID], ptr);
-    break;
-  case CURLOPT_HTTPSIG_HEADERS:
-    result = Curl_setstropt(&s->str[STRING_HTTPSIG_HEADERS], ptr);
     break;
 #endif
   case CURLOPT_REFERER:

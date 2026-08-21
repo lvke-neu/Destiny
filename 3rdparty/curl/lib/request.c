@@ -26,6 +26,7 @@
 #include "urldata.h"
 #include "cfilters.h"
 #include "curlx/dynbuf.h"
+#include "doh.h"
 #include "progress.h"
 #include "request.h"
 #include "sendf.h"

@@ -81,20 +81,17 @@
 #include "curlx/version_win32.h"
 #include "curlx/strerr.h"
 #include "curlx/strparse.h"
-#ifdef _WIN32
-#include <mstcpip.h> /* for TCP_INITIAL_RTO_PARAMETERS */
-#endif
+
 
 /* retrieves ip address and port from a sockaddr structure. note it calls
- * curlx_inet_ntop() and returns CURLcode.
+ * curlx_inet_ntop which sets errno on fail, not SOCKERRNO.
  * @unittest 1607
  */
-UNITTEST CURLcode sockaddr2string(struct sockaddr *sa, curl_socklen_t salen,
-                                  char *addr, uint16_t *port);
-UNITTEST CURLcode sockaddr2string(struct sockaddr *sa, curl_socklen_t salen,
-                                  char *addr, uint16_t *port)
+UNITTEST bool sockaddr2string(struct sockaddr *sa, curl_socklen_t salen,
+                              char *addr, uint16_t *port);
+UNITTEST bool sockaddr2string(struct sockaddr *sa, curl_socklen_t salen,
+                              char *addr, uint16_t *port)
 {
-  CURLcode result;
   struct sockaddr_in *si = NULL;
 #ifdef USE_IPV6
   struct sockaddr_in6 *si6 = NULL;
@@ -108,21 +105,17 @@ UNITTEST CURLcode sockaddr2string(struct sockaddr *sa, curl_socklen_t salen,
   switch(sa->sa_family) {
   case AF_INET:
     si = (struct sockaddr_in *)(void *)sa;
-    result = curlx_inet_ntop(sa->sa_family, &si->sin_addr, addr,
-                             MAX_IPADR_LEN);
-    if(!result) {
+    if(curlx_inet_ntop(sa->sa_family, &si->sin_addr, addr, MAX_IPADR_LEN)) {
       *port = ntohs(si->sin_port);
-      return result;
+      return TRUE;
     }
     break;
 #ifdef USE_IPV6
   case AF_INET6:
     si6 = (struct sockaddr_in6 *)(void *)sa;
-    result = curlx_inet_ntop(sa->sa_family, &si6->sin6_addr, addr,
-                             MAX_IPADR_LEN);
-    if(!result) {
+    if(curlx_inet_ntop(sa->sa_family, &si6->sin6_addr, addr, MAX_IPADR_LEN)) {
       *port = ntohs(si6->sin6_port);
-      return result;
+      return TRUE;
     }
     break;
 #endif
@@ -135,16 +128,16 @@ UNITTEST CURLcode sockaddr2string(struct sockaddr *sa, curl_socklen_t salen,
     else
       addr[0] = 0; /* socket with no name */
     *port = 0;
-    return CURLE_OK;
+    return TRUE;
 #endif
   default:
-    result = CURLE_UNSUPPORTED_PROTOCOL;
     break;
   }
 
   addr[0] = '\0';
   *port = 0;
-  return result;
+  errno = SOCKEAFNOSUPPORT;
+  return FALSE;
 }
 
 static void tcpnodelay(struct Curl_cfilter *cf,
@@ -988,7 +981,6 @@ struct cf_socket_ctx {
   BIT(accepted);                     /* socket was accepted, not connected */
   BIT(sock_connected);               /* socket is "connected", e.g. in UDP */
   BIT(active);
-  BIT(stats_reported);
 };
 
 static CURLcode cf_socket_ctx_init(struct cf_socket_ctx *ctx,
@@ -1093,19 +1085,18 @@ static void set_local_ip(struct Curl_cfilter *cf,
     /* TFTP does not connect, so it cannot get the IP like this */
     struct Curl_sockaddr_storage ssloc;
     curl_socklen_t slen = sizeof(struct Curl_sockaddr_storage);
+    VERBOSE(char buffer[STRERROR_LEN]);
 
     memset(&ssloc, 0, sizeof(ssloc));
     if(getsockname(ctx->sock, (struct sockaddr *)&ssloc, &slen)) {
-      VERBOSE(char buffer[STRERROR_LEN]);
       VERBOSE(int sockerr = SOCKERRNO);
       infof(data, "getsockname() failed with errno %d: %s",
             sockerr, curlx_strerror(sockerr, buffer, sizeof(buffer)));
     }
-    else {
-      CURLcode result = sockaddr2string((struct sockaddr *)&ssloc, slen,
-                                        ctx->ip.local_ip, &ctx->ip.local_port);
-      if(result)
-        infof(data, "ssloc inet_ntop() failed with %d", (int)result);
+    else if(!sockaddr2string((struct sockaddr *)&ssloc, slen,
+                             ctx->ip.local_ip, &ctx->ip.local_port)) {
+      infof(data, "ssloc inet_ntop() failed with errno %d: %s",
+            errno, curlx_strerror(errno, buffer, sizeof(buffer)));
     }
   }
 #else
@@ -1117,17 +1108,21 @@ static CURLcode set_remote_ip(struct Curl_cfilter *cf,
                               struct Curl_easy *data)
 {
   struct cf_socket_ctx *ctx = cf->ctx;
-  CURLcode result;
 
   /* store remote address and port used in this connection attempt */
   ctx->ip.transport = ctx->transport;
-  result = sockaddr2string(&ctx->addr.curl_sa_addr,
-                           (curl_socklen_t)ctx->addr.addrlen,
-                           ctx->ip.remote_ip, &ctx->ip.remote_port);
-  if(result) {
-    ctx->sockerr = SOCKEAFNOSUPPORT;
+  if(!sockaddr2string(&ctx->addr.curl_sa_addr,
+                      (curl_socklen_t)ctx->addr.addrlen,
+                      ctx->ip.remote_ip, &ctx->ip.remote_port)) {
+    char buffer[STRERROR_LEN];
+
+    /* using bare errno instead of SOCKERRNO is safe here, because
+       sockaddr2string() calls curlx_inet_ntop(), and they both report failures
+       via errno (even on Windows builds). */
+    ctx->sockerr = errno;
     /* malformed address or bug in inet_ntop, try next address */
-    failf(data, "curl_sa_addr inet_ntop() failed with %d", (int)result);
+    failf(data, "curl_sa_addr inet_ntop() failed with errno %d: %s",
+          errno, curlx_strerror(errno, buffer, sizeof(buffer)));
     return CURLE_FAILED_INIT;
   }
   return CURLE_OK;
@@ -1145,51 +1140,6 @@ static int cf_socktype(int x)
 #endif
   return x;
 }
-
-#ifdef _WIN32
-
-/* Offered by mingw-w64 v10+, MS SDK 8.0/~VS2012+ */
-#ifndef SIO_TCP_INITIAL_RTO
-#define SIO_TCP_INITIAL_RTO _WSAIOW(IOC_VENDOR, 17)
-#define TCP_INITIAL_RTO_DEFAULT_RTT 0
-
-/* !checksrc! disable TYPEDEFSTRUCT 1 */
-typedef struct _TCP_INITIAL_RTO_PARAMETERS {
-  USHORT Rtt;
-  UCHAR MaxSynRetransmissions;
-} TCP_INITIAL_RTO_PARAMETERS;
-#endif
-
-#ifndef TCP_INITIAL_RTO_NO_SYN_RETRANSMISSIONS
-#define TCP_INITIAL_RTO_NO_SYN_RETRANSMISSIONS 0xFE /* -2 */
-#endif
-
-static bool targets_localhost(struct cf_socket_ctx *ctx)
-{
-  return (((ctx->addr.family == AF_INET) &&
-           !strcmp(ctx->ip.remote_ip, "127.0.0.1")) ||
-          ((ctx->addr.family == AF_INET6) &&
-           !strcmp(ctx->ip.remote_ip, "::1")));
-}
-
-/* disable TCP SYN retransmissions for localhost connection on Windows to
-   detect problems faster */
-static void tcplocalhost(struct Curl_cfilter *cf,
-                         curl_socket_t sockfd)
-{
-  if(targets_localhost(cf->ctx)) {
-    TCP_INITIAL_RTO_PARAMETERS rto;
-    DWORD bytes = 0;
-    memset(&rto, 0, sizeof(rto));
-    rto.Rtt = TCP_INITIAL_RTO_DEFAULT_RTT;
-    rto.MaxSynRetransmissions = TCP_INITIAL_RTO_NO_SYN_RETRANSMISSIONS;
-    (void)WSAIoctl(sockfd, SIO_TCP_INITIAL_RTO, &rto, sizeof(rto),
-                   NULL, 0, &bytes, NULL, NULL);
-  }
-}
-#else
-#define tcplocalhost(x, y)
-#endif
 
 static CURLcode cf_socket_open(struct Curl_cfilter *cf,
                                struct Curl_easy *data)
@@ -1264,15 +1214,11 @@ static CURLcode cf_socket_open(struct Curl_cfilter *cf,
   is_tcp = (ctx->addr.family == AF_INET) &&
     cf_socktype(ctx->addr.socktype) == SOCK_STREAM;
 #endif
-  if(is_tcp) {
-    if(data->set.tcp_nodelay)
-      tcpnodelay(cf, data, ctx->sock);
+  if(is_tcp && data->set.tcp_nodelay)
+    tcpnodelay(cf, data, ctx->sock);
 
-    if(data->set.tcp_keepalive)
-      tcpkeepalive(cf, data, ctx->sock);
-
-    tcplocalhost(cf, ctx->sock);
-  }
+  if(is_tcp && data->set.tcp_keepalive)
+    tcpkeepalive(cf, data, ctx->sock);
 
   if(data->set.fsockopt) {
     /* activate callback for setting socket options */
@@ -1730,26 +1676,6 @@ static CURLcode cf_socket_cntrl(struct Curl_cfilter *cf,
   case CF_CTRL_FORGET_SOCKET:
     ctx->sock = CURL_SOCKET_BAD;
     break;
-  case CF_CTRL_REPORT_STATS:
-    if(cf->connected && !ctx->stats_reported) {
-      struct curltime *ts = NULL;
-      switch(ctx->transport) {
-      case TRNSPRT_UDP:
-      case TRNSPRT_QUIC:
-        /* Since UDP connected sockets work different from TCP, we use the
-         * time of the first byte from the peer as the "connect" time. */
-        if(ctx->got_first_byte)
-          ts = &ctx->first_byte_at;
-        break;
-      default:
-        ts = &ctx->connected_at;
-        break;
-      }
-      if(ts) {
-        Curl_pgrsTimeWas(data, TIMER_CONNECT, *ts);
-        ctx->stats_reported = TRUE;
-      }
-    }
   }
   return CURLE_OK;
 }
@@ -1820,6 +1746,24 @@ static CURLcode cf_socket_query(struct Curl_cfilter *cf,
     else
       *pres1 = -1;
     return CURLE_OK;
+  case CF_QUERY_TIMER_CONNECT: {
+    struct curltime *when = pres2;
+    switch(ctx->transport) {
+    case TRNSPRT_UDP:
+    case TRNSPRT_QUIC:
+      /* Since UDP connected sockets work different from TCP, we use the
+       * time of the first byte from the peer as the "connect" time. */
+      if(ctx->got_first_byte) {
+        *when = ctx->first_byte_at;
+        break;
+      }
+      FALLTHROUGH();
+    default:
+      *when = ctx->connected_at;
+      break;
+    }
+    return CURLE_OK;
+  }
   case CF_QUERY_IP_INFO:
 #ifdef USE_IPV6
     *pres1 = (ctx->addr.family == AF_INET6);
@@ -1827,12 +1771,6 @@ static CURLcode cf_socket_query(struct Curl_cfilter *cf,
     *pres1 = FALSE;
 #endif
     *(struct ip_quadruple *)pres2 = ctx->ip;
-    return CURLE_OK;
-  case CF_QUERY_REALLY_CONNECTED:
-    if(cf->cft != &Curl_cft_udp)
-      *pres1 = cf->connected;
-    else
-      *pres1 = ctx->got_first_byte;
     return CURLE_OK;
   default:
     break;
@@ -2167,7 +2105,7 @@ static void cf_tcp_set_accepted_remote_ip(struct Curl_cfilter *cf,
 {
   struct cf_socket_ctx *ctx = cf->ctx;
 #ifdef HAVE_GETPEERNAME
-  CURLcode result;
+  char buffer[STRERROR_LEN];
   struct Curl_sockaddr_storage ssrem;
   curl_socklen_t plen;
 
@@ -2176,16 +2114,15 @@ static void cf_tcp_set_accepted_remote_ip(struct Curl_cfilter *cf,
   plen = sizeof(ssrem);
   memset(&ssrem, 0, plen);
   if(getpeername(ctx->sock, (struct sockaddr *)&ssrem, &plen)) {
-    char buffer[STRERROR_LEN];
     int sockerr = SOCKERRNO;
     failf(data, "getpeername() failed with errno %d: %s",
           sockerr, curlx_strerror(sockerr, buffer, sizeof(buffer)));
     return;
   }
-  result = sockaddr2string((struct sockaddr *)&ssrem, plen,
-                            ctx->ip.remote_ip, &ctx->ip.remote_port);
-  if(result) {
-    failf(data, "ssrem inet_ntop() failed with %d", (int)result);
+  if(!sockaddr2string((struct sockaddr *)&ssrem, plen,
+                      ctx->ip.remote_ip, &ctx->ip.remote_port)) {
+    failf(data, "ssrem inet_ntop() failed with errno %d: %s",
+          errno, curlx_strerror(errno, buffer, sizeof(buffer)));
     return;
   }
 #else
@@ -2332,7 +2269,7 @@ struct Curl_cftype Curl_cft_tcp_accept = {
 
 CURLcode Curl_conn_tcp_listen_set(struct Curl_easy *data,
                                   struct connectdata *conn,
-                                  int8_t sockindex, curl_socket_t *s)
+                                  int sockindex, curl_socket_t *s)
 {
   CURLcode result;
   struct Curl_cfilter *cf = NULL;
@@ -2372,7 +2309,7 @@ out:
 }
 
 bool Curl_conn_is_tcp_listen(struct Curl_easy *data,
-                             int8_t sockindex)
+                             int sockindex)
 {
   struct Curl_cfilter *cf = data->conn->cfilter[sockindex];
   while(cf) {

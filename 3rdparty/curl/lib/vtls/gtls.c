@@ -591,7 +591,7 @@ static struct gtls_shared_creds *gtls_get_cached_creds(struct Curl_cfilter *cf,
   if(data->multi) {
     shared_creds = Curl_hash_pick(&data->multi->proto_hash,
                                   CURL_UNCONST(MPROTO_GTLS_X509_KEY),
-                                  CURL_CSTRLEN(MPROTO_GTLS_X509_KEY));
+                                  sizeof(MPROTO_GTLS_X509_KEY) - 1);
     if(shared_creds && shared_creds->creds &&
        !gtls_shared_creds_expired(data, shared_creds) &&
        !gtls_shared_creds_different(cf, shared_creds)) {
@@ -604,7 +604,7 @@ static struct gtls_shared_creds *gtls_get_cached_creds(struct Curl_cfilter *cf,
 static void gtls_shared_creds_hash_free(void *key, size_t key_len, void *p)
 {
   struct gtls_shared_creds *sc = p;
-  DEBUGASSERT(key_len == CURL_CSTRLEN(MPROTO_GTLS_X509_KEY));
+  DEBUGASSERT(key_len == (sizeof(MPROTO_GTLS_X509_KEY) - 1));
   DEBUGASSERT(!memcmp(MPROTO_GTLS_X509_KEY, key, key_len));
   (void)key;
   (void)key_len;
@@ -635,7 +635,7 @@ static void gtls_set_cached_creds(struct Curl_cfilter *cf,
 
   if(!Curl_hash_add2(&data->multi->proto_hash,
                      CURL_UNCONST(MPROTO_GTLS_X509_KEY),
-                     CURL_CSTRLEN(MPROTO_GTLS_X509_KEY),
+                     sizeof(MPROTO_GTLS_X509_KEY) - 1,
                      sc, gtls_shared_creds_hash_free)) {
     Curl_gtls_shared_creds_free(&sc); /* down reference again */
     return;
@@ -1043,8 +1043,7 @@ static int keylog_callback(gnutls_session_t session, const char *label,
     return -1;
   }
 
-  Curl_tls_keylog_write(label, crandom.data, crandom.size,
-                        secret->data, secret->size);
+  Curl_tls_keylog_write(label, crandom.data, secret->data, secret->size);
   return 0;
 }
 

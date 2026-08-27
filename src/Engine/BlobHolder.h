@@ -1,5 +1,6 @@
 #pragma once
 #include "Object.h"
+#include <mutex>
 
 namespace Destiny
 {
@@ -15,7 +16,7 @@ namespace Destiny
 			loading_state_succeeded
 		};
 	public:
-		BlobHolder() = default;
+		BlobHolder();
 		BlobHolder(std::shared_ptr<BlobLoader> blobLoader, const std::string& path);
 		virtual ~BlobHolder() = default;
 	public:
@@ -35,6 +36,7 @@ namespace Destiny
 		std::shared_ptr<BlobLoader>		m_blobLoader;
 		LoadingState					m_state;
 		std::string						m_path;
+		mutable std::mutex				m_lock;
 	};
 
 	inline const std::string& BlobHolder::getPath() const
@@ -49,6 +51,7 @@ namespace Destiny
 
 	inline std::shared_ptr<Blob> BlobHolder::getBlob() const
 	{
+		std::lock_guard<std::mutex> lock{ m_lock };
 		return m_blob;
 	}
 
@@ -59,16 +62,19 @@ namespace Destiny
 
 	inline bool BlobHolder::isLoadingSucceed()
 	{
+		std::lock_guard<std::mutex> lock{ m_lock };
 		return m_state == loading_state_succeeded;
 	}
 
 	inline bool BlobHolder::isLoadingFailed()
 	{
+		std::lock_guard<std::mutex> lock{ m_lock };
 		return m_state == loading_state_failed;
 	}
 
 	inline bool BlobHolder::isLoadingPending()
 	{
+		std::lock_guard<std::mutex> lock{ m_lock };
 		return m_state == loading_state_pending;
 	}
 }

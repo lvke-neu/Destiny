@@ -47,5 +47,61 @@ namespace Destiny
 		delete[] guidStr;
 		return str;
 	}
+
+    bool Utility::CopyToClipboard(const std::string& text) 
+    {
+        if (!OpenClipboard(nullptr)) {
+            return false;
+        }
+
+        if (!EmptyClipboard()) {
+            CloseClipboard();
+            return false;
+        }
+
+        size_t len = text.length() + 1;
+        HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, len);
+
+        if (!hMem) {
+
+            CloseClipboard();
+            return false;
+        }
+
+        char* pMem = static_cast<char*>(GlobalLock(hMem));
+        memcpy(pMem, text.c_str(), len);
+        GlobalUnlock(hMem);
+
+        if (!SetClipboardData(CF_TEXT, hMem)) {
+            GlobalFree(hMem);
+            CloseClipboard();
+            return false;
+        }
+
+
+        CloseClipboard();
+        return true;
+    }
+
+    std::string Utility::GetClipboardText() 
+    {
+        std::string result;
+        if (!OpenClipboard(nullptr)) return result;
+
+        HANDLE hData = GetClipboardData(CF_TEXT);
+        if (hData == nullptr) {
+            CloseClipboard();
+            return result;
+        }
+
+        char* pszText = static_cast<char*>(GlobalLock(hData));
+        if (pszText) {
+            result = pszText;
+            GlobalUnlock(hData);
+        }
+
+        CloseClipboard();
+        return result;
+    }
 }
 

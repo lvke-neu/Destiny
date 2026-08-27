@@ -1,4 +1,5 @@
 #include "DepthStencilView.h"
+#include "Texture.h"
 #include "Engine/Utility.h"
 #include "Engine/Engine.h"
 #include "GraphicsSystem.h"
@@ -10,8 +11,8 @@ namespace Destiny
 		m_width(width),
 		m_height(height),
 		m_texture(nullptr),
-		m_depthStencilView(nullptr)
-		//m_shaderResourceView(nullptr)
+		m_depthStencilView(nullptr),
+		m_shaderResourceView(nullptr)
 	{
 
 	}
@@ -20,7 +21,7 @@ namespace Destiny
 	{
 		SAFE_RELEASE(m_texture);
 		SAFE_RELEASE(m_depthStencilView);
-		//SAFE_RELEASE(m_shaderResourceView);
+		SAFE_RELEASE(m_shaderResourceView);
 	}
 
 	void DepthStencilView::doLoad()
@@ -29,13 +30,11 @@ namespace Destiny
 			m_width, m_height, 1, 1,
 			D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE);
 
-
-		HRESULT hr;
-
-		hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateTexture2D(&texDesc, nullptr, &m_texture);
+		HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateTexture2D(&texDesc, nullptr, &m_texture);
 		if (!SUCCEEDED(hr))
 		{
-			LOG_ERROR("DepthStencilView:texture load failed");
+			
+			LOG_ERROR("DepthStencilView:texture load failed:width{0},height{1}", m_width, m_height);
 			loadFailed__();
 			return;
 		}
@@ -44,7 +43,8 @@ namespace Destiny
 		hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateDepthStencilView(m_texture, &dsvDesc, &m_depthStencilView);
 		if (!SUCCEEDED(hr))
 		{
-			LOG_ERROR("DepthStencilView:depthStencilView load failed");
+			
+			LOG_ERROR("DepthStencilView:depthStencilView load failed:width{0},height{1}", m_width, m_height);
 			loadFailed__();
 			SAFE_RELEASE(m_texture);
 			return;
@@ -54,7 +54,8 @@ namespace Destiny
 		hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateShaderResourceView(m_texture, &srvDesc, &m_shaderResourceView);
 		if (!SUCCEEDED(hr))
 		{
-			LOG_ERROR("DepthStencilView:shaderResourceView load failed");
+			
+			LOG_ERROR("DepthStencilView:shaderResourceView load failed:width{0},height{1}", m_width, m_height);
 			loadFailed__();
 			SAFE_RELEASE(m_texture);
 			SAFE_RELEASE(m_depthStencilView);
@@ -62,6 +63,12 @@ namespace Destiny
 		}
 
 		loadSucceeded__();
+	}
+
+	std::shared_ptr<Texture> DepthStencilView::getTexture()
+	{
+		auto texture = std::make_shared<Texture>(m_texture, m_shaderResourceView);
+		return texture;
 	}
 }
 

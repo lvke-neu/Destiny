@@ -1,45 +1,25 @@
 #pragma once
 #include "Engine/Asset.h"
-#include <d3d11.h>
 
+struct ID3D11Buffer;
 namespace Destiny
 {
 	class Blob;
+	class InputLayout;
 	class VertexBuffer : public Asset
 	{
+		friend class Mesh;
 	public:
-		VertexBuffer();
+		VertexBuffer(std::shared_ptr<InputLayout> inputLayout, unsigned int stride, unsigned int offset, std::shared_ptr<Blob> data);
 		virtual ~VertexBuffer();
 	public:
 		virtual void doLoad() override;
-		ID3D11Buffer** getVertexBuffer();
-		unsigned int* getStride();
-		unsigned int* getOffset();
-		unsigned int getCount();
+		void modify(std::shared_ptr<Blob> data);
 	private:
-		unsigned int m_stride;
-		unsigned int m_offset;
-		ID3D11Buffer* m_vertexBuffer;
-		unsigned int m_count;
+		std::shared_ptr<InputLayout>	m_inputLayout;
+		unsigned int					m_stride;
+		unsigned int					m_offset;
+		ID3D11Buffer*					m_vertexBuffer;
+		std::shared_ptr<Blob>			m_data;
 	};
-
-	inline ID3D11Buffer** VertexBuffer::getVertexBuffer()
-	{
-		return &m_vertexBuffer;
-	}
-
-	inline unsigned int* VertexBuffer::getStride()
-	{
-		return &m_stride;
-	}
-
-	inline unsigned int* VertexBuffer::getOffset()
-	{
-		return &m_offset;
-	}
-
-	inline unsigned int VertexBuffer::getCount()
-	{
-		return m_count;
-	}
 }

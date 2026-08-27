@@ -1,0 +1,61 @@
+#pragma once
+#include "Meta.h"
+#include <rttr/property.h>
+#include <DirectXMath.h>
+#include <d3d11.h>
+
+namespace Destiny
+{
+	class Node;
+	class Object;
+	class Component;
+}
+
+class PropertyPanel : public Meta
+{
+public:
+	PropertyPanel();
+public:
+	void update();
+	float getDragFloatStep();
+	void setDragFloatStep(float dragFloatStep);
+public slots:
+	void onChoosedNode(void* parameter);
+private:
+	void popup(std::shared_ptr<Destiny::Component> component);
+
+	void reflect(std::shared_ptr<Destiny::Object> object);
+	void reflectProperty(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
+
+	void reflectBool(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
+	void reflectString(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
+	void reflectUInt(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
+	void reflectFloat(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
+	void reflectFloat2(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
+	void reflectFloat3(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
+	void reflectFloat4(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
+	void reflectColor(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
+	void reflectTransform(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
+	void reflectEnumeration(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
+	void reflectRasterizerDesc(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
+	void reflectDepthStencilStateDesc(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
+	void reflectBlendDesc(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
+	void reflectButton(const rttr::property& property, std::shared_ptr<Destiny::Object> object);
+	void reflectMaterial(std::shared_ptr<Destiny::Object> object);
+
+	bool reflectDepthStencilOpDesc(const std::string& name, D3D11_DEPTH_STENCILOP_DESC& desc);
+	bool reflectRendertargetBlendDesc(D3D11_RENDER_TARGET_BLEND_DESC& desc);
+	bool reflectFloat(const rttr::property& property, float& value);
+	bool reflectFloat3(const rttr::property& property, DirectX::XMFLOAT3& value);
+	bool reflectEnumeration(const rttr::property& property, int& value, const std::string& name = "");
+	bool reflectBool(const rttr::property& property, bool& value);
+	bool reflectInt(const rttr::property& property, int& value, float speed = 1.0f, int min = 0, int max = 0);
+private:
+	std::shared_ptr<Destiny::Node> m_choosedNode;
+	float m_dragFloatStep;
+};
+
+inline float PropertyPanel::getDragFloatStep()
+{
+	return m_dragFloatStep;
+}

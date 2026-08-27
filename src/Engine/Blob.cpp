@@ -1,8 +1,9 @@
 #include "Blob.h"
+#include <Windows.h>
 
 namespace Destiny
 {
-	Blob::Blob(size_t length)
+	Blob::Blob(unsigned long long length)
 	{
 		m_data = new char[length];
 		m_length = length;
@@ -11,5 +12,18 @@ namespace Destiny
 	Blob::~Blob()
 	{
 		delete[] m_data;
+	}
+
+	void Blob::copyfrom(void* data, unsigned long long length)
+	{
+		if (length <= m_length)
+		{
+			memcpy_s(m_data, length, data, length);
+		}
+	}
+
+	void Blob::memset0()
+	{
+		memset(m_data, 0, m_length);
 	}
 }

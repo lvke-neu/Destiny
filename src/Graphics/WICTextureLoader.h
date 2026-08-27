@@ -29,6 +29,8 @@
 
 namespace DirectX
 {
+    void WIC_INIT();
+
     enum WIC_LOADER_FLAGS
     {
         WIC_LOADER_DEFAULT      = 0,

@@ -1,96 +1,71 @@
 #pragma once
 #include <memory>
-#include <vector>
-#include <d3d11.h>
 
+struct ID3D11Device;
+struct ID3D11DeviceContext;
+struct ID3DUserDefinedAnnotation;
+struct ID3D11RenderTargetView;
+struct ID3D11DepthStencilView;
+struct ID3D11Device;
+struct IDXGISwapChain;
+struct ID3D11Texture2D;
+struct D3D11_VIEWPORT;
 namespace Destiny
 {
-	class Blob;
-	class VertexBuffer;
-	class IndexBuffer;
-	class Mesh;
-	class VertexShader;
-	class PixelShader;
-	class GeometryShader;
-	class InputLayout;
-	class RasterizerState;
-	class DepthStencilState;
-	class BlendState;
-	class SamplerState;
-	class Visual3D;
-	class Texture;
-	class TextureLoader;
-	class Material;
-	class MaterialLoader;
-	class RenderTargetView;
-	class DepthStencilView;
 	class GraphicsSystem
 	{
 	public:
+		struct GraphicsStat
+		{
+			unsigned long long DrawCallCount;
+			unsigned long long TriangleCount;
+			unsigned long long VisualCount;
+			unsigned long long DeferredVisualCount;
+			unsigned long long ForwardVisualCount;
+			unsigned long long TransparentVisualCount;
+			unsigned long long GuiVisualCount;
+		};
+	public:
 		GraphicsSystem();
-		~GraphicsSystem();
+		virtual ~GraphicsSystem();
 	public:
-		void initialize(long long hwnd);
-		void uninitialize();
-		void begin();
-		void end();
-		
-		ID3D11Device* getDevice();
-		ID3D11DeviceContext* getImmediateContext();
-		ID3D11DeviceContext* getDeferredContext();
-		ID3D11RenderTargetView** getRenderTargetView();
-		ID3D11DepthStencilView* getDepthStencilView();
-		D3D11_VIEWPORT* getViewport();
-		std::shared_ptr<RenderTargetView> getRenderToShadowMapRTV();
-		std::shared_ptr<DepthStencilView> getRenderToShadowMapDSV();
-		std::shared_ptr<VertexShader> getShadowMapVertexShader();
-		std::shared_ptr<SamplerState> getShadowMapSamplerState();
-		D3D11_VIEWPORT* getShadowMapViewport();
+		void						initialize(long long hwnd);
+		void						uninitialize();
+		void						update();
+		GraphicsStat				getGraphicsStat();
+		void						present();
 	public:
-		void commitVisual3D(std::shared_ptr<Visual3D> visual3D);
+		ID3D11Device*				getDevice();
+		ID3D11DeviceContext*		getImmediateContext();
+		ID3D11DeviceContext*		getDeferredContext();
+		ID3D11RenderTargetView**	getRenderTargetView();
+		ID3D11DepthStencilView*		getDepthStencilView();
 	public:
-		std::shared_ptr<VertexBuffer> createVertexBuffer(unsigned int stride, unsigned int offset, std::shared_ptr<Blob> vertexData);
-		std::shared_ptr<IndexBuffer> createIndexBuffer(DXGI_FORMAT format, std::shared_ptr<Blob> indexData);
-		std::shared_ptr<Mesh> createMesh(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer);
-		std::shared_ptr<VertexShader> createVertexShader(const char* path);
-		std::shared_ptr<PixelShader> createPixelShader(const char* path);
-		std::shared_ptr<PixelShader> compilePixelShader(const char* path);
-		std::shared_ptr<GeometryShader> createGeometryShader(const char* path);
-		std::shared_ptr<GeometryShader> compileGeometryShader(const char* path);
-		std::shared_ptr<InputLayout> createInputLayout(std::shared_ptr<Blob> inputElements, const char* vsPath);
-		std::shared_ptr<RasterizerState> createRasterizerState(std::shared_ptr<Blob> rasterizerDesc);
-		std::shared_ptr<DepthStencilState> createDepthStencilState(std::shared_ptr<Blob> depthStencilStateDesc);
-		std::shared_ptr<BlendState> createBlendState(std::shared_ptr<Blob> blendStateDesc);
-		std::shared_ptr<SamplerState> createSamplerState(std::shared_ptr<Blob> samplerStateDesc);
-		std::shared_ptr<Texture> createTexture(const char* path);
-		std::shared_ptr<Material> createMaterial();
-		
+		//for window resize
+		void						onResize_(unsigned int width, unsigned int height);
+		virtual void				syncState() = 0;
+	public:
+		void beginEvent(const wchar_t* name);
+		void endEvent();
 	private:
-		void createDeviceAndContext();
-		void createSwapChain(long long hwnd);
-		void onResize(void* data);
-		void onResize_(unsigned int width, unsigned int height);
+		void						createDeviceAndContext();
+		void						createSwapChain(long long hwnd);
+		void						bindEditorRenderTarget();
+		virtual void				createPipeline() = 0;
+		virtual void				render() = 0;
+	protected:
+		GraphicsStat				m_graphicsStat;
 	private:
-		ID3D11Device* m_pD3D11Device;
-		ID3D11DeviceContext* m_pD3D11ImmediateDeviceContext;
-		ID3D11DeviceContext* m_pD3D11DeferredDeviceContext;
-		IDXGISwapChain* m_pDXGISwapChain;
-		ID3D11RenderTargetView* m_pRenderTargetView;
-		ID3D11Texture2D* m_pDepthStencilBuffer;
-		ID3D11DepthStencilView* m_pDepthStencilView;
-		unsigned int m_4xMsaaQuality;
-		D3D11_VIEWPORT* m_viewport;
-		std::vector<std::shared_ptr<Visual3D>> m_visual3Ds;
-		std::shared_ptr<TextureLoader> m_textureLoader;
-		std::shared_ptr<MaterialLoader> m_materialLoader;
-
-		std::shared_ptr<RenderTargetView> m_renderToShadowMapRTV;
-		std::shared_ptr<DepthStencilView> m_renderToShadowMapDSV;
-		std::shared_ptr<VertexShader> m_shadowMapVertexShader;
-		std::shared_ptr<SamplerState> m_shadowMapSamplerState;
-		unsigned int m_shadowMapWidth;
-		unsigned int m_shadowMapHeight;
-		D3D11_VIEWPORT* m_shadowMapViewport;
+		ID3D11Device*				m_pD3D11Device;
+		ID3D11DeviceContext*		m_pD3D11ImmediateDeviceContext;
+		ID3D11DeviceContext*		m_pD3D11DeferredDeviceContext;
+		IDXGISwapChain*				m_pDXGISwapChain;
+		ID3DUserDefinedAnnotation*  m_pD3DUserDefinedAnnotation;
+		ID3D11RenderTargetView*		m_pRenderTargetView;
+		ID3D11Texture2D*			m_pDepthStencilBuffer;
+		ID3D11DepthStencilView*		m_pDepthStencilView;
+		unsigned int				m_4xMsaaQuality;
+		std::shared_ptr<D3D11_VIEWPORT>			m_viewPort;
 	};
 
 	inline ID3D11Device* GraphicsSystem::getDevice()
@@ -118,33 +93,8 @@ namespace Destiny
 		return m_pDepthStencilView;
 	}
 
-	inline D3D11_VIEWPORT* GraphicsSystem::getViewport()
+	inline GraphicsSystem::GraphicsStat GraphicsSystem::getGraphicsStat()
 	{
-		return m_viewport;
-	}
-
-	inline std::shared_ptr<RenderTargetView> GraphicsSystem::getRenderToShadowMapRTV()
-	{
-		return m_renderToShadowMapRTV;
-	}
-
-	inline std::shared_ptr<DepthStencilView> GraphicsSystem::getRenderToShadowMapDSV()
-	{
-		return m_renderToShadowMapDSV;
-	}
-
-	inline std::shared_ptr<VertexShader> GraphicsSystem::getShadowMapVertexShader()
-	{
-		return m_shadowMapVertexShader;
-	}
-
-	inline std::shared_ptr<SamplerState> GraphicsSystem::getShadowMapSamplerState()
-	{
-		return m_shadowMapSamplerState;
-	}
-
-	inline D3D11_VIEWPORT* GraphicsSystem::getShadowMapViewport()
-	{
-		return m_shadowMapViewport;
+		return m_graphicsStat;
 	}
 }

@@ -1,14 +1,49 @@
 #pragma once
-#include <QtWidgets/QApplication>
+#include <Windows.h>
 #include <memory>
 
-class MainWindow;
-class Application : public QApplication
+class ViewPortPanel;
+class ScenePanel;
+class PropertyPanel;
+class AssetPanel;
+class DebugDeferredRenderPanel;
+class DebugShadowMapPanel;
+class GraphicsStatPanel;
+class AiPanel;
+class Application
 {
 public:
-	Application(int argc = 0, char* argv[] = nullptr);
+	Application();
+public:
+	void initialize(HINSTANCE hInstance);
+	void run();
+	void uninitialize();
 private:
-	std::shared_ptr<MainWindow> m_mainWindow;
+	void initImGui();
+	void drawDock();
+	void newScene();
+	void saveScene();
+	void openScene();
+	void openSceneFromServer();
+	void clearScene();
+
+	void fileMenu();
+	void viewMenu();
+	void toolMenu();
+	void settingMenu();
+	void simulationMenu();
+private:
+	HWND										m_hwnd;
+	HINSTANCE									m_hInstance;
+public:
+	std::shared_ptr<ViewPortPanel>					m_viewPortPanel;
+	std::shared_ptr<ScenePanel>						m_scenePanel;
+	std::shared_ptr<PropertyPanel>					m_propertyPanel;
+	std::shared_ptr<AssetPanel>						m_assetPanel;
+	std::shared_ptr<DebugDeferredRenderPanel>		m_debugDeferredRenderPanel;
+	std::shared_ptr<DebugShadowMapPanel>			m_debugShadowMapPanel;
+	std::shared_ptr<GraphicsStatPanel>				m_graphicsStatPanel;
+	std::shared_ptr<AiPanel>						m_aiPanel;
 };
 
 	

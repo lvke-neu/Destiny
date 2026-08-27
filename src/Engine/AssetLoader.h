@@ -1,16 +1,16 @@
 #pragma once
-#include <mutex>
+#include <memory>
+
 namespace Destiny
 {
 	class Asset;
-	class BlobHolder;
 	class AssetLoader
 	{
 	public:
-		AssetLoader();
+		AssetLoader() = default;
 		virtual ~AssetLoader() = default;
 	public:
 		virtual void loadAsset(std::shared_ptr<Asset> asset) = 0;
-		std::mutex m_mtx;
+		virtual void reloadAsset(std::shared_ptr<Asset> asset) {};
 	};
 }

@@ -16,16 +16,17 @@
 #include "Engine/Engine.h"
 #include "Engine/LogManager.h"
 
-#define LOG_TRACE(...)     Engine::GetInstance()->getLogManager()->getCoreLogger()->trace("[" + std::string(__FUNCTION__) + "]:" + __VA_ARGS__);
-#define LOG_INFO(...)      Engine::GetInstance()->getLogManager()->getCoreLogger()->info("[" + std::string(__FUNCTION__) + "]:" + __VA_ARGS__);
-#define LOG_WARN(...)      Engine::GetInstance()->getLogManager()->getCoreLogger()->warn("[" + std::string(__FUNCTION__) + "]:" + __VA_ARGS__);
-#define LOG_ERROR(...)     Engine::GetInstance()->getLogManager()->getCoreLogger()->error("[" + std::string(__FUNCTION__) + "]:" + __VA_ARGS__);
-#define LOG_CRITICAL(...)  Engine::GetInstance()->getLogManager()->getCoreLogger()->critical("[" + std::string(__FUNCTION__) + "]:" + __VA_ARGS__);
+#define LOG_TRACE(...)     Destiny::Engine::GetInstance()->getLogManager()->getCoreLogger()->trace("[" + std::string(__FUNCTION__) + "]:" + __VA_ARGS__);
+#define LOG_INFO(...)      Destiny::Engine::GetInstance()->getLogManager()->getCoreLogger()->info("[" + std::string(__FUNCTION__) + "]:" + __VA_ARGS__);
+#define LOG_WARN(...)      Destiny::Engine::GetInstance()->getLogManager()->getCoreLogger()->warn("[" + std::string(__FUNCTION__) + "]:" + __VA_ARGS__);
+#define LOG_ERROR(...)     Destiny::Engine::GetInstance()->getLogManager()->getCoreLogger()->error("[" + std::string(__FUNCTION__) + "]:" + __VA_ARGS__);
+#define LOG_CRITICAL(...)  Destiny::Engine::GetInstance()->getLogManager()->getCoreLogger()->critical("[" + std::string(__FUNCTION__) + "]:" + __VA_ARGS__);
 //********************************************************************************************************
 
 //*************************************************delete and release*************************************************
 #define SAFE_DELETE(p) { if ((p)) { delete (p); (p) = nullptr; } } 
 #define SAFE_RELEASE(p) { if ((p)) { (p)->Release(); (p) = nullptr; } }
+#define SAFE_ADDREF(p) { if ((p)) { (p)->AddRef();} }
 //*********************************************************************************************************************
 
 namespace Destiny
@@ -36,6 +37,8 @@ namespace Destiny
 		static std::wstring MultiByte2WideChar(const std::string& pKey);
 		static std::string WideChar2MultiByte(const std::wstring& pWCStrKey);
 		static std::string GenerateUUID();
+		static bool CopyToClipboard(const std::string& text);
+		static std::string GetClipboardText();
 	};
 }
 
@@ -55,14 +58,28 @@ namespace Destiny
 #define GET_SET(TYPE, NAME)\
 	GET(TYPE, NAME);\
 	SET(TYPE, NAME);
-
-#define GET_CLASS_NAME(NAME)\
-	virtual std::string get_class_name() const\
-	{\
-		return #NAME;\
-	}\
 //**********************************************************************************************************
 
+#define MAX_BUFFER_SIZE 1024
 
 
+//************************************************* test execute time ************************************************
+#include <chrono>
+#define EXECUTION_TIME(FUNCTION_NAME, FUNCTION)\
+auto start = std::chrono::high_resolution_clock::now();\
+FUNCTION;\
+auto end = std::chrono::high_resolution_clock::now();\
+auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);\
+std::string logInfo = " execution time:{0}ms";\
+logInfo = #FUNCTION_NAME + logInfo;\
+LOG_WARN(logInfo, std::to_string(duration.count()));
 
+#define EXECUTION_TIME2(FUNCTION_NAME, FUNCTION)\
+auto start = std::chrono::high_resolution_clock::now();\
+FUNCTION;\
+auto end = std::chrono::high_resolution_clock::now();\
+auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);\
+std::string logInfo = " execution time:{0}ms";\
+logInfo = FUNCTION_NAME + logInfo;\
+LOG_WARN(logInfo, std::to_string(duration.count()));
+//**********************************************************************************************************

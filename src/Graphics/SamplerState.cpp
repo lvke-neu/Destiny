@@ -1,28 +1,13 @@
 #include "SamplerState.h"
-#include "Engine/Blob.h"
-#include "Engine/Utility.h"
 #include "Engine/Engine.h"
-#include "Engine/BlobHolder.h"
 #include "GraphicsSystem.h"
+#include <d3d11.h>
 
 namespace Destiny
 {
-	D3D11_SAMPLER_DESC SamplerState::Default_SamplerState_Desc
-	{
-		D3D11_FILTER_MIN_MAG_MIP_LINEAR,
-		D3D11_TEXTURE_ADDRESS_CLAMP,
-		D3D11_TEXTURE_ADDRESS_CLAMP,
-		D3D11_TEXTURE_ADDRESS_CLAMP,
-		0.0f,
-		0,
-		D3D11_COMPARISON_NEVER,
-		{0.0f, 0.0f, 0.0f, 0.0f},
-		-FLT_MAX,
-		FLT_MAX
-	};
-
 	SamplerState::SamplerState() :
-		m_samplerState(nullptr)
+		m_samplerState(nullptr),
+		m_samplerDesc(std::make_shared<CD3D11_SAMPLER_DESC>(CD3D11_DEFAULT()))
 	{
 
 	}
@@ -34,45 +19,90 @@ namespace Destiny
 
 	void SamplerState::doLoad()
 	{
-		if (m_blobHolder)
+		if (m_samplerDesc)
 		{
-			if (m_blobHolder->isLoadingPending())
+			
+			HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateSamplerState(m_samplerDesc.get(), &m_samplerState);
+			
+			if (SUCCEEDED(hr))
 			{
-				m_blobHolder->load(0);
-			}
-
-			if (!m_blobHolder->isLoadingSucceed())
-			{
-				loadFailed__();
-				return;
-			}
-
-			auto blob = m_blobHolder->getBlob();
-			if (blob)
-			{
-				D3D11_SAMPLER_DESC desc;
-				memcpy_s(&desc, sizeof(D3D11_SAMPLER_DESC), blob->getData(), sizeof(D3D11_SAMPLER_DESC));
-
-				HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateSamplerState(&desc, &m_samplerState);
-
-				if (SUCCEEDED(hr))
-				{
-					loadSucceeded__();
-				}
-				else
-				{
-					loadFailed__();
-				}
+				loadSucceeded__();
 			}
 			else
 			{
 				loadFailed__();
-				return;
 			}
 		}
 		else
 		{
 			loadFailed__();
+		}
+	}
+
+	void SamplerState::bind(std::shared_ptr<SamplerStateDesc> desc)
+	{
+		if (!desc)
+		{
+			return;
+		}
+
+		for (const auto& samplerStateBindFlag : desc->samplerStateBindFlag)
+		{
+			if (samplerStateBindFlag.second)
+			{
+				switch (samplerStateBindFlag.first)
+				{
+				case SamplerStateBindFlag::BindVS:
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->VSSetSamplers(desc->startSlot, 1, &m_samplerState);
+					break;
+				case SamplerStateBindFlag::BindPS:
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetSamplers(desc->startSlot, 1, &m_samplerState);
+					break;
+				case SamplerStateBindFlag::BindGS:
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->GSSetSamplers(desc->startSlot, 1, &m_samplerState);
+					break;
+				case SamplerStateBindFlag::BindHS:
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->HSSetSamplers(desc->startSlot, 1, &m_samplerState);
+					break;
+				case SamplerStateBindFlag::BindDS:
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->DSSetSamplers(desc->startSlot, 1, &m_samplerState);
+					break;
+				}
+			}
+		}
+	}
+
+	void SamplerState::unBind(std::shared_ptr<SamplerStateDesc> desc)
+	{
+		if (!desc)
+		{
+			return;
+		}
+
+		ID3D11SamplerState* sampler = nullptr;
+		for (const auto& samplerStateBindFlag : desc->samplerStateBindFlag)
+		{
+			if (samplerStateBindFlag.second)
+			{
+				switch (samplerStateBindFlag.first)
+				{
+				case SamplerStateBindFlag::BindVS:
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->VSSetSamplers(desc->startSlot, 1, &sampler);
+					break;
+				case SamplerStateBindFlag::BindPS:
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->PSSetSamplers(desc->startSlot, 1, &sampler);
+					break;
+				case SamplerStateBindFlag::BindGS:
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->GSSetSamplers(desc->startSlot, 1, &sampler);
+					break;
+				case SamplerStateBindFlag::BindHS:
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->HSSetSamplers(desc->startSlot, 1, &sampler);
+					break;
+				case SamplerStateBindFlag::BindDS:
+					Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->DSSetSamplers(desc->startSlot, 1, &sampler);
+					break;
+				}
+			}
 		}
 	}
 }

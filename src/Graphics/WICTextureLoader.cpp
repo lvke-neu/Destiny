@@ -681,6 +681,12 @@ namespace
 
 //--------------------------------------------------------------------------------------
 _Use_decl_annotations_
+void DirectX::WIC_INIT()
+{
+    LPVOID lp = NULL;
+    CoInitialize(lp);
+    _GetWIC();
+}
 HRESULT DirectX::CreateWICTextureFromMemory(ID3D11Device* d3dDevice,
     const uint8_t* wicData,
     size_t wicDataSize,

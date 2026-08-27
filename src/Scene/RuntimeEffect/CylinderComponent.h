@@ -1,0 +1,16 @@
+#pragma once
+#include "Graphics/VisualComponent.h"
+#include "Math/Color.h"
+
+namespace Destiny
+{
+	class CylinderComponent : public VisualComponent
+	{
+		RTTR_ENABLE(VisualComponent);
+	public:
+		CylinderComponent();
+		virtual ~CylinderComponent();
+	public:
+		virtual void onUpdate(float deltaTime) override;
+	};
+}

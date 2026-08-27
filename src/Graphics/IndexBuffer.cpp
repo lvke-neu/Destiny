@@ -2,15 +2,15 @@
 #include "Engine/Blob.h"
 #include "Engine/Utility.h"
 #include "Engine/Engine.h"
-#include "Engine/BlobHolder.h"
 #include "GraphicsSystem.h"
+#include <d3d11.h>
 
 namespace Destiny
 {
-	IndexBuffer::IndexBuffer() :
-		m_format(DXGI_FORMAT_UNKNOWN),
+	IndexBuffer::IndexBuffer(IndexType indexType, std::shared_ptr<Blob> data) :
+		m_indexType(indexType),
 		m_indexBuffer(nullptr),
-		m_count(0)
+		m_data(data)
 	{
 
 	}
@@ -22,58 +22,37 @@ namespace Destiny
 
 	void IndexBuffer::doLoad()
 	{
-		if (m_blobHolder)
+		if (!m_data)
 		{
-			if (m_blobHolder->isLoadingPending())
-			{
-				m_blobHolder->load(0);
-			}
+			loadFailed__();
+			LOG_ERROR("Thread {0}, IndexBuffer load failed", std::to_string((*(uint32_t*)&std::this_thread::get_id())));
+			return;
+		}
+		
+		D3D11_BUFFER_DESC ibd;
+		ZeroMemory(&ibd, sizeof(ibd));
+		ibd.Usage = D3D11_USAGE_IMMUTABLE;
+		ibd.ByteWidth = (UINT)m_data->getLength();
+		ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+		ibd.CPUAccessFlags = 0;
 
-			if (!m_blobHolder->isLoadingSucceed())
-			{
-				loadFailed__();
-				return;
-			}
+		D3D11_SUBRESOURCE_DATA InitData;
+		ZeroMemory(&InitData, sizeof(InitData));
+		InitData.pSysMem = m_data->getData();
 
-			auto blob = m_blobHolder->getBlob();
-			if (blob)
-			{
-				memcpy_s(&m_format, sizeof(DXGI_FORMAT), blob->getData(), sizeof(DXGI_FORMAT));
-
-				D3D11_BUFFER_DESC ibd;
-				ZeroMemory(&ibd, sizeof(ibd));
-				ibd.Usage = D3D11_USAGE_IMMUTABLE;
-				ibd.ByteWidth = (unsigned int)(blob->getLength() - sizeof(DXGI_FORMAT));
-				ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-				ibd.CPUAccessFlags = 0;
-
-				D3D11_SUBRESOURCE_DATA InitData;
-				ZeroMemory(&InitData, sizeof(InitData));
-				InitData.pSysMem = (char*)blob->getData() + sizeof(DXGI_FORMAT);
-
-				HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateBuffer(&ibd, &InitData, &m_indexBuffer);
-
-				if (SUCCEEDED(hr))
-				{
-					m_count = (unsigned int)(blob->getLength() - sizeof(DXGI_FORMAT)) / sizeof(unsigned int);
-
-					loadSucceeded__();
-				}
-				else
-				{
-					loadFailed__();
-				}
-			}
-			else
-			{
-				loadFailed__();
-				return;
-			}
-
+		
+		HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateBuffer(&ibd, &InitData, &m_indexBuffer);
+		
+		if (SUCCEEDED(hr))
+		{
+			loadSucceeded__();
+			m_data.reset();
 		}
 		else
 		{
 			loadFailed__();
+			LOG_ERROR("Thread {0}, IndexBuffer load failed", std::to_string((*(uint32_t*)&std::this_thread::get_id())));
+			m_data.reset();
 		}
 	}
 }

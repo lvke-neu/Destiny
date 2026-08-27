@@ -1,38 +1,28 @@
 #pragma once
 #include "Engine/Asset.h"
-#include <d3d11.h>
 
+struct ID3D11Buffer;
 namespace Destiny
 {
 	class Blob;
 	class IndexBuffer : public Asset
 	{
+		friend class Mesh;
 	public:
-		IndexBuffer();
+		enum class IndexType
+		{
+			Index16 = 57,
+			Index32 = 42
+		};
+	public:
+		IndexBuffer(IndexType indexType, std::shared_ptr<Blob> data);
 		virtual ~IndexBuffer();
 	public:
 		virtual void doLoad() override;
-		ID3D11Buffer* getIndexBuffer();
-		DXGI_FORMAT getFormat();
-		unsigned int getCount();
 	private:
-		DXGI_FORMAT m_format;
-		ID3D11Buffer* m_indexBuffer;
-		unsigned int m_count;
+		IndexType				m_indexType;
+		ID3D11Buffer*			m_indexBuffer;
+		std::shared_ptr<Blob>	m_data;
 	};
 
-	inline ID3D11Buffer* IndexBuffer::getIndexBuffer()
-	{
-		return m_indexBuffer;
-	}
-
-	inline DXGI_FORMAT IndexBuffer::getFormat()
-	{
-		return m_format;
-	}
-
-	inline unsigned int IndexBuffer::getCount()
-	{
-		return m_count;
-	}
 }

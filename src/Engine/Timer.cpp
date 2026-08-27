@@ -5,7 +5,6 @@
 #include <windows.h>
 #include "Timer.h"
 
-
 namespace Destiny
 {
 	Timer::Timer()

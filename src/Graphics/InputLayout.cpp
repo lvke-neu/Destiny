@@ -1,18 +1,17 @@
 #include "InputLayout.h"
-#include "Engine/Utility.h"
-#include "Engine/Engine.h"
 #include "Engine/Blob.h"
-#include "Engine/BlobHolder.h"
-#include "GraphicsSystem.h"
+#include "Engine/Utility.h"
+#include "Graphics/GraphicsSystem.h"
+#include <vector>
 #include <d3d11.h>
 
 namespace Destiny
 {
-	InputLayout::InputLayout(std::shared_ptr<Blob> inputElements) :
-		m_inputElements(inputElements),
+	InputLayout::InputLayout(std::shared_ptr<Blob> inputLayoutDesc) :
+		m_inputLayoutDesc(inputLayoutDesc),
 		m_inputLayout(nullptr)
 	{
-
+		
 	}
 
 	InputLayout::~InputLayout()
@@ -20,53 +19,134 @@ namespace Destiny
 		SAFE_RELEASE(m_inputLayout);
 	}
 
-	void InputLayout::doLoad()
+	ID3D11InputLayout* InputLayout::getInputLayout(std::shared_ptr<Blob> inputSignatureBlob)
 	{
-		if (!m_inputElements)
+		if (m_inputLayout)
 		{
-			loadFailed__();
-			return;
+			return m_inputLayout;
 		}
 
-		if (m_blobHolder)
+		if (!inputSignatureBlob)
 		{
-			if (m_blobHolder->isLoadingPending())
-			{
-				m_blobHolder->load(0);
-			}
-
-			if (!m_blobHolder->isLoadingSucceed())
-			{
-				loadFailed__();
-				return;
-			}
-
-			auto blob = m_blobHolder->getBlob();
-			if (blob)
-			{
-				HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateInputLayout(
-					(D3D11_INPUT_ELEMENT_DESC*)m_inputElements->getData(), (unsigned int)m_inputElements->getLength() / sizeof(D3D11_INPUT_ELEMENT_DESC),
-					blob->getData(), (unsigned int)blob->getLength(), &m_inputLayout);
-
-				if (SUCCEEDED(hr))
-				{
-					loadSucceeded__();
-				}
-				else
-				{
-					loadFailed__();
-				}
-			}
-			else
-			{
-				loadFailed__();
-				return;
-			}
-
+			return nullptr;
 		}
-		else
+
+		m_inputLayout = nullptr;
+		
+		HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateInputLayout
+		(
+			(D3D11_INPUT_ELEMENT_DESC*)m_inputLayoutDesc->getData(),(UINT) m_inputLayoutDesc->getLength() / sizeof(D3D11_INPUT_ELEMENT_DESC),
+			inputSignatureBlob->getData(), inputSignatureBlob->getLength(),
+			&m_inputLayout
+		);
+		
+		if (FAILED(hr))
 		{
-			loadFailed__();
+			LOG_ERROR("Create InputLayout failed");
 		}
+
+		return m_inputLayout;
+	}
+
+	std::shared_ptr<InputLayout> InputLayout::Create_Position3()
+	{
+		std::vector<D3D11_INPUT_ELEMENT_DESC> inputElements =
+		{
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		};
+
+		std::shared_ptr<Blob> inputLayoutDesc = std::make_shared<Blob>(sizeof(D3D11_INPUT_ELEMENT_DESC) * inputElements.size());
+		inputLayoutDesc->copyfrom(inputElements.data(), sizeof(D3D11_INPUT_ELEMENT_DESC) * inputElements.size());
+
+		return std::make_shared<InputLayout>(inputLayoutDesc);
+	}
+
+	std::shared_ptr<InputLayout> InputLayout::Create_Position2()
+	{
+		std::vector<D3D11_INPUT_ELEMENT_DESC> inputElements =
+		{
+			{ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		};
+
+		std::shared_ptr<Blob> inputLayoutDesc = std::make_shared<Blob>(sizeof(D3D11_INPUT_ELEMENT_DESC) * inputElements.size());
+		inputLayoutDesc->copyfrom(inputElements.data(), sizeof(D3D11_INPUT_ELEMENT_DESC) * inputElements.size());
+
+		return std::make_shared<InputLayout>(inputLayoutDesc);
+	}
+
+	std::shared_ptr<InputLayout> InputLayout::Create_PositionTexcoord()
+	{
+		std::vector<D3D11_INPUT_ELEMENT_DESC> inputElements =
+		{
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		};
+
+		std::shared_ptr<Blob> inputLayoutDesc = std::make_shared<Blob>(sizeof(D3D11_INPUT_ELEMENT_DESC) * inputElements.size());
+		inputLayoutDesc->copyfrom(inputElements.data(), sizeof(D3D11_INPUT_ELEMENT_DESC) * inputElements.size());
+
+		return std::make_shared<InputLayout>(inputLayoutDesc);
+	}
+
+	std::shared_ptr<InputLayout> InputLayout::Create_PositionNormalTexcoord()
+	{
+		std::vector<D3D11_INPUT_ELEMENT_DESC> inputElements =
+		{
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		};
+
+		std::shared_ptr<Blob> inputLayoutDesc = std::make_shared<Blob>(sizeof(D3D11_INPUT_ELEMENT_DESC) * inputElements.size());
+		inputLayoutDesc->copyfrom(inputElements.data(), sizeof(D3D11_INPUT_ELEMENT_DESC) * inputElements.size());
+		
+		return std::make_shared<InputLayout>(inputLayoutDesc);
+	}
+
+	std::shared_ptr<InputLayout> InputLayout::Create_PositionNormalTexcoordBone()
+	{
+		std::vector<D3D11_INPUT_ELEMENT_DESC> inputElements =
+		{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "BONEID", 0, DXGI_FORMAT_R32G32B32A32_UINT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "WEIGHTS", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "BONEID", 1, DXGI_FORMAT_R32G32B32A32_UINT, 0, 64, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "WEIGHTS", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 80, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		};
+
+		std::shared_ptr<Blob> inputLayoutDesc = std::make_shared<Blob>(sizeof(D3D11_INPUT_ELEMENT_DESC) * inputElements.size());
+		inputLayoutDesc->copyfrom(inputElements.data(), sizeof(D3D11_INPUT_ELEMENT_DESC) * inputElements.size());
+
+		return std::make_shared<InputLayout>(inputLayoutDesc);
+	}
+
+	std::shared_ptr<InputLayout> InputLayout::Create_PositionColor()
+	{
+		std::vector<D3D11_INPUT_ELEMENT_DESC> inputElements =
+		{
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		};
+
+		std::shared_ptr<Blob> inputLayoutDesc = std::make_shared<Blob>(sizeof(D3D11_INPUT_ELEMENT_DESC) * inputElements.size());
+		inputLayoutDesc->copyfrom(inputElements.data(), sizeof(D3D11_INPUT_ELEMENT_DESC) * inputElements.size());
+
+		return std::make_shared<InputLayout>(inputLayoutDesc);
+	}
+
+	std::shared_ptr<InputLayout> InputLayout::Create_PositionNormal()
+	{
+		std::vector<D3D11_INPUT_ELEMENT_DESC> inputElements =
+		{
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		};
+
+		std::shared_ptr<Blob> inputLayoutDesc = std::make_shared<Blob>(sizeof(D3D11_INPUT_ELEMENT_DESC) * inputElements.size());
+		inputLayoutDesc->copyfrom(inputElements.data(), sizeof(D3D11_INPUT_ELEMENT_DESC) * inputElements.size());
+
+		return std::make_shared<InputLayout>(inputLayoutDesc);
 	}
 }

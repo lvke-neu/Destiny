@@ -1,52 +1,49 @@
 #pragma once
-#include <d3d11.h>
-#include "Engine/Utility.h"
-#include "Engine/Engine.h"
-#include "GraphicsSystem.h"
+#include <string>
+#include <memory>
+#include <unordered_map>
 
+struct ID3D11Buffer;
+struct ID3D11DeviceContext;
 namespace Destiny
 {
-	template<typename T>
+	enum class ConstantBufferBindFlag
+	{
+		BindVS,
+		BindPS,
+		BindGS,
+		BindHS,
+		BindDS,
+		BindCS
+	};
+
+	struct ConstantBufferVariable
+	{
+		unsigned int offset;
+		unsigned int size;
+	};
+
+	class Blob;
 	class ConstantBuffer
 	{
 	public:
-		ConstantBuffer();
+		ConstantBuffer(unsigned int startSlot, unsigned int byteWidth);
 		~ConstantBuffer();
 	public:
-		void update(T data);
-		ID3D11Buffer** getConstantBuffer()
-		{
-			return &m_constantBuffer;
-		}
+		void														addVariable(const std::string& name, ConstantBufferVariable variable);
+		void														setVariable(const std::string& name, std::shared_ptr<Blob> data);
+		void														setConstantBufferBindFlag(ConstantBufferBindFlag bindFlag, bool value);
+		void														bind();
+		void														unBind();
+		//copy m_startSlot, m_byteWidth,m_variables,m_constantBufferBindFlag
+		std::shared_ptr<ConstantBuffer>								shallowClone();
 	private:
-		ID3D11Buffer* m_constantBuffer;
+		unsigned int												m_startSlot;
+		unsigned int												m_byteWidth;
+		std::unordered_map<std::string, ConstantBufferVariable>		m_variables;
+		std::unordered_map<ConstantBufferBindFlag, bool>			m_constantBufferBindFlag;
+		std::shared_ptr<Blob>										m_backData;
+		ID3D11Buffer*												m_constantBuffer;
 	};
 
-	template<typename T>
-	ConstantBuffer<T>::ConstantBuffer() :
-		m_constantBuffer(nullptr)
-	{
-		D3D11_BUFFER_DESC cbd;
-		ZeroMemory(&cbd, sizeof(cbd));
-		cbd.Usage = D3D11_USAGE_DYNAMIC;
-		cbd.ByteWidth = sizeof(T);
-		cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateBuffer(&cbd, nullptr, &m_constantBuffer);
-	}
-
-	template<typename T>
-	ConstantBuffer<T>::~ConstantBuffer()
-	{
-		SAFE_RELEASE(m_constantBuffer);
-	}
-
-	template<typename T>
-	void ConstantBuffer<T>::update(T data)
-	{
-		D3D11_MAPPED_SUBRESOURCE mappedData;
-		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->Map(m_constantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData);
-		memcpy_s(mappedData.pData, sizeof(T), &data, sizeof(T));
-		Engine::GetInstance()->getGraphicsSystem()->getImmediateContext()->Unmap(m_constantBuffer, 0);
-	}
 }

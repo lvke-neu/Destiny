@@ -2,7 +2,8 @@
 
 namespace Destiny
 {
-	EventSystem::EventSystem()
+	EventSystem::EventSystem() :
+		m_viewportHovered(false)
 	{
 
 	}
@@ -29,7 +30,7 @@ namespace Destiny
 		}
 	}
 
-	void EventSystem::dispatchEvent(EventType type, void* data)
+	void EventSystem::dispatchEventUnsafe(EventType type, void* data)
 	{
 		if (type == EventType::KeyPressed)
 		{
@@ -48,6 +49,13 @@ namespace Destiny
 		{
 			m_MouseTriggers[*(MouseCode*)data] = false;
 		}
+		if (type == EventType::MousePressed || type == EventType::MouseMoved || type == EventType::MouseReleased)
+		{
+			if (!m_viewportHovered)
+			{
+				return;
+			}
+		}
 		for (const auto& event : m_events[type])
 		{
 			event(data);
@@ -58,6 +66,7 @@ namespace Destiny
 	{
 		return m_keyTriggers[keyCode];
 	}
+
 	bool EventSystem::isMousePressed(MouseCode mouseCode)
 	{
 		return m_MouseTriggers[mouseCode];

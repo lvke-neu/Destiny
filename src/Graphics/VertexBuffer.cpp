@@ -1,17 +1,18 @@
 #include "VertexBuffer.h"
 #include "Engine/Blob.h"
-#include "Engine/BlobHolder.h"
 #include "Engine/Utility.h"
 #include "Engine/Engine.h"
 #include "GraphicsSystem.h"
+#include <d3d11.h>
 
 namespace Destiny
 {
-	VertexBuffer::VertexBuffer() :
-		m_stride(0),
-		m_offset(0),
+	VertexBuffer::VertexBuffer(std::shared_ptr<InputLayout> inputLayout, unsigned int stride, unsigned int offset, std::shared_ptr<Blob> data) :
+		m_inputLayout(inputLayout),
+		m_stride(stride),
+		m_offset(offset),
 		m_vertexBuffer(nullptr),
-		m_count(0)
+		m_data(data)
 	{
 
 	}
@@ -23,59 +24,48 @@ namespace Destiny
 
 	void VertexBuffer::doLoad()
 	{
-		if (m_blobHolder)
+		if (!m_inputLayout || !m_data)
 		{
-			if (m_blobHolder->isLoadingPending())
-			{
-				m_blobHolder->load(0);
-			}
+			loadFailed__();
+			LOG_ERROR("Thread {0}, VertexBuffer load failed", std::to_string((*(uint32_t*)&std::this_thread::get_id())));
+			return;
+		}
 
-			if (!m_blobHolder->isLoadingSucceed())
-			{
-				loadFailed__();
-				return;
-			}
+		SAFE_RELEASE(m_vertexBuffer);
 
-			auto blob = m_blobHolder->getBlob();
-			if (blob)
-			{
-				memcpy_s(&m_stride, sizeof(unsigned int), blob->getData(), sizeof(unsigned int));
-				memcpy_s(&m_offset, sizeof(unsigned int), (char*)blob->getData() + sizeof(unsigned int), sizeof(unsigned int));
+		D3D11_BUFFER_DESC ibd;
+		ZeroMemory(&ibd, sizeof(ibd));
+		ibd.Usage = D3D11_USAGE_DYNAMIC;
+		ibd.ByteWidth = (UINT)m_data->getLength();
+		ibd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		ibd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
-				D3D11_BUFFER_DESC vbd;
-				ZeroMemory(&vbd, sizeof(vbd));
-				vbd.Usage = D3D11_USAGE_IMMUTABLE;
-				vbd.ByteWidth = (unsigned int)(blob->getLength() - sizeof(unsigned int) * 2);
-				vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-				vbd.CPUAccessFlags = 0;
-
-				D3D11_SUBRESOURCE_DATA InitData;
-				ZeroMemory(&InitData, sizeof(InitData));
-				InitData.pSysMem = (char*)blob->getData() + sizeof(unsigned int) * 2;
-
-				m_count = (unsigned int)(blob->getLength() - sizeof(unsigned int) * 2) / m_stride;
-
-				HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateBuffer(&vbd, &InitData, &m_vertexBuffer);
-
-				if (SUCCEEDED(hr))
-				{
-					loadSucceeded__();
-				}
-				else
-				{
-					loadFailed__();
-				}
-			}
-			else
-			{
-				loadFailed__();
-				return;
-			}
-
+		D3D11_SUBRESOURCE_DATA InitData;
+		ZeroMemory(&InitData, sizeof(InitData));
+		InitData.pSysMem = m_data->getData();
+		
+		HRESULT hr = Engine::GetInstance()->getGraphicsSystem()->getDevice()->CreateBuffer(&ibd, &InitData, &m_vertexBuffer);
+		
+		if (SUCCEEDED(hr))
+		{
+			loadSucceeded__();
+			m_data.reset();
 		}
 		else
 		{
 			loadFailed__();
+			LOG_ERROR("Thread {0}, IndexBuffer load failed", std::to_string((*(uint32_t*)&std::this_thread::get_id())));
+			m_data.reset();
 		}
+	}
+
+	void VertexBuffer::modify(std::shared_ptr<Blob> data)
+	{
+		if (!data)
+		{
+			return;
+		}
+		m_data = data;
+		doLoad();
 	}
 }
